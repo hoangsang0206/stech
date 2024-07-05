@@ -1,16 +1,20 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using STech.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<StechDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("STechDb"));
+});
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
 {
     options.LoginPath = new PathString("/");
     options.AccessDeniedPath = new PathString("/access-denied");
 });
-//builder.Services.AddDbContext<>();
-
 
 var app = builder.Build();
 

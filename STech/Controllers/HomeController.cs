@@ -1,14 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using STech.Models;
+using STech.Data.Models;
 using System.Diagnostics;
 
 namespace STech.Controllers
 {
     public class HomeController : Controller
     {
-        public HomeController()
+        private readonly StechDbContext _dbContext;
+        public HomeController(StechDbContext db)
         {
-            
+            _dbContext = db;
         }
 
         public IActionResult Index()
@@ -24,7 +25,8 @@ namespace STech.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            //return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
     }
 }
