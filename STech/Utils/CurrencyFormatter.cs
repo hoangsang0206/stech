@@ -9,7 +9,7 @@ namespace STech.Utils
 
         public static string Format(decimal? amount)
         {
-            if(amount == null)
+            if (amount == null)
             {
                 return "";
             }

@@ -5,9 +5,9 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "STech", "STech\STech.csproj", "{5F084707-78AD-48E9-8B30-A936A68A73EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STech.Data", "STech.Data\STech.Data.csproj", "{C9B7B634-5C07-460A-8726-1EAC1CFCAB9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "STech.Data", "STech.Data\STech.Data.csproj", "{C9B7B634-5C07-460A-8726-1EAC1CFCAB9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STech.Services", "STech.Services\STech.Services.csproj", "{1D2362FF-9B1A-4B59-9C7C-2F59C2FC37E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "STech.Services", "STech.Services\STech.Services.csproj", "{1D2362FF-9B1A-4B59-9C7C-2F59C2FC37E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

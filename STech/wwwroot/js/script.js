@@ -1,26 +1,4 @@
-﻿//Load sub header data --------------------------
-$(document).ready(() => {
-    $.ajax({
-        type: 'GET',
-        url: '/api/categories',
-        success: (data) => {
-            $('.sub-header-item-list').empty();
-            data.map(item => {
-                const str = `<li class="sub-header-item">
-                    <a href="/collections/${item.MaDM}" class="sub-header-link">${item.TenDM}</a>
-                </li>`;
-
-                $('.sub-header-item-list').append(str);
-            })
-        },
-        error: () => {
-            console.error("Cannot get categories");
-        }
-    })
-})
-
-//Show overlay when click category button -------------------------------------------
-let isShow = false;
+﻿let isShow = false;
 $(".categories-btn").click(() => {
     if (!isShow) {
         isShow = true;

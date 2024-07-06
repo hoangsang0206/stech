@@ -1702,6 +1702,7 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
 
     .container-xxl {
         margin: 0;
+        padding: 0 0.4rem;
     }
 
     header {
@@ -1762,9 +1763,9 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
         width: 3rem;
     }
 
-    .search-btn i {
-        font-size: 1.1rem;
-    }
+        .search-btn i {
+            font-size: 1.1rem;
+        }
 
     .ajax-search-autocomplete {
         left: 0;
@@ -1795,21 +1796,21 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
         padding: 1.5rem 1rem;
     }
 
-    .logout-confirm-box span {
-        font-size: 1rem;
-    }
+        .logout-confirm-box span {
+            font-size: 1rem;
+        }
 
     .cart-btn {
         padding: 0;
     }
 
-    .cart-btn ion-icon {
-        font-size: 2.1rem;
-    }
+        .cart-btn ion-icon {
+            font-size: 2.1rem;
+        }
 
-    .cart-btn span {
-        display: none;
-    }
+        .cart-btn span {
+            display: none;
+        }
 
     .cart-count-holder {
         top: -10%;
@@ -1830,6 +1831,10 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
 
     .hidden-menu {
         display: none;
+    }
+
+    .change-theme {
+        right: -5.5rem;
     }
 
     footer {

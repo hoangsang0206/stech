@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
-using System.Collections;
-using System.Diagnostics;
 
 namespace STech.Controllers
 {
@@ -42,7 +40,7 @@ namespace STech.Controllers
 
             IEnumerable<Slider> sliders = await _dbContext.Sliders.ToArrayAsync();
 
-            Tuple<IEnumerable<Category>, IEnumerable<Brand>, IEnumerable<Category>, IEnumerable<Slider>> data 
+            Tuple<IEnumerable<Category>, IEnumerable<Brand>, IEnumerable<Category>, IEnumerable<Slider>> data
                 = new Tuple<IEnumerable<Category>, IEnumerable<Brand>, IEnumerable<Category>, IEnumerable<Slider>>(categories, brands, randomCategories, sliders);
 
             return View(data);

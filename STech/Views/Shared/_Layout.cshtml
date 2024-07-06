@@ -25,7 +25,7 @@
 </head>
 <body>
 
-    @await Component.InvokeAsync("Header")
+    @await Component.InvokeAsync("Header", "subheader")
 
 
     <main>
@@ -42,7 +42,7 @@
         </div>
     </main>
 
-    @await Html.PartialAsync("PartialViews/Footer")
+    @await Component.InvokeAsync("Footer")
     @await Html.PartialAsync("PartialViews/MobileSidebar")
     @await Html.PartialAsync("PartialViews/BottomNavigation")
     @await Html.PartialAsync("PartialViews/HiddenContents")

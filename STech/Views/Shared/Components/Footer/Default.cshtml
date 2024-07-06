@@ -1,4 +1,6 @@
-﻿<footer>
+﻿@model IEnumerable<DeliveryUnit>
+
+<footer>
     <div class="container-xxl">
         <div class="row">
             <div class="col-sm-12 col-md-6 col-lg-2">
@@ -73,9 +75,10 @@
                         </div>
                         <div class="footer-content">
                             <div class="footer-delivery d-flex flex-wrap">
-                                <img src="~/Assets/Images/delivery/emsvn-logo.png" alt="EMS VN" class="delivery-logo">
-                                <img src="~/Assets/Images/delivery/ghtk-logo.png" alt="GHTK" class="delivery-logo">
-                                <img src="~/Assets/Images/delivery/ghn-logo.png" alt="GHN" class="delivery-logo">
+                                @foreach(DeliveryUnit du in Model)
+                                {
+                                    <img src="@du.LogoSrc" alt="@du.Duname" class="delivery-logo">
+                                }
                             </div>
                         </div>
                     </div>
