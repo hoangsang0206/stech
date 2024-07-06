@@ -11,5 +11,6 @@ namespace STech.Services
     {
         public Task<IEnumerable<Product>> GetAll();
         public Task<IEnumerable<Product>> SearchByName(string q);
+        public Task<IEnumerable<Product>> GetByCategory(string categoryId);
     }
 }

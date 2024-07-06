@@ -4,6 +4,8 @@ namespace STech.Utils
 {
     public static class ProductUtils
     {
+        public static readonly int productsPerPage = 40;
+
         public static IEnumerable<Product> Sort(IEnumerable<Product> products, string value)
         {
             IEnumerable<Product> sortedProduct = new List<Product>();
@@ -32,7 +34,7 @@ namespace STech.Utils
             return sortedProduct;
         }
 
-        public static IEnumerable<Product> Pagnigate(IEnumerable<Product> products, int page, int productsPerPage)
+        public static IEnumerable<Product> Pagnigate(IEnumerable<Product> products, int page)
         {
             int noOfProductToSkip = (page - 1) * productsPerPage;
 

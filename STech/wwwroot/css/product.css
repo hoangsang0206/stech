@@ -291,10 +291,6 @@ button:disabled {
     font-size: 1.1rem;
 }
 
-.order-product .product-box {
-    border: 1px solid #e5e5e5;
-}
-
 .product-description span {
     font-size: 1.15rem;
     font-weight: 500;

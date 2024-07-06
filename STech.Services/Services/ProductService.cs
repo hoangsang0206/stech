@@ -15,7 +15,18 @@ namespace STech.Services.Services
 
         public async Task<IEnumerable<Product>> GetAll()
         {
-            return await _context.Products.ToListAsync();
+            return await _context.Products
+                .Select(p => new Product()
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    OriginalPrice = p.OriginalPrice,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages.Take(1).ToList(),
+                    WarehouseProducts = p.WarehouseProducts,
+                    Brand = p.Brand,
+                })
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Product>> SearchByName(string q)
@@ -35,7 +46,25 @@ namespace STech.Services.Services
                     OriginalPrice = p.OriginalPrice,
                     Price = p.Price,
                     ProductImages = p.ProductImages.Take(1).ToList(),
-                    WarehouseProducts = p.WarehouseProducts
+                    WarehouseProducts = p.WarehouseProducts,
+                    Brand = p.Brand,
+                })
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Product>> GetByCategory(string categoryId)
+        {
+            return await _context.Products
+                .Where(p => p.CategoryId == categoryId)
+                .Select(p => new Product()
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    OriginalPrice = p.OriginalPrice,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages.Take(1).ToList(),
+                    WarehouseProducts = p.WarehouseProducts,
+                    Brand = p.Brand,
                 })
                 .ToListAsync();
         }

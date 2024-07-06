@@ -41,6 +41,7 @@ namespace STech.Services.Services
                         Price = p.Price,
                         ProductImages = p.ProductImages.Take(1).ToList(),
                         WarehouseProducts = p.WarehouseProducts,
+                        Brand = p.Brand
 
                     }).Take(numProducts).ToList(),
                 })

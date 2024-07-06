@@ -135,7 +135,9 @@
             <div class="collection-slick-slider">
                 @foreach (Product product in category.Products)
                 {
-                    @await Html.PartialAsync("PartialViews/ProductBox", product)
+                    <div class="slick-slider-item">
+                        @await Html.PartialAsync("PartialViews/ProductBox", product)
+                    </div>
                 }
             </div>
         </div>
