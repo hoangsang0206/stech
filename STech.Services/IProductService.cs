@@ -1,4 +1,5 @@
-﻿using System;
+﻿using STech.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,7 @@ namespace STech.Services
 {
     public interface IProductService
     {
+        public Task<IEnumerable<Product>> GetAll();
+        public Task<IEnumerable<Product>> SearchByName(string q);
     }
 }

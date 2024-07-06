@@ -22,6 +22,8 @@ builder.Services.AddControllersWithViews();
 //builder.Services.AddCors(options => options.AddDefaultPolicy(policy => 
 //  policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
 {
     options.LoginPath = new PathString("/");

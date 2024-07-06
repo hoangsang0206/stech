@@ -23,7 +23,7 @@ namespace STech.Controllers
         public async Task<IActionResult> Index()
         {
             IEnumerable<Category> categories = await _categoryService.GetAll(true);
-            IEnumerable<Brand> brands = await _brandService.GetAll();
+            IEnumerable<Brand> brands = await _brandService.GetAll(true);
 
             IEnumerable<Category> randomCategories = await _categoryService.GetRandomWithProducts(8, 15);
 

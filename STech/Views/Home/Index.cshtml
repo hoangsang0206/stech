@@ -135,60 +135,7 @@
             <div class="collection-slick-slider">
                 @foreach (Product product in category.Products)
                 {
-                    ProductImage pImage = product.ProductImages.FirstOrDefault() ?? new ProductImage();
-                    string src = pImage.ImageSrc ?? "~/images/no-image.jpg";
-                    int qty = product.WarehouseProducts.Sum(wh => wh.Quantity);
-
-                    double discountPercent = 0;
-
-                    <div class="slick-slider-item">
-                        <div class="product-box">
-                            <a href="/product/@product.ProductId" class="product-link">
-                                <div class="product-image lazy-loading">
-                                    <img lazy-src="@src" alt="" class="product-img">
-                                </div>
-                            </a>
-                            @if (qty <= 0)
-                            {
-                                <div class="out-of-stock mt-1 text-center">
-                                    Hết hàng
-                                </div>
-                            }
-                            <a href="/product/@product.ProductId" class="product-link">
-                                <div class="product-name">
-                                    @product.ProductName
-                                </div>
-                            </a>
-
-                            <div class="product-original-price">
-                                @if (product.OriginalPrice > product.Price)
-                                {
-                                    discountPercent = Convert.ToDouble((product.OriginalPrice - product.Price)
-                                        / product.OriginalPrice) * 100;
-                                    <span>@CurrencyFormatter.Format(product.OriginalPrice)</span>
-                                }
-                                else
-                                {
-                                    <span style="visibility: hidden">-</span>
-                                }
-                            </div>
-                            <div class="product-price d-flex align-items-center">
-                                <span>@CurrencyFormatter.Format(product.Price)</span>
-                                @if (discountPercent > 0)
-                                {
-                                    <div class="product-discount-percent">
-                                        @( "-" + (int)discountPercent + "%" )
-                                    </div>
-                                }
-                            </div>
-                            <button class="view-product" onclick="window.location.href='/product/@product.ProductId'">
-                                <i class="fa-regular fa-eye"></i>
-                            </button>
-                            <button class="btn-add-to-cart" data-product="@product.ProductId" @(qty <= 0 ? "disabled" : "")>
-                                <i class="fa-solid fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    </div>
+                    @await Html.PartialAsync("PartialViews/ProductBox", product)
                 }
             </div>
         </div>

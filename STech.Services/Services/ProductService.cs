@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using STech.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +10,34 @@ namespace STech.Services.Services
 {
     public class ProductService : IProductService
     {
+        private readonly StechDbContext _context;
+        public ProductService(StechDbContext context) => _context = context;
+
+        public async Task<IEnumerable<Product>> GetAll()
+        {
+            return await _context.Products.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Product>> SearchByName(string q)
+        {
+            if(q == null)
+            {
+                return new List<Product>();
+            }
+
+            string[] keywords = q.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            return await _context.Products
+                .Where(p => keywords.All(key =>  p.ProductName.Contains(key)))
+                .Select(p => new Product()
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    OriginalPrice = p.OriginalPrice,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages.Take(1).ToList(),
+                    WarehouseProducts = p.WarehouseProducts
+                })
+                .ToListAsync();
+        }
     }
 }

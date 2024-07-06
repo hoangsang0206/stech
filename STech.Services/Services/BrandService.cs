@@ -13,8 +13,13 @@ namespace STech.Services.Services
         private readonly StechDbContext _context;
         public BrandService(StechDbContext context) => _context = context;
 
-        public async Task<IEnumerable<Brand>> GetAll()
+        public async Task<IEnumerable<Brand>> GetAll(bool isExcept)
         {
+            if(isExcept)
+            {
+                return await _context.Brands.Where(b => b.BrandId != "khac").ToListAsync();
+            }
+
             return await _context.Brands.ToListAsync();
         }
     }
