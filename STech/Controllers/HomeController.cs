@@ -1,44 +1,33 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
+using STech.Services;
 
 namespace STech.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly StechDbContext _dbContext;
-        public HomeController(StechDbContext db)
+        private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
+        private readonly IBrandService _brandService;
+        private readonly ISliderService _sliderService;
+
+        public HomeController(IProductService productService, ICategoryService categoryService, IBrandService brandService, ISliderService sliderService)
         {
-            _dbContext = db;
+            _productService = productService;
+            _categoryService = categoryService;
+            _brandService = brandService;
+            _sliderService = sliderService;
         }
 
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Category> categories = await _dbContext.Categories.Where(c => c.CategoryId != "khac").ToListAsync();
-            IEnumerable<Brand> brands = await _dbContext.Brands.ToListAsync();
+            IEnumerable<Category> categories = await _categoryService.GetAll(true);
+            IEnumerable<Brand> brands = await _brandService.GetAll();
 
-            IEnumerable<Category> randomCategories = await _dbContext.Categories
-                .Where(c => c.Products.Count > 10 && c.CategoryId != "khac")
-                .OrderBy(c => Guid.NewGuid())
-                .Select(c => new Category()
-                {
-                    CategoryId = c.CategoryId,
-                    CategoryName = c.CategoryName,
-                    Products = c.Products.OrderBy(p => Guid.NewGuid()).Select(p => new Product()
-                    {
-                        ProductId = p.ProductId,
-                        ProductName = p.ProductName,
-                        OriginalPrice = p.OriginalPrice,
-                        Price = p.Price,
-                        ProductImages = p.ProductImages,
-                        WarehouseProducts = p.WarehouseProducts,
+            IEnumerable<Category> randomCategories = await _categoryService.GetRandomWithProducts(8, 15);
 
-                    }).Take(15).ToList(),
-                })
-                .Take(8)
-                .ToListAsync();
-
-            IEnumerable<Slider> sliders = await _dbContext.Sliders.ToArrayAsync();
+            IEnumerable<Slider> sliders = await _sliderService.GetAll();
 
             Tuple<IEnumerable<Category>, IEnumerable<Brand>, IEnumerable<Category>, IEnumerable<Slider>> data
                 = new Tuple<IEnumerable<Category>, IEnumerable<Brand>, IEnumerable<Category>, IEnumerable<Slider>>(categories, brands, randomCategories, sliders);
