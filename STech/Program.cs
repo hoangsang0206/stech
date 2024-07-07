@@ -26,6 +26,7 @@ builder.Services.AddSingleton<ICategoryService, CategoryService>();
 builder.Services.AddSingleton<IProductService, ProductService>();
 builder.Services.AddSingleton<IBrandService, BrandService>();
 builder.Services.AddSingleton<ISliderService, SliderService>();
+builder.Services.AddSingleton<IUserService, UserService>();
 
 
 var app = builder.Build();

@@ -9,8 +9,8 @@ namespace STech.Services
 {
     public interface IProductService
     {
-        public Task<IEnumerable<Product>> GetAll();
-        public Task<IEnumerable<Product>> SearchByName(string q);
-        public Task<IEnumerable<Product>> GetByCategory(string categoryId);
+        Task<IEnumerable<Product>> GetAll();
+        Task<IEnumerable<Product>> SearchByName(string q);
+        Task<IEnumerable<Product>> GetByCategory(string categoryId);
     }
 }

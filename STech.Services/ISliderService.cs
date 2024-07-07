@@ -9,6 +9,6 @@ namespace STech.Services
 {
     public interface ISliderService
     {
-        public Task<IEnumerable<Slider>> GetAll();
+        Task<IEnumerable<Slider>> GetAll();
     }
 }

@@ -9,8 +9,8 @@ namespace STech.Services
 {
     public interface ICategoryService
     {
-        public Task<IEnumerable<Category>> GetAll(bool isExcept);
-        public Task<IEnumerable<Category>> GetRandomWithProducts(int numCategories, int numProducts);
-        public Task<Category> GetOne(string id);
+        Task<IEnumerable<Category>> GetAll(bool isExcept);
+        Task<IEnumerable<Category>> GetRandomWithProducts(int numCategories, int numProducts);
+        Task<Category> GetOne(string id);
     }
 }

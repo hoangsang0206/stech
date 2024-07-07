@@ -1,0 +1,63 @@
+﻿@model RegisterVM
+
+<div class="form-container register">
+    <div class="form-box">
+        <div class="close-form">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+        <h3 class="text-center mt-3 mb-4 fw-semibold">Đăng ký</h3>
+        <form method="POST" asp-controller="Account" asp-action="Register">
+            <div class="form-error show"></div>
+            <div class="login-input-box">
+                <label asp-for="@Model.RegUserName"></label>
+                <div class="login-input">
+                    <i class='bx bx-user'></i>
+                    <input asp-for="@Model.RegUserName" placeholder="Tên đăng nhập" />
+                    <span class="input-focus"></span>
+                </div>
+                <span asp-validation-for="@Model.RegUserName"></span>
+            </div>
+            <div class="login-input-box">
+                <label asp-for="@Model.Email"></label>
+                <div class="login-input">
+                    <i class='bx bx-user'></i>
+                    <input asp-for="@Model.Email" placeholder="example@gmail.com" />
+                    <span class="input-focus"></span>
+                </div>
+                <span asp-validation-for="@Model.Email"></span>
+            </div>
+            <div class="login-input-box">
+                <label asp-for="@Model.RegPassword"></label>
+                <div class="login-input">
+                    <i class='bx bx-user'></i>
+                    <input asp-for="@Model.RegPassword" type="password" placeholder="Mật khẩu" />
+                    <span class="input-focus"></span>
+                </div>
+                <span asp-validation-for="@Model.RegPassword"></span>
+            </div>
+            <div class="login-input-box">
+                <label asp-for="@Model.ConfirmPassword"></label>
+                <div class="login-input">
+                    <i class='bx bx-user'></i>
+                    <input asp-for="@Model.ConfirmPassword" type="password" placeholder="Nhập lại mật khẩu" />
+                    <span class="input-focus"></span>
+                </div>
+                <span asp-validation-for="@Model.ConfirmPassword"></span>
+            </div>
+            <div class="d-flex login-redirect">
+                <p>Đã có tải khoản?&nbsp;</p>
+                <a href="javascript:void(0)" class="to-login">Đăng nhập</a>
+            </div>
+
+            <button type="submit" class="form-submit-btn">Đăng ký</button>
+        </form>
+
+        <div class="other-login d-flex flex-column align-items-center mt-4">
+            <span>Hoặc đăng nhập bằng</span>
+            <div class="d-flex gap-2">
+                <a href="javascript:void(0)"><i class="bx bxl-facebook-circle"></i></a>
+                <a href="javascript:void(0)"><i class="bx bxl-google"></i></a>
+            </div>
+        </div>
+    </div>
+</div>

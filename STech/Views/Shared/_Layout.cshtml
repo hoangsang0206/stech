@@ -47,6 +47,9 @@
     @await Html.PartialAsync("PartialViews/BottomNavigation")
     @await Html.PartialAsync("PartialViews/HiddenContents")
 
+    @await Html.PartialAsync("PartialViews/Form_Login", new LoginVM())
+    @await Html.PartialAsync("PartialViews/Form_Register", new RegisterVM())
+
 @*     @await Html.PartialAsync("Partial_Login", new STech.ViewModels.LoginVM())
     @await Html.PartialAsync("Partial_Register", new STech.ViewModels.RegisterVM()) *@
 
@@ -63,5 +66,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script type="text/javascript" src="~/js/script.js"></script>
+    <script type="text/javascript" src="~/js/account.js"></script>
 </body>
 </html>

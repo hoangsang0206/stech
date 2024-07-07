@@ -1,4 +1,46 @@
-﻿let isShow = false;
+﻿const showBtnLoading = (button) => {
+    var btnText = button.html();
+    var loadingStr = `<div class="loadingio-spinner-dual-ring-ekj0ol56kwc">
+                        <div class="ldio-gmrbyawnrc">
+                            <div></div><div><div></div></div>
+                        </div>
+                    </div>`;
+    button.html(loadingStr);
+
+    return btnText;
+}
+
+const resetBtn = (button, btnText) => {
+    const timeout = setTimeout(() => {
+        button.html(btnText);
+        clearTimeout(timeout);
+    }, 1000);
+}
+
+const showFormError = (form, message) => {
+    $(form).find('.form-error').show();
+    $(form).find('.form-error').html(message);
+}
+
+const closeFormError = (form) => {
+    $(form).find('.form-error').hide();
+    $(form).find('.form-error').empty();
+}
+
+const closeFormErrorWithTimeout = (form) => {
+    const timeout = setTimeout(() => {
+        $(form).find('.form-error').hide();
+        $(form).find('.form-error').empty();
+        clearTimeout(timeout);
+    }, 5000)
+}
+
+const clearFormInput = (form) => {
+    form.find('input').val('');
+}
+
+
+let isShow = false;
 $(".categories-btn").click(() => {
     if (!isShow) {
         isShow = true;
@@ -559,39 +601,29 @@ $('.bottom-nav-account').click(() => {
     $('.login').addClass('show');
 })
 
-//-----
-
-$('.login-info-logout, .account-logout').on('click', () => {
-   //
-})
-
-$('.logout-confirm').click((e) => {
-    //
-})
-
-$('.logout-confirm-no').click(() => {
-   //
-})
-
 //---
 $('.close-form').click(function () {
     $(this).closest('.form-container').removeClass('show');
+    clearFormInput(this.find('form'))
 })
 
-$('.form-container').click(function(e) {
+$('.form-container').click(function (e) {
     if ($(e.target).closest('.form-box').length <= 0) {
         $(this).removeClass('show');
+        clearFormInput(this.find('form'))
     }
 })
 
 $('.to-login').click(() => {
     $('.register').removeClass('show');
     $('.login').addClass('show');
+    clearFormInput($('.register'))
 })
 
 $('.to-register').click(() => {
     $('.login').removeClass('show');
     $('.register').addClass('show');
+    clearFormInput($('.login'))
 })
 
  //------------------------
