@@ -64,9 +64,7 @@ namespace STech.Services.Services
             };
 
             await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-
-            return true;
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

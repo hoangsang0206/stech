@@ -15,6 +15,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 {
     options.LoginPath = new PathString("/");
     options.AccessDeniedPath = new PathString("/access-denied");
+    options.ExpireTimeSpan = TimeSpan.FromDays(90);
 });
 
 builder.Services.AddDbContext<StechDbContext>(options =>
@@ -27,6 +28,7 @@ builder.Services.AddSingleton<IProductService, ProductService>();
 builder.Services.AddSingleton<IBrandService, BrandService>();
 builder.Services.AddSingleton<ISliderService, SliderService>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<ICartService, CartService>();
 
 
 var app = builder.Build();

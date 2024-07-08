@@ -68,5 +68,71 @@ namespace STech.Services.Services
                 })
                 .ToListAsync();
         }
+
+        public async Task<Product?> GetProduct(string id)
+        {
+            return await _context.Products
+                .Select(p => new Product
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    OriginalPrice = p.OriginalPrice,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages,
+                    WarehouseProducts = p.WarehouseProducts,
+                    Brand = p.Brand,
+                    ShortDescription = p.ShortDescription,
+                    Description = p.Description,
+                    ProductSpecifications = p.ProductSpecifications,
+                    Category = p.Category,
+                    ManufacturedYear = p.ManufacturedYear,
+                    Warranty = p.Warranty,
+                })
+                .FirstOrDefaultAsync(p => p.ProductId == id);
+        }
+
+        public async Task<Product?> GetProductWithBasicInfo(string id)
+        {
+            return await _context.Products
+                .Select(p => new Product
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    OriginalPrice = p.OriginalPrice,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages.Take(1).ToList(),
+                    WarehouseProducts = p.WarehouseProducts,
+                    Brand = p.Brand,
+                    Category = p.Category,
+                })
+                .FirstOrDefaultAsync(p => p.ProductId == id);
+        }
+
+        public async Task<bool> CheckOutOfStock(string id)
+        {
+            Product product = await _context.Products
+                .Include(p => p.WarehouseProducts)
+                .FirstOrDefaultAsync(p => p.ProductId == id) ?? new Product();
+
+            if(product.ProductId == null)
+            {
+                return false;
+            }
+
+            int totalQty = product.WarehouseProducts.Sum(p => p.Quantity);
+
+            return totalQty <= 0;
+        }
+
+        public async Task<int> GetTotalQty(string id)
+        {
+            Product product = await _context.Products
+                .Include(p => p.WarehouseProducts)
+                .FirstOrDefaultAsync(p => p.ProductId == id)
+                ?? new Product();
+
+            return product.WarehouseProducts
+                .Sum(p => p.Quantity);
+        }
     }
 }

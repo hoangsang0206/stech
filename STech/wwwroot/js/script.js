@@ -604,13 +604,13 @@ $('.bottom-nav-account').click(() => {
 //---
 $('.close-form').click(function () {
     $(this).closest('.form-container').removeClass('show');
-    clearFormInput(this.find('form'))
+    clearFormInput($(this).find('form'))
 })
 
 $('.form-container').click(function (e) {
     if ($(e.target).closest('.form-box').length <= 0) {
         $(this).removeClass('show');
-        clearFormInput(this.find('form'))
+        clearFormInput($(this).find('form'))
     }
 })
 
