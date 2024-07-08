@@ -39,6 +39,22 @@ const clearFormInput = (form) => {
     form.find('input').val('');
 }
 
+const showErrorDialog = () => {
+    Swal.fire({
+        title: "Đã xảy ra lỗi?",
+        text: "Đã xảy ra lỗi không xác định",
+        icon: "info",
+    })
+}
+
+const showHtmlErrorDialog = (html) => {
+    Swal.fire({
+        title: "Lỗi?",
+        html: html,
+        icon: "info",
+    })
+}
+
 
 let isShow = false;
 $(".categories-btn").click(() => {
@@ -134,7 +150,7 @@ function hideWebLoader() {
     const timeout = setTimeout(() => {
         $('.webloading').hide();
         clearTimeout(timeout);
-    }, 1000);
+    }, 500);
 }
 
 //Show scroll to top button ----------------------------------------------------------

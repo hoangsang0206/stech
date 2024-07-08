@@ -76,10 +76,10 @@
                                         </div>
                                         <div class="cart-product-price-quantity">
                                             <div class="cart-product-price">
-                                                <h5>@(CurrencyFormatter.Format(cart.Product.Price))đ</h5>
+                                                <h5>@(CurrencyFormatter.Format(cart.Product.Price))</h5>
                                                 @if (cart.Product.OriginalPrice > cart.Product.Price)
                                                 {
-                                                    <h6>@(CurrencyFormatter.Format(cart.Product.OriginalPrice))đ</h6>
+                                                    <h6>@(CurrencyFormatter.Format(cart.Product.OriginalPrice))</h6>
                                                 }
                                                 else
                                                 {
@@ -88,12 +88,12 @@
                                             </div>
                                             <div class="cart-product-quantity">
                                                 <button type="button" class="update-quantity decrease-quantity"
-                                                        data-product="@cart.ProductId" data-update="decrease">
+                                                        data-product="@cart.ProductId" data-update="minus">
                                                     <i class="fa-solid fa-minus"></i>
                                                 </button>
                                                 <input type="number" name="quantity" value="@cart.Quantity" data-product="@cart.ProductId" min="1" />
                                                 <button type="button" class="update-quantity increase-quantity"
-                                                        data-product="@cart.ProductId" data-update="increase">
+                                                        data-product="@cart.ProductId" data-update="plus">
                                                     <i class="fa-solid fa-plus"></i>
                                                 </button>
                                             </div>
@@ -139,7 +139,7 @@
                             </div>
                             <div class="form-error mt-1 mb-2"></div>
                             <form action="#" method="post" id="form-info-edit">
-                                <div class="cart-form">
+                                @* <div class="cart-form">
                                     <div class="cart-form-detail">
                                         <div class="cart-form-header">
                                             <h5>Thông tin khách mua hàng</h5>
@@ -190,7 +190,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> *@
                             </form>
                         </div>
                         <hr class="cart-hr" />

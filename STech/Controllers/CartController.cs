@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Services;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
@@ -16,11 +17,13 @@ namespace STech.Controllers
 
         private readonly ICartService _cartService;
         private readonly IProductService _productService;
+        private readonly IUserService _userService;
 
-        public CartController(ICartService cartService, IProductService productService)
+        public CartController(ICartService cartService, IProductService productService, IUserService userService)
         {
             _cartService = cartService;
             _productService = productService;
+            _userService = userService;
         }
 
 
@@ -59,6 +62,29 @@ namespace STech.Controllers
         private void DeleteCookieCart()
         {
             Response.Cookies.Delete(CART_KEY);
+        }
+
+        private int UpdateCartItemQuantity(string type, int oldQty, int newQty)
+        {
+            switch (type)
+            {
+                case "plus":
+                    oldQty += 1;
+                    break;
+                case "minus":
+                    oldQty -= 1;
+                    break;
+                default:
+                    oldQty = newQty;
+                    break;
+            }
+
+            if(oldQty <= 0)
+            {
+                oldQty = 1;
+            }
+
+            return oldQty;
         }
 
         public async Task<IActionResult> Index()
@@ -134,6 +160,9 @@ namespace STech.Controllers
                     await _cartService.RemoveListCart(cartToDelete);
                     cart = await _cartService.GetUserCart(userId);
                 }
+
+                User? user = await _userService.GetUserById(userId);
+                ViewBag.User = user;
             }
             else
             {
@@ -262,6 +291,151 @@ namespace STech.Controllers
                     Status = true
                 });
             }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateQuantity(string id, string type, int qty)
+        {
+            if(id == null)
+            {
+                return BadRequest();
+            }
+
+            Product product = await _productService.GetProductWithBasicInfo(id) ?? new Product();
+            int warehouseQty = await _productService.GetTotalQty(id);
+            string message = "";
+            int updatedQty = qty;
+            decimal totalPrice = 0;
+
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                string? userId = User.FindFirstValue("Id");
+                if (userId == null)
+                {
+                    return BadRequest();
+                }
+
+                UserCart? cart = await _cartService.GetUserCartItem(userId, id);
+                if (cart == null)
+                {
+                    return BadRequest();
+                }
+
+
+                if(warehouseQty <= 0)
+                {
+                    await _cartService.RemoveFromCart(cart);
+                    return Ok(new ApiResponse
+                    {
+                        Status = false,
+                        Message = $"Sản phẩm <strong class=\"text-danger\">{product.ProductName}</strong> đã hết hàng"
+                    });
+                }
+
+                cart.Quantity = UpdateCartItemQuantity(type, cart.Quantity, qty);
+
+                if (cart.Quantity > warehouseQty)
+                {
+                    cart.Quantity = warehouseQty;
+                    message = $"<strong class=\"text-danger\">{product.ProductName}</strong> chỉ còn lại {warehouseQty} sản phẩm";
+                }
+
+                await _cartService.UpdateQuantity(cart, cart.Quantity);
+
+                IEnumerable<UserCart> userCart = await _cartService.GetUserCart(userId);
+                totalPrice = userCart.Sum(c => c.Quantity * c.Product.Price);
+                updatedQty = cart.Quantity;
+            }
+            else
+            {
+                List<CartVM> cartFromCookie = GetCartFromCookie();
+                CartVM? cart = cartFromCookie.FirstOrDefault(c => c.ProductId == id);
+
+                if (cart == null)
+                {
+                    return BadRequest();
+                }
+
+                if (warehouseQty <= 0)
+                {
+                    cartFromCookie.Remove(cart);
+                    return Ok(new ApiResponse
+                    {
+                        Status = false,
+                        Message = $"Sản phẩm <strong class=\"text-danger\">{product.ProductName}</strong> đã hết hàng"
+                    });
+                }
+
+                cart.Quantity = UpdateCartItemQuantity(type, cart.Quantity, qty);
+
+                if (cart.Quantity > warehouseQty)
+                {
+                    cart.Quantity = warehouseQty;
+                    message = $"<strong class=\"text-danger\">{product.ProductName}</strong> chỉ còn lại {warehouseQty} sản phẩm";
+                }
+
+                foreach(CartVM c in cartFromCookie)
+                {
+                    if (c.ProductId == null)
+                    {
+                        cartFromCookie.Remove(c);
+                        continue;
+                    }
+
+                    Product? p = await _productService.GetProductWithBasicInfo(c.ProductId);
+                    totalPrice += c.Quantity * p.Price;
+                }
+
+                updatedQty = cart.Quantity;
+                SaveCartToCookie(cartFromCookie);
+            }
+
+            return Ok(new ApiResponse
+            {
+                Status = true,
+                Message = message,
+                Data = new { Quantity = updatedQty, TotalPrice = totalPrice }
+            });
+        }
+
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (id == null)
+            {
+                return Redirect("/cart");
+            }
+
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                string? userId = User.FindFirstValue("Id");
+                if (userId == null)
+                {
+                    return Redirect("/cart");
+                }
+
+                UserCart? cart = await _cartService.GetUserCartItem(userId, id);
+                if(cart == null)
+                {
+                    return Redirect("/cart");
+                }
+                await _cartService.RemoveFromCart(cart);
+            }
+            else
+            {
+                List<CartVM> cartFromCookie = GetCartFromCookie();
+                CartVM? cart = cartFromCookie.FirstOrDefault(c => c.ProductId == id);
+
+                if(cart == null)
+                {
+                    return BadRequest();
+                }
+
+                cartFromCookie.Remove(cart);
+                SaveCartToCookie(cartFromCookie);
+            }
+
+
+            return Redirect("/cart");
         }
 
         [HttpGet]

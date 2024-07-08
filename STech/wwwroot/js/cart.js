@@ -50,7 +50,7 @@ $('.not-logged-in').click(() => {
 
 //---------------------------------
 $(document).ready(() => {
-    var cartFormInput = $('.cart-form input').toArray();
+    const cartFormInput = $('.cart-form input').toArray();
     cartFormInput.forEach((input) => {
         checkInputValid($(input));
     })
@@ -84,7 +84,7 @@ function disAciveStep(step2, step3, step4) {
 }
 
 function showCartInfo() {
-    var idFromUrl = window.location.hash.substring(1);
+    const idFromUrl = window.location.hash.substring(1);
     if (idFromUrl.length > 0) {
         hideCartInfo();
         $('#' + idFromUrl).addClass('form-current');
@@ -98,7 +98,7 @@ function showCartInfo() {
 }
 
 function hideCartInfo() {
-    var cartInfoList = $('.cart-info').toArray();
+    const cartInfoList = $('.cart-info').toArray();
     cartInfoList.forEach((item) => {
         $(item).removeClass('form-current');
     })
@@ -113,86 +113,58 @@ $(document).ready(() => {
 })
 
 //--Update cart item quantity
+const updateCartQty = (id, type, qty, input_element) => {
+    showWebLoader();
+    $.ajax({
+        type: 'PUT',
+        url: '/cart/updatequantity',
+        data: {
+            id: id,
+            type: type,
+            qty: qty
+        },
+        success: (response) => {
+            hideWebLoader()
+            if (response.status) {
+                input_element.val(response.data.quantity);
+                $('.total-price').html(response.data.totalPrice.toLocaleString("vi-VN") + 'đ');
+
+                if (response.message) {
+                    setTimeout(() => {
+                        showHtmlErrorDialog(response.message)
+                    }, 500);
+                }
+            } else {
+                setTimeout(() => {
+                    showHtmlErrorDialog(response.message)
+                }, 500);
+            }
+        },
+        error: () => {
+            hideWebLoader();
+            setTimeout(showErrorDialog, 500);
+        }
+    })
+}
+
 $('.update-quantity').click(function() {
-    var productID = $(this).data('product');
-    var updateType = $(this).data('update');
-    var parentOfBtn = $(this).parent('.cart-product-quantity');
-    var inputQuantity = parentOfBtn.children('input[name="quantity"]');
+    const productID = $(this).data('product');
+    const updateType = $(this).data('update');
 
     if (productID.length > 0 && updateType.length > 0) {
-        showWebLoader();
-        $.ajax({
-            type: 'PUT',
-            url: '/cart/updatequantity',
-            data: {
-                maSP: productID,
-                updateType: updateType
-            },
-            success: (res) => {
-                hideWebLoader()
-                inputQuantity.val(res.qty);
-
-                var total = res.total.toLocaleString("vi-VN") + 'đ';
-                $('.total-price').empty();
-                $('.total-price').text(total);
-
-                if (res.error.length > 0) {
-                    $('.cart-error').empty();
-                    $('.cart-error').show();
-                    var str = `<span><i class="fa-solid fa-circle-exclamation"></i>
-                    ${res.error}</span>`;
-                    $('.cart-error').append(str);
-
-                    var timeout = setTimeout(() => {
-                        $('.cart-error').hide()
-                        clearTimeout(timeout);
-                    }, 7000)
-                }
-            },
-            error: () => { hideWebLoader(); }
-        })
+        updateCartQty(productID, updateType, 0, $(this).siblings('input[name="quantity"]'));
     }
 })
 
 //--------
-$('input[name="quantity"]').focus((e) => {
-    var currentVal = $(e.target).val();
+$('input[name="quantity"]').focus(function() {
+    const currentQty = $(this).val();
 
-    $(e.target).blur(() => {
-        var newVal = $(e.target).val();
-        var productID = $(e.target).data('product');
-        if (newVal != currentVal) {
-            showWebLoader();    
-            $.ajax({
-                type: 'PUT',
-                url: '/cart/updatequantity',
-                data: {
-                    maSP: productID,
-                    sluong: newVal
-                },
-                success: (res) => {
-                    hideWebLoader()
-                    $(e.target).val(res.qty);
-
-                    var total = res.total.toLocaleString("vi-VN") + 'đ';
-                    $('.total-price').empty();
-                    $('.total-price').text(total);
-
-                    if (res.error.length > 0) {
-                        $('.cart-error').empty();
-                        $('.cart-error').show();
-                        var str = `<span><i class="fa-solid fa-circle-exclamation"></i>
-                    ${res.error}</span>`;
-                        $('.cart-error').append(str);
-
-                        var timeout = setTimeout(() => {
-                            $('.cart-error').hide()
-                            clearTimeout(timeout);
-                        }, 7000)
-                    }
-                },
-                error: () => { hideWebLoader(); }
-            })
+    $(this).blur(() => {
+        const newQty = $(this).val();
+        const productID = $(this).data('product');
+        if (newQty != currentQty) {
+            updateCartQty(productID, "", newQty, $(this));
         }
     })
 })

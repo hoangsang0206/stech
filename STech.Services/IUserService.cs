@@ -10,7 +10,8 @@ namespace STech.Services
 {
     public interface IUserService
     {
-        Task<User> GetUser(LoginVM login);
+        Task<User?> GetUser(LoginVM login);
+        Task<User?> GetUserById(string id);
         Task<bool> IsExist(string username);
         Task<bool> IsEmailExist(string email);
         Task<bool> CreateUser(RegisterVM register);

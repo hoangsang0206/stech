@@ -45,6 +45,7 @@ namespace STech.Services.Services
                 .Select(c => new UserCart
                 {
                     Id = c.Id,
+                    ProductId = c.ProductId,
                     Product = new Product
                     {
                         ProductId = c.ProductId,

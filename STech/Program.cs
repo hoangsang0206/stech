@@ -21,14 +21,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddDbContext<StechDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("STechDb"));
-}, ServiceLifetime.Singleton);
+});
 
-builder.Services.AddSingleton<ICategoryService, CategoryService>();
-builder.Services.AddSingleton<IProductService, ProductService>();
-builder.Services.AddSingleton<IBrandService, BrandService>();
-builder.Services.AddSingleton<ISliderService, SliderService>();
-builder.Services.AddSingleton<IUserService, UserService>();
-builder.Services.AddSingleton<ICartService, CartService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<ISliderService, SliderService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 
 var app = builder.Build();
