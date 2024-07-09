@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace STech.Data.Models;
 
-public partial class InvoiceStatus
+public partial class InvoiceDeliveryStatus
 {
     public int Id { get; set; }
 

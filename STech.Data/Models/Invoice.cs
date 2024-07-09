@@ -47,7 +47,11 @@ public partial class Invoice
 
     public virtual Employee? Employee { get; set; }
 
+    public virtual ICollection<InvoiceDeliveryStatus> InvoiceDeliveryStatuses { get; set; } = new List<InvoiceDeliveryStatus>();
+
     public virtual ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new List<InvoiceDetail>();
+
+    public virtual ICollection<InvoiceStatus> InvoiceStatuses { get; set; } = new List<InvoiceStatus>();
 
     public virtual User? User { get; set; }
 }

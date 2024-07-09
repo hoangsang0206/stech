@@ -33,6 +33,8 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<Invoice> Invoices { get; set; }
 
+    public virtual DbSet<InvoiceDeliveryStatus> InvoiceDeliveryStatuses { get; set; }
+
     public virtual DbSet<InvoiceDetail> InvoiceDetails { get; set; }
 
     public virtual DbSet<InvoiceStatus> InvoiceStatuses { get; set; }
@@ -80,6 +82,10 @@ public partial class StechDbContext : DbContext
     public virtual DbSet<Warehouse> Warehouses { get; set; }
 
     public virtual DbSet<WarehouseProduct> WarehouseProducts { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=AORUS-Laptop;Database=STechDb;User Id=sang;Password=123456;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -194,7 +200,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Invoice>(entity =>
         {
-            entity.HasKey(e => e.InvoiceId).HasName("PK__Invoices__D796AAB57AB11FB7");
+            entity.HasKey(e => e.InvoiceId).HasName("PK__Invoices__D796AAB5BFB31CE6");
 
             entity.Property(e => e.InvoiceId)
                 .HasMaxLength(50)
@@ -256,9 +262,28 @@ public partial class StechDbContext : DbContext
                 .HasConstraintName("FK_Invoice_User");
         });
 
+        modelBuilder.Entity<InvoiceDeliveryStatus>(entity =>
+        {
+            entity.HasKey(e => new { e.Id, e.InvoiceId });
+
+            entity.ToTable("InvoiceDeliveryStatus");
+
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.InvoiceId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.DateUpdated).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(200);
+
+            entity.HasOne(d => d.Invoice).WithMany(p => p.InvoiceDeliveryStatuses)
+                .HasForeignKey(d => d.InvoiceId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DStatus_Invoice");
+        });
+
         modelBuilder.Entity<InvoiceDetail>(entity =>
         {
-            entity.HasKey(e => new { e.InvoiceId, e.ProductId }).HasName("PK__InvoiceD__1CD666D9C2BCEED3");
+            entity.HasKey(e => new { e.InvoiceId, e.ProductId }).HasName("PK__InvoiceD__1CD666D9C9D7DD6D");
 
             entity.Property(e => e.InvoiceId)
                 .HasMaxLength(50)
@@ -281,7 +306,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<InvoiceStatus>(entity =>
         {
-            entity.HasKey(e => new { e.Id, e.InvoiceId }).HasName("PK__InvoiceS__7F6D86ACE01B5895");
+            entity.HasKey(e => new { e.Id, e.InvoiceId }).HasName("PK__InvoiceS__7F6D86ACC90F8CEC");
 
             entity.ToTable("InvoiceStatus");
 
@@ -291,6 +316,11 @@ public partial class StechDbContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.DateUpdated).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(100);
+
+            entity.HasOne(d => d.Invoice).WithMany(p => p.InvoiceStatuses)
+                .HasForeignKey(d => d.InvoiceId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Status_Invoice");
         });
 
         modelBuilder.Entity<Menu>(entity =>
@@ -386,7 +416,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<ProductImage>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ProductI__3214EC071D4BF153");
+            entity.HasKey(e => e.Id).HasName("PK__ProductI__3214EC07AFDDDCF3");
 
             entity.Property(e => e.ProductId)
                 .HasMaxLength(50)
@@ -400,13 +430,12 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<ProductSpecification>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ProductS__3214EC07E90923BB");
+            entity.HasKey(e => e.Id).HasName("PK__ProductS__3214EC073B99A0E4");
 
             entity.Property(e => e.ProductId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.SpecName).HasMaxLength(50);
-            entity.Property(e => e.SpecValue).HasMaxLength(250);
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductSpecifications)
                 .HasForeignKey(d => d.ProductId)
@@ -518,8 +547,11 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.UserId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Dob).HasColumnName("DOB");
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.EmailConfirmed).HasDefaultValue(false);
+            entity.Property(e => e.FullName).HasMaxLength(50);
+            entity.Property(e => e.Gender).HasMaxLength(10);
             entity.Property(e => e.IsActive).HasDefaultValue(false);
             entity.Property(e => e.PasswordHash).HasMaxLength(50);
             entity.Property(e => e.Phone)

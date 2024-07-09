@@ -27,6 +27,12 @@ public partial class User
 
     public string RoleId { get; set; } = null!;
 
+    public string? FullName { get; set; }
+
+    public DateOnly? Dob { get; set; }
+
+    public string? Gender { get; set; }
+
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
     public virtual Role Role { get; set; } = null!;
