@@ -22,4 +22,6 @@ public partial class Employee
     public string CitizenId { get; set; } = null!;
 
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
+
+    public virtual ICollection<PackingSlip> PackingSlips { get; set; } = new List<PackingSlip>();
 }

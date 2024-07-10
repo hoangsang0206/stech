@@ -13,5 +13,5 @@ public partial class DeliveryUnit
 
     public string? LogoSrc { get; set; }
 
-    public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
+    public virtual ICollection<PackingSlip> PackingSlips { get; set; } = new List<PackingSlip>();
 }

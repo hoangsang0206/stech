@@ -33,8 +33,6 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<Invoice> Invoices { get; set; }
 
-    public virtual DbSet<InvoiceDeliveryStatus> InvoiceDeliveryStatuses { get; set; }
-
     public virtual DbSet<InvoiceDetail> InvoiceDetails { get; set; }
 
     public virtual DbSet<InvoiceStatus> InvoiceStatuses { get; set; }
@@ -44,6 +42,10 @@ public partial class StechDbContext : DbContext
     public virtual DbSet<MenuLevel1> MenuLevel1s { get; set; }
 
     public virtual DbSet<MenuLevel2> MenuLevel2s { get; set; }
+
+    public virtual DbSet<PackingSlip> PackingSlips { get; set; }
+
+    public virtual DbSet<PackingSlipStatus> PackingSlipStatuses { get; set; }
 
     public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
 
@@ -200,7 +202,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Invoice>(entity =>
         {
-            entity.HasKey(e => e.InvoiceId).HasName("PK__Invoices__D796AAB5BFB31CE6");
+            entity.HasKey(e => e.InvoiceId).HasName("PK__Invoices__D796AAB5FB883162");
 
             entity.Property(e => e.InvoiceId)
                 .HasMaxLength(50)
@@ -209,13 +211,7 @@ public partial class StechDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.DeliveryAddress).HasMaxLength(200);
-            entity.Property(e => e.DeliveryFee)
-                .HasDefaultValue(0m)
-                .HasColumnType("decimal(18, 0)");
             entity.Property(e => e.DeliveryMedId)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.DeliveryUnitId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.EmployeeId)
@@ -249,10 +245,6 @@ public partial class StechDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Invoice_Delivery");
 
-            entity.HasOne(d => d.DeliveryUnit).WithMany(p => p.Invoices)
-                .HasForeignKey(d => d.DeliveryUnitId)
-                .HasConstraintName("FK_Invoice_DeliveryUnit");
-
             entity.HasOne(d => d.Employee).WithMany(p => p.Invoices)
                 .HasForeignKey(d => d.EmployeeId)
                 .HasConstraintName("FK_Invoice_Employee");
@@ -262,28 +254,9 @@ public partial class StechDbContext : DbContext
                 .HasConstraintName("FK_Invoice_User");
         });
 
-        modelBuilder.Entity<InvoiceDeliveryStatus>(entity =>
-        {
-            entity.HasKey(e => new { e.Id, e.InvoiceId });
-
-            entity.ToTable("InvoiceDeliveryStatus");
-
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            entity.Property(e => e.InvoiceId)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.DateUpdated).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(200);
-
-            entity.HasOne(d => d.Invoice).WithMany(p => p.InvoiceDeliveryStatuses)
-                .HasForeignKey(d => d.InvoiceId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_DStatus_Invoice");
-        });
-
         modelBuilder.Entity<InvoiceDetail>(entity =>
         {
-            entity.HasKey(e => new { e.InvoiceId, e.ProductId }).HasName("PK__InvoiceD__1CD666D9C9D7DD6D");
+            entity.HasKey(e => new { e.InvoiceId, e.ProductId }).HasName("PK__InvoiceD__1CD666D9CC5CEEB5");
 
             entity.Property(e => e.InvoiceId)
                 .HasMaxLength(50)
@@ -306,7 +279,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<InvoiceStatus>(entity =>
         {
-            entity.HasKey(e => new { e.Id, e.InvoiceId }).HasName("PK__InvoiceS__7F6D86ACC90F8CEC");
+            entity.HasKey(e => new { e.Id, e.InvoiceId }).HasName("PK__InvoiceS__7F6D86AC597D5B0E");
 
             entity.ToTable("InvoiceStatus");
 
@@ -359,6 +332,63 @@ public partial class StechDbContext : DbContext
                 .HasForeignKey(d => d.MenuLevel1Id)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Menu2_Menu1");
+        });
+
+        modelBuilder.Entity<PackingSlip>(entity =>
+        {
+            entity.HasKey(e => e.Psid).HasName("PK__PackingS__BC000956A3663469");
+
+            entity.HasIndex(e => e.InvoiceId, "UQ__PackingS__D796AAB4AE04BC5A").IsUnique();
+
+            entity.Property(e => e.Psid)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("PSId");
+            entity.Property(e => e.DeliveryFee).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.DeliveryUnitId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.EmployeeId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.InvoiceId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.IsCompleted).HasDefaultValue(false);
+
+            entity.HasOne(d => d.DeliveryUnit).WithMany(p => p.PackingSlips)
+                .HasForeignKey(d => d.DeliveryUnitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PackingSlip_DeliveryUnit");
+
+            entity.HasOne(d => d.Employee).WithMany(p => p.PackingSlips)
+                .HasForeignKey(d => d.EmployeeId)
+                .HasConstraintName("FK_PackingSlip_Employee");
+
+            entity.HasOne(d => d.Invoice).WithOne(p => p.PackingSlip)
+                .HasForeignKey<PackingSlip>(d => d.InvoiceId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PackingSlip_Invoice");
+        });
+
+        modelBuilder.Entity<PackingSlipStatus>(entity =>
+        {
+            entity.HasKey(e => new { e.Id, e.Psid }).HasName("PK__PackingS__49D4EC9254FA29D6");
+
+            entity.ToTable("PackingSlipStatus");
+
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.Psid)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("PSId");
+            entity.Property(e => e.DateUpdated).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(200);
+
+            entity.HasOne(d => d.Ps).WithMany(p => p.PackingSlipStatuses)
+                .HasForeignKey(d => d.Psid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PSStatus_PackingSlip");
         });
 
         modelBuilder.Entity<PaymentMethod>(entity =>
