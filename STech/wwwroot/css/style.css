@@ -155,6 +155,7 @@ html {
 
 button:disabled {
     cursor: not-allowed;
+    border: none !important;
 }
 
 .web-scroll-block {

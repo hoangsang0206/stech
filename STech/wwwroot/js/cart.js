@@ -2,7 +2,7 @@
 function updateCartCount() {
     $.ajax({
         type: 'GET',
-        url: '/cart/getcartcount',
+        url: '/api/cart',
         success: (response) => {
             $('.cart-count').html(response.data);
         },
@@ -24,14 +24,14 @@ $('.add-to-cart-btn, .btn-add-to-cart, .buy-action-btn').click(function() {
         showWebLoader();
         $.ajax({
             type: 'POST',
-            url: '/cart/addtocart',
-            data: {
-                id: productID
-            },
+            url: `/api/cart?id=${productID}`,
             success: (respone) => {
                 if (respone.status) {
                     updateCartCount();
                 }
+            },
+            error: () => { 
+                showErrorDialog();
             }
         })
 
@@ -117,12 +117,7 @@ const updateCartQty = (id, type, qty, input_element) => {
     showWebLoader();
     $.ajax({
         type: 'PUT',
-        url: '/cart/updatequantity',
-        data: {
-            id: id,
-            type: type,
-            qty: qty
-        },
+        url: `/api/cart?id=${id}&type=${type}&qty=${qty}`,
         success: (response) => {
             hideWebLoader()
             if (response.status) {
@@ -131,12 +126,12 @@ const updateCartQty = (id, type, qty, input_element) => {
 
                 if (response.message) {
                     setTimeout(() => {
-                        showHtmlErrorDialog(response.message)
+                        showHtmlDialog('info', 'Không thể cập nhật', response.message)
                     }, 500);
                 }
             } else {
                 setTimeout(() => {
-                    showHtmlErrorDialog(response.message)
+                    showHtmlDialog('info', 'Không thể cập nhật', response.message)
                 }, 500);
             }
         },

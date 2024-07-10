@@ -39,19 +39,27 @@ const clearFormInput = (form) => {
     form.find('input').val('');
 }
 
-const showErrorDialog = () => {
+const showDialog = (type, title, message) => {
     Swal.fire({
-        title: "Đã xảy ra lỗi?",
-        text: "Đã xảy ra lỗi không xác định",
-        icon: "info",
+        title: title,
+        text: message,
+        icon: type,
     })
 }
 
-const showHtmlErrorDialog = (html) => {
+const showHtmlDialog = (type, title, html) => {
     Swal.fire({
-        title: "Lỗi?",
+        title: title,
         html: html,
-        icon: "info",
+        icon: type,
+    })
+}
+
+const showErrorDialog = () => {
+    Swal.fire({
+        title: "Đã xảy ra lỗi",
+        text: "Đã xảy ra lỗi không xác định",
+        icon: "error",
     })
 }
 

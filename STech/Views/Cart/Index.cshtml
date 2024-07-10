@@ -87,12 +87,12 @@
                                                 }
                                             </div>
                                             <div class="cart-product-quantity">
-                                                <button type="button" class="update-quantity decrease-quantity"
+                                                <button type="button" class="update-quantity decrease-qty"
                                                         data-product="@cart.ProductId" data-update="minus">
                                                     <i class="fa-solid fa-minus"></i>
                                                 </button>
                                                 <input type="number" name="quantity" value="@cart.Quantity" data-product="@cart.ProductId" min="1" />
-                                                <button type="button" class="update-quantity increase-quantity"
+                                                <button type="button" class="update-quantity increase-qty"
                                                         data-product="@cart.ProductId" data-update="plus">
                                                     <i class="fa-solid fa-plus"></i>
                                                 </button>
@@ -106,7 +106,7 @@
                     <hr class="cart-hr" />
                     <div class="cart-product-total d-flex flex-column gap-3">
                         <div class="summary-shipping">
-                            <span class="s-shipping-title">Phí vận chuyển: </span>
+                            <span class="s-shipping-title">Phí vận chuyển (dự kiến): </span>
                             <span class="ship-price">Miễn phí</span>
                         </div>
                         <div class="summary-price">
@@ -133,6 +133,13 @@
 
                     if(user != null)
                     {
+                        UserAddress? mainAddress = user.UserAddresses.FirstOrDefault(adr => adr.IsDefault != null && adr.IsDefault.Value);
+                        string address = "";
+                        if (mainAddress != null)
+                        {
+                            address = $"{mainAddress.Address}, {mainAddress.Ward}, {mainAddress.District}, {mainAddress.Province}";
+                        } 
+
                         <div class="cart-info d-none" id="cart-order-box">
                             <div class="cart-order-wrapper">
                                 <div class="to-prev-step">
@@ -148,23 +155,13 @@
                                             <div class="cart-form-header">
                                                 <h5>Thông tin khách mua hàng</h5>
                                             </div>
-                                            <div class="cart-form-checkbox d-flex gap-3">
-                                                <div class="checkbox-item">
-                                                    <input type="radio" id="men" name="gender" value="Nam" @(ViewBag.User.Gender == "Nam" ? "checked" : "") />
-                                                    <label for="men">Nam</label>
-                                                </div>
-                                                <div class="checkbox-item">
-                                                    <input type="radio" id="women" name="gender" value="Nữ" @(ViewBag.User.Gender == "Nữ" ? "checked" : "") />
-                                                    <label for="women">Nữ</label>
-                                                </div>
-                                            </div>
                                             <div class="cart-form-input my-4">
                                                 <div class="form-input-box position-relative d-flex align-items-center">
-                                                    <input type="text" id="UserFullName" name="UserFullName" value="@ViewBag.User.UserFullName" class="form-input" required />
+                                                    <input type="text" id="UserFullName" name="UserFullName" value="@user.FullName" class="form-input" required />
                                                     <label for="UserFullName" class="input-label position-absolute">Họ tên</label>
                                                 </div>
                                                 <div class="form-input-box position-relative d-flex align-items-center">
-                                                    <input type="text" id="PhoneNumber" name="PhoneNumber" value="@ViewBag.User.PhoneNumber" class="form-input" required />
+                                                    <input type="text" id="PhoneNumber" name="PhoneNumber" value="@user.Phone" class="form-input" required />
                                                     <label for="PhoneNumber" class="input-label position-absolute">Số điện thoại</label>
                                                 </div>
                                             </div>
@@ -178,7 +175,7 @@
                                                 </div>
                                                 <div class="input-ship-info">
                                                     <div class="form-input-box position-relative d-flex align-items-center">
-                                                        <input type="text" id="ship-address" name="ship-address" value="@ViewBag.User.Address" class="form-input" required />
+                                                        <input type="text" id="ship-address" name="ship-address" value="@address" class="form-input" required />
                                                         <label for="ship-address" class="input-label position-absolute">Địa chỉ nhận hàng</label>
                                                     </div>
                                                 </div>
@@ -200,7 +197,7 @@
                             <hr class="cart-hr" />
                             <div class="cart-product-total d-flex flex-column gap-3">
                                 <div class="summary-shipping">
-                                    <span class="s-shipping-title">Phí vận chuyển: </span>
+                                    <span class="s-shipping-title">Phí vận chuyển (dự kiến): </span>
                                     <span class="ship-price">Miễn phí</span>
                                 </div>
                                 <div class="summary-price">

@@ -110,13 +110,13 @@ namespace STech.Services.Services
 
         public async Task<bool> CheckOutOfStock(string id)
         {
-            Product product = await _context.Products
+            Product? product = await _context.Products
                 .Include(p => p.WarehouseProducts)
-                .FirstOrDefaultAsync(p => p.ProductId == id) ?? new Product();
+                .FirstOrDefaultAsync(p => p.ProductId == id);
 
-            if(product.ProductId == null)
+            if(product == null)
             {
-                return false;
+                return true;
             }
 
             int totalQty = product.WarehouseProducts.Sum(p => p.Quantity);

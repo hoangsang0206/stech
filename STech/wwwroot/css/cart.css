@@ -213,12 +213,12 @@ input[name="quantity"] {
     pointer-events: none;
 }
 
-.increase-quantity {
+.update-quantity.increase-qty {
     border-top-right-radius: 0.2rem;
     border-bottom-right-radius: 0.2rem;
 }
 
-.descrease-quantity {
+.update-quantity.decrease-qty {
     border-top-left-radius: 0.2rem;
     border-bottom-left-radius: 0.2rem;
 }

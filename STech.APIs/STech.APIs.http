@@ -1,6 +1,0 @@
-@STech.APIs_HostAddress = http://localhost:5036
-
-GET {{STech.APIs_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
