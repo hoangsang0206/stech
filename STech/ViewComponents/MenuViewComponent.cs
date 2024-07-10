@@ -14,7 +14,9 @@ namespace STech.ViewComponents
             IEnumerable<Menu> menu = await dbContext.Menus
                 .Include(m => m.MenuLevel1s)
                 .ThenInclude(m => m.MenuLevel2s)
+                .AsSplitQuery()
                 .ToListAsync();
+
             return View(menu);
         }
     }

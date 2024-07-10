@@ -29,5 +29,7 @@ namespace STech.Data.ViewModels
         [Required(ErrorMessage = "* Vui lòng xác nhận mật khẩu")]
         [Compare("RegPassword", ErrorMessage = "* Xác nhập mật khảu không đúng")]
         public string ConfirmPassword { get; set; } = null!;
+
+        public string? ReturnUrl { get; set; }
     }
 }

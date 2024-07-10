@@ -6,8 +6,13 @@ namespace STech.Utils
     {
         public static readonly int productsPerPage = 40;
 
-        public static IEnumerable<Product> Sort(IEnumerable<Product> products, string value)
+        public static IEnumerable<Product> Sort(this IEnumerable<Product> products, string? value)
         {
+            if(value == null)
+            {
+                return products;
+            }
+
             IEnumerable<Product> sortedProduct = new List<Product>();
 
             if (value == "price-ascending")
@@ -34,8 +39,13 @@ namespace STech.Utils
             return sortedProduct;
         }
 
-        public static IEnumerable<Product> Pagnigate(IEnumerable<Product> products, int page)
+        public static IEnumerable<Product> Pagnigate(this IEnumerable<Product> products, int page)
         {
+            if(page <= 0)
+            {
+                page = 1;
+            }
+
             int noOfProductToSkip = (page - 1) * productsPerPage;
 
             products = products.Skip(noOfProductToSkip).Take(productsPerPage).ToList();

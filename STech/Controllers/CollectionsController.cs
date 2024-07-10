@@ -19,7 +19,7 @@ namespace STech.Controllers
             _productService = productService;
         }
 
-        public async Task<IActionResult> Index(string id, string sort, int page)
+        public async Task<IActionResult> Index(string id, string? sort, int page = 1)
         {
             if(id == null)
             {
@@ -46,27 +46,15 @@ namespace STech.Controllers
                 title = "Danh sách " + category.CategoryName;
             }
 
-            if (!sort.IsNullOrEmpty())
-            {
-                products = ProductUtils.Sort(products, sort);
-            }
-
-            if (page <= 0)
-            {
-                page = 1;
-            }
-
             int totalPage = Convert.ToInt32(Math.Ceiling(
                 Convert.ToDouble(products.Count()) / Convert.ToDouble(ProductUtils.productsPerPage)));
-
-            products = ProductUtils.Pagnigate(products, page);
 
             ViewBag.Sort = sort;
             ViewBag.Page = page;
             ViewBag.TotalPage = totalPage;
 
             ViewData["Title"] = title;
-            return View(new Tuple<IEnumerable<Product>, List<Breadcrumb>>(products, breadcrumbs));
+            return View(new Tuple<IEnumerable<Product>, List<Breadcrumb>>(products.Sort(sort).Pagnigate(page), breadcrumbs));
         }
     }
 }

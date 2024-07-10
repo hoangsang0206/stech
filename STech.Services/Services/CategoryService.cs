@@ -39,7 +39,7 @@ namespace STech.Services.Services
                         ProductName = p.ProductName,
                         OriginalPrice = p.OriginalPrice,
                         Price = p.Price,
-                        ProductImages = p.ProductImages.Take(1).ToList(),
+                        ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
                         WarehouseProducts = p.WarehouseProducts,
                         Brand = p.Brand
 

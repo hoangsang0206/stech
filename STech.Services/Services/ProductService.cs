@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure;
+using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -22,12 +23,14 @@ namespace STech.Services.Services
                     ProductName = p.ProductName,
                     OriginalPrice = p.OriginalPrice,
                     Price = p.Price,
-                    ProductImages = p.ProductImages.Take(1).ToList(),
+                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
                     WarehouseProducts = p.WarehouseProducts,
                     Brand = p.Brand,
                 })
                 .ToListAsync();
         }
+
+
 
         public async Task<IEnumerable<Product>> SearchByName(string q)
         {
@@ -45,7 +48,7 @@ namespace STech.Services.Services
                     ProductName = p.ProductName,
                     OriginalPrice = p.OriginalPrice,
                     Price = p.Price,
-                    ProductImages = p.ProductImages.Take(1).ToList(),
+                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
                     WarehouseProducts = p.WarehouseProducts,
                     Brand = p.Brand,
                 })
@@ -62,7 +65,7 @@ namespace STech.Services.Services
                     ProductName = p.ProductName,
                     OriginalPrice = p.OriginalPrice,
                     Price = p.Price,
-                    ProductImages = p.ProductImages.Take(1).ToList(),
+                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
                     WarehouseProducts = p.WarehouseProducts,
                     Brand = p.Brand,
                 })
@@ -100,7 +103,7 @@ namespace STech.Services.Services
                     ProductName = p.ProductName,
                     OriginalPrice = p.OriginalPrice,
                     Price = p.Price,
-                    ProductImages = p.ProductImages.Take(1).ToList(),
+                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
                     WarehouseProducts = p.WarehouseProducts,
                     Brand = p.Brand,
                     Category = p.Category,
@@ -110,14 +113,12 @@ namespace STech.Services.Services
 
         public async Task<bool> CheckOutOfStock(string id)
         {
-            Product? product = await _context.Products
-                .Include(p => p.WarehouseProducts)
-                .FirstOrDefaultAsync(p => p.ProductId == id);
-
-            if(product == null)
-            {
-                return true;
-            }
+            Product product = await _context.Products
+                .Select(p => new Product { 
+                    WarehouseProducts = p.WarehouseProducts 
+                })
+                .FirstOrDefaultAsync(p => p.ProductId == id) 
+                ?? new Product();
 
             int totalQty = product.WarehouseProducts.Sum(p => p.Quantity);
 
@@ -127,7 +128,9 @@ namespace STech.Services.Services
         public async Task<int> GetTotalQty(string id)
         {
             Product product = await _context.Products
-                .Include(p => p.WarehouseProducts)
+                .Select(p => new Product {
+                    WarehouseProducts = p.WarehouseProducts
+                })
                 .FirstOrDefaultAsync(p => p.ProductId == id)
                 ?? new Product();
 

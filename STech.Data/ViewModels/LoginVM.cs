@@ -17,5 +17,7 @@ namespace STech.Data.ViewModels
         [Display(Name = "Mật khẩu")]
         [Required(ErrorMessage = "* Mật khẩu không để trống")]
         public string Password { get; set; } = null!;
+
+        public string? ReturnUrl { get; set; }
     }
 }

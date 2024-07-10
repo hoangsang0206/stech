@@ -9,13 +9,15 @@
     const btnText = showBtnLoading(submitBtn);
     $.ajax({
         type: 'POST',
-        url: '/account/register',
-        data: {
+        url: '/api/account/register',
+        contentType: 'application/json',
+        data: JSON.stringify({
             RegUserName: userName,
             RegPassword: password,
             ConfirmPassword: confirmPassword,
-            Email: email
-        },
+            Email: email,
+            ReturnUrl: window.location.href
+        }),
         success: (response) => {
             if (!response.status) {
                 const str = `<span>
@@ -48,11 +50,13 @@ $('.login form').submit(function (e) {
 
     $.ajax({
         type: 'POST',
-        url: '/account/login',
-        data: {
+        url: '/api/account/login',
+        contentType: 'application/json',
+        data: JSON.stringify({
             UserName: userName,
-            Password: password
-        },
+            Password: password,
+            ReturnUrl: window.location.href
+        }),
         success: (response) => {
             if (response.status) {
                 closeFormError(this);

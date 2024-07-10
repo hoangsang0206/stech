@@ -32,6 +32,8 @@ namespace STech.Services.Services
         public async Task<User?> GetUserById(string id)
         {
             return await _context.Users
+                .Include(u => u.UserAddresses)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(u => u.UserId == id);
         }
 

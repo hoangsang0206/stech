@@ -52,7 +52,7 @@ namespace STech.Services.Services
                         ProductName = c.Product.ProductName,
                         OriginalPrice = c.Product.OriginalPrice,
                         Price = c.Product.Price,
-                        ProductImages = c.Product.ProductImages.Take(1).ToList(),
+                        ProductImages = c.Product.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
                     },
                     Quantity = c.Quantity,
                 })
