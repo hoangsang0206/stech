@@ -114,7 +114,8 @@ namespace STech.Services.Services
         public async Task<bool> CheckOutOfStock(string id)
         {
             Product product = await _context.Products
-                .Select(p => new Product { 
+                .Select(p => new Product {
+                    ProductId = p.ProductId,
                     WarehouseProducts = p.WarehouseProducts 
                 })
                 .FirstOrDefaultAsync(p => p.ProductId == id) 
@@ -129,6 +130,7 @@ namespace STech.Services.Services
         {
             Product product = await _context.Products
                 .Select(p => new Product {
+                    ProductId = p.ProductId,
                     WarehouseProducts = p.WarehouseProducts
                 })
                 .FirstOrDefaultAsync(p => p.ProductId == id)

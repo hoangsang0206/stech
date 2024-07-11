@@ -32,9 +32,18 @@ namespace STech.Services.Services
         public async Task<User?> GetUserById(string id)
         {
             return await _context.Users
-                .Include(u => u.UserAddresses)
-                .AsSplitQuery()
                 .FirstOrDefaultAsync(u => u.UserId == id);
+        }
+
+        public async Task<UserAddress?> GetUserMainAddress(string id)
+        {
+            return await _context.UserAddresses
+                .FirstOrDefaultAsync (u => u.UserId == id && u.IsDefault != null && u.IsDefault.Value);
+        }
+
+        public async Task<IEnumerable<UserAddress>> GetUserAddress(string id)
+        {
+            return await _context.UserAddresses.Where(u => u.UserId == id).ToListAsync();
         }
 
         public async Task<bool> IsExist(string username)

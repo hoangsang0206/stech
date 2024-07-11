@@ -97,7 +97,9 @@ namespace STech.Controllers
                 }
 
                 User? user = await _userService.GetUserById(userId);
+                UserAddress? address = await _userService.GetUserMainAddress(userId);
                 ViewBag.User = user;
+                ViewBag.Address = address;
             }
             else
             {

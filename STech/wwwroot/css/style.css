@@ -496,7 +496,7 @@ header {
 }
 
 .login-info-box {
-    top: 135%;
+    top: calc(100% + 0.9rem);
     right: 0;
     min-width: 250%;
     padding: 1.2rem 1rem 1.5rem 1rem;

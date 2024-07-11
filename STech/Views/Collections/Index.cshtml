@@ -3,15 +3,7 @@
 
 @await Html.PartialAsync("PartialViews/Breadcrumb", Model.Item2)
 
-<section class="collections-page">
-    <div class="filter-box d-flex justify-content-between mt-2 mb-3 gap-2">
-
-        
-
-        @await Html.PartialAsync("PartialViews/Sort")
-    </div>
-
-
+<section class="page-container">
     @if (Model.Item1.Count() <= 0)
     {
         <div class="filter-error mt-3 mb-5 px-3 d-flex flex-column align-items-center justify-content-center">
@@ -25,6 +17,13 @@
     }
     else
     {
+        <div class="filter-box d-flex justify-content-between mt-2 mb-3 gap-2">
+
+
+
+            @await Html.PartialAsync("PartialViews/Sort")
+        </div>
+
         <div class="product-list">
             @foreach (Product product in Model.Item1)
             {

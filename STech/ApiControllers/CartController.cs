@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Services;
@@ -20,7 +21,7 @@ namespace STech.ApiControllers
             _productService = productService;
         }
 
-        [HttpGet]
+        [HttpGet("count")]
         public async Task<IActionResult> GetCartCount()
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -46,6 +47,35 @@ namespace STech.ApiControllers
                 {
                     Status = true,
                     Data = cart.Count()
+                });
+            }
+        }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetUserCart()
+        {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                string? userId = User.FindFirstValue("Id");
+                if(userId == null)
+                {
+                    return BadRequest();
+                }
+
+                IEnumerable<UserCart> cart = await _cartService.GetUserCart(userId) ?? new List<UserCart>();
+                return Ok(new ApiResponse
+                {
+                    Status = true,
+                    Data = cart
+                });
+            }
+            else
+            {
+                IEnumerable<CartVM> cart = CartUtils.GetCartFromCookie(Request);
+                return Ok(new ApiResponse
+                {
+                    Status = true,
+                    Data = cart
                 });
             }
         }

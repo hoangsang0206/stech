@@ -1,18 +1,20 @@
-﻿const showBtnLoading = (button) => {
-    var btnText = button.html();
-    var loadingStr = `<div class="loadingio-spinner-dual-ring-ekj0ol56kwc">
-                        <div class="ldio-gmrbyawnrc">
-                            <div></div><div><div></div></div>
-                        </div>
-                    </div>`;
-    button.html(loadingStr);
+﻿const showButtonLoader = (element, loaderSize, strokeWidth) => {
+    const elementHtml = $(element).html();
+    const elementLoader = `<div class="loader-box">
+            <svg class="loader-container" style="width: ${loaderSize}; height: ${loaderSize}" viewBox="0 0 40 40" height="20" width="20">
+                <circle class="track" cx="20" cy="20" r="17.5" pathlength="100" stroke-width="${strokeWidth}" fill="none" />
+                <circle class="car" cx="20" cy="20" r="17.5" pathlength="100" stroke-width="${strokeWidth}" fill="none" />
+            </svg></span></div>`;
 
-    return btnText;
+    $(element).css('height', $(element).outerHeight());
+    $(element).html(elementLoader);
+
+    return elementHtml;
 }
 
-const resetBtn = (button, btnText) => {
+const hideButtonLoader = (element, elementHtml) => {
     const timeout = setTimeout(() => {
-        button.html(btnText);
+        $(element).html(elementHtml);
         clearTimeout(timeout);
     }, 1000);
 }

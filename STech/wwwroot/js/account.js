@@ -5,8 +5,12 @@
     const confirmPassword = $(this).find('#ConfirmPassword').val();
     const email = $(this).find('#Email').val();
 
+    if (!userName || !password || !confirmPassword || !email) {
+        return;
+    }
+
     const submitBtn = $(e.target).find('.form-submit-btn');
-    const btnText = showBtnLoading(submitBtn);
+    const btnHtml = showButtonLoader(submitBtn, '23px', '4px')
     $.ajax({
         type: 'POST',
         url: '/api/account/register',
@@ -25,7 +29,7 @@
                     + response.message + `</span>`;
                 showFormError(this, str);
                 closeFormErrorWithTimeout(this);
-                resetBtn(submitBtn, btnText);
+                hideButtonLoader(submitBtn, btnHtml);
             } else {
                 closeFormError(this);
                 window.location.href = response.data;
@@ -46,7 +50,7 @@ $('.login form').submit(function (e) {
     }
 
     const submitBtn = $(this).find('.form-submit-btn');
-    const btnText = showBtnLoading(submitBtn);
+    const btnHtml = showButtonLoader(submitBtn, '23px', '4px');
 
     $.ajax({
         type: 'POST',
@@ -67,7 +71,7 @@ $('.login form').submit(function (e) {
                     + response.message + `</span>`;
                 showFormError(this, str);
                 closeFormErrorWithTimeout(this);
-                resetBtn(submitBtn, btnText);
+                hideButtonLoader(submitBtn, btnHtml);
             }
         },
         error: (jqXHR) => { }

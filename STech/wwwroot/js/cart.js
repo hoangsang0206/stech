@@ -1,8 +1,8 @@
 ﻿
-function updateCartCount() {
+const updateCartCount = () => {
     $.ajax({
         type: 'GET',
-        url: '/api/cart',
+        url: '/api/cart/count',
         success: (response) => {
             $('.cart-count').html(response.data);
         },
@@ -12,11 +12,53 @@ function updateCartCount() {
     })
 }
 
+const getCartPreview = () => {
+
+    $.ajax({
+        type: 'GET',
+        url: '/api/cart/all',
+        success: (response) => {
+
+
+            if (response.status) {
+                $('.cart-preview').empty();
+                response.data.map(item => {
+                    let imgSrc = "/images/no-image.jpg";
+                    if (item.product.productImages) {
+                        imgSrc = item.product.productImages[0].imageSrc;
+                    }
+
+                    $('.cart-preview').append(
+                        `<div class="cart-preview-item d-flex align-items-center gap-2">
+                            <img src="${imgSrc}" />
+                            <div class="d-flex flex-column justify-content-between flex-grow-1">
+                                <p class="m-0">${item.product.productName}</p>
+                                <div class="d-flex align-items-end justify-content-between">
+                                    <div class="d-flex gap-3">
+                                        <a class="cart-preview-rm" href="javascript:void(0)">Xóa</a>
+                                        <span class="m-0">SL: ${item.quantity}</span>
+                                    </div>
+                                    <span class="cart-preview-price">${item.product.price.toLocaleString("vi-VN")}đ</span>
+                                </div>
+                            </div>
+                        </div>`
+                    );
+                })
+            }
+        }
+    })
+}
+
 $(document).ready(() => {
     updateCartCount();
 })
 
-//-Add product to cart ------------------------------------
+
+$('.cart-btn').mouseenter(() => {
+    getCartPreview();
+})
+
+
 $('.add-to-cart-btn, .btn-add-to-cart, .buy-action-btn').click(function() {
     const productID = $(this).data('product');
 

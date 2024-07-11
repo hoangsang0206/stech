@@ -130,87 +130,103 @@
                 if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
                     User? user = ViewBag.User as User;
+                    UserAddress? userAddress = ViewBag.Address as UserAddress;
+
+                    string address = "";
+                    string phone = "";
+                    string name = "";
 
                     if(user != null)
                     {
-                        UserAddress? mainAddress = user.UserAddresses.FirstOrDefault(adr => adr.IsDefault != null && adr.IsDefault.Value);
-                        string address = "";
-                        if (mainAddress != null)
-                        {
-                            address = $"{mainAddress.Address}, {mainAddress.Ward}, {mainAddress.District}, {mainAddress.Province}";
-                        } 
+                        phone = user.Phone ?? "";
+                        name = user.FullName ?? "";
+                    }
 
-                        <div class="cart-info d-none" id="cart-order-box">
-                            <div class="cart-order-wrapper">
-                                <div class="to-prev-step">
-                                    <a href="#cart-info-box">
-                                        <i class="fa-solid fa-chevron-left"></i>
-                                        <span>Quay lại</span>
-                                    </a>
-                                </div>
-                                <div class="form-error mt-1 mb-2"></div>
-                                <form action="#" method="post" id="form-info-edit">
-                                    <div class="cart-form">
-                                        <div class="cart-form-detail">
+                    if (userAddress != null)
+                    {
+                        address = $"{userAddress.Address}, {userAddress.Ward}, {userAddress.District}, {userAddress.Province}";
+
+                        if(userAddress.RecipientPhone != null)
+                        {
+                            phone = userAddress.RecipientPhone;
+                        }
+
+                        if(userAddress.RecipientName != null)
+                        {
+                            name = userAddress.RecipientName;
+                        }
+                    }
+
+                    <div class="cart-info d-none" id="cart-order-box">
+                        <div class="cart-order-wrapper">
+                            <div class="to-prev-step">
+                                <a href="#cart-info-box">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                    <span>Quay lại</span>
+                                </a>
+                            </div>
+                            <div class="form-error mt-1 mb-2"></div>
+                            <form action="#" method="post" id="form-info-edit">
+                                <div class="cart-form">
+                                    <div class="cart-form-detail">
+                                        <div class="cart-form-header">
+                                            <h5>Thông tin khách mua hàng</h5>
+                                        </div>
+                                        <div class="cart-form-input my-4">
+                                            <div class="form-input-box position-relative d-flex align-items-center">
+                                                <input type="text" id="UserFullName" name="UserFullName" value="@phone" class="form-input" required />
+                                                <label for="UserFullName" class="input-label position-absolute">Họ tên</label>
+                                            </div>
+                                            <div class="form-input-box position-relative d-flex align-items-center">
+                                                <input type="text" id="PhoneNumber" name="PhoneNumber" value="@name" class="form-input" required />
+                                                <label for="PhoneNumber" class="input-label position-absolute">Số điện thoại</label>
+                                            </div>
+                                        </div>
+                                        <div class="cart-form-input-ship">
                                             <div class="cart-form-header">
-                                                <h5>Thông tin khách mua hàng</h5>
+                                                <h5>Chọn cách nhận hàng</h5>
                                             </div>
-                                            <div class="cart-form-input my-4">
-                                                <div class="form-input-box position-relative d-flex align-items-center">
-                                                    <input type="text" id="UserFullName" name="UserFullName" value="@user.FullName" class="form-input" required />
-                                                    <label for="UserFullName" class="input-label position-absolute">Họ tên</label>
-                                                </div>
-                                                <div class="form-input-box position-relative d-flex align-items-center">
-                                                    <input type="text" id="PhoneNumber" name="PhoneNumber" value="@user.Phone" class="form-input" required />
-                                                    <label for="PhoneNumber" class="input-label position-absolute">Số điện thoại</label>
-                                                </div>
+                                            <div class="checkbox-shipmethod my-3">
+                                                <input type="radio" id="cod-method" name="shipmethod" value="COD" checked />
+                                                <label for="cod-method">Giao hàng tận nơi</label>
                                             </div>
-                                            <div class="cart-form-input-ship">
-                                                <div class="cart-form-header">
-                                                    <h5>Chọn cách nhận hàng</h5>
-                                                </div>
-                                                <div class="checkbox-shipmethod my-3">
-                                                    <input type="radio" id="cod-method" name="shipmethod" value="COD" checked />
-                                                    <label for="cod-method">Giao hàng tận nơi</label>
-                                                </div>
-                                                <div class="input-ship-info">
-                                                    <div class="form-input-box position-relative d-flex align-items-center">
-                                                        <input type="text" id="ship-address" name="ship-address" value="@address" class="form-input" required />
-                                                        <label for="ship-address" class="input-label position-absolute">Địa chỉ nhận hàng</label>
-                                                    </div>
-                                                </div>
-                                                <div class="checkbox-shipmethod my-3">
-                                                    <input type="radio" id="store-method" name="shipmethod" value="Store" />
-                                                    <label for="store-method">Nhận tại cửa hàng</label>
+                                            <div class="input-ship-info">
+                                                <div class="form-input-box position-relative d-flex align-items-center">
+                                                    <input type="text" id="ship-address" name="ship-address" value="@address" class="form-input" required />
+                                                    <label for="ship-address" class="input-label position-absolute">Địa chỉ nhận hàng</label>
                                                 </div>
                                             </div>
-                                            <div class="cart-note my-3">
-                                                <div class="form-input-box position-relative d-flex align-items-center">
-                                                    <input type="text" id="cart-note" name="cart-note" value="" class="form-input" />
-                                                    <label for="cart-note" class="input-label position-absolute">Lưu ý, yêu cầu khác (không bắt buộc)</label>
-                                                </div>
+                                            <div class="checkbox-shipmethod my-3">
+                                                <input type="radio" id="store-method" name="shipmethod" value="Store" />
+                                                <label for="store-method">Nhận tại cửa hàng</label>
+                                            </div>
+                                        </div>
+                                        <div class="cart-note my-3">
+                                            <div class="form-input-box position-relative d-flex align-items-center">
+                                                <input type="text" id="cart-note" name="cart-note" value="" class="form-input" />
+                                                <label for="cart-note" class="input-label position-absolute">Lưu ý, yêu cầu khác (không bắt buộc)</label>
                                             </div>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
-                            <hr class="cart-hr" />
-                            <div class="cart-product-total d-flex flex-column gap-3">
-                                <div class="summary-shipping">
-                                    <span class="s-shipping-title">Phí vận chuyển (dự kiến): </span>
-                                    <span class="ship-price">Miễn phí</span>
                                 </div>
-                                <div class="summary-price">
-                                    <span class="s-price-title">Tổng tiền: </span>
-                                    <span class="total-price">@(CurrencyFormatter.Format(totalPrice))đ</span>
-                                </div>
-                                <button class="summary-action order-info-summary">
-                                    ĐẶT HÀNG NGAY
-                                </button>
-                                <small class="text-center">Bạn có thể chọn hình thức thanh toán sau khi đặt hàng</small>
-                            </div>
+                            </form>
                         </div>
-                    }  
+                        <hr class="cart-hr" />
+                        <div class="cart-product-total d-flex flex-column gap-3">
+                            <div class="summary-shipping">
+                                <span class="s-shipping-title">Phí vận chuyển (dự kiến): </span>
+                                <span class="ship-price">Miễn phí</span>
+                            </div>
+                            <div class="summary-price">
+                                <span class="s-price-title">Tổng tiền: </span>
+                                <span class="total-price">@(CurrencyFormatter.Format(totalPrice))đ</span>
+                            </div>
+                            <button class="summary-action order-info-summary">
+                                ĐẶT HÀNG NGAY
+                            </button>
+                            <small class="text-center">Bạn có thể chọn hình thức thanh toán sau khi đặt hàng</small>
+                        </div>
+                    </div>
                 }
             }
             else

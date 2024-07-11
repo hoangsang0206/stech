@@ -12,6 +12,8 @@ namespace STech.Services
     {
         Task<User?> GetUser(LoginVM login);
         Task<User?> GetUserById(string id);
+        Task<UserAddress?> GetUserMainAddress(string id);
+        Task<IEnumerable<UserAddress>> GetUserAddress(string id);
         Task<bool> IsExist(string username);
         Task<bool> IsEmailExist(string email);
         Task<bool> CreateUser(RegisterVM register);
