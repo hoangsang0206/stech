@@ -1,14 +1,10 @@
-﻿.cart-btn:hover .cart-preview-wrapper {
-    display: block;
-}
-
-.cart-preview-wrapper {
+﻿.cart-preview-wrapper {
     display: none;
     background: #fff;
     border-radius: 0.3rem;
     box-shadow: 1px 1px 7px #5c5c5c91, -1px -1px 7px #5c5c5c91;
     top: calc(100% + 0.8rem);
-    right: -7rem;
+    right: -5.5rem;
     z-index: 10;
     padding: 0.7rem;
     color: #000;
@@ -30,7 +26,7 @@
     border-right: 1rem solid transparent;
     position: absolute;
     top: -1rem;
-    left: 10rem;
+    left: 11rem;
 }
 
 .cart-preview-item {
@@ -518,5 +514,12 @@ input[name="quantity"] {
     .cart-form-input {
         grid-template-columns: 1fr;
         grid-gap: 0;
+    }
+}
+
+/* For desktop */
+@media screen and (min-width: 1024px) {
+    .cart-btn:hover .cart-preview-wrapper {
+        display: block;
     }
 }

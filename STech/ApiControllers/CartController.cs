@@ -265,5 +265,51 @@ namespace STech.ApiControllers
                 Data = new { Quantity = updatedQty, TotalPrice = totalPrice }
             });
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                string? userId = User.FindFirstValue("Id");
+                if (userId == null)
+                {
+                    return BadRequest();
+                }
+
+                UserCart? cart = await _cartService.GetUserCartItem(userId, id);
+                if (cart == null)
+                {
+                    return BadRequest();
+                }
+
+                return Ok(new ApiResponse{
+                    Status = await _cartService.RemoveFromCart(cart)
+                });
+            }
+            else
+            {
+                List<CartVM> cartFromCookie = CartUtils.GetCartFromCookie(Request);
+                CartVM? cart = cartFromCookie.FirstOrDefault(c => c.ProductId == id);
+
+                if (cart == null)
+                {
+                    return BadRequest();
+                }
+
+                cartFromCookie.Remove(cart);
+                CartUtils.SaveCartToCookie(Response, cartFromCookie);
+
+                return Ok(new ApiResponse
+                {
+                    Status = true
+                });
+            }
+        }
     }
 }

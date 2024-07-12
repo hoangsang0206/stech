@@ -160,7 +160,7 @@ function hideWebLoader() {
     const timeout = setTimeout(() => {
         $('.webloading').hide();
         clearTimeout(timeout);
-    }, 500);
+    }, 1000);
 }
 
 //Show scroll to top button ----------------------------------------------------------

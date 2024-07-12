@@ -12,14 +12,12 @@ const updateCartCount = () => {
     })
 }
 
-const getCartPreview = () => {
 
+const getCartPreview = () => {
     $.ajax({
         type: 'GET',
         url: '/api/cart/all',
         success: (response) => {
-
-
             if (response.status) {
                 $('.cart-preview').empty();
                 response.data.map(item => {
@@ -35,7 +33,7 @@ const getCartPreview = () => {
                                 <p class="m-0">${item.product.productName}</p>
                                 <div class="d-flex align-items-end justify-content-between">
                                     <div class="d-flex gap-3">
-                                        <a class="cart-preview-rm" href="javascript:void(0)">Xóa</a>
+                                        <a class="cart-preview-rm" data-product="${item.productId}"" href="javascript:void(0)">Xóa</a>
                                         <span class="m-0">SL: ${item.quantity}</span>
                                     </div>
                                     <span class="cart-preview-price">${item.product.price.toLocaleString("vi-VN")}đ</span>
@@ -51,12 +49,27 @@ const getCartPreview = () => {
 
 $(document).ready(() => {
     updateCartCount();
-})
-
-
-$('.cart-btn').mouseenter(() => {
     getCartPreview();
 })
+
+$(document).ready(() => {
+    $(document).on('click', '.cart-preview-rm', function () {
+        const productId = $(this).data('product');
+        if (productId) {
+            $.ajax({
+                type: 'DELETE',
+                url: `/api/cart?id=${productId}`,
+                success: (response) => {
+                    if (response.status) {
+                        getCartPreview();
+                        updateCartCount();
+                    }
+                }
+            })
+        }
+    })
+})
+
 
 
 $('.add-to-cart-btn, .btn-add-to-cart, .buy-action-btn').click(function() {
@@ -70,6 +83,7 @@ $('.add-to-cart-btn, .btn-add-to-cart, .buy-action-btn').click(function() {
             success: (respone) => {
                 if (respone.status) {
                     updateCartCount();
+                    getCartPreview();
                 }
             },
             error: () => { 

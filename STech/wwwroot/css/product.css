@@ -358,15 +358,13 @@ button:disabled {
     font-weight: 600;
 }
 
-.product-cts-box {
+
+.product-contents {
+    width: calc(100% - 25rem);
+    min-height: 20rem;
     border-radius: 0.2rem;
     background: #ffffff;
     padding: 1rem 1.5rem;
-}
-
-.product-contents {
-    width: 60%;
-    min-height: 13.36rem;
 }
 
 .pro-content-image img {
@@ -379,8 +377,11 @@ button:disabled {
     aspect-ratio: 16/9;
 }
 
-.product-parameter-news {
-    width: 40%;
+.product-similar {
+    width: 25rem;
+    border-radius: 0.2rem;
+    background: #ffffff;
+    padding: 1rem 1.5rem;
 }
 
 .box-header h4 {
@@ -403,7 +404,7 @@ button:disabled {
 
 .product-para-table table tr td:first-child {
     background: #f7f7f7;
-    width: 22%;
+    width: 10rem;
     font-weight: 600;
 }
 
@@ -441,7 +442,7 @@ button:disabled {
         width: 100%;
     }
 
-    .product-parameter-news {
+    .product-similar {
         width: 100%;
     }
 
