@@ -520,15 +520,14 @@ $(document).ready(function () {
 
 })
 
-//---AJAX---------------------------------------------------
 
-//---AJAX autocomplete search----------------------------
-var typingTimeOut;
+
+let typingTimeOut;
 $("#search").keyup(function () {
     clearTimeout(typingTimeOut);
 
     typingTimeOut = setTimeout(() => {
-        var searchText = $(this).val();
+        const searchText = $(this).val();
         if (searchText.length > 0) {
             $.ajax({
                 url: '/api/products',
@@ -536,38 +535,42 @@ $("#search").keyup(function () {
                 data: {
                     q: searchText
                 },
-                success: function (responses) {
-                    var maxItems = window.innerWidth < 768 ? 25 : 6
+                success: function (response) {
+                    const maxItems = window.innerWidth < 768 ? 25 : 6
 
-                    if (responses == null || responses.length <= 0) {
-                        $('.ajax-search-autocomplete').show();
-                        $('.ajax-search-items').empty();
+                    $('.ajax-search-autocomplete').show();
+                    $('.ajax-search-items').empty();
+
+                    if (!response.status || !response.data) {
                         $('.ajax-search-empty').css('display', 'grid');
                     }
                     else {
-                        $('.ajax-search-autocomplete').show();
-                        $('.ajax-search-items').empty();
                         $('.ajax-search-empty').hide();
-                        for (let i = 0; i <= responses.length && i < maxItems; i++) {
-                            const strHTML = `<a href="/product/${responses[i].MaSP}"> 
+
+                        const products = response.data.slice(0, maxItems);
+                        products.map(item => {
+                            let src = '/images/no-image.jpg';
+                            if (item.productImages) {
+                                src = item.productImages[0].imageSrc;
+                            }
+
+                            $('.ajax-search-items').append(`<a href="/product/${item.productId}"> 
                                 <div class="ajax-search-item d-flex justify-content-between align-items-center">
                                     <div class="ajax-search-item-info">
                                         <div class="ajax-search-item-name d-flex align-items-center">
-                                            <h3>${responses[i].TenSP}</h3>
+                                            <h3>${item.productName}</h3>
                                         </div>
                                         <div class="ajax-search-item-price d-flex align-items-center">
-                                            <h3>${responses[i].GiaBan.toLocaleString('vi-VN') + 'đ'}</h3>
-                                            <h4>${responses[i].GiaGoc > responses[i].GiaBan ? responses[i].GiaGoc.toLocaleString('vi-VN') + 'đ' : ''}</h4>
+                                            <h3>${item.price.toLocaleString('vi-VN') + 'đ'}</h3>
+                                            <h4>${item.originalPrice > item.price ? item.originalPrice.toLocaleString('vi-VN') + 'đ' : ''}</h4>
                                         </div>
                                     </div>
                                     <div class="ajax-search-item-image">
-                                        <img src="${responses[i].HinhAnh ? responses[i].HinhAnh : '/Assets/Images/no-image.jpg'}" alt="" />
+                                        <img src="${src}" alt="" />
                                     </div>
                                 </div>
-                            </a>`;
-
-                            $('.ajax-search-items').append(strHTML);
-                        }
+                            </a>`)
+                        })
                     }
                 },
                 error: () => {
