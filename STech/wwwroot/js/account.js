@@ -79,7 +79,7 @@ $('.login form').submit(function (e) {
 })
 
 
-$('.login-info-logout, .account-logout').click(() => {
+$('.login-info-logout, .account-sidebar-logout').click(() => {
     Swal.fire({
         title: "Đăng xuất?",
         text: "Bạn chắc chắn muốn đăng xuất?",
@@ -94,4 +94,15 @@ $('.login-info-logout, .account-logout').click(() => {
             window.location.href = '/account/logout'
         }
     });
+})
+
+
+$('.account-sidebar-item').click(function () {
+    const sidebar = $(this).data('sidebar');
+
+    $('.account-content').removeClass('current');
+    $(`[data-sidebar="${sidebar}"]`).addClass('current');
+
+    $('.account-sidebar-item').removeClass('active');
+    $(this).addClass('active');
 })

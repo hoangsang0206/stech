@@ -36,6 +36,7 @@ namespace STech.Controllers
             return View(new Tuple<User, IEnumerable<Breadcrumb>>(user, breadcrumbs));
         }
 
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
