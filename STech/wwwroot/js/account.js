@@ -106,3 +106,84 @@ $('.account-sidebar-item').click(function () {
     $('.account-sidebar-item').removeClass('active');
     $(this).addClass('active');
 })
+
+
+$('.form-update-user').submit(function (e) {
+    e.preventDefault();
+
+    const fullname = $(this).find('#update_fullname').val();
+    const dob = $(this).find('#update_dob').val();
+    const phonenumber = $(this).find('#update_phonenumber').val();
+    const email = $(this).find('#update_email').val();
+    const gender = $(this).find('input[name="update_gender"]:checked').val();
+
+    if (fullname && phonenumber && email) {
+        const submitBtn = $(e.target).find('.form-submit-btn');
+        const btnHtml = showButtonLoader(submitBtn, '23px', '4px')
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/account/update',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                FullName: fullname,
+                Email: email,
+                PhoneNumber: phonenumber,
+                DOB: dob || null,
+                Gender: gender || null
+            }),
+            success: (response) => {
+                if (response.status) {
+                    $('.user-fullname').text(fullname);
+                    $('.user_email').text(email);
+                    closeFormError(this);
+                    showDialog('info', 'Cập nhật thành công', null);
+                } else {
+                    const str = `<span>
+                <i class="fa-solid fa-circle-exclamation"></i>`
+                        + response.message + `</span>`;
+                    showFormError(this, str);
+                    closeFormErrorWithTimeout(this);
+                }
+
+                hideButtonLoader(submitBtn, btnHtml);
+            },
+            error: () => {
+                showErrorDialog();
+                hideButtonLoader(submitBtn, btnHtml);
+            }
+        })
+    }
+})
+
+
+$('.click-change-image').click(() => {
+    $('.upload-image').addClass('show');
+})
+
+
+$('.form-upload-image').submit(function (e) {
+    e.preventDefault();
+    const formData = new FormData();
+    const file = $(this).find('#user-image').prop('files')[0];
+    formData.append('file', file);
+
+    if (formData) {
+        $.ajax({
+            type: 'POST',
+            url: '/api/account/upload',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: (response) => {
+                if(response.status) {
+                    $('.user-image img').attr('src', response.data);
+                    showDialog('info', 'Cập nhật ảnh đại diện thành công', null);
+                }
+            },
+            error: () => {
+                showErrorDialog();
+            }
+        });
+    }
+})

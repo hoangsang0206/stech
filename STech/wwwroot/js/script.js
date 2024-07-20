@@ -7,6 +7,7 @@
             </svg></span></div>`;
 
     $(element).css('height', $(element).outerHeight());
+    $(element).css('width', $(element).outerWidth());
     $(element).html(elementLoader);
 
     return elementHtml;

@@ -58,6 +58,12 @@ namespace STech.Services.Services
             return user != null;
         }
 
+        public async Task<bool> IsEmailExist(string userId, string email)
+        {
+            User? user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.UserId != userId);
+            return user != null;
+        }
+
         public async Task<bool> CreateUser(RegisterVM register)
         {
             if(register.RegPassword != register.ConfirmPassword) return false;
@@ -82,5 +88,13 @@ namespace STech.Services.Services
             await _context.Users.AddAsync(user);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<bool> UpdateUser(User user)
+        {
+            _context.Users.Update(user);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+
     }
 }

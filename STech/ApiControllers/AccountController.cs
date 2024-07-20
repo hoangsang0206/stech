@@ -6,6 +6,9 @@ using STech.Data.Models;
 using STech.Data.ViewModels;
 using System.Security.Claims;
 using STech.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Azure.Storage.Blobs;
 
 namespace STech.ApiControllers
 {
@@ -13,11 +16,15 @@ namespace STech.ApiControllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        private readonly string[] ALLOWED_IMAGE_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+        private readonly long MAX_FILE_LENGTH = 5 * 1024 * 1024;
         private readonly IUserService _userService;
+        private readonly IConfiguration _configuration;
 
-        public AccountController(IUserService userService)
+        public AccountController(IUserService userService, IConfiguration configuration)
         {
             _userService = userService;
+            _configuration = configuration;
         }
 
         private async Task SignIn(User user)
@@ -128,6 +135,136 @@ namespace STech.ApiControllers
             {
                 return BadRequest();
             }
+        }
+
+        [HttpPost("update"), Authorize]
+        public async Task<IActionResult> Update([FromBody] UserUpdateVM update)
+        {
+            if(ModelState.IsValid)
+            {
+                if (User.Identity == null)
+                {
+                    return Unauthorized();
+                }
+
+                string? userId = User.FindFirstValue("Id");
+                if (userId == null)
+                {
+                    return Unauthorized();
+                }
+
+                User? user = await _userService.GetUserById(userId);
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+
+                if (await _userService.IsEmailExist(userId, update.Email))
+                {
+                    return Ok(new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Email này đã tồn tại"
+                    });
+                }
+
+                user.FullName = update.FullName;
+                user.Email = update.Email;
+                user.Phone = update.PhoneNumber;
+                user.Gender = update.Gender;
+
+                if (await _userService.UpdateUser(user))
+                {
+                    return Ok(new ApiResponse
+                    {
+                        Status = true,
+                    });
+                }
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPost("upload"), Authorize]
+        public async Task<IActionResult> UploadAvatar(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest();
+            }
+
+            if (!ALLOWED_IMAGE_EXTENSIONS.Contains(Path.GetExtension(file.FileName).ToLower()))
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Hình ảnh không hợp lệ"
+                });
+            }
+
+            if (file.Length > MAX_FILE_LENGTH)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Hình ảnh không quá {Convert.ToInt32(MAX_FILE_LENGTH / 1000000)}"
+                });
+            }
+
+            if (User.Identity == null)
+            {
+                return Unauthorized();
+            }
+
+            string? userId = User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            User? user = await _userService.GetUserById(userId);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            string? blobConnectionString = _configuration["Azure:ConnectionString"];
+            string? blobContainerName = _configuration["Azure:BlobContainerName"];
+            string? blobUrl = _configuration["Azure:BlobUrl"];
+            if(blobConnectionString == null || blobContainerName == null || blobUrl == null)
+            {
+                return BadRequest();
+            }
+
+            string fileName = $"{userId}{Path.GetExtension(file.FileName)}";
+            string path = Path.Combine("user-images", fileName);
+            
+            BlobServiceClient blobServiceClient = new BlobServiceClient(blobConnectionString);
+            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(blobContainerName);
+            BlobClient blobClient = containerClient.GetBlobClient(path);
+
+            using (Stream stream = file.OpenReadStream())
+            {
+                await blobClient.UploadAsync(stream, true);
+            }
+
+            if(!string.IsNullOrEmpty(user.Avatar))
+            {
+                BlobClient oldBlobClient = containerClient.GetBlobClient(user.Avatar.Replace($"{blobUrl}{blobContainerName}/", ""));
+                await oldBlobClient.DeleteIfExistsAsync();
+            }
+
+            user.Avatar = $"{blobUrl}{blobContainerName}/{path}";
+            if(await _userService.UpdateUser(user))
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = true,
+                    Data = user.Avatar
+                });
+            }
+
+            return BadRequest();
         }
     }
 }

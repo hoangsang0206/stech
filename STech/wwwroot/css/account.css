@@ -171,3 +171,7 @@
 .user-infomation .user-email {
     color: #858585;
 }
+
+.upload-image .form-box {
+    width: 40rem;
+}

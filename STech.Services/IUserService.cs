@@ -16,6 +16,8 @@ namespace STech.Services
         Task<IEnumerable<UserAddress>> GetUserAddress(string id);
         Task<bool> IsExist(string username);
         Task<bool> IsEmailExist(string email);
+        Task<bool> IsEmailExist(string userId, string email);
         Task<bool> CreateUser(RegisterVM register);
+        Task<bool> UpdateUser(User user);
     }
 }

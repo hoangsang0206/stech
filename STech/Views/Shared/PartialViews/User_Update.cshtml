@@ -1,0 +1,89 @@
+﻿@model Tuple<User, UserUpdateVM>
+
+@{
+    User user = Model.Item1;
+}
+
+<form method="POST" class="form-update-user">
+    <div class="row m-0 p-0">
+        <div class="col-12 col-sm-7">
+            <div class="page-input-box">
+                <label>Họ tên</label>
+                <input asp-for="Item2.FullName" id="update_fullname" type="text" value="@(user.FullName ?? "")" placeholder="Họ tên" />
+                <span asp-validation-for="Item2.FullName"></span>
+            </div>
+        </div>
+        <div class="col-12 col-sm-5">
+        </div>
+    </div>
+    <div class="row m-0 mt-1 p-0">
+        <div class="col-12 col-sm-7">
+            <div class="page-input-box">
+                <label>Ngày sinh</label>
+                <input asp-for="Item2.DOB" id="update_dob" type="date" value="@user.Dob" />
+                <span asp-validation-for="Item2.DOB"></span>
+            </div>
+        </div>
+        <div class="col-12 col-sm-5">
+        </div>
+    </div>
+    <div class="row m-0 mt-1 p-0">
+        <div class="col-12 col-sm-7">
+            <div class="page-input-box">
+                <label>Số điện thoại</label>
+                <input asp-for="Item2.PhoneNumber" id="update_phonenumber" type="text" value="@(user.Phone ?? "")" placeholder="Số điện thoại" />
+                <span asp-validation-for="Item2.PhoneNumber"></span>
+            </div>
+        </div>
+        <div class="col-12 col-sm-5">
+            @if (!Convert.ToBoolean(user.PhoneConfirmed))
+            {
+                @*  <div class="d-flex align-items-center h-100 pt-3">
+            <a href="javascript:void(0)" class="verify-infomation text-success fw-bold">Xác nhận</a>
+            </div> *@
+            }
+        </div>
+    </div>
+    <div class="row m-0 mt-1 p-0">
+        <div class="col-12 col-sm-7">
+            <div class="page-input-box">
+                <label>Email</label>
+                <input asp-for="Item2.Email" id="update_email" type="text" value="@(user.Email ?? "")" placeholder="Email" />
+                <span asp-validation-for="Item2.Email"></span>
+            </div>
+        </div>
+        <div class="col-12 col-sm-5">
+            @if (!Convert.ToBoolean(user.EmailConfirmed))
+            {
+                @* <div class="d-flex align-items-center h-100 pt-3">
+            <a href="javascript:void(0)" class="verify-infomation text-success fw-bold">Xác nhận</a>
+            </div> *@
+            }
+        </div>
+    </div>
+    <div class="row m-0 mt-2 p-0">
+        <div class="col-12 col-sm-7">
+            <div class="d-flex align-items-center gap-4">
+                <div class="d-flex align-items-center gap-1">
+                    <label class="cursor-pointer" for="gender-male" style="font-size: 1.1rem">Nam</label>
+                    <input asp-for="Item2.Gender" class="cursor-pointer" type="radio" name="update_gender" id="gender-male" value="male" checked="@(user.Gender == "male")" />
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                    <label class="cursor-pointer" for="gender-female" style=" font-size: 1.1rem">Nữ</label>
+                    <input asp-for="Item2.Gender" class="cursor-pointer" type="radio" name="update_gender" id="gender-female" value="female" checked="@(user.Gender == "female")" />
+                </div>
+            </div>
+            <span asp-validation-for="Item2.Gender"></span>
+        </div>
+        <div class="col-12 col-sm-5">
+        </div>
+    </div>
+
+    <div class="mt-4 form-error">
+
+    </div>
+
+    <button type="submit" class="form-submit-btn page-btn-sm mt-4">
+        Cập nhật thông tin
+    </button>
+</form>

@@ -688,10 +688,11 @@ header {
     padding: 0.6rem 0;
     display: grid;
     place-items: center;
+    white-space: nowrap;
 }
 
-.form-submit-btn.btn-sm {
-    width: auto !important;
+.form-submit-btn.page-btn-sm {
+    width: auto;
     padding: 0.7rem 1.5rem;
     font-size: 1rem;
 }
