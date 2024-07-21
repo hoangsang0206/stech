@@ -229,3 +229,7 @@
     border: none;
 
 }
+
+.add-address .form-box {
+    width: 35rem;
+}

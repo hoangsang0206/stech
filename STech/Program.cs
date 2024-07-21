@@ -50,6 +50,8 @@ builder.Services.AddScoped<ISliderService, SliderService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICartService, CartService>();
 
+builder.Services.AddSingleton(new AddressService(Path.Combine(builder.Environment.ContentRootPath, "..", "STech.Data")));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline

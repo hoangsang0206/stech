@@ -9,7 +9,10 @@
         <div class="col-12 col-sm-7">
             <div class="page-input-box">
                 <label>Họ tên</label>
-                <input asp-for="Item2.FullName" id="update_fullname" type="text" value="@(user.FullName ?? "")" placeholder="Họ tên" />
+                <div class="page-input">
+                    <i class="fa-regular fa-id-card"></i>
+                    <input asp-for="Item2.FullName" id="update_fullname" type="text" value="@(user.FullName ?? "")" placeholder="Họ tên" />
+                </div>
                 <span asp-validation-for="Item2.FullName"></span>
             </div>
         </div>
@@ -20,7 +23,10 @@
         <div class="col-12 col-sm-7">
             <div class="page-input-box">
                 <label>Ngày sinh</label>
-                <input asp-for="Item2.DOB" id="update_dob" type="date" value="@(user.Dob.HasValue ? user.Dob.Value.ToString("yyyy-MM-dd") : "")" />
+                <div class="page-input">
+                    <i class="fa-solid fa-cake-candles"></i>
+                    <input asp-for="Item2.DOB" id="update_dob" type="date" value="@(user.Dob.HasValue ? user.Dob.Value.ToString("yyyy-MM-dd") : "")" />
+                </div>
                 <span asp-validation-for="Item2.DOB"></span>
             </div>
         </div>
@@ -31,7 +37,10 @@
         <div class="col-12 col-sm-7">
             <div class="page-input-box">
                 <label>Số điện thoại</label>
-                <input asp-for="Item2.PhoneNumber" id="update_phonenumber" type="text" value="@(user.Phone ?? "")" placeholder="Số điện thoại" />
+                <div class="page-input">
+                    <i class="fa-solid fa-phone-volume"></i>
+                    <input asp-for="Item2.PhoneNumber" id="update_phonenumber" type="text" value="@(user.Phone ?? "")" placeholder="Số điện thoại" />
+                </div>
                 <span asp-validation-for="Item2.PhoneNumber"></span>
             </div>
         </div>
@@ -48,7 +57,10 @@
         <div class="col-12 col-sm-7">
             <div class="page-input-box">
                 <label>Email</label>
-                <input asp-for="Item2.Email" id="update_email" type="text" value="@(user.Email ?? "")" placeholder="Email" />
+                <div class="page-input">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input asp-for="Item2.Email" id="update_email" type="text" value="@(user.Email ?? "")" placeholder="Email" />
+                </div>
                 <span asp-validation-for="Item2.Email"></span>
             </div>
         </div>
@@ -79,8 +91,11 @@
         </div>
     </div>
 
-    <div class="mt-4 form-error">
-
+    <div class="row m-0 p-0">
+        <div class="col-12 col-sm-7">
+            <div class="mt-4 form-error"></div>
+        </div>
+        <div class="col-12 col-sm-5 p-0 m-0"></div>
     </div>
 
     <button type="submit" class="form-submit-btn page-btn-sm mt-4">

@@ -293,3 +293,8 @@ $('.form-upload-image').submit(function (e) {
 $('.form-upload-image').on('reset', function() {
     hideFormUploadImage();
 })
+
+
+$('.btn-add-address').click(() => {
+    $('.add-address').addClass('show');
+})

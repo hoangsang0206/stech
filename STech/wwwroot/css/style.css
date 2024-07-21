@@ -797,6 +797,11 @@ header {
     transition: transform .4s ease;
 }
 
+.form-group-header {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
 
 .page-input-box {
     width: 100%;
@@ -809,21 +814,36 @@ header {
         font-weight: normal;
     }
 
-    .page-input-box input {
+    .page-input {
         width: 100%;
         border: 1px solid #cfcfcf;
         border-radius: 0.3rem;
-        padding: 0.6rem 1.2rem;
-        font-size: 1.1rem;
+        display: flex;
     }
 
-    .page-input-box input:focus {
-        outline: 1px solid #9d9c9c;
-    }
+        .page-input i {
+            width: 3rem;
+            display: grid;
+            place-items: center;
+            font-size: 1.3rem;
+        }
+
+        .page-input input {
+            width: calc(100% - 3rem);
+            border: none;
+            outline: none;
+            border-radius: 0.3rem;
+            padding: 0.6rem 1.2rem 0.6rem 0;
+            font-size: 0.97rem;
+        }
+
+        .page-input.focused {
+            outline: 1px solid #9d9c9c;
+        }
 
 
 .login-input-box {
-    width: 100%;
+        width: 100%;
     display: flex;
     flex-direction: column;
     margin-bottom: 1rem;

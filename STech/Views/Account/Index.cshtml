@@ -6,7 +6,7 @@
     User user = Model.Item1;
 }
 
-@await Html.PartialAsync("PartialViews/Breadcrumb", Model.Item2)
+@* @await Html.PartialAsync("PartialViews/Breadcrumb", Model.Item2) *@
 
 <section class="account-page row m-0 align-items-">
     <div class="col-12 col-sm-12 col-lg-3 p-0">
@@ -79,7 +79,31 @@
             </div>
         
             <div class="account-content" data-sidebar="addresses">
-                Address
+                <div class="account-content-header d-flex align-items-center justify-content-between">
+                    <h4 class="m-0">Địa chỉ</h4>
+                    <button class="btn-add-address btn btn-primary">
+                        <i class="fa-solid fa-plus me-1"></i>
+                        <span>Thêm địa chỉ</span>
+                    </button>
+                </div>
+                <div class="user-address-list">
+                    @foreach (UserAddress address in user.UserAddresses)
+                    {
+                        <div class="row">
+                            <div class="col-8">
+                            </div>
+                            <div class="col-4">
+                                <div class="d-flex gap-2">
+                                    <a href="javascript:void(0)" class="update-address text-primary">Cập nhật</a>
+                                    <a href="javascript:void(0)" class="delete-address text-danger">Xóa</a>
+                                </div>
+                                <div>
+                                    <a href="javascript:void(0)" class="set-address-default btn-primary-ouline">Đặt làm mặc định</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
             </div>
 
             <div class="account-content" data-sidebar="orders">
@@ -91,11 +115,12 @@
             </div>
 
             <div class="account-content" data-sidebar="password">
-                Password
+                @await Html.PartialAsync("PartialViews/User_ChangePassword");
             </div>
         </div>
     </div>
 
 
     @await Html.PartialAsync("PartialViews/User_UploadImage")
+    @await Html.PartialAsync("PartialViews/User_AddAddress")
 </section>

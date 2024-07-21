@@ -27,7 +27,14 @@ namespace STech.Controllers
                 return BadRequest();
             }
 
-            User user = await _userService.GetUserById(userId) ?? new User();
+            User? user = await _userService.GetUserById(userId);
+            if(user == null)
+            {
+                return BadRequest();
+            }
+
+            user.UserAddresses = await _userService.GetUserAddress(userId) as List<UserAddress> ?? new List<UserAddress>();
+
             IEnumerable<Breadcrumb> breadcrumbs = new List<Breadcrumb>
             {
                 new Breadcrumb("Tài khoản", "")

@@ -632,6 +632,7 @@ $('.bottom-nav-account').click(() => {
 })
 
 //---
+
 $('.close-form').click(function () {
     $(this).closest('.form-container').removeClass('show');
     clearFormInput($(this).find('form'))
@@ -648,6 +649,11 @@ $('.form-container').click(function (e) {
     }
 })
 
+$('.form-container form').on('reset', function () {
+    $(this).closest('.form-container').removeClass('show');
+    clearFormInput($(this).find('form'));
+})
+
 $('.to-login').click(() => {
     $('.register').removeClass('show');
     $('.login').addClass('show');
@@ -662,3 +668,10 @@ $('.to-register').click(() => {
 
  //------------------------
 
+$(document).on('focus', '.page-input > input', function () {
+    $(this).parent().addClass('focused');
+})
+
+$(document).on('blur', '.page-input > input', function () {
+    $(this).parent().removeClass('focused');
+})
