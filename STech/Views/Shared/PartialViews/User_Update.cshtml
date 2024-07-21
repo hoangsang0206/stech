@@ -20,7 +20,7 @@
         <div class="col-12 col-sm-7">
             <div class="page-input-box">
                 <label>Ngày sinh</label>
-                <input asp-for="Item2.DOB" id="update_dob" type="date" value="@user.Dob" />
+                <input asp-for="Item2.DOB" id="update_dob" type="date" value="@(user.Dob.HasValue ? user.Dob.Value.ToString("yyyy-MM-dd") : "")" />
                 <span asp-validation-for="Item2.DOB"></span>
             </div>
         </div>

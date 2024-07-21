@@ -15,7 +15,7 @@
         <ion-icon name="chatbubbles-outline" class="bottom-nav-icon"></ion-icon>
         <span>Tư vấn</span>
     </a>
-    @if (User.Identity.IsAuthenticated)
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
         <a href="/account" class="bottom-nav-link d-flex flex-column align-items-center justify-content-center @( ViewBag.ActiveBotNav == "account" ? "nav-link-active" : "")">
             <ion-icon name="person-outline" class="bottom-nav-icon"></ion-icon>
@@ -24,7 +24,7 @@
     }
     else
     {
-        <a href="#" class="bottom-nav-link bottom-nav-account d-flex flex-column align-items-center justify-content-center">
+        <a href="javascript:void(0)" class="bottom-nav-link bottom-nav-account d-flex flex-column align-items-center justify-content-center">
             <ion-icon name="person-outline" class="bottom-nav-icon"></ion-icon>
             <span>Tài khoản</span>
         </a>

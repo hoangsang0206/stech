@@ -638,6 +638,10 @@ $('.close-form').click(function () {
 })
 
 $('.form-container').click(function (e) {
+    if ($(this).hasClass('edit-image') || $(this).hasClass('upload-image')) {
+        return;
+    }
+
     if ($(e.target).closest('.form-box').length <= 0) {
         $(this).removeClass('show');
         clearFormInput($(this).find('form'))

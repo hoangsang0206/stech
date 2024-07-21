@@ -9,6 +9,7 @@ using STech.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Azure.Storage.Blobs;
+using STech.Utils;
 
 namespace STech.ApiControllers
 {
@@ -172,6 +173,7 @@ namespace STech.ApiControllers
                 user.Email = update.Email;
                 user.Phone = update.PhoneNumber;
                 user.Gender = update.Gender;
+                user.Dob = update.DOB;
 
                 if (await _userService.UpdateUser(user))
                 {
@@ -207,7 +209,7 @@ namespace STech.ApiControllers
                 return Ok(new ApiResponse
                 {
                     Status = false,
-                    Message = $"Hình ảnh không quá {Convert.ToInt32(MAX_FILE_LENGTH / 1000000)}"
+                    Message = $"Hình ảnh không quá {Convert.ToInt32(MAX_FILE_LENGTH / 1000000)}MB"
                 });
             }
 
@@ -236,7 +238,7 @@ namespace STech.ApiControllers
                 return BadRequest();
             }
 
-            string fileName = $"{userId}{Path.GetExtension(file.FileName)}";
+            string fileName = $"{userId}-{RandomUtils.GenerateRandomString(10)}-{Path.GetExtension(file.FileName)}";
             string path = Path.Combine("user-images", fileName);
             
             BlobServiceClient blobServiceClient = new BlobServiceClient(blobConnectionString);
