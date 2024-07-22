@@ -1,17 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using System.Security.Claims;
 using STech.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Azure.Storage.Blobs;
 using STech.Utils;
 using STech.Services.Services;
-using Stripe;
 
 namespace STech.ApiControllers
 {
@@ -333,8 +330,12 @@ namespace STech.ApiControllers
                     RecipientPhone = address.RecipientPhone,
                     Address = address.Address,
                     Province = city.name_with_type,
+                    ProvinceCode = city.code,
                     District = district.name_with_type,
+                    DistrictCode = district.code,
                     Ward = ward.name_with_type,
+                    WardCode = ward.code,
+                    AddressType = address.Type,
                     IsDefault = await _userService.GetUserMainAddress(userId) == null,
                     
                 };
@@ -378,7 +379,18 @@ namespace STech.ApiControllers
                     return BadRequest();
                 }
 
-                if(await _userService.UpdateUserAddress(userAddress))
+                userAddress.RecipientName = address.RecipientName;
+                userAddress.RecipientPhone = address.RecipientPhone;
+                userAddress.Address = address.Address;
+                userAddress.Province = city.name_with_type;
+                userAddress.ProvinceCode = city.code;
+                userAddress.District = district.name_with_type;
+                userAddress.DistrictCode = district.code;
+                userAddress.Ward = ward.name_with_type;
+                userAddress.WardCode = ward.code;
+                userAddress.AddressType = address.Type;
+
+                if (await _userService.UpdateUserAddress(userAddress))
                 {
                     return Ok(new ApiResponse
                     {

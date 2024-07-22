@@ -17,11 +17,19 @@ public partial class UserAddress
 
     public string Ward { get; set; } = null!;
 
+    public string WardCode { get; set; } = null!;
+
     public string District { get; set; } = null!;
+
+    public string DistrictCode { get; set; } = null!;
 
     public string Province { get; set; } = null!;
 
+    public string ProvinceCode { get; set; } = null!;
+
     public bool? IsDefault { get; set; }
+
+    public string AddressType { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
 }

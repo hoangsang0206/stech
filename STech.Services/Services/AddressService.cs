@@ -28,12 +28,12 @@ namespace STech.Services.Services
 
             Cities.ForEach(city =>
             {
-                city.districts = Districts.Where(d => d.parent_code == city.code).ToList();
+                city.districts = Districts.Where(d => d.parent_code == city.code).OrderBy(d => d.slug).ToList();
             });
 
             Districts.ForEach(district =>
             {
-                district.wards = Wards.Where(w => w.parent_code == district.code).ToList();
+                district.wards = Wards.Where(w => w.parent_code == district.code).OrderBy(w => w.slug).ToList();
             });
         }
 
@@ -59,6 +59,7 @@ namespace STech.Services.Services
         private async Task LoadCities()
         {
             Cities = await ReadJson<AddressVM.City>(CITIES_FILE_PATH) ?? new List<AddressVM.City>();
+            Cities = Cities.OrderBy(c => c.slug).ToList();
         }
 
         private async Task LoadDistricts()

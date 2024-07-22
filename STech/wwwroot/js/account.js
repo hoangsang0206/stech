@@ -382,6 +382,7 @@ $('.form-add-address').submit(function (e) {
                 DistrictCode: districtCode,
                 WardCode: wardCode,
                 Address: address,
+                Type: addressType
             }),
             success: (response) => {
                 if (response.status) {
@@ -415,7 +416,76 @@ $(document).on('click', '.set-address-default', function () {
     }
 })
 
+$(document).on('click', '.update-address', function () {
+    const addressId = $(this).data('address');
+    if (addressId) {
+        $.ajax({
+            type: 'GET',
+            url: `/api/account/address/${addressId}`,
+            success: (response) => {
+                if (response.status) {
+                    const address = response.data;
+                    $('.update-address').addClass('show');
+                    const form = $('.form-update-address');
 
+                    form.find('#AddressId').val(address.id);
+                    form.find('#UpdateRecipientName').val(address.recipientName).trigger('change');
+                    form.find('#UpdateRecipientPhone').val(address.recipientPhone).trigger('change');
+                    form.find('#update-city-select').val(address.provinceCode);
+                    form.find('#UpdateAddress').val(address.address).trigger('change');
+                    form.find(`input[name="address-type"][value="${address.addressType}"]`).prop('checked', true);
+
+                    loadDistricts(form, address.provinceCode, address.districtCode);
+                    loadWards(form, address.districtCode, address.wardCode);
+                }
+            },
+            error: () => {
+                showErrorDialog();
+            }
+        })
+    }
+})
+
+$('.form-update-address').submit(function (e) {
+    e.preventDefault();
+
+    const addressId = $(this).find('#AddressId').val();
+    const recipientName = $(this).find('#UpdateRecipientName').val();
+    const recipientPhone = $(this).find('#UpdateRecipientPhone').val();
+    const cityCode = $(this).find('#update-city-select').val();
+    const districtCode = $(this).find('#update-district-select').val();
+    const wardCode = $(this).find('#update-ward-select').val();
+    const address = $(this).find('#UpdateAddress').val();
+    const addressType = $(this).find('input[name="address-type"]:checked').val();
+
+    if (addressId && recipientName && recipientPhone && cityCode && districtCode && wardCode && address && addressType) {
+        $.ajax({
+            type: 'PUT',
+            url: '/api/account/address/update',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                Id: addressId,
+                RecipientName: recipientName,
+                RecipientPhone: recipientPhone,
+                CityCode: cityCode,
+                DistrictCode: districtCode,
+                WardCode: wardCode,
+                Address: address,
+                Type: addressType
+            }),
+            success: (response) => {
+                if (response.status) {
+                    $(this).closest('.form-container').removeClass('show');
+                    clearFormInput($(this))
+                    loadUserAddresses();
+                }
+            },
+            error: () => {
+                showErrorDialog();
+            }
+        })
+    }
+})
 
 $(document).on('click', '.delete-address', function () {
     const addressId = $(this).data('address');

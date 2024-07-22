@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace STech.Data.Models;
 
@@ -85,6 +84,10 @@ public partial class StechDbContext : DbContext
     public virtual DbSet<Warehouse> Warehouses { get; set; }
 
     public virtual DbSet<WarehouseProduct> WarehouseProducts { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=AORUS-Laptop;Database=STechDb;User Id=sang;Password=123456;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -601,21 +604,33 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<UserAddress>(entity =>
         {
-            entity.HasKey(e => new { e.Id, e.UserId }).HasName("PK__UserAddr__E36C60C3FBED9524");
+            entity.HasKey(e => new { e.Id, e.UserId }).HasName("PK__UserAddr__E36C60C3C5EDE225");
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.UserId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.Address).HasMaxLength(50);
+            entity.Property(e => e.AddressType)
+                .HasMaxLength(30)
+                .IsUnicode(false);
             entity.Property(e => e.District).HasMaxLength(30);
+            entity.Property(e => e.DistrictCode)
+                .HasMaxLength(30)
+                .IsUnicode(false);
             entity.Property(e => e.IsDefault).HasDefaultValue(false);
             entity.Property(e => e.Province).HasMaxLength(30);
+            entity.Property(e => e.ProvinceCode)
+                .HasMaxLength(30)
+                .IsUnicode(false);
             entity.Property(e => e.RecipientName).HasMaxLength(50);
             entity.Property(e => e.RecipientPhone)
                 .HasMaxLength(30)
                 .IsUnicode(false);
             entity.Property(e => e.Ward).HasMaxLength(50);
+            entity.Property(e => e.WardCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.User).WithMany(p => p.UserAddresses)
                 .HasForeignKey(d => d.UserId)

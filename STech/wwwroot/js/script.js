@@ -39,7 +39,9 @@ const closeFormErrorWithTimeout = (form) => {
 }
 
 const clearFormInput = (form) => {
-    form.find('input').val('');
+    form.find('input').not('[type="radio"], [type="checkbox"]').val('').trigger('change');
+    form.find('select').val('').trigger('change');
+    form.find('textarea').val('').trigger('change');
 }
 
 const showDialog = (type, title, message) => {
@@ -596,17 +598,19 @@ $("#search").keyup(function () {
 
 //-----------------------------------------------------------------------
 function checkInputValid(_input) {
-    if (_input.val().length > 0) {
-        _input.addClass('input-valid');
-    }
-    else {
-        _input.removeClass('input-valid');
+    if (_input) {
+        if (_input.val().length > 0) {
+            _input.addClass('input-valid');
+        }
+        else {
+            _input.removeClass('input-valid');
+        }
     }
 }
 
-const inputArr = $('.form-input').toArray();
+const inputArr = $('.form-input').not('select').toArray();
 inputArr.forEach((input) => {
-    var _input = $(input);
+    const _input = $(input);
 
     _input.on({
         focus: () => { checkInputValid(_input) },
@@ -635,7 +639,7 @@ $('.bottom-nav-account').click(() => {
 
 $('.close-form').mousedown(function () {
     $(this).closest('.form-container').removeClass('show');
-    clearFormInput($(this).find('form'))
+    clearFormInput($(this).closest('.form-container').find('form'))
 })
 
 $('.form-container').mousedown(function (e) {
@@ -649,9 +653,11 @@ $('.form-container').mousedown(function (e) {
     }
 })
 
-$('.form-container form').on('reset', function () {
+$('.form-container form').on('reset', function (e) {
+    e.preventDefault();
+
     $(this).closest('.form-container').removeClass('show');
-    clearFormInput($(this).find('form'));
+    clearFormInput($(this));
 })
 
 $('.to-login').mousedown(() => {

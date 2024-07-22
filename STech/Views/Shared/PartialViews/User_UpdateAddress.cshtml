@@ -5,7 +5,7 @@
         <div class="close-form">
             <i class="fa-solid fa-xmark"></i>
         </div>
-        <h3 class="text-center mt-3 mb-4 fw-semibold">Thêm địa chỉ mới</h3>
+        <h3 class="text-center mt-3 mb-4 fw-semibold">Cập nhật địa chỉ</h3>
         <form class="form-update-address">
             <input type="hidden" id="AddressId" />
             <div>
@@ -16,14 +16,14 @@
                     <div>
                         <div>
                             <div class="form-input-box">
-                                <input asp-for="@Model.RecipientName" type="text" class="form-input" />
+                                <input asp-for="@Model.RecipientName" type="text" id="UpdateRecipientName" class="form-input" />
                                 <label class="input-label">Họ tên</label>
                             </div>
                             <span asp-validation-for="@Model.RecipientName"></span>
                         </div>
                         <div>
                             <div class="form-input-box">
-                                <input asp-for="@Model.RecipientPhone" type="text" class="form-input" />
+                                <input asp-for="@Model.RecipientPhone" type="text" id="UpdateRecipientPhone" class="form-input" />
                                 <label class="input-label">Số điện thoại</label>
                             </div>
                             <span asp-validation-for="@Model.RecipientPhone"></span>
@@ -37,7 +37,7 @@
                     <div>
                         <div>
                             <div class="form-input-box">
-                                <select asp-for="@Model.CityCode" class="form-input" id="city-select">
+                                <select asp-for="@Model.CityCode" class="form-input" id="update-city-select" name="city-select">
                                     @await Component.InvokeAsync("SelectOptions")
                                 </select>
                             </div>
@@ -45,7 +45,7 @@
                         </div>
                         <div>
                             <div class="form-input-box">
-                                <select asp-for="@Model.DistrictCode" class="form-input" id="district-select">
+                                <select asp-for="@Model.DistrictCode" class="form-input" id="update-district-select" name="district-select">
                                     <option value="" selected>Chọn quận/huyện</option>
                                 </select>
                             </div>
@@ -53,7 +53,7 @@
                         </div>
                         <div>
                             <div class="form-input-box">
-                                <select asp-for="@Model.WardCode" class="form-input" id="ward-select">
+                                <select asp-for="@Model.WardCode" class="form-input" id="update-ward-select" name="ward-select">
                                     <option value="" selected>Chọn xã/phường</option>
                                 </select>
                             </div>
@@ -61,7 +61,7 @@
                         </div>
                         <div>
                             <div class="form-input-box">
-                                <input asp-for="@Model.Address" type="text" class="form-input" />
+                                <input asp-for="@Model.Address" id="UpdateAddress" type="text" class="form-input" />
                                 <label class="input-label">Số nhà, địa chỉ</label>
                             </div>
                             <span asp-validation-for="@Model.Address"></span>
@@ -75,14 +75,14 @@
                     <div>
                         <div class="d-flex gap-3 mt-3">
                             <div>
-                                <input type="radio" value="home" id="address-home" name="address-type" hidden checked />
-                                <label for="address-home">
+                                <input type="radio" value="home" id="update-address-home" name="address-type" hidden checked />
+                                <label for="update-address-home">
                                     <span class="address-type cursor-pointer">Nhà riêng</span>
                                 </label>
                             </div>
                             <div>
-                                <input type="radio" value="office" id="address-office" name="address-type" hidden />
-                                <label for="address-office">
+                                <input type="radio" value="office" id="update-address-office" name="address-type" hidden />
+                                <label for="update-address-office">
                                     <span class="address-type cursor-pointer">Văn phòng</span>
                                 </label>
                             </div>
@@ -92,7 +92,7 @@
             </div>
             <div>
                 <div class="d-flex gap-2 mt-1">
-                    <button class="form-submit-btn page-btn-sm" type="submit">Thêm mới</button>
+                    <button class="form-submit-btn page-btn-sm" type="submit">Cập nhật</button>
                     <button class="form-reset-btn" type="reset">Hủy</button>
                 </div>
             </div>
