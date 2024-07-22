@@ -36,21 +36,21 @@
 /* -----------------------------------------*/
 :root {
     /*--color -------------*/
-    --primary-color: #e30019;
-    --primary-color-hover: #fba5a5;
+    --primary-color: #0652DD;
+    --primary-color-hover: #548ffa;
     --primary-color-1: #7d5fff;
-    --primary-color-2: #0652DD;
+    --primary-color-2: #e30019;
     --primary-color-3: #FC427B;
     --primary-color-4: #44bd32;
     --primary-color-1-hover: #af9dff;
-    --primary-color-2-hover: #548ffa;
+    --primary-color-2-hover: #fba5a5;
     --primary-color-3-hover: #ff96b6;
     --primary-color-4-hover: #7ffba9;
     --content-color-black: #000000;
     --content-color-white: #ffffff;
-    --header-btn-background: #be1529;
+    --header-btn-background: #387dfc;
     --header-btn-background-1: #5129ff;
-    --header-btn-background-2: #387dfc;
+    --header-btn-background-2: #be1529;
     --header-btn-background-3: #FD7272;
     --header-btn-background-4: #009432;
     /*--transition---------*/
@@ -58,7 +58,6 @@
     --trans-all-04: all .4s ease;
     --trans-all-03: all .3s ease;
     --trans-all-02: all .2s ease;
-
     --radius: 0.3rem;
 }
 
@@ -833,6 +832,7 @@ header {
             display: grid;
             place-items: center;
             font-size: 1.3rem;
+            color: #575757;
         }
 
         .page-input input {
@@ -1739,7 +1739,7 @@ input[name="theme"] {
 }
 
 .theme-color-1 {
-    background: #e30019;
+    background: #0652DD;
 }
 
 .theme-color-2 {

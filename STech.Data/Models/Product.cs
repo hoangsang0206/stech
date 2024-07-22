@@ -25,6 +25,14 @@ public partial class Product
 
     public string? BrandId { get; set; }
 
+    public bool? IsActive { get; set; }
+
+    public bool? IsDeleted { get; set; }
+
+    public DateTime? DateAdded { get; set; }
+
+    public DateTime? DateDeleted { get; set; }
+
     public virtual Brand? Brand { get; set; }
 
     public virtual Category? Category { get; set; }

@@ -17,6 +17,7 @@ namespace STech.Services.Services
         public async Task<IEnumerable<Product>> GetAll()
         {
             return await _context.Products
+                .Where(p => p.IsActive == true)
                 .Select(p => new Product()
                 {
                     ProductId = p.ProductId,
@@ -41,7 +42,7 @@ namespace STech.Services.Services
 
             string[] keywords = q.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             return await _context.Products
-                .Where(p => keywords.All(key =>  p.ProductName.Contains(key)))
+                .Where(p => keywords.All(key =>  p.ProductName.Contains(key)) && p.IsActive == true)
                 .Select(p => new Product()
                 {
                     ProductId = p.ProductId,
@@ -58,7 +59,7 @@ namespace STech.Services.Services
         public async Task<IEnumerable<Product>> GetByCategory(string categoryId)
         {
             return await _context.Products
-                .Where(p => p.CategoryId == categoryId)
+                .Where(p => p.CategoryId == categoryId && p.IsActive == true)
                 .Select(p => new Product()
                 {
                     ProductId = p.ProductId,
@@ -75,6 +76,7 @@ namespace STech.Services.Services
         public async Task<Product?> GetProduct(string id)
         {
             return await _context.Products
+                .Where(p => p.ProductId == id && p.IsActive == true)
                 .Select(p => new Product
                 {
                     ProductId = p.ProductId,
@@ -91,12 +93,13 @@ namespace STech.Services.Services
                     ManufacturedYear = p.ManufacturedYear,
                     Warranty = p.Warranty,
                 })
-                .FirstOrDefaultAsync(p => p.ProductId == id);
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Product?> GetProductWithBasicInfo(string id)
         {
             return await _context.Products
+                .Where(p => p.ProductId == id && p.IsActive == true)
                 .Select(p => new Product
                 {
                     ProductId = p.ProductId,
@@ -108,17 +111,18 @@ namespace STech.Services.Services
                     Brand = p.Brand,
                     Category = p.Category,
                 })
-                .FirstOrDefaultAsync(p => p.ProductId == id);
+                .FirstOrDefaultAsync();
         }
 
         public async Task<bool> CheckOutOfStock(string id)
         {
             Product product = await _context.Products
+                .Where(p => p.ProductId == id && p.IsActive == true)
                 .Select(p => new Product {
                     ProductId = p.ProductId,
                     WarehouseProducts = p.WarehouseProducts 
                 })
-                .FirstOrDefaultAsync(p => p.ProductId == id) 
+                .FirstOrDefaultAsync() 
                 ?? new Product();
 
             int totalQty = product.WarehouseProducts.Sum(p => p.Quantity);
@@ -129,11 +133,12 @@ namespace STech.Services.Services
         public async Task<int> GetTotalQty(string id)
         {
             Product product = await _context.Products
+                .Where(p => p.ProductId == id && p.IsActive == true)
                 .Select(p => new Product {
                     ProductId = p.ProductId,
                     WarehouseProducts = p.WarehouseProducts
                 })
-                .FirstOrDefaultAsync(p => p.ProductId == id)
+                .FirstOrDefaultAsync()
                 ?? new Product();
 
             return product.WarehouseProducts

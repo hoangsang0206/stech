@@ -33,7 +33,7 @@ namespace STech.Services.Services
                 {
                     CategoryId = c.CategoryId,
                     CategoryName = c.CategoryName,
-                    Products = c.Products.OrderBy(p => Guid.NewGuid()).Select(p => new Product()
+                    Products = c.Products.Where(p => p.IsActive == true).OrderBy(p => Guid.NewGuid()).Select(p => new Product()
                     {
                         ProductId = p.ProductId,
                         ProductName = p.ProductName,

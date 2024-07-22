@@ -36,7 +36,7 @@
                     <div>
                         <div>
                             <div class="form-input-box">
-                                <select asp-for="@Model.CityCode" class="form-input" id="city-select" name="city-select">
+                                <select asp-for="@Model.CityCode" class="form-input city-select" id="city-select">
                                     @await Component.InvokeAsync("SelectOptions")
                                 </select>
                             </div>
@@ -44,7 +44,7 @@
                         </div>
                         <div>
                             <div class="form-input-box">
-                                <select asp-for="@Model.DistrictCode" class="form-input" id="district-select" name="district-select">
+                                <select asp-for="@Model.DistrictCode" class="form-input district-select" id="district-select">
                                     <option value="" selected>Chọn quận/huyện</option>
                                 </select>
                             </div>
@@ -52,7 +52,7 @@
                         </div>
                         <div>
                             <div class="form-input-box">
-                                <select asp-for="@Model.WardCode" class="form-input" id="ward-select" name="ward-select">
+                                <select asp-for="@Model.WardCode" class="form-input ward-select" id="ward-select">
                                     <option value="" selected>Chọn xã/phường</option>
                                 </select>
                             </div>

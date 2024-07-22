@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Azure.Storage.Blobs;
 using STech.Utils;
 using STech.Services.Services;
+using STech.Services.Utils;
 
 namespace STech.ApiControllers
 {
@@ -177,6 +178,47 @@ namespace STech.ApiControllers
                     return Ok(new ApiResponse
                     {
                         Status = true,
+                    });
+                }
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPut("password"), Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordVM password)
+        {
+            if(ModelState.IsValid)
+            {
+                string? userId = User.FindFirstValue("Id");
+                if (userId == null)
+                {
+                    return BadRequest();
+                }
+
+                User? user = await _userService.GetUserById(userId);
+                if (user == null)
+                {
+                    return BadRequest();
+                }
+
+                if (user.PasswordHash != password.OldPassword.HashPasswordMD5(user.RandomKey))
+                {
+                    return Ok(new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Mật khẩu cũ không đúng"
+                    });
+                }
+
+                user.PasswordHash = password.ConfirmPassword.HashPasswordMD5(user.RandomKey);
+
+                if (await _userService.UpdateUser(user))
+                {
+                    return Ok(new ApiResponse
+                    {
+                        Status = true,
+                        Message = "Đổi mật khẩu thành công"
                     });
                 }
             }

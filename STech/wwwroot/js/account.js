@@ -135,12 +135,12 @@ $('.form-update-user').submit(function (e) {
             success: (response) => {
                 if (response.status) {
                     $('.user-fullname').text(fullname);
-                    $('.user_email').text(email);
+                    $('.user-email').text(email);
                     closeFormError(this);
                     showDialog('info', 'Cập nhật thành công', null);
                 } else {
                     const str = `<span>
-                <i class="fa-solid fa-circle-exclamation"></i>`
+                        <i class="fa-solid fa-circle-exclamation"></i>`
                         + response.message + `</span>`;
                     showFormError(this, str);
                     closeFormErrorWithTimeout(this);
@@ -155,6 +155,54 @@ $('.form-update-user').submit(function (e) {
         })
     }
 })
+
+
+$('.form-change-password').submit(function (e) {
+    e.preventDefault();
+
+    const oldPassword = $(this).find('#old-password').val();
+    const newPassword = $(this).find('#new-password').val();
+    const confirmPassword = $(this).find('#confirm-new-password').val();
+
+    if (oldPassword && newPassword && confirmPassword) {
+        const submitBtn = $(e.target).find('.form-submit-btn');
+        const btnHtml = showButtonLoader(submitBtn, '23px', '4px')
+
+        $.ajax({
+            type: 'PUT',
+            url: '/api/account/password',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                OldPassword: oldPassword,
+                NewPassword: newPassword,
+                ConfirmPassword: confirmPassword
+            }),
+            success: (response) => {
+                if (response.status) {
+                    closeFormError(this);
+                    showDialog('info', 'Đổi mật khẩu thành công', null);
+
+                    $(this).find('#old-password').val('');
+                    $(this).find('#new-password').val('');
+                    $(this).find('#confirm-new-password').val('');
+                } else {
+                    const str = `<span>
+                        <i class="fa-solid fa-circle-exclamation"></i>`
+                        + response.message + `</span>`;
+                    showFormError(this, str);
+                    closeFormErrorWithTimeout(this);
+                }
+
+                hideButtonLoader(submitBtn, btnHtml);
+            },
+            error: () => {
+                showErrorDialog();
+                hideButtonLoader(submitBtn, btnHtml);
+            }
+        })
+    }
+})
+
 
 let cropper;
 const showCropper = (image) => {
@@ -293,7 +341,6 @@ $('.form-upload-image').submit(function (e) {
 $('.form-upload-image').on('reset', function () {
     hideFormUploadImage();
 })
-
 
 
 const loadUserAddresses = () => {
@@ -491,7 +538,7 @@ $(document).on('click', '.delete-address', function () {
     const addressId = $(this).data('address');
     if (addressId) {
         Swal.fire({
-            icon: 'info',
+            icon: 'question',
             title: 'Xoá địa chỉ này?',
             showConfirmButton: true,
             showCancelButton: true,
@@ -514,4 +561,14 @@ $(document).on('click', '.delete-address', function () {
             }
         })
     }
+})
+
+tippy('.update-address', {
+    content: 'Cập nhật địa chỉ',
+    placement: 'top'
+})
+
+tippy('.delete-address', {
+    content: 'Xóa địa chỉ',
+    placement: 'top'
 })

@@ -148,7 +148,10 @@
             </div>
 
             <div class="account-content" data-sidebar="password">
-                @await Html.PartialAsync("PartialViews/User_ChangePassword")
+                <div class="account-content-header mb-4">
+                    <h4 class="m-0">Đổi mật khẩu</h4>
+                </div>
+                @await Html.PartialAsync("PartialViews/User_ChangePassword", new ChangePasswordVM())
             </div>
         </div>
     </div>

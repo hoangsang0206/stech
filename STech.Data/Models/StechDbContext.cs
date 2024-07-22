@@ -415,7 +415,10 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.CategoryId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.DateAdded).HasColumnType("datetime");
+            entity.Property(e => e.DateDeleted).HasColumnType("datetime");
             entity.Property(e => e.Description).HasColumnType("text");
+            entity.Property(e => e.IsActive).HasDefaultValue(false);
             entity.Property(e => e.OriginalPrice).HasColumnType("decimal(18, 0)");
             entity.Property(e => e.Price).HasColumnType("decimal(18, 0)");
             entity.Property(e => e.ProductName).HasMaxLength(200);

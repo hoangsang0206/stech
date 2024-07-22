@@ -130,11 +130,11 @@ $(document).ready(() => {
 })
 
 $('input[name="theme"]').on('change', (e) => {
-    var colorValue = $(e.target).val();
+    const colorValue = $(e.target).val();
 
     if (colorValue == "theme-1") {
-        changeThemeColor('#e30019', '#fba5a5', '#be1529');
-        saveColorToLocalStorage('#e30019', '#fba5a5', '#be1529', 'theme-1');
+        changeThemeColor('#0652DD', '#548ffa', '#387dfc');
+        saveColorToLocalStorage('#0652DD', '#548ffa', '#387dfc', 'theme-1');
     }
     else if (colorValue == "theme-2") {
         changeThemeColor('var(--primary-color-1)', 'var(--primary-color-1-hover)', 'var(--header-btn-background-1)');
