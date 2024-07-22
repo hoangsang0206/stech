@@ -15,6 +15,7 @@ namespace STech.Data.ViewModels
             public string slug { get; set; } = null!;
             public string name_with_type { get; set; } = null!;
             public string code { get; set; } = null!;
+            public List<District> districts { get; set; } = new List<District>();
         }
 
         public class District
@@ -27,6 +28,7 @@ namespace STech.Data.ViewModels
             public string path_with_type { get; set; } = null!;
             public string code { get; set; } = null!;
             public string parent_code { get; set; } = null!;
+            public List<Ward> wards { get; set; } = new List<Ward>();
         }
 
         public class Ward

@@ -12,12 +12,18 @@ namespace STech.Services
     {
         Task<User?> GetUser(LoginVM login);
         Task<User?> GetUserById(string id);
-        Task<UserAddress?> GetUserMainAddress(string id);
-        Task<IEnumerable<UserAddress>> GetUserAddress(string id);
         Task<bool> IsExist(string username);
         Task<bool> IsEmailExist(string email);
         Task<bool> IsEmailExist(string userId, string email);
         Task<bool> CreateUser(RegisterVM register);
         Task<bool> UpdateUser(User user);
+
+        Task<UserAddress?> GetUserMainAddress(string id);
+        Task<IEnumerable<UserAddress>> GetUserAddress(string userId);
+        Task<UserAddress?> GetUserAddress(string userId, int addressId);
+        Task<bool> CreateUserAddress(UserAddress address);
+        Task<bool> UpdateUserAddress(UserAddress address);
+        Task<bool> SetDefaultAddress(string userId, int id);
+        Task<bool> DeleteUserAddress(string userId, int id);
     }
 }

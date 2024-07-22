@@ -25,6 +25,16 @@ namespace STech.Services.Services
             LoadCities().Wait();
             LoadDistricts().Wait();
             LoadWards().Wait();
+
+            Cities.ForEach(city =>
+            {
+                city.districts = Districts.Where(d => d.parent_code == city.code).ToList();
+            });
+
+            Districts.ForEach(district =>
+            {
+                district.wards = Wards.Where(w => w.parent_code == district.code).ToList();
+            });
         }
 
         private async Task<List<T>?> ReadJson<T>(string relativePath)

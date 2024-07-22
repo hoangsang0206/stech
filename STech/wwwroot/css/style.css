@@ -637,6 +637,8 @@ header {
     visibility: hidden;
     place-items: center;
     z-index: 30;
+    cursor: pointer;
+    transition: var(--trans-all-04);
 }
 
 .cursor-pointer {
@@ -659,20 +661,24 @@ header {
     opacity: 0;
     visibility: hidden;
     overflow: auto;
-}
-
-.form-container.show .form-box {
-    opacity: 1;
-    visibility: visible;
     transition: var(--trans-all-04);
 }
+
+    .form-box > h3 {
+        font-size: 1.5rem;
+    }
+
+    .form-container.show .form-box {
+        opacity: 1;
+        visibility: visible;
+    }
 
 .form-bottom {
     margin-top: 1rem;
 }
 
 .form-header {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 1.5rem !important;
 }
@@ -759,7 +765,8 @@ header {
     padding: 0.3rem 0;
 }
 
-.field-validation-error span {
+.field-validation-error span,
+.field-validation-valid span{
     margin: 0.3rem 0;
     color: #e30019;
     font-size: 0.85rem !important;
@@ -780,7 +787,7 @@ header {
     outline: none;
     padding: 0.6rem 1.2rem;
     border-radius: 0.3rem;
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
     .form-input:focus ~ .input-label, .form-input.input-valid ~ .input-label {
@@ -798,9 +805,9 @@ header {
 }
 
 .form-group-header {
-    font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 1rem 0 0 0;
 }
 
 .page-input-box {

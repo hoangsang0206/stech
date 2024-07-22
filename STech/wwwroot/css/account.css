@@ -130,6 +130,13 @@
     transition: opacity .5s ease;
 }
 
+.account-content-box {
+    width: 100%;
+    max-height: 40rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 
 .user-image {
     width: 6rem;
@@ -230,6 +237,28 @@
 
 }
 
-.add-address .form-box {
+.add-address .form-box,
+.update-address .form-box {
     width: 35rem;
+}
+
+.address-type {
+    padding: 0.6rem;
+    border-radius: var(--radius);
+    border: 1px solid #cfcfcf;
+    color: var(--content-color-black);
+    text-decoration: none;
+}
+
+input[name="address-type"]:checked ~ label > .address-type {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.address-default {
+    padding: 0.2rem 0.3rem;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: var(--radius);
 }

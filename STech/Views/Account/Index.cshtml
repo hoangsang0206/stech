@@ -4,6 +4,7 @@
     ViewData["Title"] = "Tài khoản - STech";
 
     User user = Model.Item1;
+    IEnumerable<UserAddress> userAddresses = user.UserAddresses;
 }
 
 @* @await Html.PartialAsync("PartialViews/Breadcrumb", Model.Item2) *@
@@ -13,31 +14,31 @@
         <nav class="account-sidebar">
             <ul class="p-0 m-0">
                 <li>
-                    <a href="javascript:void(0)" class="account-sidebar-item active d-flex gap-2 align-items-center" data-sidebar="profile">
+                    <a href="#profile" class="account-sidebar-item active d-flex gap-2 align-items-center" data-sidebar="profile">
                         <i class="fa-solid fa-user"></i>
                         <span>Tổng quan</span>
                     </a>
                 </li>
                 <li>
-                    <a href="javascript:void(0)" class="account-sidebar-item d-flex gap-2 align-items-center" data-sidebar="addresses">
+                    <a href="#addresses" class="account-sidebar-item d-flex gap-2 align-items-center" data-sidebar="addresses">
                         <i class="fa-solid fa-map-location-dot"></i>
                         <span>Địa chỉ</span>
                     </a>
                 </li>
                 <li>
-                    <a href="javascript:void(0)" class="account-sidebar-item d-flex gap-2 align-items-center" data-sidebar="orders">
+                    <a href="#orders" class="account-sidebar-item d-flex gap-2 align-items-center" data-sidebar="orders">
                         <i class="fa-solid fa-receipt"></i>
                         <span>Đơn hàng</span>
                     </a>
                 </li>
                 <li>
-                    <a href="javascript:void(0)" class="account-sidebar-item d-flex gap-2 align-items-center" data-sidebar="reviews">
+                    <a href="#reviews" class="account-sidebar-item d-flex gap-2 align-items-center" data-sidebar="reviews">
                         <i class="fa-solid fa-star-half-stroke"></i>
                         Đánh giá
                     </a>
                 </li>
                 <li>
-                    <a href="javascript:void(0)" class="account-sidebar-item d-flex gap-2 align-items-center" data-sidebar="password">
+                    <a href="#password" class="account-sidebar-item d-flex gap-2 align-items-center" data-sidebar="password">
                         <i class="fa-solid fa-lock"></i>
                         <span>Đổi mật khẩu</span>
                     </a>
@@ -54,7 +55,7 @@
     <div class="col-12 col-sm-12 col-lg-9 p-0">
         <div class="account-content-wrapper">
             <div class="account-content current" data-sidebar="profile">
-                <div class="d-flex gap-3">
+                <div class="d-flex gap-4">
                     <div class="user-image-wrapper position-relative">
                         <div class="user-image">
                             <img src="@(user.Avatar ?? "/images/no-image.jpg")" />
@@ -86,22 +87,54 @@
                         <span>Thêm địa chỉ</span>
                     </button>
                 </div>
-                <div class="user-address-list">
-                    @foreach (UserAddress address in user.UserAddresses)
+                <hr />
+                <div class="user-address-list account-content-box">
+                    @foreach (UserAddress address in userAddresses)
                     {
-                        <div class="row">
-                            <div class="col-8">
+                        bool isDefault = Convert.ToBoolean(address.IsDefault);
+                        <div class="row mt-2">
+                            <div class="col-8 col-sm-9 d-flex flex-column justify-content-center">
+                                <div class="d-flex align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        @(isDefault ? Html.Raw("<div class=\"address-default me-2\">Mặc định</div>") : "") 
+                                        <span class="fw-bold">@address.RecipientName</span>
+                                    </div> 
+                                    &nbsp; | &nbsp;
+                                    <span class="fw-bold text-secondary">@address.RecipientPhone</span>
+                                </div>
+                                <div class="mt-2">
+                                    @($"{address.Address}, {address.Ward}, {address.District}, {address.Province}")
+                                </div>
                             </div>
-                            <div class="col-4">
-                                <div class="d-flex gap-2">
-                                    <a href="javascript:void(0)" class="update-address text-primary">Cập nhật</a>
-                                    <a href="javascript:void(0)" class="delete-address text-danger">Xóa</a>
-                                </div>
-                                <div>
-                                    <a href="javascript:void(0)" class="set-address-default btn-primary-ouline">Đặt làm mặc định</a>
-                                </div>
+                            <div class="col-4 col-sm-3 d-flex flex-column align-items-end">
+                                @if (!isDefault)
+                                {
+                                    <div class="d-flex gap-1">
+                                        <button class="update-address btn btn-info text-white" data-address="@address.Id">
+                                            <i class="fa-regular fa-pen-to-square" style="font-size: 0.9rem"></i>
+                                        </button>
+                                        <button class="delete-address btn btn-danger" data-address="@address.Id">
+                                            <i class="fa-regular fa-trash-can" style="font-size: 0.9rem"></i>
+                                        </button>
+                                    </div>
+                                    <div class="mt-1">
+                                        <button class="set-address-default btn btn-outline-success" style="font-size: 0.9rem" data-address="@address.Id">
+                                            Đặt làm mặc định
+                                        </button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <button class="update-address btn btn-info text-white" data-address="@address.Id">
+                                            <i class="fa-regular fa-pen-to-square" style="font-size: 0.9rem"></i>
+                                        </button>
+                                    </div>
+                                }
                             </div>
                         </div>
+
+                        <hr />
                     }
                 </div>
             </div>
@@ -115,12 +148,36 @@
             </div>
 
             <div class="account-content" data-sidebar="password">
-                @await Html.PartialAsync("PartialViews/User_ChangePassword");
+                @await Html.PartialAsync("PartialViews/User_ChangePassword")
             </div>
         </div>
     </div>
 
 
     @await Html.PartialAsync("PartialViews/User_UploadImage")
-    @await Html.PartialAsync("PartialViews/User_AddAddress")
+    @await Html.PartialAsync("PartialViews/User_AddAddress", new AddAddressVM())
+    @await Html.PartialAsync("PartialViews/User_UpdateAddress", new AddAddressVM())
+
+    <script>
+        const showContent = () => {
+            const idFromUrl = window.location.hash.substring(1);
+            if (idFromUrl.length > 0) {
+                document.querySelectorAll('.account-content').forEach(function (element) {
+                    element.classList.remove('current');
+                });
+                document.querySelector(`.account-content[data-sidebar="${idFromUrl}"]`).classList.add('current');
+
+                document.querySelectorAll('.account-sidebar-item').forEach(function (element) {
+                    element.classList.remove('active');
+                });
+                document.querySelector(`.account-sidebar-item[data-sidebar="${idFromUrl}"]`).classList.add('active');
+            }
+        }
+
+        showContent();
+
+        window.addEventListener('hashchange', () => {
+            showContent();
+        })
+    </script>
 </section>

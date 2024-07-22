@@ -9,6 +9,8 @@ namespace STech.Data.ViewModels
 {
     public class AddAddressVM
     {
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "* Địa chỉ không để trống")]
         public string Address { get; set; } = null!;
 
@@ -25,10 +27,10 @@ namespace STech.Data.ViewModels
         public string Type { get; set; } = "home";
 
         [Required(ErrorMessage = "* Tên người nhận không để trống")]
-        public string Recipient { get; set; } = null!;
+        public string RecipientName { get; set; } = null!;
 
         [Required(ErrorMessage = "* Số điện thoại không để trống")]
         [RegularExpression(@"^(0[1-9]\d{8,9})$|^(84[1-9]\d{8,9})$|^\+84[1-9]\d{8,9}$", ErrorMessage = "* Số điện thoại không hợp lệ")]
-        public string Phone { get; set; } = null!;
+        public string RecipientPhone { get; set; } = null!;
     }
 }

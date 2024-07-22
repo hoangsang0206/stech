@@ -101,7 +101,7 @@ $('.account-sidebar-item').click(function () {
     const sidebar = $(this).data('sidebar');
 
     $('.account-content').removeClass('current');
-    $(`[data-sidebar="${sidebar}"]`).addClass('current');
+    $(`.account-content[data-sidebar="${sidebar}"]`).addClass('current');
 
     $('.account-sidebar-item').removeClass('active');
     $(this).addClass('active');
@@ -290,11 +290,158 @@ $('.form-upload-image').submit(function (e) {
     }
 })
 
-$('.form-upload-image').on('reset', function() {
+$('.form-upload-image').on('reset', function () {
     hideFormUploadImage();
 })
 
 
+
+const loadUserAddresses = () => {
+    showWebLoader();
+    $.ajax({
+        type: 'GET',
+        url: '/api/account/address',
+        success: (response) => {
+            if (response.status) {
+                $('.user-address-list').empty();
+                response.data.map(address => {
+                    const isDefault = address.isDefault;
+                    $('.user-address-list').append(`
+                        <div class="row mt-2">
+                            <div class="col-8 col-sm-9 d-flex flex-column justify-content-center">
+                                <div class="d-flex align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        ${isDefault ? `<div class="address-default me-2">Mặc định</div>` : ''}
+                                        <span class="fw-bold">${address.recipientName}</span>
+                                    </div> 
+                                    &nbsp; | &nbsp;
+                                    <span class="fw-bold text-secondary">${address.recipientPhone}</span>
+                                </div>
+                                <div class="mt-2">
+                                    ${address.address}, ${address.ward}, ${address.district}, ${address.province}
+                                </div>
+                            </div>
+                            <div class="col-4 col-sm-3 d-flex flex-column align-items-end">
+                                ${!isDefault ?
+                                    `<div class="d-flex gap-1">
+                                        <button class="update-address btn btn-info text-white" data-address="${address.id}">
+                                            <i class="fa-regular fa-pen-to-square" style="font-size: 0.9rem"></i>
+                                        </button>
+                                        <button class="delete-address btn btn-danger" data-address="${address.id}">
+                                            <i class="fa-regular fa-trash-can" style="font-size: 0.9rem"></i>
+                                        </button>
+                                    </div>
+                                    <div class="mt-1">
+                                        <button class="set-address-default btn btn-outline-success" style="font-size: 0.9rem" data-address="${address.id}">
+                                            Đặt làm mặc định
+                                        </button>
+                                    </div>`
+                                    :
+                                    `<div>
+                                        <button class="update-address btn btn-info text-white" data-address="${address.id}">
+                                            <i class="fa-regular fa-pen-to-square" style="font-size: 0.9rem"></i>
+                                        </button>
+                                    </div>`
+                                    }
+                            </div>
+                        </div >
+                        <hr />
+                    `);
+                })
+            }
+
+            hideWebLoader();
+        }
+    })
+}
+
 $('.btn-add-address').click(() => {
     $('.add-address').addClass('show');
+})
+
+$('.form-add-address').submit(function (e) {
+    e.preventDefault();
+
+    const recipientName = $(this).find('#RecipientName').val();
+    const recipientPhone = $(this).find('#RecipientPhone').val();
+    const cityCode = $(this).find('#city-select').val();
+    const districtCode = $(this).find('#district-select').val();
+    const wardCode = $(this).find('#ward-select').val();
+    const address = $(this).find('#Address').val();
+    const addressType = $(this).find('input[name="address-type"]:checked').val();
+
+    if (recipientName && recipientPhone && cityCode && districtCode && wardCode && address && addressType) {
+        $.ajax({
+            type: 'POST',
+            url: '/api/account/address',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                RecipientName: recipientName,
+                RecipientPhone: recipientPhone,
+                CityCode: cityCode,
+                DistrictCode: districtCode,
+                WardCode: wardCode,
+                Address: address,
+            }),
+            success: (response) => {
+                if (response.status) {
+                    $(this).closest('.form-container').removeClass('show');
+                    clearFormInput($(this))
+                    loadUserAddresses();
+                }
+            },
+            error: () => {
+                showErrorDialog();
+            }
+        })
+    }
+})
+
+$(document).on('click', '.set-address-default', function () {
+    const addressId = $(this).data('address');
+    if (addressId) {
+        $.ajax({
+            type: 'PUT',
+            url: `/api/account/address/default/${addressId}`,
+            success: (response) => {
+                if (response.status) {
+                    loadUserAddresses();
+                }
+            },
+            error: () => {
+                showErrorDialog();
+            }
+        })
+    }
+})
+
+
+
+$(document).on('click', '.delete-address', function () {
+    const addressId = $(this).data('address');
+    if (addressId) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Xoá địa chỉ này?',
+            showConfirmButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'DELETE',
+                    url: `/api/account/address/${addressId}`,
+                    success: (response) => {
+                        if (response.status) {
+                            loadUserAddresses();
+                        }
+                    },
+                    error: () => {
+                        showErrorDialog();
+                    }
+                })
+            }
+        })
+    }
 })

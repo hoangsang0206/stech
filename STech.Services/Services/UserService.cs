@@ -16,6 +16,8 @@ namespace STech.Services.Services
         private readonly StechDbContext _context;
         public UserService(StechDbContext context) => _context = context;
 
+        #region User
+
         public async Task<User?> GetUser(LoginVM login)
         {
             User? user = await _context.Users
@@ -33,17 +35,6 @@ namespace STech.Services.Services
         {
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.UserId == id);
-        }
-
-        public async Task<UserAddress?> GetUserMainAddress(string id)
-        {
-            return await _context.UserAddresses
-                .FirstOrDefaultAsync (u => u.UserId == id && u.IsDefault != null && u.IsDefault.Value);
-        }
-
-        public async Task<IEnumerable<UserAddress>> GetUserAddress(string id)
-        {
-            return await _context.UserAddresses.Where(u => u.UserId == id).ToListAsync();
         }
 
         public async Task<bool> IsExist(string username)
@@ -95,6 +86,72 @@ namespace STech.Services.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
+        #endregion
 
+
+        #region UserAddresses
+
+        public async Task<UserAddress?> GetUserMainAddress(string id)
+        {
+            return await _context.UserAddresses
+                .FirstOrDefaultAsync(u => u.UserId == id && u.IsDefault != null && u.IsDefault.Value);
+        }
+
+        public async Task<IEnumerable<UserAddress>> GetUserAddress(string userId)
+        {
+            return await _context.UserAddresses.Where(u => u.UserId == userId).OrderBy(d => !d.IsDefault).ToListAsync();
+        }
+
+        public async Task<UserAddress?> GetUserAddress(string userId, int addressId)
+        {
+            return await _context.UserAddresses
+                .FirstOrDefaultAsync(u => u.UserId == userId && u.Id == addressId);
+        }
+
+        public async Task<bool> CreateUserAddress(UserAddress address)
+        {
+            _context.UserAddresses.Add(address);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> UpdateUserAddress(UserAddress address)
+        {
+            _context.UserAddresses.Update(address);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> SetDefaultAddress(string userId, int id)
+        {
+            UserAddress? address = await _context.UserAddresses
+                .FirstOrDefaultAsync(u => u.UserId == userId && u.Id == id);
+            UserAddress? mainAddress = await GetUserMainAddress(userId);
+
+            if (address != null)
+            {
+                if(mainAddress != null)
+                {
+                    mainAddress.IsDefault = false;
+                    _context.UserAddresses.Update(mainAddress);
+                }
+
+                address.IsDefault = true;
+
+                _context.UserAddresses.Update(address);
+                return await _context.SaveChangesAsync() > 0;
+            }
+            return false;
+        }
+
+        public async Task<bool> DeleteUserAddress(string userId, int id)
+        {
+            UserAddress? address = await _context.UserAddresses.FirstOrDefaultAsync(u => u.UserId == userId && u.Id == id);
+            if(address == null) return false;
+            if (Convert.ToBoolean(address.IsDefault)) return false;
+
+            _context.UserAddresses.Remove(address);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        #endregion
     }
 }

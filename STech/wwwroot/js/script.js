@@ -80,14 +80,14 @@ $(".categories-btn").click(() => {
     }
 });
 
-$(".hidden-menu").click((e) => {
+$(".hidden-menu").mousedown((e) => {
     if ($(e.target).closest('.sidebar').length <= 0) {
         $('.hidden-menu').removeClass("showHiddenMenu");
         $(".overlay").removeClass("showOverlay");
     }
 });
 
-$(".overlay").click(() => {
+$(".overlay").mousedown(() => {
     $(".hidden-menu").removeClass("showHiddenMenu");
     $(".overlay").removeClass("showOverlay");
 });
@@ -633,12 +633,12 @@ $('.bottom-nav-account').click(() => {
 
 //---
 
-$('.close-form').click(function () {
+$('.close-form').mousedown(function () {
     $(this).closest('.form-container').removeClass('show');
     clearFormInput($(this).find('form'))
 })
 
-$('.form-container').click(function (e) {
+$('.form-container').mousedown(function (e) {
     if ($(this).hasClass('edit-image') || $(this).hasClass('upload-image')) {
         return;
     }
@@ -654,13 +654,13 @@ $('.form-container form').on('reset', function () {
     clearFormInput($(this).find('form'));
 })
 
-$('.to-login').click(() => {
+$('.to-login').mousedown(() => {
     $('.register').removeClass('show');
     $('.login').addClass('show');
     clearFormInput($('.register'))
 })
 
-$('.to-register').click(() => {
+$('.to-register').mousedown(() => {
     $('.login').removeClass('show');
     $('.register').addClass('show');
     clearFormInput($('.login'))

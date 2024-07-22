@@ -28,17 +28,25 @@ namespace STech.ApiControllers
         [HttpGet("districts/{cityCode}"), Authorize]
         public IActionResult GetDistricts(string cityCode)
         {
-            IEnumerable<AddressVM.District>? districts = _addressService.Districts;
-            districts = districts?.Where(d => d.parent_code == cityCode);
-            return Ok(districts);
+            AddressVM.City? city = _addressService.Cities.FirstOrDefault(c => c.code == cityCode);
+            if(city == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(city.districts);
         }
 
         [HttpGet("wards/{districtCode}"), Authorize]
         public IActionResult GetWards(string districtCode)
         {
-            IEnumerable<AddressVM.Ward>? wards = _addressService.Wards;
-            wards = wards?.Where(w => w.parent_code == districtCode);
-            return Ok(wards);
+            AddressVM.District? district = _addressService.Districts.FirstOrDefault(d => d.code == districtCode);
+            if(district == null)
+            {
+                return BadRequest();
+            }   
+
+            return Ok(district.wards);
         }
     }
 }
