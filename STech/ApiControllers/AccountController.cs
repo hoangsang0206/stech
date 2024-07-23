@@ -10,6 +10,7 @@ using Azure.Storage.Blobs;
 using STech.Utils;
 using STech.Services.Services;
 using STech.Services.Utils;
+using System.Runtime.ConstrainedExecution;
 
 namespace STech.ApiControllers
 {
@@ -23,7 +24,8 @@ namespace STech.ApiControllers
         private readonly IConfiguration _configuration;
         private readonly AddressService _addressService;
 
-        public AccountController(IUserService userService, IConfiguration configuration, AddressService addressService)
+        public AccountController(IUserService userService, IConfiguration configuration, 
+            AddressService addressService)
         {
             _userService = userService;
             _configuration = configuration;
@@ -31,7 +33,7 @@ namespace STech.ApiControllers
         }
 
         #region User
-        private async Task SignIn(User user)
+        private async Task UserSignIn(User user)
         {
             IEnumerable<Claim> claims = new List<Claim>
                 {
@@ -71,7 +73,7 @@ namespace STech.ApiControllers
                     });
                 }
 
-                await SignIn(user);
+                await UserSignIn(user);
 
                 return Ok(new ApiResponse
                 {
@@ -124,7 +126,7 @@ namespace STech.ApiControllers
                         return BadRequest();
                     }
 
-                    await SignIn(user);
+                    await UserSignIn(user);
 
                     return Ok(new ApiResponse
                     {

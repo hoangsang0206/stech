@@ -6,7 +6,7 @@
 
 <form method="POST" class="form-update-user">
     <div class="row m-0 p-0">
-        <div class="col-12 col-sm-7">
+        <div class="col-12 col-sm-11 col-lg-8">
             <div class="page-input-box">
                 <label>Họ tên</label>
                 <div class="page-input">
@@ -16,11 +16,9 @@
                 <span asp-validation-for="Item2.FullName"></span>
             </div>
         </div>
-        <div class="col-12 col-sm-5">
-        </div>
     </div>
     <div class="row m-0 mt-1 p-0">
-        <div class="col-12 col-sm-7">
+        <div class="col-12 col-sm-11 col-lg-8">
             <div class="page-input-box">
                 <label>Ngày sinh</label>
                 <div class="page-input">
@@ -30,11 +28,9 @@
                 <span asp-validation-for="Item2.DOB"></span>
             </div>
         </div>
-        <div class="col-12 col-sm-5">
-        </div>
     </div>
     <div class="row m-0 mt-1 p-0">
-        <div class="col-12 col-sm-7">
+        <div class="col-12 col-sm-11 col-lg-8">
             <div class="page-input-box">
                 <label>Số điện thoại</label>
                 <div class="page-input">
@@ -44,17 +40,9 @@
                 <span asp-validation-for="Item2.PhoneNumber"></span>
             </div>
         </div>
-        <div class="col-12 col-sm-5">
-            @if (!Convert.ToBoolean(user.PhoneConfirmed))
-            {
-                @*  <div class="d-flex align-items-center h-100 pt-3">
-            <a href="javascript:void(0)" class="verify-infomation text-success fw-bold">Xác nhận</a>
-            </div> *@
-            }
-        </div>
     </div>
     <div class="row m-0 mt-1 p-0">
-        <div class="col-12 col-sm-7">
+        <div class="col-12 col-sm-11 col-lg-8">
             <div class="page-input-box">
                 <label>Email</label>
                 <div class="page-input">
@@ -64,17 +52,9 @@
                 <span asp-validation-for="Item2.Email"></span>
             </div>
         </div>
-        <div class="col-12 col-sm-5">
-            @if (!Convert.ToBoolean(user.EmailConfirmed))
-            {
-                @* <div class="d-flex align-items-center h-100 pt-3">
-            <a href="javascript:void(0)" class="verify-infomation text-success fw-bold">Xác nhận</a>
-            </div> *@
-            }
-        </div>
     </div>
     <div class="row m-0 mt-2 p-0">
-        <div class="col-12 col-sm-7">
+        <div class="col-12 col-sm-11 col-lg-8">
             <div class="d-flex align-items-center gap-4">
                 <div class="d-flex align-items-center gap-1">
                     <label class="cursor-pointer" for="gender-male" style="font-size: 1.1rem">Nam</label>
@@ -87,15 +67,12 @@
             </div>
             <span asp-validation-for="Item2.Gender"></span>
         </div>
-        <div class="col-12 col-sm-5">
-        </div>
     </div>
 
     <div class="row m-0 p-0">
-        <div class="col-12 col-sm-7">
+        <div class="col-12 col-sm-11 col-lg-8">
             <div class="mt-4 form-error"></div>
         </div>
-        <div class="col-12 col-sm-5 p-0 m-0"></div>
     </div>
 
     <button type="submit" class="form-submit-btn page-btn-sm mt-4">

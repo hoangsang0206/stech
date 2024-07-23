@@ -81,7 +81,7 @@
                 <div class="login-btn">
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
-                        <a href="/account" class="logged-link">
+                        <a href="/account" class="logged-in-link">
                             <span>@User.Identity.Name</span>
                         </a>
                         <div class="login-info-box account-logged position-absolute">

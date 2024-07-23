@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.OpenApi.Models;
@@ -31,12 +32,27 @@ builder.Services.AddControllersWithViews()
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie(options =>
 {
     options.LoginPath = new PathString("/");
     options.AccessDeniedPath = new PathString("/access-denied");
     options.ExpireTimeSpan = TimeSpan.FromDays(90);
-});
+})
+.AddFacebook(facebookOptions =>
+{
+    IConfigurationSection facebookAuthNSection = builder.Configuration.GetSection("Authentication:Facebook");
+
+    facebookOptions.AppId = facebookAuthNSection["AppId"] ?? "";
+    facebookOptions.AppSecret = facebookAuthNSection["AppSecret"] ?? "";
+    facebookOptions.CallbackPath = new PathString("/login-facebook");
+}); ;
+
 
 builder.Services.AddDbContext<StechDbContext>(options =>
 {
@@ -70,6 +86,8 @@ else
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseCors();
 
 app.UseAuthentication();
 

@@ -1,245 +1,112 @@
-﻿
+﻿@model Tuple<IEnumerable<UserCart>, IEnumerable<Breadcrumb>>
+
 @{
     ViewData["Title"] = "Giỏ hàng - STech";
 }
 
-@model IEnumerable<UserCart>
+@await Html.PartialAsync("Partialviews/Breadcrumb", Model.Item2)
 
-<section class="cart-wrapper">
-    <div class="container-fluid">
-        <div class="breadcrumb-cart">
-            <a href="/collections/all">
-                <i class="fa-solid fa-chevron-left"></i>
-                <span>Mua thêm sản phẩm khác</span>
-            </a>
-        </div>
-        <div class="cart-main">
+<section class="cart-page">
+        @if (Model.Item1.Count() > 0)
+        {
+            decimal totalPrice = 0;
 
-            <div class="checkout-steplist">
-                <div class="checkout-step step-1 step-active">
-                    <i class='bx bxs-shopping-bag-alt step-icon'></i>
-                    <span class="step-text">Giỏ hàng</span>
-                </div>
-                <div class="checkout-step step-2">
-                    <i class='bx bxs-id-card step-icon'></i>
-                    <span class="step-text">Thông tin đặt hàng</span>
-                </div>
-                <div class="checkout-step step-3">
-                    <i class='bx bxs-credit-card step-icon'></i>
-                    <span class="step-text">Thanh toán</span>
-                </div>
-                <div class="checkout-step step-4">
-                    <i class='bx bxs-check-shield step-icon'></i>
-                    <span class="step-text">Hoàn tất</span>
-                </div>
-            </div>
+            <div class="row m-0 p-0">
+                <div class="col-12 col-sm-9 m-0 p-0">
+                    <div class="row m-0 p-0 d-none d-md-flex">
+                        <div class="col-4">Sản phẩm</div>
+                        <div class="col-3">Đơn giá</div>
+                        <div class="col-2">Số lượng</div>
+                        <div class="col-3">Thành tiền</div>
+                    </div>
+                    @foreach(UserCart cart in Model.Item1)
+                    {
+                        if (cart.Product == null)
+                        {
+                            continue;
+                        }
 
-            <div class="cart-error">
+                        totalPrice += cart.Product.Price * cart.Quantity;
 
-            </div>
+                        ProductImage pImage = cart.Product.ProductImages.FirstOrDefault() ?? new ProductImage();
+                        string src = pImage.ImageSrc ?? "~/images/no-image.jpg";
 
-            @if (Model.Count() > 0)
-            {
-                <div class="cart-info d-none form-current" id="cart-info-box">
-                    <div class="cart-products-wrapper">
-                        @{
-                            decimal totalPrice = 0;
-                            foreach (UserCart cart in Model)
-                            {
-                                if(cart.Product == null)
-                                {
-                                    continue;
-                                }
+                        <div class="row m-0 p-0 d-none d-md-flex">
+                            <div class="col-4">
 
-                                totalPrice += cart.Product.Price * cart.Quantity;
+                            </div>
+                            <div class="col-3">
 
-                                ProductImage pImage = cart.Product.ProductImages.FirstOrDefault() ?? new ProductImage();
-                                string src = pImage.ImageSrc ?? "~/images/no-image.jpg";
+                            </div>
+                            <div class="col-2">
 
-                                <div class="cart-product-box d-flex">
-                                    <div class="cart-product-left d-flex flex-column align-items-center gap-2">
-                                        <a href="/product/@cart.ProductId">
-                                            <div class="cart-img">
-                                                <img src="@src" alt="@cart.ProductId" />
-                                            </div>
-                                        </a>
-                                        <a href="/cart/delete?id=@cart.ProductId" class="delete-cart-item d-flex gap-2 align-items-center">
-                                            <i class="fa-regular fa-trash-can"></i>
-                                            <span>Xóa</span>
-                                        </a>
-                                    </div>
-                                    <div class="cart-product-right d-flex justify-content-between">
-                                        <div class="cart-product-name">
-                                            <a href="/product/@cart.ProductId">
-                                                <h5>@cart.Product.ProductName</h5>
-                                            </a>
-                                        </div>
-                                        <div class="cart-product-price-quantity">
-                                            <div class="cart-product-price">
-                                                <h5>@(CurrencyFormatter.Format(cart.Product.Price))</h5>
-                                                @if (cart.Product.OriginalPrice > cart.Product.Price)
-                                                {
-                                                    <h6>@(CurrencyFormatter.Format(cart.Product.OriginalPrice))</h6>
-                                                }
-                                                else
-                                                {
-                                                    <h6 style="visibility: hidden">None</h6>
-                                                }
-                                            </div>
-                                            <div class="cart-product-quantity">
-                                                <button type="button" class="update-quantity decrease-qty"
-                                                        data-product="@cart.ProductId" data-update="minus">
-                                                    <i class="fa-solid fa-minus"></i>
-                                                </button>
-                                                <input type="number" name="quantity" value="@cart.Quantity" data-product="@cart.ProductId" min="1" />
-                                                <button type="button" class="update-quantity increase-qty"
-                                                        data-product="@cart.ProductId" data-update="plus">
-                                                    <i class="fa-solid fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div class="col-3">
+
+                            </div>
+                        </div>
+
+
+                    @* <div class="cart-product-box d-flex">
+                        <div class="cart-product-left d-flex flex-column align-items-center gap-2">
+                            <a href="/product/@cart.ProductId">
+                                <div class="cart-img">
+                                    <img src="@src" alt="@cart.ProductId" />
                                 </div>
-                            }
-                        }
-                    </div>
-                    <hr class="cart-hr" />
-                    <div class="cart-product-total d-flex flex-column gap-3">
-                        <div class="summary-shipping">
-                            <span class="s-shipping-title">Phí vận chuyển (dự kiến): </span>
-                            <span class="ship-price">Miễn phí</span>
+                            </a>
+                            <a href="/cart/delete?id=@cart.ProductId" class="delete-cart-item d-flex gap-2 align-items-center">
+                                <i class="fa-regular fa-trash-can"></i>
+                                <span>Xóa</span>
+                            </a>
                         </div>
-                        <div class="summary-price">
-                            <span class="s-price-title">Tổng tiền: </span>
-                            <span class="total-price">@(CurrencyFormatter.Format(totalPrice))đ</span>
-                        </div>
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
-                        {
-                            <button class="summary-action cart-summary-btn" onclick="window.location.href='#cart-order-box'">
-                                ĐẶT HÀNG NGAY
-                            </button>
-                        }
-                        else
-                        {
-                            <button class="summary-action not-logged-in">
-                                ĐẶT HÀNG NGAY
-                            </button>
-                        }
-                    </div>
-                </div>
-                if (User.Identity != null && User.Identity.IsAuthenticated)
-                {
-                    User? user = ViewBag.User as User;
-                    UserAddress? userAddress = ViewBag.Address as UserAddress;
-
-                    string address = "";
-                    string phone = "";
-                    string name = "";
-
-                    if(user != null)
-                    {
-                        phone = user.Phone ?? "";
-                        name = user.FullName ?? "";
-                    }
-
-                    if (userAddress != null)
-                    {
-                        address = $"{userAddress.Address}, {userAddress.Ward}, {userAddress.District}, {userAddress.Province}";
-
-                        if(userAddress.RecipientPhone != null)
-                        {
-                            phone = userAddress.RecipientPhone;
-                        }
-
-                        if(userAddress.RecipientName != null)
-                        {
-                            name = userAddress.RecipientName;
-                        }
-                    }
-
-                    <div class="cart-info d-none" id="cart-order-box">
-                        <div class="cart-order-wrapper">
-                            <div class="to-prev-step">
-                                <a href="#cart-info-box">
-                                    <i class="fa-solid fa-chevron-left"></i>
-                                    <span>Quay lại</span>
+                        <div class="cart-product-right d-flex justify-content-between">
+                            <div class="cart-product-name">
+                                <a href="/product/@cart.ProductId">
+                                    <h5>@cart.Product.ProductName</h5>
                                 </a>
                             </div>
-                            <div class="form-error mt-1 mb-2"></div>
-                            <form action="#" method="post" id="form-info-edit">
-                                <div class="cart-form">
-                                    <div class="cart-form-detail">
-                                        <div class="cart-form-header">
-                                            <h5>Thông tin khách mua hàng</h5>
-                                        </div>
-                                        <div class="cart-form-input my-4">
-                                            <div class="form-input-box position-relative d-flex align-items-center">
-                                                <input type="text" id="UserFullName" name="UserFullName" value="@phone" class="form-input" required />
-                                                <label for="UserFullName" class="input-label position-absolute">Họ tên</label>
-                                            </div>
-                                            <div class="form-input-box position-relative d-flex align-items-center">
-                                                <input type="text" id="PhoneNumber" name="PhoneNumber" value="@name" class="form-input" required />
-                                                <label for="PhoneNumber" class="input-label position-absolute">Số điện thoại</label>
-                                            </div>
-                                        </div>
-                                        <div class="cart-form-input-ship">
-                                            <div class="cart-form-header">
-                                                <h5>Chọn cách nhận hàng</h5>
-                                            </div>
-                                            <div class="checkbox-shipmethod my-3">
-                                                <input type="radio" id="cod-method" name="shipmethod" value="COD" checked />
-                                                <label for="cod-method">Giao hàng tận nơi</label>
-                                            </div>
-                                            <div class="input-ship-info">
-                                                <div class="form-input-box position-relative d-flex align-items-center">
-                                                    <input type="text" id="ship-address" name="ship-address" value="@address" class="form-input" required />
-                                                    <label for="ship-address" class="input-label position-absolute">Địa chỉ nhận hàng</label>
-                                                </div>
-                                            </div>
-                                            <div class="checkbox-shipmethod my-3">
-                                                <input type="radio" id="store-method" name="shipmethod" value="Store" />
-                                                <label for="store-method">Nhận tại cửa hàng</label>
-                                            </div>
-                                        </div>
-                                        <div class="cart-note my-3">
-                                            <div class="form-input-box position-relative d-flex align-items-center">
-                                                <input type="text" id="cart-note" name="cart-note" value="" class="form-input" />
-                                                <label for="cart-note" class="input-label position-absolute">Lưu ý, yêu cầu khác (không bắt buộc)</label>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="cart-product-price-quantity">
+                                <div class="cart-product-price">
+                                    <h5>@(CurrencyFormatter.Format(cart.Product.Price))</h5>
+                                    @if (cart.Product.OriginalPrice > cart.Product.Price)
+                                    {
+                                        <h6>@(CurrencyFormatter.Format(cart.Product.OriginalPrice))</h6>
+                                    }
+                                    else
+                                    {
+                                        <h6 style="visibility: hidden">None</h6>
+                                    }
                                 </div>
-                            </form>
-                        </div>
-                        <hr class="cart-hr" />
-                        <div class="cart-product-total d-flex flex-column gap-3">
-                            <div class="summary-shipping">
-                                <span class="s-shipping-title">Phí vận chuyển (dự kiến): </span>
-                                <span class="ship-price">Miễn phí</span>
+                                <div class="cart-product-quantity">
+                                    <button type="button" class="update-quantity decrease-qty"
+                                            data-product="@cart.ProductId" data-update="minus">
+                                        <i class="fa-solid fa-minus"></i>
+                                    </button>
+                                    <input type="number" name="quantity" value="@cart.Quantity" data-product="@cart.ProductId" min="1" />
+                                    <button type="button" class="update-quantity increase-qty"
+                                            data-product="@cart.ProductId" data-update="plus">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="summary-price">
-                                <span class="s-price-title">Tổng tiền: </span>
-                                <span class="total-price">@(CurrencyFormatter.Format(totalPrice))đ</span>
-                            </div>
-                            <button class="summary-action order-info-summary">
-                                ĐẶT HÀNG NGAY
-                            </button>
-                            <small class="text-center">Bạn có thể chọn hình thức thanh toán sau khi đặt hàng</small>
                         </div>
-                    </div>
-                }
-            }
-            else
-            {
-                <div class="cart-info">
-                    <div class="cart-empty d-flex flex-column align-items-center py-5">
-                        <p>Giỏ hàng của bạn đang trống</p>
-                        <button class="to-home-page-btn" onclick="window.location.href='/collections/all'">
-                            TIẾP TỤC MUA HÀNG
-                        </button>
-                    </div>
+                    </div> *@
+                    }
                 </div>
-            }
-        </div>
-    </div>
+                <div class="col-12 col-sm-3  m-0 p-0">
+
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="cart-info">
+                <div class="cart-empty d-flex flex-column align-items-center py-5">
+                    <p>Giỏ hàng của bạn đang trống</p>
+                    <button class="to-home-page-btn" onclick="window.location.href='/collections/all'">
+                        TIẾP TỤC MUA HÀNG
+                    </button>
+                </div>
+            </div>
+        }
 </section>

@@ -95,11 +95,6 @@ namespace STech.Controllers
                     await _cartService.RemoveListCart(cartToDelete);
                     cart = await _cartService.GetUserCart(userId);
                 }
-
-                User? user = await _userService.GetUserById(userId);
-                UserAddress? address = await _userService.GetUserMainAddress(userId);
-                ViewBag.User = user;
-                ViewBag.Address = address;
             }
             else
             {
@@ -148,7 +143,12 @@ namespace STech.Controllers
                 CartUtils.SaveCartToCookie(Response, cartFromCookie);
             }
 
-            return View(cart);
+            IEnumerable<Breadcrumb> breadcrumbs = new List<Breadcrumb>
+            {
+                new Breadcrumb("Giỏ hàng", "")
+            };
+
+            return View(new Tuple<IEnumerable<UserCart>, IEnumerable<Breadcrumb>>(cart, breadcrumbs));
         }
 
         public async Task<IActionResult> Delete(string id)

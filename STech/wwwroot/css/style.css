@@ -474,16 +474,16 @@ header {
     padding: 0.3rem 1rem;
 }
 
-.login-btn > a {
-    color: var(--content-color-white);
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    font-weight: 500;
-    font-size: 1.1rem;
-    overflow: hidden;
-}
+    .login-btn > a {
+        color: var(--content-color-white);
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        font-weight: 500;
+        font-size: 1rem;
+        overflow: hidden;
+    }
 
 
 .login-btn i {
@@ -492,22 +492,31 @@ header {
     overflow: unset;
 }
 
-.logged-link {
+.logged-in-link {
     padding: 0.5rem 0.2rem;
+    
 }
 
-.login-info-box {
-    top: calc(100% + 0.9rem);
-    right: 0;
-    min-width: 250%;
-    padding: 1.2rem 1rem 1.5rem 1rem;
-    background: var(--content-color-white);
-    border-radius: 0.2rem;
-    box-shadow: 1px 1px 5px #828282;
-    transform: scale(0);
-    opacity: 0;
-    transition: opacity .5s ease;
-}
+    .logged-in-link span {
+        text-overflow: ellipsis;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .login-info-box {
+        top: calc(100% + 0.9rem);
+        right: 0;
+        min-width: 250%;
+        padding: 1.2rem 1rem 1.5rem 1rem;
+        background: var(--content-color-white);
+        border-radius: 0.2rem;
+        box-shadow: 1px 1px 5px #828282;
+        transform: scale(0);
+        opacity: 0;
+        transition: opacity .5s ease;
+    }
 
 .login-info-box * {
     color: var(--content-color-black);

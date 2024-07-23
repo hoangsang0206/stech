@@ -37,6 +37,12 @@ namespace STech.Services.Services
                 .FirstOrDefaultAsync(u => u.UserId == id);
         }
 
+        public async Task<User?> GetUserByEmail(string email)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email);
+        }
+
         public async Task<bool> IsExist(string username)
         {
             User? user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
@@ -74,6 +80,36 @@ namespace STech.Services.Services
                 RandomKey = randomKey,
                 IsActive = true,
                 RoleId = role.RoleId,
+            };
+
+            await _context.Users.AddAsync(user);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> CreateUser(ExternalRegisterVM register)
+        {
+            string randomKey = UserUtils.GenerateRandomString(20);
+
+            Role? role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == "user");
+
+            if (role == null || role.RoleId == null)
+            {
+                return false;
+            }
+
+            User user = new User()
+            {
+                UserId = register.UserId,
+                Username = register.Email ?? UserUtils.GenerateRandomId(30),
+                PasswordHash = UserUtils.GenerateRandomString(20).HashPasswordMD5(randomKey),
+                Email = register.Email,
+                EmailConfirmed = register.EmailConfirmed,
+                RandomKey = randomKey,
+                FullName = register.FullName,
+                Avatar = register.Avatar,
+                IsActive = true,
+                RoleId = role.RoleId,
+                AuthenticationProvider = register.AuthenticationProvider
             };
 
             await _context.Users.AddAsync(user);

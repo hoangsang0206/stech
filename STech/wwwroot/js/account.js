@@ -35,7 +35,7 @@
                 window.location.href = response.data;
             }
         },
-        error: (jqXHR) => { }
+        error: (jqXHR) => {  }
     })
 })
 
@@ -76,6 +76,15 @@ $('.login form').submit(function (e) {
         },
         error: (jqXHR) => { }
     })
+})
+
+$('.external-login-btn').click(function () {
+    const provider = $(this).data('provider');
+    const returnUrl = window.location.href;
+
+    if (provider) {
+        window.location.href = `/account/externallogin?provider=${provider}&returnUrl=${returnUrl}`;
+    }
 })
 
 

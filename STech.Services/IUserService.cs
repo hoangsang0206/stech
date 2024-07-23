@@ -12,10 +12,12 @@ namespace STech.Services
     {
         Task<User?> GetUser(LoginVM login);
         Task<User?> GetUserById(string id);
+        Task<User?> GetUserByEmail(string email);
         Task<bool> IsExist(string username);
         Task<bool> IsEmailExist(string email);
         Task<bool> IsEmailExist(string userId, string email);
         Task<bool> CreateUser(RegisterVM register);
+        Task<bool> CreateUser(ExternalRegisterVM register);
         Task<bool> UpdateUser(User user);
 
         Task<UserAddress?> GetUserMainAddress(string id);
