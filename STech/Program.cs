@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -7,6 +9,7 @@ using STech.Data.Models;
 using STech.Services;
 using STech.Services.Services;
 using STech.Utils;
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,8 +53,26 @@ builder.Services.AddAuthentication(options =>
 
     facebookOptions.AppId = facebookAuthNSection["AppId"] ?? "";
     facebookOptions.AppSecret = facebookAuthNSection["AppSecret"] ?? "";
-    facebookOptions.CallbackPath = new PathString("/login-facebook");
-}); ;
+    facebookOptions.SaveTokens = true;
+    facebookOptions.ClaimActions.MapJsonKey("picture", "picture.data.url");
+    facebookOptions.Fields.Add("picture");
+
+    facebookOptions.Events.OnCreatingTicket = context =>
+    {
+        string picture = context.User.GetProperty("picture").GetProperty("data").GetProperty("url").GetString() ?? "";
+        context.Identity?.AddClaim(new Claim("picture", picture));
+        return Task.CompletedTask;
+    };
+})
+.AddGoogle(googleOptions =>
+{
+    IConfigurationSection facebookAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+
+    googleOptions.ClientId = facebookAuthNSection["ClientId"] ?? "";
+    googleOptions.ClientSecret = facebookAuthNSection["ClientSecret"] ?? "";
+    googleOptions.SaveTokens = true;
+    googleOptions.ClaimActions.MapJsonKey("picture", "picture");
+});
 
 
 builder.Services.AddDbContext<StechDbContext>(options =>
