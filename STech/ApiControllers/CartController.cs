@@ -174,6 +174,7 @@ namespace STech.ApiControllers
             string message = "";
             int updatedQty = qty;
             decimal totalPrice = 0;
+            decimal productTotalPrice = 0;
 
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
@@ -213,6 +214,7 @@ namespace STech.ApiControllers
                 IEnumerable<UserCart> userCart = await _cartService.GetUserCart(userId);
                 totalPrice = userCart.Sum(c => c.Quantity * c.Product.Price);
                 updatedQty = cart.Quantity;
+                productTotalPrice = updatedQty * product.Price;
             }
             else
             {
@@ -255,6 +257,7 @@ namespace STech.ApiControllers
                 }
 
                 updatedQty = cart.Quantity;
+                productTotalPrice = updatedQty * product.Price;
                 CartUtils.SaveCartToCookie(Response, cartFromCookie);
             }
 
@@ -262,7 +265,7 @@ namespace STech.ApiControllers
             {
                 Status = true,
                 Message = message,
-                Data = new { Quantity = updatedQty, TotalPrice = totalPrice }
+                Data = new { Quantity = updatedQty, TotalPrice = totalPrice, ProductTotalPrice = productTotalPrice }
             });
         }
 

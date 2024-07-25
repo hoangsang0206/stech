@@ -46,7 +46,7 @@ namespace STech.Utils
             response.Cookies.Delete(CART_KEY);
         }
 
-        public static int UpdateCartItemQuantity(string type, int oldQty, int newQty)
+        public static int UpdateCartItemQuantity(string? type, int oldQty, int newQty)
         {
             switch (type)
             {

@@ -689,21 +689,33 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Warehouse>(entity =>
         {
-            entity.HasKey(e => e.WarehouseId).HasName("PK__Warehous__2608AFF92AAFE38D");
+            entity.HasKey(e => e.WarehouseId).HasName("PK__Warehous__2608AFF9F444B510");
 
             entity.Property(e => e.WarehouseId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.Address).HasMaxLength(50);
             entity.Property(e => e.District).HasMaxLength(30);
+            entity.Property(e => e.DistrictCode)
+                .HasMaxLength(30)
+                .IsUnicode(false);
             entity.Property(e => e.Province).HasMaxLength(30);
+            entity.Property(e => e.ProvinceCode)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.Type)
+                .HasMaxLength(30)
+                .IsUnicode(false);
             entity.Property(e => e.Ward).HasMaxLength(50);
+            entity.Property(e => e.WardCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.WarehouseName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<WarehouseProduct>(entity =>
         {
-            entity.HasKey(e => new { e.WarehouseId, e.ProductId }).HasName("PK__Warehous__ED486395BE539A54");
+            entity.HasKey(e => new { e.WarehouseId, e.ProductId }).HasName("PK__Warehous__ED486395FBE0EFEB");
 
             entity.Property(e => e.WarehouseId)
                 .HasMaxLength(50)
@@ -720,7 +732,7 @@ public partial class StechDbContext : DbContext
             entity.HasOne(d => d.Warehouse).WithMany(p => p.WarehouseProducts)
                 .HasForeignKey(d => d.WarehouseId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_WP_Warehouses");
+                .HasConstraintName("FK_WP_kho");
         });
 
         OnModelCreatingPartial(modelBuilder);

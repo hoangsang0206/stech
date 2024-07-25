@@ -4,7 +4,6 @@
     ViewData["Title"] = "Tài khoản - STech";
 
     User user = Model.Item1;
-    IEnumerable<UserAddress> userAddresses = user.UserAddresses;
 }
 
 @* @await Html.PartialAsync("PartialViews/Breadcrumb", Model.Item2) *@
@@ -89,53 +88,7 @@
                 </div>
                 <hr />
                 <div class="user-address-list account-content-box">
-                    @foreach (UserAddress address in userAddresses)
-                    {
-                        bool isDefault = Convert.ToBoolean(address.IsDefault);
-                        <div class="row mt-2">
-                            <div class="col-8 col-sm-9 d-flex flex-column justify-content-center">
-                                <div class="d-flex align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        @(isDefault ? Html.Raw("<div class=\"address-default me-2\">Mặc định</div>") : "") 
-                                        <span class="fw-bold">@address.RecipientName</span>
-                                    </div> 
-                                    &nbsp; | &nbsp;
-                                    <span class="fw-bold text-secondary">@address.RecipientPhone</span>
-                                </div>
-                                <div class="mt-2">
-                                    @($"{address.Address}, {address.Ward}, {address.District}, {address.Province}")
-                                </div>
-                            </div>
-                            <div class="col-4 col-sm-3 d-flex flex-column align-items-end">
-                                @if (!isDefault)
-                                {
-                                    <div class="d-flex gap-1">
-                                        <button class="update-address btn btn-info text-white" data-address="@address.Id">
-                                            <i class="fa-regular fa-pen-to-square" style="font-size: 0.9rem"></i>
-                                        </button>
-                                        <button class="delete-address btn btn-danger" data-address="@address.Id">
-                                            <i class="fa-regular fa-trash-can" style="font-size: 0.9rem"></i>
-                                        </button>
-                                    </div>
-                                    <div class="mt-1">
-                                        <button class="set-address-default btn btn-outline-success" style="font-size: 0.9rem" data-address="@address.Id">
-                                            Đặt làm mặc định
-                                        </button>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div>
-                                        <button class="update-address btn btn-info text-white" data-address="@address.Id">
-                                            <i class="fa-regular fa-pen-to-square" style="font-size: 0.9rem"></i>
-                                        </button>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-
-                        <hr />
-                    }
+                    
                 </div>
             </div>
 
@@ -160,27 +113,4 @@
     @await Html.PartialAsync("PartialViews/User_UploadImage")
     @await Html.PartialAsync("PartialViews/User_AddAddress", new AddAddressVM())
     @await Html.PartialAsync("PartialViews/User_UpdateAddress", new AddAddressVM())
-
-    <script>
-        const showContent = () => {
-            const idFromUrl = window.location.hash.substring(1);
-            if (idFromUrl.length > 0) {
-                document.querySelectorAll('.account-content').forEach(function (element) {
-                    element.classList.remove('current');
-                });
-                document.querySelector(`.account-content[data-sidebar="${idFromUrl}"]`).classList.add('current');
-
-                document.querySelectorAll('.account-sidebar-item').forEach(function (element) {
-                    element.classList.remove('active');
-                });
-                document.querySelector(`.account-sidebar-item[data-sidebar="${idFromUrl}"]`).classList.add('active');
-            }
-        }
-
-        showContent();
-
-        window.addEventListener('hashchange', () => {
-            showContent();
-        })
-    </script>
 </section>

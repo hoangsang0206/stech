@@ -13,9 +13,17 @@ public partial class Warehouse
 
     public string Ward { get; set; } = null!;
 
+    public string WardCode { get; set; } = null!;
+
     public string District { get; set; } = null!;
 
+    public string DistrictCode { get; set; } = null!;
+
     public string Province { get; set; } = null!;
+
+    public string ProvinceCode { get; set; } = null!;
+
+    public string? Type { get; set; }
 
     public virtual ICollection<WarehouseProduct> WarehouseProducts { get; set; } = new List<WarehouseProduct>();
 }

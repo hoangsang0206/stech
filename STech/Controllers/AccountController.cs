@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared;
+using Newtonsoft.Json.Linq;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Services;
 using System.Security.Claims;
+using System.Security.Policy;
 
 namespace STech.Controllers
 {
@@ -35,6 +39,7 @@ namespace STech.Controllers
             await HttpContext.SignInAsync(principal);
         }
 
+
         [Authorize]
         public async Task<IActionResult> Index()
         {
@@ -50,8 +55,6 @@ namespace STech.Controllers
             {
                 return BadRequest();
             }
-
-            user.UserAddresses = await _userService.GetUserAddress(userId) as List<UserAddress> ?? new List<UserAddress>();
 
             IEnumerable<Breadcrumb> breadcrumbs = new List<Breadcrumb>
             {

@@ -1,0 +1,26 @@
+﻿namespace STech.Utils
+{
+    public class GeocodioUtils
+    {
+        public static readonly double EarthRadius = 6371.0; //km
+
+        public static double DegreeToRadius(double degree)
+        {
+            return degree * Math.PI / 180;
+        }
+
+        public static double CalculateDistance(double lat1, double long1, double lat2, double long2)
+        {
+            double _lat = DegreeToRadius(lat2 - lat1);
+            double _long = DegreeToRadius(long2 - long1);
+            double a =
+              Math.Sin(_lat / 2) * Math.Sin(_lat / 2) +
+              Math.Cos(DegreeToRadius(lat1)) * Math.Cos(DegreeToRadius(lat2)) *
+              Math.Sin(_long / 2) * Math.Sin(_long / 2);
+
+            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
+            return EarthRadius * c;
+        }
+    }
+}

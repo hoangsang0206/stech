@@ -137,8 +137,16 @@ const updateCartQty = (id, type, qty, input_element) => {
         success: (response) => {
             hideWebLoader()
             if (response.status) {
+                const shippingFee = parseFloat($('#shipping-fee').data('shipping-fee')) || 0;
+                const subTotal = parseFloat(response.data.totalPrice);
+                const productTotalPrice = parseFloat(response.data.productTotalPrice);
+                const totalPrice = subTotal + shippingFee;
+
                 input_element.val(response.data.quantity);
-                $('.total-price').html(response.data.totalPrice.toLocaleString("vi-VN") + 'đ');
+                $(`.cart-product-total-price[data-product="${id}"]`).html(productTotalPrice.toLocaleString("vi-VN") + 'đ');
+                $('#cart-total-price').data('subtotal', subTotal).html(subTotal.toLocaleString("vi-VN") + 'đ');
+                $('#total-price').data('total', totalPrice).html(totalPrice.toLocaleString("vi-VN") + 'đ');
+
 
                 if (response.message) {
                     setTimeout(() => {
@@ -178,4 +186,45 @@ $('input[name="quantity"]').focus(function() {
             updateCartQty(productID, "", newQty, $(this));
         }
     })
+})
+
+
+$('.cart-shipping-fee form').submit(function (e) {
+    e.preventDefault();
+
+    const cityCode = $(this).find('#city-select').val();
+    const districtCode = $(this).find('#district-select').val();
+    const wardCode = $(this).find('#ward-select').val();
+
+    if (cityCode && districtCode && wardCode) {
+        const submitBtn = $(e.target).find('.form-submit-btn');
+        const btnHtml = showButtonLoader(submitBtn, '23px', '4px')
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/shipping/fee',
+            data: {
+                city: cityCode,
+                district: districtCode,
+                ward: wardCode
+            },
+            success: (response) => {
+                if (response.status) {
+                    const shippingFee = parseFloat(response.data.fee);
+                    const subTotal = parseFloat($('#cart-total-price').data('subtotal'));
+                    const totalPrice = subTotal + shippingFee;
+
+                    $('#total-price').data('total', totalPrice).html(totalPrice.toLocaleString("vi-VN") + 'đ');
+                    $('#shipping-fee, #estimated-shipping-fee').data('shipping-fee', shippingFee).html(shippingFee.toLocaleString('vi-VN') + 'đ');
+                }
+
+
+                hideButtonLoader(submitBtn, btnHtml);
+            },
+            error: () => {
+                hideButtonLoader(submitBtn, btnHtml);
+                setTimeout(showErrorDialog, 500);
+            }
+        })
+    }
 })

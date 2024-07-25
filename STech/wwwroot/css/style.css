@@ -159,6 +159,11 @@ button:disabled {
     border: none !important;
 }
 
+button:disabled:hover {
+    border: none !important;
+    outline: none !important;
+}
+
 .web-scroll-block {
     overflow: hidden;
 }

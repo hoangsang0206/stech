@@ -106,17 +106,6 @@ $('.login-info-logout, .account-sidebar-logout').click(() => {
 })
 
 
-$('.account-sidebar-item').click(function () {
-    const sidebar = $(this).data('sidebar');
-
-    $('.account-content').removeClass('current');
-    $(`.account-content[data-sidebar="${sidebar}"]`).addClass('current');
-
-    $('.account-sidebar-item').removeClass('active');
-    $(this).addClass('active');
-})
-
-
 $('.form-update-user').submit(function (e) {
     e.preventDefault();
 
@@ -351,7 +340,6 @@ $('.form-upload-image').on('reset', function () {
     hideFormUploadImage();
 })
 
-
 const loadUserAddresses = () => {
     showWebLoader();
     $.ajax({
@@ -410,6 +398,68 @@ const loadUserAddresses = () => {
         }
     })
 }
+
+const loadOrders = () => {
+    showWebLoader();
+    $.ajax({
+        type: 'GET',
+        url: '/api/orders/all',
+        success: (response) => {
+            if (response.status) {
+
+            }
+
+            hideWebLoader();
+        }
+    })
+    hideWebLoader();
+}
+
+const loadReviews = () => {
+    showWebLoader();
+    $.ajax({
+        type: 'GET',
+        url: '/api/reviews/user',
+        success: (response) => {
+            if (response.status) {
+                
+            }
+
+            hideWebLoader();
+        }
+    })
+    hideWebLoader();
+}
+
+const showContent = () => {
+    const idFromUrl = window.location.hash.substring(1);
+    if (idFromUrl) {
+        $('.account-content').removeClass('current');
+        $(`.account-content[data-sidebar="${idFromUrl}"]`).addClass('current');
+
+        $('.account-sidebar-item').removeClass('active');
+        $(`.account-sidebar-item[data-sidebar="${idFromUrl}"]`).addClass('active');
+
+        switch (idFromUrl) {
+            case 'addresses':
+                loadUserAddresses();
+                break;
+            case 'orders':
+                loadOrders();
+                break;
+            case 'reviews':
+                loadReviews();
+                break;
+        }
+    }
+}
+
+showContent();
+
+$(window).on('hashchange', () => {
+    showContent();
+})
+
 
 $('.btn-add-address').click(() => {
     $('.add-address').addClass('show');
