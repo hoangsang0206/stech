@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\js\address.js" />
+    <Content Remove="wwwroot\js\order.js" />
   </ItemGroup>
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\js\address.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\order.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +36,7 @@
 
   <ItemGroup>
     <None Include="wwwroot\js\address.js" />
+    <None Include="wwwroot\js\order.js" />
   </ItemGroup>
 
   <ItemGroup>

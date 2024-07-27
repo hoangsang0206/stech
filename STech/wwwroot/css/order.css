@@ -1,0 +1,13 @@
+﻿.checkout-page {
+    background: var(--content-color-white);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+}
+
+.text-overflow-2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical
+}

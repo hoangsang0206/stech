@@ -68,6 +68,14 @@ const showErrorDialog = () => {
     })
 }
 
+const updateQueryParams = (params) => {
+    const url = new URL(window.location.href);
+    params.map(param => {
+        url.searchParams.set(param.key, param.value);
+    })
+    window.history.pushState({}, '', url);
+}
+
 
 let isShow = false;
 $(".categories-btn").click(() => {
@@ -680,4 +688,10 @@ $(document).on('focus', '.page-input > input', function () {
 
 $(document).on('blur', '.page-input > input', function () {
     $(this).parent().removeClass('focused');
+})
+
+$(document).on('change', '.page-radio-input input', function () {
+    const name = $(this).attr('name');
+    $(`.page-radio-input input[name="${name}"]`).closest('label').removeClass('checked');
+    $(this).closest('label').addClass('checked')
 })

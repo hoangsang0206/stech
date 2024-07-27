@@ -14,7 +14,7 @@ namespace STech.ViewComponents
 
         public IViewComponentResult Invoke()
         {
-            return View("Cities", _addressService.Cities);
+            return View("Cities", _addressService.Address.Cities);
         }
     }
 }

@@ -72,7 +72,7 @@
                     @if (inStock > 0)
                     {
                         <div class="buy-action d-flex gap-3">
-                            <button class="buy-action-btn" data-product="@product.ProductId">
+                            <button class="buy-action-btn" onclick="window.location.href='/order/checkout?pId=@product.ProductId'">
                                 <h4>MUA NGAY</h4>
                                 <span>Giao tận nơi hoặc nhận tại cửa hàng</span>
                             </button>

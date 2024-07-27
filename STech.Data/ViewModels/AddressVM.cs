@@ -42,5 +42,13 @@ namespace STech.Data.ViewModels
             public string code { get; set; } = null!;
             public string parent_code { get; set; } = null!;
         }
+
+        public List<City> Cities { get; set; } = new List<City>();
+        public List<District> Districts { get; set; } = new List<District>();
+        public List<Ward> Wards { get; set; } = new List<Ward>();
+
+        public City? _City { get; set; }
+        public District? _District { get; set; }
+        public Ward? _Ward { get; set; }
     }
 }

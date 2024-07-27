@@ -21,14 +21,14 @@ namespace STech.ApiControllers
         [HttpGet("cities"), Authorize]
         public IActionResult GetCities()
         {
-            IEnumerable<AddressVM.City> cities = _addressService.Cities;
+            IEnumerable<AddressVM.City> cities = _addressService.Address.Cities;
             return Ok(cities);
         }
 
         [HttpGet("districts/{cityCode}"), Authorize]
         public IActionResult GetDistricts(string cityCode)
         {
-            AddressVM.City? city = _addressService.Cities.FirstOrDefault(c => c.code == cityCode);
+            AddressVM.City? city = _addressService.Address.Cities.FirstOrDefault(c => c.code == cityCode);
             if(city == null)
             {
                 return BadRequest();
@@ -40,7 +40,7 @@ namespace STech.ApiControllers
         [HttpGet("wards/{districtCode}"), Authorize]
         public IActionResult GetWards(string districtCode)
         {
-            AddressVM.District? district = _addressService.Districts.FirstOrDefault(d => d.code == districtCode);
+            AddressVM.District? district = _addressService.Address.Districts.FirstOrDefault(d => d.code == districtCode);
             if(district == null)
             {
                 return BadRequest();

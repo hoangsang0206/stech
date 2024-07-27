@@ -22,5 +22,21 @@
 
             return EarthRadius * c;
         }
+
+        public static double CalculateFee(double distance)
+        {
+            double fee = distance switch
+            {
+                <= 5 => 15000,
+                <= 15 => 20000,
+                <= 30 => 25000,
+                <= 50 => 35000,
+                <= 100 => 40000,
+                _ => 50000,
+            };
+
+
+            return Math.Floor(fee);
+        }
     }
 }

@@ -328,6 +328,23 @@ namespace STech.ApiControllers
             });
         }
 
+        [HttpGet("address/default"), Authorize]
+        public async Task<IActionResult> GetUserDefaultAddress()
+        {
+            string? userId = User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return BadRequest();
+            }
+
+            UserAddress? address = await _userService.GetUserMainAddress(userId);
+            return Ok(new ApiResponse
+            {
+                Status = true,
+                Data = address
+            });
+        }
+
         [HttpGet("address"), Authorize]
         public async Task<IActionResult> GetUserAddresses()
         {
@@ -357,8 +374,7 @@ namespace STech.ApiControllers
                     return BadRequest();
                 }
 
-                AddressVM addressVM = new AddressVM();
-                AddressVM.City city = _addressService.Cities.FirstOrDefault(c => c.code == address.CityCode) ?? new AddressVM.City();
+                AddressVM.City city = _addressService.Address.Cities.FirstOrDefault(c => c.code == address.CityCode) ?? new AddressVM.City();
                 AddressVM.District district = city.districts.FirstOrDefault(c => c.code == address.DistrictCode) ?? new AddressVM.District();
                 AddressVM.Ward ward = district.wards.FirstOrDefault(c => c.code == address.WardCode) ?? new AddressVM.Ward();
 
@@ -407,8 +423,7 @@ namespace STech.ApiControllers
                     return BadRequest();
                 }
 
-                AddressVM addressVM = new AddressVM();
-                AddressVM.City city = _addressService.Cities.FirstOrDefault(c => c.code == address.CityCode) ?? new AddressVM.City();
+                AddressVM.City city = _addressService.Address.Cities.FirstOrDefault(c => c.code == address.CityCode) ?? new AddressVM.City();
                 AddressVM.District district = city.districts.FirstOrDefault(c => c.code == address.DistrictCode) ?? new AddressVM.District();
                 AddressVM.Ward ward = district.wards.FirstOrDefault(c => c.code == address.WardCode) ?? new AddressVM.Ward();
 

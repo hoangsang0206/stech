@@ -10,4 +10,8 @@ public partial class PaymentMethod
     public string PaymentName { get; set; } = null!;
 
     public string? LogoSrc { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public int Sort { get; set; }
 }

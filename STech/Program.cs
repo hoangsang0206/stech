@@ -88,6 +88,8 @@ builder.Services.AddScoped<ISliderService, SliderService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 builder.Services.AddSingleton(new AddressService(Path.Combine(builder.Environment.ContentRootPath, "..", "STech.Data")));
 

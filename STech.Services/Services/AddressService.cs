@@ -1,10 +1,5 @@
 ﻿using STech.Data.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace STech.Services.Services
 {
@@ -15,9 +10,7 @@ namespace STech.Services.Services
         private readonly string DISTRICTS_FILE_PATH = Path.Combine("Json", "Address", "districts.json");
         private readonly string WARDS_FILE_PATH = Path.Combine("Json", "Address", "wards.json");
 
-        public List<AddressVM.City> Cities { get; private set; } = new List<AddressVM.City>();
-        public List<AddressVM.District> Districts { get; private set; } = new List<AddressVM.District>();
-        public List<AddressVM.Ward> Wards { get; private set; } = new List<AddressVM.Ward>();
+        public AddressVM Address = new AddressVM();
 
         public AddressService(string rootPath)
         {
@@ -26,14 +19,14 @@ namespace STech.Services.Services
             LoadDistricts().Wait();
             LoadWards().Wait();
 
-            Cities.ForEach(city =>
+            Address.Cities.ForEach(city =>
             {
-                city.districts = Districts.Where(d => d.parent_code == city.code).OrderBy(d => d.slug).ToList();
+                city.districts = Address.Districts.Where(d => d.parent_code == city.code).OrderBy(d => d.slug).ToList();
             });
 
-            Districts.ForEach(district =>
+            Address.Districts.ForEach(district =>
             {
-                district.wards = Wards.Where(w => w.parent_code == district.code).OrderBy(w => w.slug).ToList();
+                district.wards = Address.Wards.Where(w => w.parent_code == district.code).OrderBy(w => w.slug).ToList();
             });
         }
 
@@ -58,18 +51,18 @@ namespace STech.Services.Services
 
         private async Task LoadCities()
         {
-            Cities = await ReadJson<AddressVM.City>(CITIES_FILE_PATH) ?? new List<AddressVM.City>();
-            Cities = Cities.OrderBy(c => c.slug).ToList();
+            Address.Cities = await ReadJson<AddressVM.City>(CITIES_FILE_PATH) ?? new List<AddressVM.City>();
+            Address.Cities = Address.Cities.OrderBy(c => c.slug).ToList();
         }
 
         private async Task LoadDistricts()
         {
-            Districts = await ReadJson<AddressVM.District>(DISTRICTS_FILE_PATH) ?? new List<AddressVM.District>();
+            Address.Districts = await ReadJson<AddressVM.District>(DISTRICTS_FILE_PATH) ?? new List<AddressVM.District>();
         }
 
         private async Task LoadWards()
         {
-            Wards = await ReadJson<AddressVM.Ward>(WARDS_FILE_PATH) ?? new List<AddressVM.Ward>();
+            Address.Wards = await ReadJson<AddressVM.Ward>(WARDS_FILE_PATH) ?? new List<AddressVM.Ward>();
         }
     }
 }

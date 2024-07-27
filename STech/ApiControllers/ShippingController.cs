@@ -24,22 +24,6 @@ namespace STech.ApiControllers
             _addressService = addressService;
         }
 
-        private double CalculateFee(double distance)
-        {
-            double fee = distance switch
-            {
-                <= 5 => 15000,
-                <= 15 => 20000,
-                <= 30 => 25000,
-                <= 50 => 35000,
-                <= 100 => 40000,
-                _ => 50000,
-            };
-
-
-            return Math.Floor(fee);
-        }
-
         [HttpGet("fee")]
         public async Task<IActionResult> CalculateShippingFee(string city, string district, string ward)
         {
@@ -49,11 +33,11 @@ namespace STech.ApiControllers
                 return BadRequest();
             }
 
-            AddressVM.City _city = _addressService.Cities.FirstOrDefault(c => c.code == city) ?? new AddressVM.City();
+            AddressVM.City _city = _addressService.Address.Cities.FirstOrDefault(c => c.code == city) ?? new AddressVM.City();
             AddressVM.District _district = _city.districts.FirstOrDefault(c => c.code == district) ?? new AddressVM.District();
             AddressVM.Ward _ward = _district.wards.FirstOrDefault(c => c.code == ward) ?? new AddressVM.Ward();
 
-            AddressVM.City whCity = _addressService.Cities.FirstOrDefault(c => c.code == warehouse.ProvinceCode) ?? new AddressVM.City();
+            AddressVM.City whCity = _addressService.Address.Cities.FirstOrDefault(c => c.code == warehouse.ProvinceCode) ?? new AddressVM.City();
             AddressVM.District whDistrict = whCity.districts.FirstOrDefault(c => c.code == warehouse.DistrictCode) ?? new AddressVM.District();
             AddressVM.Ward whWard = whDistrict.wards.FirstOrDefault(c => c.code == warehouse.WardCode) ?? new AddressVM.Ward();
 
@@ -66,7 +50,7 @@ namespace STech.ApiControllers
             }
 
             double distance = GeocodioUtils.CalculateDistance(latitude.Value, longtitude.Value, whLat.Value, whLong.Value);
-            double fee = CalculateFee(distance);
+            double fee = GeocodioUtils.CalculateFee(distance);
 
             return Ok(new ApiResponse
             {

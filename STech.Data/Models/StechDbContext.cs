@@ -202,7 +202,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Invoice>(entity =>
         {
-            entity.HasKey(e => e.InvoiceId).HasName("PK__Invoices__D796AAB5E61B9D92");
+            entity.HasKey(e => e.InvoiceId).HasName("PK__Invoices__D796AAB597F45137");
 
             entity.Property(e => e.InvoiceId)
                 .HasMaxLength(50)
@@ -256,7 +256,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<InvoiceDetail>(entity =>
         {
-            entity.HasKey(e => new { e.InvoiceId, e.ProductId }).HasName("PK__InvoiceD__1CD666D953051DE6");
+            entity.HasKey(e => new { e.InvoiceId, e.ProductId }).HasName("PK__InvoiceD__1CD666D94B8E4111");
 
             entity.Property(e => e.InvoiceId)
                 .HasMaxLength(50)
@@ -279,7 +279,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<InvoiceStatus>(entity =>
         {
-            entity.HasKey(e => new { e.Id, e.InvoiceId }).HasName("PK__InvoiceS__7F6D86AC1EF3FFF3");
+            entity.HasKey(e => new { e.Id, e.InvoiceId }).HasName("PK__InvoiceS__7F6D86ACCA9E5C0D");
 
             entity.ToTable("InvoiceStatus");
 
@@ -336,9 +336,9 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<PackingSlip>(entity =>
         {
-            entity.HasKey(e => e.Psid).HasName("PK__PackingS__BC000956B80DCF9F");
+            entity.HasKey(e => e.Psid).HasName("PK__PackingS__BC0009566EAFF147");
 
-            entity.HasIndex(e => e.InvoiceId, "UQ__PackingS__D796AAB422C544F3").IsUnique();
+            entity.HasIndex(e => e.InvoiceId, "UQ__PackingS__D796AAB4EE8445A8").IsUnique();
 
             entity.Property(e => e.Psid)
                 .HasMaxLength(50)
@@ -373,7 +373,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<PackingSlipStatus>(entity =>
         {
-            entity.HasKey(e => new { e.Id, e.Psid }).HasName("PK__PackingS__49D4EC92D863CD7F");
+            entity.HasKey(e => new { e.Id, e.Psid }).HasName("PK__PackingS__49D4EC92B6836F61");
 
             entity.ToTable("PackingSlipStatus");
 
@@ -393,13 +393,14 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<PaymentMethod>(entity =>
         {
-            entity.HasKey(e => e.PaymentMedId).HasName("PK__PaymentM__1D98A1A78C7A24E9");
+            entity.HasKey(e => e.PaymentMedId).HasName("PK__PaymentM__1D98A1A732B5DBE6");
 
             entity.Property(e => e.PaymentMedId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.LogoSrc).IsUnicode(false);
             entity.Property(e => e.PaymentName).HasMaxLength(50);
+            entity.Property(e => e.Sort).ValueGeneratedOnAdd();
         });
 
         modelBuilder.Entity<Product>(entity =>

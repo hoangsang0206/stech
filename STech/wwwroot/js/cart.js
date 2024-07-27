@@ -74,7 +74,7 @@ $(document).ready(() => {
 
 
 
-$('.add-to-cart-btn, .btn-add-to-cart, .buy-action-btn').click(function() {
+$('.add-to-cart-btn, .btn-add-to-cart').click(function() {
     const productID = $(this).data('product');
 
     if (productID) {
@@ -95,10 +95,6 @@ $('.add-to-cart-btn, .btn-add-to-cart, .buy-action-btn').click(function() {
 
         hideWebLoader()
     }   
-})
-
-$('.buy-action-btn').click(() => {
-    setTimeout(() => { window.location.href = '/cart' }, 510)
 })
 
 //-------------------------------
@@ -189,15 +185,9 @@ $('input[name="quantity"]').focus(function() {
 })
 
 
-$('.cart-shipping-fee form').submit(function (e) {
-    e.preventDefault();
-
-    const cityCode = $(this).find('#city-select').val();
-    const districtCode = $(this).find('#district-select').val();
-    const wardCode = $(this).find('#ward-select').val();
-
+const calculateShippingFee = (form, wardCode, districtCode, cityCode) => {
     if (cityCode && districtCode && wardCode) {
-        const submitBtn = $(e.target).find('.form-submit-btn');
+        const submitBtn = $(form).find('.form-submit-btn');
         const btnHtml = showButtonLoader(submitBtn, '23px', '4px')
 
         $.ajax({
@@ -227,4 +217,46 @@ $('.cart-shipping-fee form').submit(function (e) {
             }
         })
     }
+}
+
+$(document).ready(() => {
+    $.ajax({
+        type: 'GET',
+        url: '/api/account/address/default',
+        success: (response) => {
+            const wardCode = response.data.wardCode;
+            const districtCode = response.data.districtCode;
+            const cityCode = response.data.provinceCode;
+
+            const formAddress = $('.cart-shipping-fee form');
+            formAddress.find('#city-select').val(cityCode);
+            formAddress.find('#district-select').val(districtCode);
+            formAddress.find('#ward-select').val(wardCode);
+
+            loadDistricts(formAddress, cityCode, districtCode);
+            loadWards(formAddress, districtCode, wardCode);
+
+            calculateShippingFee('.cart-shipping-fee form', wardCode, districtCode, cityCode);
+        }
+    })
+})
+
+
+$('.cart-shipping-fee form').submit(function (e) {
+    e.preventDefault();
+
+    const cityCode = $(this).find('#city-select').val();
+    const districtCode = $(this).find('#district-select').val();
+    const wardCode = $(this).find('#ward-select').val();
+
+    calculateShippingFee(this, wardCode, districtCode, cityCode);
+})
+
+
+$('.cart-buy-action').click(() => {
+    const cityCode = $('.cart-shipping-fee #city-select').val();
+    const districtCode = $('.cart-shipping-fee #district-select').val();
+    const wardCode = $('.cart-shipping-fee #ward-select').val();
+
+    window.location.href = `/order/checkout?cityCode=${cityCode}&districtCode=${districtCode}&wardCode=${wardCode}`;
 })
