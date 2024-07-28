@@ -84,17 +84,23 @@ namespace STech.Controllers
                 List<UserCart> cartToDelete = new List<UserCart>();
                 foreach (UserCart c in cart)
                 {
-                    if(await _productService.CheckOutOfStock(c.ProductId))
+                    int qty = await _productService.GetTotalQty(c.ProductId);
+                    if(qty <= 0)
                     {
                         cartToDelete.Add(c);
+                    } 
+                    else if(c.Quantity > qty)
+                    {
+                        await _cartService.UpdateQuantity(c, qty);
                     }
                 }
 
                 if(cartToDelete.Count > 0)
                 {
                     await _cartService.RemoveListCart(cartToDelete);
-                    cart = await _cartService.GetUserCart(userId);
                 }
+
+                cart = await _cartService.GetUserCart(userId);
             }
             else
             {

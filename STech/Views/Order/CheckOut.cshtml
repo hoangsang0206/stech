@@ -19,7 +19,7 @@
         <input type="hidden" id="hidden-district" value="@address?._District?.code" />
         <input type="hidden" id="hidden-ward" value="@address?._Ward?.code" />
     </div>
-    <form asp-controller="Order" asp-action="PlaceOrder" method="POST">
+    <form asp-controller="Order" asp-action="PlaceOrder" method="POST" class="form-place-order">
         <input type="hidden" id="hidden-product" name="pId" value="@product?.ProductId" />
         <div class="row">
             <div class="order-col-12 col-lg-8 pe-0 pe-md-5">
@@ -30,12 +30,13 @@
                 </div>
                 <div>
                     <div class="form-group-header mb-3">
-                        Khác
+                        Cách thức nhận hàng
                     </div>
                     <div class="form-input-box">
                         <input class="form-input" type="text" name="Note" />
                         <label class="input-label">Ghi chú (nếu có)</label>
                     </div>
+                    @await Component.InvokeAsync("Delivery")
                 </div>
                 <div>
                     <div class="form-group-header mb-3">

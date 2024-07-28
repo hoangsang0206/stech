@@ -26,6 +26,9 @@ namespace STech.Data.ViewModels
         [Required]
         public string PaymentMethod { get; set; } = null!;
 
+        [Required]
+        public string DeliveryMethod { get; set; } = null!;
+
         public string? Note { get; set; }
 
         public string? pId { get; set; }

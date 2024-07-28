@@ -10,5 +10,7 @@ namespace STech.Services
     public interface IWarehouseService
     {
         Task<Warehouse?> GetOnlineWarehouse();
+
+        Task<bool> SubtractProductQuantity(string warehouseId, string productId, int quantity);
     }
 }

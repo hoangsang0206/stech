@@ -1,15 +1,10 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Facebook;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
 using STech.Data.Models;
 using STech.Services;
 using STech.Services.Services;
-using STech.Utils;
+using Stripe;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 
@@ -82,7 +77,7 @@ builder.Services.AddDbContext<StechDbContext>(options =>
 });
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductService, STech.Services.Services.ProductService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<ISliderService, SliderService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -102,6 +97,16 @@ builder.Services.AddHttpClient<IGeocodioService, GeocodioService>(client =>
 builder.Services.AddSingleton<IGeocodioService, GeocodioService>(sp =>
     new GeocodioService(sp.GetRequiredService<HttpClient>(), builder.Configuration.GetSection("OpenCageGeocodio")["ApiKey"] ?? "")
 );
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(15);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("Payments:Stripe")["SecretKey"];
+
 
 var app = builder.Build();
 
@@ -127,6 +132,8 @@ app.UseCors();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

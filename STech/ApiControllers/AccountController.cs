@@ -39,7 +39,8 @@ namespace STech.ApiControllers
                 {
                     new Claim(ClaimTypes.Name, user.Username),
                     new Claim(ClaimTypes.Email, user.Email ?? ""),
-                    new Claim("Id", user.UserId)
+                    new Claim("Id", user.UserId),
+                    new Claim(ClaimTypes.Role, user.RoleId),
                 };
 
             ClaimsIdentity identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

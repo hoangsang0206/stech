@@ -44,3 +44,20 @@ $('#recipient-ward').on('change', function() {
         calculateOrderShippingFee(wardCode, districtCode, cityCode);
     }
 })
+
+$('.form-place-order').submit(function(e) {
+    e.preventDefault();
+
+    const pId = $('#hidden-product').val();
+    $.ajax({
+        type: 'GET',
+        url: `/api/order/check?pId=${pId}`,
+        success: (response) => {
+            if (!response.status) {
+                showHtmlDialog('warning', null, `<ul class="list-unstyled p-0">${response.data}</ul>`);
+            } else {
+                $(this).submit();
+            }
+        }
+    })
+})

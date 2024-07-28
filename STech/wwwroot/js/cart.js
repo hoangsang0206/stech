@@ -258,5 +258,5 @@ $('.cart-buy-action').click(() => {
     const districtCode = $('.cart-shipping-fee #district-select').val();
     const wardCode = $('.cart-shipping-fee #ward-select').val();
 
-    window.location.href = `/order/checkout?cityCode=${cityCode}&districtCode=${districtCode}&wardCode=${wardCode}`;
+    window.location.href = `/order/checkout?city=${cityCode}&district=${districtCode}&ward=${wardCode}`;
 })

@@ -9,7 +9,7 @@ public partial class PackingSlip
 
     public string InvoiceId { get; set; } = null!;
 
-    public string DeliveryUnitId { get; set; } = null!;
+    public string? DeliveryUnitId { get; set; }
 
     public string? EmployeeId { get; set; }
 
@@ -17,7 +17,7 @@ public partial class PackingSlip
 
     public decimal DeliveryFee { get; set; }
 
-    public virtual DeliveryUnit DeliveryUnit { get; set; } = null!;
+    public virtual DeliveryUnit? DeliveryUnit { get; set; }
 
     public virtual Employee? Employee { get; set; }
 

@@ -21,5 +21,19 @@ namespace STech.Services.Services
         {
             return await _context.Warehouses.Where(t => t.Type == "online").FirstOrDefaultAsync();
         }
+
+        public async Task<bool> SubtractProductQuantity(string warehouseId, string productId, int quantity)
+        {
+            WarehouseProduct? whP = await _context.WarehouseProducts
+                .Where(wp => wp.ProductId == productId && wp.WarehouseId == warehouseId).FirstOrDefaultAsync();
+            if (whP != null)
+            {
+                whP.Quantity -= quantity;
+                _context.WarehouseProducts.Update(whP);
+                return await _context.SaveChangesAsync() > 0;
+            }
+
+            return false;
+        }
     }
 }
