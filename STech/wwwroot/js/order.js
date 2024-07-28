@@ -49,12 +49,16 @@ $('.form-place-order').submit(function(e) {
     e.preventDefault();
 
     const pId = $('#hidden-product').val();
+
+    showWebLoader();
+
     $.ajax({
         type: 'GET',
         url: `/api/order/check?pId=${pId}`,
         success: (response) => {
             if (!response.status) {
                 showHtmlDialog('warning', null, `<ul class="list-unstyled p-0">${response.data}</ul>`);
+                hideWebLoader();
             } else {
                 $(this).submit();
             }

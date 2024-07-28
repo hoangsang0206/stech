@@ -8,6 +8,7 @@ using STech.Services.Services;
 using STech.Utils;
 using Stripe;
 using Stripe.Checkout;
+using Stripe.Climate;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -42,6 +43,8 @@ namespace STech.Controllers
 
             _httpClient = httpClient;
         }
+
+        #region Functions
 
         private string GetDomain()
         {
@@ -87,7 +90,7 @@ namespace STech.Controllers
         {
             DateTime date = DateTime.Now;
             Data.Models.Invoice invoice = new Data.Models.Invoice();
-            invoice.InvoiceId = date.ToString("yyyyMMdd") + RandomUtils.GenerateRandomString(8).ToUpper();
+            invoice.InvoiceId = date.ToString("yyyyMMdd") + "INVOICE" + RandomUtils.GenerateRandomString(8).ToUpper();
             invoice.OrderDate = date;
             invoice.PaymentMedId = paymentMethod.PaymentMedId;
             invoice.PaymentStatus = PaymentContants.UnPaid;
@@ -109,7 +112,7 @@ namespace STech.Controllers
 
             PackingSlip packingSlip = new PackingSlip();
             packingSlip.InvoiceId = invoice.InvoiceId;
-            packingSlip.Psid = DateTime.Now.ToString("yyyyMMdd") + "STECH" + RandomUtils.GenerateRandomString(8).ToUpper();
+            packingSlip.Psid = DateTime.Now.ToString("yyyyMMdd") + "PKS" + RandomUtils.GenerateRandomString(8).ToUpper();
             packingSlip.DeliveryFee = await CalculateShippingFee(address, whAddress);
             packingSlip.IsCompleted = false;
 
@@ -171,6 +174,8 @@ namespace STech.Controllers
             return invoiceDetails;
         }
 
+        
+
         private Data.Models.Invoice? GetInvoiceFromSession()
         {
             string invoiceJson = HttpContext.Session.GetString("Invoice") ?? "";
@@ -180,6 +185,26 @@ namespace STech.Controllers
             return invoice;
         }
 
+        private async Task<bool> RemoveUserCart()
+        {
+            bool isOrderFromCart = HttpContext.Session.GetString("OrderFromCart") == "true";
+            if (isOrderFromCart)
+            {
+                string? userId = User.FindFirstValue("Id");
+                if (userId != null)
+                {
+                    return await _cartService.RemoveUserCart(userId);
+                }
+
+            }
+
+            return false;
+        }
+
+        #endregion
+
+
+        #region Actions
         [Authorize]
         public async Task<IActionResult> CheckOut(string? pId = null, string? ward = null, string? district = null, string? city = null)
         {
@@ -291,25 +316,18 @@ namespace STech.Controllers
                 invoice.SubTotal = invoice.InvoiceDetails.Sum(t => t.Cost * t.Quantity);
                 invoice.Total = invoice.SubTotal + invoice.PackingSlip.DeliveryFee;
 
-                switch(order.PaymentMethod)
+                HttpContext.Session.SetString("Invoice", JsonSerializer.Serialize(invoice));
+                HttpContext.Session.SetString("OrderFromCart", order.pId == null ? "true" : "false");
+
+                switch (order.PaymentMethod)
                 {
                     case PaymentContants.CashPayment:
-                        bool result = await _orderService.CreateInvoice(invoice);
-                        if(result)
-                        {
-                            return RedirectToAction("PaymentSucceeded");
-                        }
-                        else
-                        {
-                            return RedirectToAction("PaymentFailed");
-                        }
+                        return RedirectToAction("PaymentWithCash");
 
                     case PaymentContants.CardPayment:
-                        HttpContext.Session.SetString("Invoice", JsonSerializer.Serialize(invoice));
                         return RedirectToAction("PaymentWithStripe");
                             
                     case PaymentContants.PaypalPayment:
-                        HttpContext.Session.SetString("Invoice", JsonSerializer.Serialize(invoice));
                         return RedirectToAction("PaymentWithPaypal");
 
                     default:
@@ -321,78 +339,100 @@ namespace STech.Controllers
         }
 
         [Authorize]
+        public async Task<IActionResult> PaymentWithCash()
+        {
+            Data.Models.Invoice? invoice = GetInvoiceFromSession();
+
+
+            if(invoice == null)
+            {
+                return NotFound();
+            }
+
+            bool result = await _orderService.CreateInvoice(invoice);
+            if (result)
+            {
+                await RemoveUserCart();
+                return RedirectToAction("PaymentSucceeded");
+            }
+
+            return RedirectToAction("PaymentFailed");
+        }
+
+        [Authorize]
         public async Task<IActionResult> PaymentWithStripe()
         {
             Data.Models.Invoice? invoice = GetInvoiceFromSession();
 
-            if(invoice != null)
+            if(invoice == null)
             {
-                List<SessionLineItemOptions> items = new List<SessionLineItemOptions>();
-                foreach(InvoiceDetail detail in invoice.InvoiceDetails)
-                {
-                    Data.Models.Product? product = await _productService.GetProductWithBasicInfo(detail.ProductId);
+                return NotFound();
+            }
 
-                    items.Add(new SessionLineItemOptions
-                    {
-                        PriceData = new SessionLineItemPriceDataOptions
-                        {
-                            UnitAmount = (long)Math.Round((detail.Cost) / PaymentContants.USD_EXCHANGE_RATE) * 100,
-                            Currency = "usd",
-                            ProductData = new SessionLineItemPriceDataProductDataOptions
-                            {
-                                Name = product?.ProductName,
-                                Images = new List<string> { product?.ProductImages.FirstOrDefault()?.ImageSrc ?? "" }
-                            }
-                        },
-                        Quantity = detail.Quantity
-                    });
-                }
+            List<SessionLineItemOptions> items = new List<SessionLineItemOptions>();
+            foreach (InvoiceDetail detail in invoice.InvoiceDetails)
+            {
+                Data.Models.Product? product = await _productService.GetProductWithBasicInfo(detail.ProductId);
 
-                if (invoice.PackingSlip != null)
+                items.Add(new SessionLineItemOptions
                 {
-                    items.Add(new SessionLineItemOptions
+                    PriceData = new SessionLineItemPriceDataOptions
                     {
-                        PriceData = new SessionLineItemPriceDataOptions
+                        UnitAmount = (long)Math.Round((detail.Cost) / PaymentContants.USD_EXCHANGE_RATE) * 100,
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
-                            UnitAmount = (long)Math.Round((invoice.PackingSlip.DeliveryFee) / PaymentContants.USD_EXCHANGE_RATE) * 100,
-                            Currency = "usd",
-                            ProductData = new SessionLineItemPriceDataProductDataOptions
-                            {
-                                Name = "Delivery Fee"
-                            }
+                            Name = product?.ProductName,
+                            Images = new List<string> { product?.ProductImages.FirstOrDefault()?.ImageSrc ?? "" }
                         }
-                    });
-                }
+                    },
+                    Quantity = detail.Quantity
+                });
+            }
 
-                SessionCreateOptions options = new SessionCreateOptions
+            if (invoice.PackingSlip != null)
+            {
+                items.Add(new SessionLineItemOptions
                 {
-                    PaymentMethodTypes = new List<string> { "card" },
-                    LineItems = items,
-                    Metadata = new Dictionary<string, string>
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        UnitAmount = (long)Math.Round((invoice.PackingSlip.DeliveryFee) / PaymentContants.USD_EXCHANGE_RATE) * 100,
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = "Delivery Fee"
+                        }
+                    }
+                });
+            }
+
+            SessionCreateOptions options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = items,
+                Metadata = new Dictionary<string, string>
                     {
                         { "invoice_id", invoice.InvoiceId }
                     },
-                    Mode = "payment",
-                    SuccessUrl = $"{GetDomain()}/order/stripecallback",
-                    CancelUrl = $"{GetDomain()}/order/paymentfailed"
-                };
-                
-                SessionService service = new SessionService();
-                Session session = service.Create(options);
-                TempData["Invoice"] = session.Id;
+                Mode = "payment",
+                SuccessUrl = $"{GetDomain()}/order/stripecallback",
+                CancelUrl = $"{GetDomain()}/order/paymentfailed"
+            };
 
-                if(await _orderService.CreateInvoice(invoice)) {
-                    return Redirect(session.Url);
-                }
-                else
-                {
-                    return BadRequest();
-                }
+            SessionService service = new SessionService();
+            Session session = service.Create(options);
+            TempData["Invoice"] = session.Id;
+
+            if (await _orderService.CreateInvoice(invoice))
+            {
+                await RemoveUserCart();
+                return Redirect(session.Url);
             }
 
-            return BadRequest();
+            return NotFound();
         }
 
+        [Authorize]
         public async Task<IActionResult> StripeCallback()
         {
             SessionService service = new SessionService();
@@ -409,7 +449,6 @@ namespace STech.Controllers
             {
                 invoice.PaymentStatus = PaymentContants.Paid;
                 await _orderService.UpdateInvoice(invoice);
-
                 return RedirectToAction("PaymentSucceeded");
             }
 
@@ -441,5 +480,7 @@ namespace STech.Controllers
         {
             return View();
         }
+
+        #endregion
     }
 }

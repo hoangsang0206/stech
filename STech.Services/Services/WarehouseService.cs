@@ -22,6 +22,14 @@ namespace STech.Services.Services
             return await _context.Warehouses.Where(t => t.Type == "online").FirstOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<WarehouseProduct>> GetWarehouseProducts(string productId)
+        {
+            return await _context.WarehouseProducts
+                .Where(p => p.ProductId == productId)
+                .Include(p => p.Warehouse)
+                .ToListAsync();
+        }
+
         public async Task<bool> SubtractProductQuantity(string warehouseId, string productId, int quantity)
         {
             WarehouseProduct? whP = await _context.WarehouseProducts
@@ -34,6 +42,21 @@ namespace STech.Services.Services
             }
 
             return false;
+        }
+
+        public async Task<bool> SubtractProductQuantity(Invoice invoice)
+        {
+            if (invoice == null)
+            {
+                return false;
+            }
+
+            foreach (InvoiceDetail detail in invoice.InvoiceDetails)
+            {
+                
+            }
+
+            return true;
         }
     }
 }

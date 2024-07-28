@@ -83,6 +83,10 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<Warehouse> Warehouses { get; set; }
 
+    public virtual DbSet<WarehouseExport> WarehouseExports { get; set; }
+
+    public virtual DbSet<WarehouseExportDetail> WarehouseExportDetails { get; set; }
+
     public virtual DbSet<WarehouseProduct> WarehouseProducts { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -709,6 +713,61 @@ public partial class StechDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.WarehouseName).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<WarehouseExport>(entity =>
+        {
+            entity.HasKey(e => e.Weid).HasName("PK__Warehous__FA31005192D7BD96");
+
+            entity.Property(e => e.Weid)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("WEId");
+            entity.Property(e => e.DateCreate).HasColumnType("datetime");
+            entity.Property(e => e.DateExport).HasColumnType("datetime");
+            entity.Property(e => e.EmployeeId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.InvoiceId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Note).HasMaxLength(200);
+            entity.Property(e => e.ReasonExport).HasMaxLength(100);
+            entity.Property(e => e.WarehouseId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Employee).WithMany(p => p.WarehouseExports)
+                .HasForeignKey(d => d.EmployeeId)
+                .HasConstraintName("FK_WE_Employee");
+
+            entity.HasOne(d => d.Invoice).WithMany(p => p.WarehouseExports)
+                .HasForeignKey(d => d.InvoiceId)
+                .HasConstraintName("FK_WE_Invoice");
+
+            entity.HasOne(d => d.Warehouse).WithMany(p => p.WarehouseExports)
+                .HasForeignKey(d => d.WarehouseId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_WE_Warehouse");
+        });
+
+        modelBuilder.Entity<WarehouseExportDetail>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Warehous__3214EC07F8FCAAC9");
+
+            entity.Property(e => e.ProductId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.Weid)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("WEId");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.WarehouseExportDetails)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_WEDetail_Product");
         });
 
         modelBuilder.Entity<WarehouseProduct>(entity =>

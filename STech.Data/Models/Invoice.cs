@@ -48,4 +48,6 @@ public partial class Invoice
     public virtual PackingSlip? PackingSlip { get; set; }
 
     public virtual User? User { get; set; }
+
+    public virtual ICollection<WarehouseExport> WarehouseExports { get; set; } = new List<WarehouseExport>();
 }
