@@ -429,10 +429,18 @@ namespace STech.Controllers
             {
                 await RemoveUserCart();
                 await UpdateWarehouseExports(warehouseExports);
-                return RedirectToAction("PaymentSucceeded");
             }
 
-            return RedirectToAction("PaymentFailed");
+
+            HttpContext.Session.SetString("PaymentStatus", JsonSerializer.Serialize(new PaymentStatusVM
+            {
+                InvoiceId = invoice.InvoiceId,
+                IsPaid = result,
+                TotalAmount = invoice.Total,
+                PaymentDate = DateTime.Now
+            }));
+
+            return RedirectToAction("PaymentResult");
         }
 
         [Authorize]
@@ -456,7 +464,7 @@ namespace STech.Controllers
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            UnitAmount = (long)Math.Round((detail.Cost) / PaymentContants.USD_EXCHANGE_RATE) * 100,
+                            UnitAmount = (long)(detail.Cost / PaymentContants.USD_EXCHANGE_RATE) * 100,
                             Currency = "usd",
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
@@ -474,7 +482,7 @@ namespace STech.Controllers
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            UnitAmount = (long)Math.Round((invoice.PackingSlip.DeliveryFee) / PaymentContants.USD_EXCHANGE_RATE) * 100,
+                            UnitAmount = (long)(invoice.PackingSlip.DeliveryFee / PaymentContants.USD_EXCHANGE_RATE) * 100,
                             Currency = "usd",
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
@@ -529,19 +537,28 @@ namespace STech.Controllers
 
             if(invoice == null)
             {
-                return RedirectToAction("PaymentFailed");
+                return BadRequest();
             }
             
             if(session.PaymentStatus == "paid")
             {
                 invoice.PaymentStatus = PaymentContants.Paid;
-                await _orderService.UpdateInvoice(invoice);
-                return RedirectToAction("PaymentSucceeded");
+            }
+            else
+            {
+                invoice.PaymentStatus = PaymentContants.PaymentFailed;
             }
 
-            invoice.PaymentStatus = PaymentContants.PaymentFailed;
+            HttpContext.Session.SetString("PaymentStatus", JsonSerializer.Serialize(new PaymentStatusVM
+            {
+                InvoiceId = invoice.InvoiceId,
+                IsPaid = invoice.PaymentStatus == PaymentContants.Paid,
+                TotalAmount = invoice.Total,
+                PaymentDate = DateTime.Now
+            }));
+
             await _orderService.UpdateInvoice(invoice);
-            return RedirectToAction("PaymentFailed");
+            return RedirectToAction("PaymentResult");
         }
 
         [Authorize]
@@ -549,6 +566,7 @@ namespace STech.Controllers
         {
             try
             {
+
                 return Ok();
 
             }
@@ -559,20 +577,34 @@ namespace STech.Controllers
         }
 
         [Authorize]
-        public IActionResult PaymentSucceeded()
+        public IActionResult PaymentResult()
         {
+            string? json = HttpContext.Session.GetString("PaymentStatus");
+            HttpContext.Session.Remove("PaymentStatus");
 
-            return View();
+            if (string.IsNullOrEmpty(json))
+            {
+                return NotFound();
+            }
+
+            PaymentStatusVM paymentStatus = JsonSerializer.Deserialize<PaymentStatusVM>(json) ?? new PaymentStatusVM();
+
+            return View(paymentStatus);
         }
 
-        [Authorize]
-        public IActionResult PaymentFailed()
+        public IActionResult CheckOrder()
         {
+
             return View();
         }
 
         public IActionResult CheckOrder(string oId, string phone)
         {
+            if(string.IsNullOrEmpty(oId) || string.IsNullOrEmpty(phone))
+            {
+                return NotFound();
+            }
+
             return View();
         }
 

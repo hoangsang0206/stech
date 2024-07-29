@@ -4,6 +4,13 @@
     padding: 1.5rem;
 }
 
+.payment-status-page {
+    background: var(--content-color-white);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    height: 40rem;
+}
+
 .text-overflow-2 {
     overflow: hidden;
     text-overflow: ellipsis;
