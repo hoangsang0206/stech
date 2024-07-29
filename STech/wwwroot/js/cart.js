@@ -253,7 +253,7 @@ $('.cart-shipping-fee form').submit(function (e) {
 })
 
 
-$('.cart-buy-action').click(() => {
+$('.cart-buy-action.logged-in').click(() => {
     const cityCode = $('.cart-shipping-fee #city-select').val();
     const districtCode = $('.cart-shipping-fee #district-select').val();
     const wardCode = $('.cart-shipping-fee #ward-select').val();

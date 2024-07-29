@@ -701,6 +701,8 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.DistrictCode)
                 .HasMaxLength(30)
                 .IsUnicode(false);
+            entity.Property(e => e.Latitude).HasColumnType("decimal(18, 10)");
+            entity.Property(e => e.Longtitude).HasColumnType("decimal(18, 10)");
             entity.Property(e => e.Province).HasMaxLength(30);
             entity.Property(e => e.ProvinceCode)
                 .HasMaxLength(30)
@@ -768,6 +770,11 @@ public partial class StechDbContext : DbContext
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_WEDetail_Product");
+
+            entity.HasOne(d => d.We).WithMany(p => p.WarehouseExportDetails)
+                .HasForeignKey(d => d.Weid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_WHDetail_WHE");
         });
 
         modelBuilder.Entity<WarehouseProduct>(entity =>

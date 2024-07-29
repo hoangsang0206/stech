@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -26,9 +25,11 @@ public partial class Warehouse
 
     public string? Type { get; set; }
 
-    [JsonIgnore]
+    public decimal? Latitude { get; set; }
+
+    public decimal? Longtitude { get; set; }
+
     public virtual ICollection<WarehouseExport> WarehouseExports { get; set; } = new List<WarehouseExport>();
 
-    [JsonIgnore]
     public virtual ICollection<WarehouseProduct> WarehouseProducts { get; set; } = new List<WarehouseProduct>();
 }

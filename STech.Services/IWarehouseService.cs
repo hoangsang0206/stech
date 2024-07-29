@@ -9,10 +9,12 @@ namespace STech.Services
 {
     public interface IWarehouseService
     {
-        Task<Warehouse?> GetOnlineWarehouse();
+        Task<IEnumerable<Warehouse>> GetWarehouses();
+        Task<IEnumerable<Warehouse>> GetWarehousesOrderByDistance(double latitude, double longtitude);
+        Task<IEnumerable<Warehouse>> GetWarehousesOrderByDistanceWithProduct(double? latitude, double? longtitude);
+        Task<Warehouse?> GetNearestWarehouse(double latitude, double longtitude);
         Task<IEnumerable<WarehouseProduct>> GetWarehouseProducts(string productId);
-
-        Task<bool> SubtractProductQuantity(string warehouseId, string productId, int quantity);
-        Task<bool> SubtractProductQuantity(Invoice invoice);
+        Task<bool> CreateWarehouseExports(IEnumerable<WarehouseExport> warehouseExports);
+        Task<bool> SubtractProductQuantity(IEnumerable<WarehouseExport> warehouseExports);
     }
 }

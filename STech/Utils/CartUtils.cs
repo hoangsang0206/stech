@@ -13,6 +13,7 @@ namespace STech.Utils
         {
             if (cart.Count() <= 0)
             {
+                DeleteCookieCart(response);
                 return;
             }
 

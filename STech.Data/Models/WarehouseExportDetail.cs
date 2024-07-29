@@ -18,4 +18,6 @@ public partial class WarehouseExportDetail
     public decimal UnitPrice { get; set; }
 
     public virtual Product Product { get; set; } = null!;
+
+    public virtual WarehouseExport We { get; set; } = null!;
 }

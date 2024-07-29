@@ -5,10 +5,12 @@ using STech.Data.ViewModels;
 using STech.Services;
 using STech.Services.Constants;
 using STech.Services.Services;
+using STech.Services.Utils;
 using STech.Utils;
 using Stripe;
 using Stripe.Checkout;
 using Stripe.Climate;
+using System.Net;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -62,25 +64,25 @@ namespace STech.Controllers
             return address;
         }
 
-        private async Task<decimal> CalculateShippingFee(AddressVM address_1, AddressVM address_2)
+        private async Task<decimal> CalculateShippingFee(AddressVM address)
         {
-            if(address_1._Ward == null || address_1._District == null || address_1._City == null 
-                || address_2._Ward == null || address_2._District == null || address_2._City == null )
+            if(address._Ward == null || address._District == null || address._City == null)
             {
                 return 0;
             }
+
 
             var (latitude, longtitude) = await _geocodioService
-                .GetLocation(address_1._City.name_with_type, address_1._District.name_with_type, address_1._Ward.name_with_type);
-            var (whLat, whLong) = await _geocodioService
-                .GetLocation(address_2._City.name_with_type, address_2._District.name_with_type, address_2._Ward.name_with_type);
+                .GetLocation(address._City.name_with_type, address._District.name_with_type, address._Ward.name_with_type);
 
-            if (!latitude.HasValue || !longtitude.HasValue || !whLat.HasValue || !whLong.HasValue)
+            if (!latitude.HasValue || !longtitude.HasValue)
             {
                 return 0;
             }
 
-            double distance = GeocodioUtils.CalculateDistance(latitude.Value, longtitude.Value, whLat.Value, whLong.Value);
+            Warehouse? warehouse = await _warehouseService.GetNearestWarehouse(latitude.Value, longtitude.Value);
+
+            double distance = GeocodioUtils.CalculateDistance(latitude.Value, longtitude.Value, Convert.ToDouble(warehouse?.Latitude), Convert.ToDouble(warehouse?.Longtitude));
             double fee = GeocodioUtils.CalculateFee(distance);
 
             return Convert.ToDecimal(fee);
@@ -90,7 +92,7 @@ namespace STech.Controllers
         {
             DateTime date = DateTime.Now;
             Data.Models.Invoice invoice = new Data.Models.Invoice();
-            invoice.InvoiceId = date.ToString("yyyyMMdd") + "INVOICE" + RandomUtils.GenerateRandomString(8).ToUpper();
+            invoice.InvoiceId = date.ToString("yyyyMMdd") + "ORD" + RandomUtils.GenerateRandomString(8).ToUpper();
             invoice.OrderDate = date;
             invoice.PaymentMedId = paymentMethod.PaymentMedId;
             invoice.PaymentStatus = PaymentContants.UnPaid;
@@ -107,13 +109,10 @@ namespace STech.Controllers
 
         private async Task<PackingSlip> CreatePackingSlip(Data.Models.Invoice invoice, AddressVM address)
         {
-            Warehouse warehouse = await _warehouseService.GetOnlineWarehouse() ?? new Warehouse();
-            AddressVM whAddress = GetAddress(warehouse.WardCode, warehouse.DistrictCode, warehouse.ProvinceCode);
-
             PackingSlip packingSlip = new PackingSlip();
             packingSlip.InvoiceId = invoice.InvoiceId;
             packingSlip.Psid = DateTime.Now.ToString("yyyyMMdd") + "PKS" + RandomUtils.GenerateRandomString(8).ToUpper();
-            packingSlip.DeliveryFee = await CalculateShippingFee(address, whAddress);
+            packingSlip.DeliveryFee = await CalculateShippingFee(address);
             packingSlip.IsCompleted = false;
 
             return packingSlip;
@@ -174,7 +173,80 @@ namespace STech.Controllers
             return invoiceDetails;
         }
 
-        
+        private async Task<List<WarehouseExport>> CreateWarehouseExports(Data.Models.Invoice invoice, AddressVM address)
+        {
+            if (address._Ward == null || address._District == null || address._City == null)
+            {
+                return new List<WarehouseExport>();
+            }
+
+            var (latitude, longtitude) = await _geocodioService
+            .GetLocation(address._City.name_with_type, address._District.name_with_type, address._Ward.name_with_type);
+
+            List<WarehouseExport> whEs = new List<WarehouseExport>();
+            IEnumerable<Warehouse> warehouses = await _warehouseService.GetWarehousesOrderByDistanceWithProduct(latitude, longtitude);
+
+            foreach (InvoiceDetail detail in invoice.InvoiceDetails)
+            {
+                IEnumerable<WarehouseProduct> whProducts = warehouses
+                    .SelectMany(w => w.WarehouseProducts)
+                    .Where(wp => wp.ProductId == detail.ProductId)
+                    .ToList();
+
+                int requestedQty = detail.Quantity;
+
+                foreach (WarehouseProduct wp in whProducts)
+                {
+                    if (requestedQty <= 0)
+                    {
+                        break;
+                    }
+
+                    int qty = wp.Quantity;
+                    if (qty <= 0)
+                    {
+                        continue;
+                    }
+
+                    int exportQty = Math.Min(requestedQty, qty);
+                    requestedQty -= exportQty;
+
+                    WarehouseExport? whE = whEs.FirstOrDefault(t => t.WarehouseId == wp.WarehouseId);
+                    if(whE == null)
+                    {
+                        whE = new WarehouseExport();
+                        whE.Weid = DateTime.Now.ToString("yyyyMMdd") + "WHE" + RandomUtils.GenerateRandomString(8).ToUpper();
+                        whE.WarehouseId = wp.WarehouseId;
+                        whE.InvoiceId = invoice.InvoiceId;
+                        whE.DateCreate = DateTime.Now;
+                        whE.ReasonExport = "Xuất hàng theo hóa đơn";
+
+                        whEs.Add(whE);
+                    }
+
+                    whE.WarehouseExportDetails.Add(new WarehouseExportDetail
+                    {
+                        Weid = whE.Weid,
+                        ProductId = wp.ProductId,
+                        RequestedQuantity = exportQty,
+                        UnitPrice = detail.Cost
+                    });
+                } 
+            }
+
+            return whEs;
+        }
+
+        private async Task<bool> UpdateWarehouseExports(IEnumerable<WarehouseExport> warehouseExports)
+        {
+            bool result = await _warehouseService.CreateWarehouseExports(warehouseExports);
+            if(result)
+            {
+                await _warehouseService.SubtractProductQuantity(warehouseExports);
+            }
+
+            return result;
+        }
 
         private Data.Models.Invoice? GetInvoiceFromSession()
         {
@@ -193,9 +265,9 @@ namespace STech.Controllers
                 string? userId = User.FindFirstValue("Id");
                 if (userId != null)
                 {
-                    return await _cartService.RemoveUserCart(userId);
+                    bool result = await _cartService.RemoveUserCart(userId);
+                    return result;
                 }
-
             }
 
             return false;
@@ -316,6 +388,8 @@ namespace STech.Controllers
                 invoice.SubTotal = invoice.InvoiceDetails.Sum(t => t.Cost * t.Quantity);
                 invoice.Total = invoice.SubTotal + invoice.PackingSlip.DeliveryFee;
 
+                invoice.WarehouseExports = await CreateWarehouseExports(invoice, address);
+
                 HttpContext.Session.SetString("Invoice", JsonSerializer.Serialize(invoice));
                 HttpContext.Session.SetString("OrderFromCart", order.pId == null ? "true" : "false");
 
@@ -343,16 +417,18 @@ namespace STech.Controllers
         {
             Data.Models.Invoice? invoice = GetInvoiceFromSession();
 
-
             if(invoice == null)
             {
                 return NotFound();
             }
 
+            IEnumerable<WarehouseExport> warehouseExports = invoice.WarehouseExports;
+
             bool result = await _orderService.CreateInvoice(invoice);
             if (result)
             {
                 await RemoveUserCart();
+                await UpdateWarehouseExports(warehouseExports);
                 return RedirectToAction("PaymentSucceeded");
             }
 
@@ -362,74 +438,85 @@ namespace STech.Controllers
         [Authorize]
         public async Task<IActionResult> PaymentWithStripe()
         {
-            Data.Models.Invoice? invoice = GetInvoiceFromSession();
-
-            if(invoice == null)
+            try
             {
-                return NotFound();
-            }
+                Data.Models.Invoice? invoice = GetInvoiceFromSession();
 
-            List<SessionLineItemOptions> items = new List<SessionLineItemOptions>();
-            foreach (InvoiceDetail detail in invoice.InvoiceDetails)
-            {
-                Data.Models.Product? product = await _productService.GetProductWithBasicInfo(detail.ProductId);
-
-                items.Add(new SessionLineItemOptions
+                if (invoice == null)
                 {
-                    PriceData = new SessionLineItemPriceDataOptions
-                    {
-                        UnitAmount = (long)Math.Round((detail.Cost) / PaymentContants.USD_EXCHANGE_RATE) * 100,
-                        Currency = "usd",
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
-                        {
-                            Name = product?.ProductName,
-                            Images = new List<string> { product?.ProductImages.FirstOrDefault()?.ImageSrc ?? "" }
-                        }
-                    },
-                    Quantity = detail.Quantity
-                });
-            }
+                    return NotFound();
+                }
 
-            if (invoice.PackingSlip != null)
-            {
-                items.Add(new SessionLineItemOptions
+                List<SessionLineItemOptions> items = new List<SessionLineItemOptions>();
+                foreach (InvoiceDetail detail in invoice.InvoiceDetails)
                 {
-                    PriceData = new SessionLineItemPriceDataOptions
-                    {
-                        UnitAmount = (long)Math.Round((invoice.PackingSlip.DeliveryFee) / PaymentContants.USD_EXCHANGE_RATE) * 100,
-                        Currency = "usd",
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
-                        {
-                            Name = "Delivery Fee"
-                        }
-                    }
-                });
-            }
+                    Data.Models.Product? product = await _productService.GetProductWithBasicInfo(detail.ProductId);
 
-            SessionCreateOptions options = new SessionCreateOptions
-            {
-                PaymentMethodTypes = new List<string> { "card" },
-                LineItems = items,
-                Metadata = new Dictionary<string, string>
+                    items.Add(new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = (long)Math.Round((detail.Cost) / PaymentContants.USD_EXCHANGE_RATE) * 100,
+                            Currency = "usd",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = product?.ProductName,
+                                Images = new List<string> { product?.ProductImages.FirstOrDefault()?.ImageSrc ?? "" }
+                            }
+                        },
+                        Quantity = detail.Quantity
+                    });
+                }
+
+                if (invoice.PackingSlip != null)
+                {
+                    items.Add(new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = (long)Math.Round((invoice.PackingSlip.DeliveryFee) / PaymentContants.USD_EXCHANGE_RATE) * 100,
+                            Currency = "usd",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = "Delivery Fee"
+                            }
+                        },
+                        Quantity = 1
+                    });
+                }
+
+                SessionCreateOptions options = new SessionCreateOptions
+                {
+                    PaymentMethodTypes = new List<string> { "card" },
+                    LineItems = items,
+                    Metadata = new Dictionary<string, string>
                     {
                         { "invoice_id", invoice.InvoiceId }
                     },
-                Mode = "payment",
-                SuccessUrl = $"{GetDomain()}/order/stripecallback",
-                CancelUrl = $"{GetDomain()}/order/paymentfailed"
-            };
+                    Mode = "payment",
+                    SuccessUrl = $"{GetDomain()}/order/stripecallback",
+                    CancelUrl = $"{GetDomain()}/order/paymentfailed"
+                };
 
-            SessionService service = new SessionService();
-            Session session = service.Create(options);
-            TempData["Invoice"] = session.Id;
+                SessionService service = new SessionService();
+                Session session = service.Create(options);
+                TempData["Invoice"] = session.Id;
 
-            if (await _orderService.CreateInvoice(invoice))
-            {
-                await RemoveUserCart();
-                return Redirect(session.Url);
+                IEnumerable<WarehouseExport> warehouseExports = invoice.WarehouseExports;
+
+                if (await _orderService.CreateInvoice(invoice))
+                {
+                    await RemoveUserCart();
+                    await UpdateWarehouseExports(warehouseExports);
+                    return Redirect(session.Url);
+                }
+
+                return NotFound();
             }
-
-            return NotFound();
+            catch(Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         [Authorize]
@@ -460,7 +547,15 @@ namespace STech.Controllers
         [Authorize]
         public async Task<IActionResult> PaymentWithPaypal(Data.Models.Invoice invoice)
         {
-            return Ok();
+            try
+            {
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }   
         }
 
         [Authorize]

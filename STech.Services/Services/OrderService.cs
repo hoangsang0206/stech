@@ -14,13 +14,14 @@ namespace STech.Services.Services
 
         public async Task<bool> CreateInvoice(Invoice invoice)
         {
-            IEnumerable<InvoiceDetail> invoiceDetails = invoice.InvoiceDetails ?? new List<InvoiceDetail>();
-            IEnumerable<InvoiceStatus> invoiceStatuses = invoice.InvoiceStatuses ?? new List<InvoiceStatus>();
+            IEnumerable<InvoiceDetail> invoiceDetails = invoice.InvoiceDetails;
+            IEnumerable<InvoiceStatus> invoiceStatuses = invoice.InvoiceStatuses;
             PackingSlip? packingSlip = invoice.PackingSlip;
 
             invoice.InvoiceDetails = new List<InvoiceDetail>();
             invoice.InvoiceStatuses = new List<InvoiceStatus>();
             invoice.PackingSlip = null;
+            invoice.WarehouseExports = new List<WarehouseExport>();
 
             await _context.Invoices.AddAsync(invoice);
             await _context.SaveChangesAsync();
@@ -32,7 +33,6 @@ namespace STech.Services.Services
                 await _context.PackingSlips.AddAsync(packingSlip);
             }
 
-            _context.Invoices.Update(invoice);
             return await _context.SaveChangesAsync() > 0;
         }
 

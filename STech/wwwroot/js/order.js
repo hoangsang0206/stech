@@ -45,9 +45,7 @@ $('#recipient-ward').on('change', function() {
     }
 })
 
-$('.form-place-order').submit(function(e) {
-    e.preventDefault();
-
+$('.form-place-order .form-submit-btn').click(() => {
     const pId = $('#hidden-product').val();
 
     showWebLoader();
@@ -56,11 +54,14 @@ $('.form-place-order').submit(function(e) {
         type: 'GET',
         url: `/api/order/check?pId=${pId}`,
         success: (response) => {
+            hideWebLoader();
+
             if (!response.status) {
-                showHtmlDialog('warning', null, `<ul class="list-unstyled p-0">${response.data}</ul>`);
-                hideWebLoader();
+                setTimeout(() => {
+                    showHtmlDialog('warning', null, `<ul class="list-unstyled p-0">${response.data}</ul>`)
+                }, 1000)
             } else {
-                $(this).submit();
+                $('.form-place-order ').submit();
             }
         }
     })

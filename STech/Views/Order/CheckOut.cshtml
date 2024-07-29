@@ -6,6 +6,7 @@
     User user = Model.Item1;
     IEnumerable<UserCart> userCart = user.UserCarts;
     IEnumerable<UserAddress> userAddresses = user.UserAddresses;
+    UserAddress defaultAddress = userAddresses.FirstOrDefault(a => a.IsDefault == true) ?? new UserAddress();
     AddressVM address = Model.Item2;
     Product? product = Model.Item3;
 
@@ -25,7 +26,12 @@
             <div class="order-col-12 col-lg-8 pe-0 pe-md-5">
                 <div>
                     <div>
-                        @await Html.PartialAsync("PartialViews/Order_RecipientInfo", new AddAddressVM())
+                        @await Html.PartialAsync("PartialViews/Order_RecipientInfo", new AddAddressVM() 
+                        { 
+                            RecipientName = defaultAddress.RecipientName ?? "",
+                            RecipientPhone = defaultAddress.RecipientPhone ?? "",
+                            Address = address?._Ward?.code == defaultAddress.WardCode ? defaultAddress.Address : "",
+                        })
                     </div>
                 </div>
                 <div>
@@ -107,7 +113,7 @@
                         <span id="order-total" style="font-size: 1.2rem; color: var(--primary-color)" class="fw-bold" data-total="@totalPrice">@CurrencyFormatter.Format(totalPrice)</span>
                     </div>
 
-                    <button type="submit" class="form-submit-btn">THANH TOÁN NGAY</button>
+                    <button type="button" class="form-submit-btn">THANH TOÁN NGAY</button>
                 </div>
             </div>
         </div>

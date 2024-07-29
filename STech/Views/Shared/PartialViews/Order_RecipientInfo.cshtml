@@ -10,14 +10,16 @@
             <div>
                 <div>
                     <div class="form-input-box">
-                        <input asp-for="@Model.RecipientName" type="text" class="form-input" id="recipient-name" />
+                        <input asp-for="@Model.RecipientName" type="text" value="@Model.RecipientName"
+                               class="form-input @(!string.IsNullOrEmpty(Model.RecipientName) ? "input-valid" : "")" id="recipient-name" />
                         <label class="input-label">Họ tên</label>
                     </div>
                     <span asp-validation-for="@Model.RecipientName"></span>
                 </div>
                 <div>
                     <div class="form-input-box">
-                        <input asp-for="@Model.RecipientPhone" type="text" class="form-input" id="recipient-phone" />
+                        <input asp-for="@Model.RecipientPhone" type="text" value="@Model.RecipientPhone"
+                               class="form-input @(!string.IsNullOrEmpty(Model.RecipientPhone) ? "input-valid" : "")" id="recipient-phone" />
                         <label class="input-label">Số điện thoại</label>
                     </div>
                     <span asp-validation-for="@Model.RecipientPhone"></span>
@@ -57,7 +59,8 @@
                 </div>
                 <div>
                     <div class="form-input-box">
-                        <input asp-for="@Model.Address" type="text" class="form-input" id="recipient-address" />
+                        <input asp-for="@Model.Address" type="text" value="@Model.Address"
+                               class="form-input @(!string.IsNullOrEmpty(Model.Address) ? "input-valid" : "")" id="recipient-address" />
                         <label class="input-label">Số nhà, địa chỉ</label>
                     </div>
                     <span asp-validation-for="@Model.Address"></span>

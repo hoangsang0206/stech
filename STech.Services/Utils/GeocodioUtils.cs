@@ -1,6 +1,8 @@
-﻿namespace STech.Utils
+﻿using STech.Data.Models;
+
+namespace STech.Services.Utils
 {
-    public class GeocodioUtils
+    public static class GeocodioUtils
     {
         public static readonly double EarthRadius = 6371.0; //km
 
@@ -37,6 +39,15 @@
 
 
             return Math.Floor(fee);
+        }
+
+        public static IEnumerable<Warehouse> OrderByDistance(this IEnumerable<Warehouse> warehouses, double latitude, double longtitude)
+        {
+            return warehouses.OrderBy(wh =>
+            {
+                double distance = CalculateDistance(latitude, longtitude, Convert.ToDouble(wh.Latitude), Convert.ToDouble(wh.Longtitude));
+                return distance;
+            }).ToList();
         }
     }
 }

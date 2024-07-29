@@ -1,10 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using STech.Services.Utils;
 
 namespace STech.Services.Services
 {
@@ -17,9 +13,37 @@ namespace STech.Services.Services
             _context = context;
         }
 
-        public async Task<Warehouse?> GetOnlineWarehouse()
+        public async Task<IEnumerable<Warehouse>> GetWarehouses()
         {
-            return await _context.Warehouses.Where(t => t.Type == "online").FirstOrDefaultAsync();
+            return await _context.Warehouses.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Warehouse>> GetWarehousesOrderByDistance(double latitude, double longtitude)
+        {
+            IEnumerable<Warehouse> warehouses = await GetWarehouses();
+            return warehouses.OrderByDistance(latitude, longtitude);
+        }
+
+        public async Task<IEnumerable<Warehouse>> GetWarehousesOrderByDistanceWithProduct(double? latitude, double? longtitude)
+        {
+            IEnumerable<Warehouse> warehouses = warehouses = await _context.Warehouses
+                .Include(w => w.WarehouseProducts)
+                .ToListAsync();
+
+            if (latitude == null || longtitude == null)
+            {
+                return warehouses.OrderByDescending(w => w.WarehouseProducts.Count);
+            }
+
+            return warehouses.OrderByDistance(latitude.Value, longtitude.Value);
+        }
+
+        public async Task<Warehouse?> GetNearestWarehouse(double latitude, double longtitude)
+        {
+            IEnumerable<Warehouse> warehouses = await GetWarehousesOrderByDistance(latitude, longtitude);
+            Warehouse? warehouse = warehouses.FirstOrDefault();
+
+            return warehouse;
         }
 
         public async Task<IEnumerable<WarehouseProduct>> GetWarehouseProducts(string productId)
@@ -30,33 +54,38 @@ namespace STech.Services.Services
                 .ToListAsync();
         }
 
-        public async Task<bool> SubtractProductQuantity(string warehouseId, string productId, int quantity)
+        public async Task<bool> CreateWarehouseExports(IEnumerable<WarehouseExport> warehouseExports)
         {
-            WarehouseProduct? whP = await _context.WarehouseProducts
-                .Where(wp => wp.ProductId == productId && wp.WarehouseId == warehouseId).FirstOrDefaultAsync();
-            if (whP != null)
-            {
-                whP.Quantity -= quantity;
-                _context.WarehouseProducts.Update(whP);
-                return await _context.SaveChangesAsync() > 0;
-            }
+            IEnumerable<WarehouseExportDetail> wheDetails = warehouseExports.SelectMany(t => t.WarehouseExportDetails).ToList();
+            warehouseExports.ToList().ForEach(t => t.WarehouseExportDetails = new List<WarehouseExportDetail>());
 
-            return false;
+            await _context.WarehouseExports.AddRangeAsync(warehouseExports);
+            await _context.SaveChangesAsync();
+
+            await _context.WarehouseExportDetails.AddRangeAsync(wheDetails);
+
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> SubtractProductQuantity(Invoice invoice)
+
+        public async Task<bool> SubtractProductQuantity(IEnumerable<WarehouseExport> warehouseExports)
         {
-            if (invoice == null)
+            foreach (WarehouseExport wE in warehouseExports)
             {
-                return false;
+                foreach(WarehouseExportDetail detail in wE.WarehouseExportDetails)
+                {
+                    WarehouseProduct? whP = await _context.WarehouseProducts
+                        .Where(wp => wp.ProductId == detail.ProductId && wp.WarehouseId == wE.WarehouseId).FirstOrDefaultAsync();
+
+                    if (whP != null)
+                    {
+                        whP.Quantity -= detail.RequestedQuantity;
+                        _context.WarehouseProducts.Update(whP);
+                    }
+                }
             }
 
-            foreach (InvoiceDetail detail in invoice.InvoiceDetails)
-            {
-                
-            }
-
-            return true;
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

@@ -26,4 +26,6 @@ public partial class WarehouseExport
     public virtual Invoice? Invoice { get; set; }
 
     public virtual Warehouse Warehouse { get; set; } = null!;
+
+    public virtual ICollection<WarehouseExportDetail> WarehouseExportDetails { get; set; } = new List<WarehouseExportDetail>();
 }

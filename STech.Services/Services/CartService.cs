@@ -72,12 +72,12 @@ namespace STech.Services.Services
 
         public async Task<bool> RemoveUserCart(string userId)
         {
-            if(userId != null)
+            if(userId == null)
             {
                 return false;
             }
 
-            IEnumerable<UserCart> cart = await _context.UserCarts .Where(c => c.UserId == userId).ToListAsync();
+            IEnumerable<UserCart> cart = await _context.UserCarts.Where(c => c.UserId == userId).ToListAsync();
 
             if(cart.Count() <= 0)
             {
@@ -96,7 +96,7 @@ namespace STech.Services.Services
             }
 
             _context.UserCarts.RemoveRange(cart);
-            return await _context.SaveChangesAsync() >= 0;
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> UpdateQuantity(UserCart cart, int qty)

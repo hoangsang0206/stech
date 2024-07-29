@@ -71,7 +71,28 @@ namespace STech.ApiControllers
             }
             else
             {
-                IEnumerable<CartVM> cart = CartUtils.GetCartFromCookie(Request);
+                IEnumerable<CartVM> cartFromCookie = CartUtils.GetCartFromCookie(Request);
+                List<UserCart> cart = new List<UserCart>();
+                foreach(CartVM c in cartFromCookie)
+                {
+                    if(c.ProductId == null)
+                    {
+                        continue;
+                    }
+
+                    Product? product = await _productService.GetProductWithBasicInfo(c.ProductId);
+                    if(product == null)
+                    {
+                        continue;
+                    }
+
+                    cart.Add(new UserCart
+                    {
+                        Product = product,
+                        Quantity = c.Quantity
+                    });
+                }
+
                 return Ok(new ApiResponse
                 {
                     Status = true,
