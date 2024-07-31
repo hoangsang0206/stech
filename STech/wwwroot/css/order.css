@@ -113,8 +113,8 @@
         border-radius: 50%;
         background: #fff;
         border: 2px solid #bbb;
-        width: 1.7rem;
-        height: 1.7rem;
+        width: 1.5rem;
+        height: 1.5rem;
         display: grid;
         place-items: center;
         color: #bbb;
@@ -122,7 +122,7 @@
     }
 
     .timeline-icon span:not(:empty) i {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
 
 .timeline-text {

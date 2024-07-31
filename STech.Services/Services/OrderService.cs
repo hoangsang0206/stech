@@ -80,6 +80,21 @@ namespace STech.Services.Services
             return invoice;
         }
 
+        public async Task<IEnumerable<Invoice>> GetUserInvoices(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new List<Invoice>();
+            }
+
+            return await _context.Invoices
+                .Where(i => i.UserId == userId)
+                .Include(i => i.InvoiceStatuses)
+                .Include(i => i.InvoiceDetails)
+                .OrderByDescending(i => i.OrderDate)
+                .ToListAsync();
+        }
+
         public async Task<bool> UpdateInvoice(Invoice invoice)
         {
             _context.Invoices.Update(invoice);

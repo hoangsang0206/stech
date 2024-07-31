@@ -92,7 +92,7 @@ namespace STech.Controllers
         {
             DateTime date = DateTime.Now;
             Data.Models.Invoice invoice = new Data.Models.Invoice();
-            invoice.InvoiceId = date.ToString("yyyyMMdd") + "ORD" + RandomUtils.GenerateRandomString(8).ToUpper();
+            invoice.InvoiceId = date.ToString("ddMMyy") + RandomUtils.GenerateRandomString(5).ToUpper();
             invoice.OrderDate = date;
             invoice.PaymentMedId = paymentMethod.PaymentMedId;
             invoice.PaymentStatus = PaymentContants.UnPaid;
@@ -111,7 +111,7 @@ namespace STech.Controllers
         {
             PackingSlip packingSlip = new PackingSlip();
             packingSlip.InvoiceId = invoice.InvoiceId;
-            packingSlip.Psid = DateTime.Now.ToString("yyyyMMdd") + "PKS" + RandomUtils.GenerateRandomString(8).ToUpper();
+            packingSlip.Psid = DateTime.Now.ToString("ddMMyy") + "SHIP" + RandomUtils.GenerateRandomString(5).ToUpper();
             packingSlip.DeliveryFee = await CalculateShippingFee(address);
             packingSlip.IsCompleted = false;
 
@@ -215,7 +215,7 @@ namespace STech.Controllers
                     if(whE == null)
                     {
                         whE = new WarehouseExport();
-                        whE.Weid = DateTime.Now.ToString("yyyyMMdd") + "WHE" + RandomUtils.GenerateRandomString(8).ToUpper();
+                        whE.Weid = DateTime.Now.ToString("ddMMyy") + "EX" + RandomUtils.GenerateRandomString(5).ToUpper();
                         whE.WarehouseId = wp.WarehouseId;
                         whE.InvoiceId = invoice.InvoiceId;
                         whE.DateCreate = DateTime.Now;
@@ -594,9 +594,14 @@ namespace STech.Controllers
 
         public async Task<IActionResult> CheckOrder(string? oId, string? phone)
         {
+            IEnumerable<Breadcrumb> breadcrumbs = new List<Breadcrumb>
+            {
+                new Breadcrumb("Tra cứu đơn hàng", "")
+            };
+
             if (string.IsNullOrEmpty(oId) || string.IsNullOrEmpty(phone))
             {
-                return View();
+                return View(new Tuple<Data.Models.Invoice?, IEnumerable<Breadcrumb>>(null, breadcrumbs));
             }
 
             Data.Models.Invoice? invoice = await _orderService.GetInvoice(oId, phone);
@@ -604,7 +609,7 @@ namespace STech.Controllers
             ViewBag.SearchOId = oId;
             ViewBag.SearchPhone = phone;
 
-            return View(invoice);
+            return View(new Tuple<Data.Models.Invoice?, IEnumerable<Breadcrumb>>(invoice, breadcrumbs));
         }
 
         #endregion

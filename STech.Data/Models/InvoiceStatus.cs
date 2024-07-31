@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -13,5 +14,6 @@ public partial class InvoiceStatus
 
     public DateTime? DateUpdated { get; set; }
 
+    [JsonIgnore]
     public virtual Invoice Invoice { get; set; } = null!;
 }

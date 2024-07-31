@@ -39,19 +39,16 @@
                     }
                 }
             </div>
-        </div>
-        <div class="mt-2">
-            <span style="font-size: 1rem" class="text-secondary">Ngày đặt hàng: @Model.OrderDate?.ToString("dd/MM/yyyy HH:mm")</span>
-        </div>
-        @if (Model.IsCompleted == true)
-        {
-            <div class="mt-2">
+            <div class="flex-grow-1 d-flex justify-content-end">
                 <button class="dowload-invoice btn btn-primary">
                     <i class="fa-solid fa-download"></i>
                     <span>Tải hóa đơn</span>
                 </button>
             </div>
-        }
+        </div>
+        <div class="mt-2">
+            <span style="font-size: 1rem" class="text-secondary">Ngày đặt hàng: @Model.OrderDate?.ToString("dd/MM/yyyy HH:mm")</span>
+        </div>
     </div>
 
     <div class="row m-0 p-0">
@@ -188,7 +185,7 @@
 
                                         <div class="timeline-icon">
                                             <span>
-                                                <i class="fa-solid fa-truck-check"></i>
+                                                <i class="fa-solid fa-check"></i>
                                             </span>
                                         </div>
                                         <div class="timeline-text">

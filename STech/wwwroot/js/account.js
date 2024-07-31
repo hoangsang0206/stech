@@ -406,7 +406,69 @@ const loadOrders = () => {
         url: '/api/orders/all',
         success: (response) => {
             if (response.status) {
+                $('.user-order-list').empty();
+                $('.user-order-list').append(`
+                    <tr class="page-table-header">
+                        <th>STT</th>
+                        <th>Mã đơn hàng</th>
+                        <th>Ngày đặt</th>
+                        <th>Số SP</th>
+                        <th>Thành tiền</th>
+                        <th>Thanh toán</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                    </tr>
+                `);
 
+                let index = 0;
+
+                response.data.map(order => {
+                    index++;
+
+                    const order_date = new Date(order.orderDate);
+                    const total_items = order.invoiceDetails.reduce((accumulator, item) => {
+                        return accumulator + item.quantity;
+                    }, 0);
+ 
+                    let payment_status = ``;
+                    let order_status = ``;
+
+                    switch (order.paymentStatus) {
+                        case 'paid':
+                            payment_status = `<span class="page-badge badge-success">Đã thanh toán</span>`;
+                            break;
+
+                        case 'unpaid':
+                            payment_status = `<span class="page-badge badge-warning">Chờ thanh toán</span>`;
+                            break;
+
+                        case 'payment-failed':
+                            payment_status = `<span class="page-badge badge-error">Thanh toán thất bại</span>`;
+                            break;
+                    }
+
+
+                    if (order.isCancelled === true) {
+                        order_status = `<span class="page-badge badge-error">Đã hủy</span>`;
+                    }
+                    else {
+                        order_status = order.isCompleted ? `<span class="page-badge badge-success">Đã giao hàng</span>`
+                            : `<span class="page-badge badge-warning">Chờ giao hàng</span>`;
+                    }
+
+                    $('.user-order-list').append(`
+                        <tr>
+                            <td>${index}</td>
+                            <td>${order.invoiceId}</td>
+                            <td>${order_date.getDate()}/${order_date.getMonth() + 1}/${order_date.getFullYear()}</td>
+                            <td>${total_items}</td>
+                            <td class="fweight-600">${order.total.toLocaleString('vi-VN')}đ</td>
+                            <td>${payment_status}</td>
+                            <td>${order_status}</td>
+                            <td></td>
+                        </tr>
+                    `);
+                })
             }
 
             hideWebLoader();

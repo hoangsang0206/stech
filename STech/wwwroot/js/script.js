@@ -147,7 +147,7 @@ $('input[name="theme"]').on('change', (e) => {
     const colorValue = $(e.target).val();
 
     if (colorValue == "theme-1") {
-        changeThemeColor('#0652DD', '#548ffa', '#387dfc');
+        changeThemeColor('#0859ec', '#548ffa', '#387dfc');
         saveColorToLocalStorage('#0652DD', '#548ffa', '#387dfc', 'theme-1');
     }
     else if (colorValue == "theme-2") {
