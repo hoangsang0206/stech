@@ -592,20 +592,19 @@ namespace STech.Controllers
             return View(paymentStatus);
         }
 
-        public IActionResult CheckOrder()
+        public async Task<IActionResult> CheckOrder(string? oId, string? phone)
         {
-
-            return View();
-        }
-
-        public IActionResult CheckOrder(string oId, string phone)
-        {
-            if(string.IsNullOrEmpty(oId) || string.IsNullOrEmpty(phone))
+            if (string.IsNullOrEmpty(oId) || string.IsNullOrEmpty(phone))
             {
-                return NotFound();
+                return View();
             }
 
-            return View();
+            Data.Models.Invoice? invoice = await _orderService.GetInvoice(oId, phone);
+
+            ViewBag.SearchOId = oId;
+            ViewBag.SearchPhone = phone;
+
+            return View(invoice);
         }
 
         #endregion

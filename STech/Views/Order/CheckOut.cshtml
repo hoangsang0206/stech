@@ -14,7 +14,7 @@
 }
 
 
-<section class="checkout-page">
+<section class="page-container-padding checkout-page">
     <div class="d-none">
         <input type="hidden" id="hidden-city" value="@address?._City?.code" />
         <input type="hidden" id="hidden-district" value="@address?._District?.code" />
@@ -22,7 +22,7 @@
     </div>
     <form asp-controller="Order" asp-action="PlaceOrder" method="POST" class="form-place-order">
         <input type="hidden" id="hidden-product" name="pId" value="@product?.ProductId" />
-        <div class="row">
+        <div class="row m-0 p-0">
             <div class="order-col-12 col-lg-8 pe-0 pe-md-5">
                 <div>
                     <div>

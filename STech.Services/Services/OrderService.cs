@@ -41,6 +41,45 @@ namespace STech.Services.Services
             return await _context.Invoices.Where(i => i.InvoiceId == invoiceId).FirstOrDefaultAsync();
         }
 
+        public async Task<Invoice?> GetInvoice(string invoiceId, string phone)
+        {
+            Invoice? invoice = await _context.Invoices
+                .Where(i => i.InvoiceId == invoiceId && i.RecipientPhone == phone)
+                .Include(i => i.PackingSlip)
+                .Include(i => i.InvoiceStatuses)
+                .Include(i => i.InvoiceDetails)
+                .ThenInclude(d => d.Product)
+                .ThenInclude(d => d.ProductImages)
+                .FirstOrDefaultAsync();
+
+            if(invoice != null)
+            {
+                invoice.InvoiceDetails = invoice.InvoiceDetails.Select(d => new InvoiceDetail
+                {
+                    InvoiceId = d.InvoiceId,
+                    ProductId = d.ProductId,
+                    Quantity = d.Quantity,
+                    Cost = d.Cost,
+                    Product = new Product
+                    {
+                        ProductId = d.Product.ProductId,
+                        ProductName = d.Product.ProductName,
+                        Price = d.Product.Price,
+                        ProductImages = d.Product.ProductImages.OrderBy(t => t.Id).Take(1).ToList(),
+                    }
+                }).ToList();
+            }
+
+            if (invoice?.PackingSlip != null)
+            {
+                invoice.PackingSlip.PackingSlipStatuses = await _context.PackingSlipStatuses
+                    .Where(p => p.Psid == invoice.PackingSlip.Psid)
+                    .ToListAsync();
+            }
+
+            return invoice;
+        }
+
         public async Task<bool> UpdateInvoice(Invoice invoice)
         {
             _context.Invoices.Update(invoice);

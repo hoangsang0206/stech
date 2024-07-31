@@ -209,6 +209,8 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.InvoiceId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.CancelledDate).HasColumnType("datetime");
+            entity.Property(e => e.CompletedDate).HasColumnType("datetime");
             entity.Property(e => e.CustomerId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -219,6 +221,7 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.EmployeeId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.IsCancelled).HasDefaultValue(false);
             entity.Property(e => e.IsCompleted).HasDefaultValue(false);
             entity.Property(e => e.Note).HasMaxLength(200);
             entity.Property(e => e.OrderDate)

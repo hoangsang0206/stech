@@ -1,14 +1,19 @@
 ﻿const showButtonLoader = (element, loaderSize, strokeWidth) => {
     const elementHtml = $(element).html();
     const elementLoader = `<div class="loader-box">
-            <svg class="loader-container" style="width: ${loaderSize}; height: ${loaderSize}" viewBox="0 0 40 40" height="20" width="20">
+            <svg class="loader-container" style="width: ${loaderSize}; height: ${loaderSize}" viewBox="0 0 40 40" height="40" width="40">
                 <circle class="track" cx="20" cy="20" r="17.5" pathlength="100" stroke-width="${strokeWidth}" fill="none" />
                 <circle class="car" cx="20" cy="20" r="17.5" pathlength="100" stroke-width="${strokeWidth}" fill="none" />
-            </svg></span></div>`;
+            </svg></div>`;
 
-    $(element).css('height', $(element).outerHeight());
-    $(element).css('width', $(element).outerWidth());
+    const elementWidth = $(element).width();
+    const elementHeight = $(element).height();
+
     $(element).html(elementLoader);
+    $(element).find('.loader-box').css('height', elementHeight);
+    $(element).find('.loader-box').css('width', elementWidth);
+
+    $(element).prop('disabled', true);
 
     return elementHtml;
 }
@@ -16,6 +21,7 @@
 const hideButtonLoader = (element, elementHtml) => {
     const timeout = setTimeout(() => {
         $(element).html(elementHtml);
+        $(element).prop('disabled', false);
         clearTimeout(timeout);
     }, 1000);
 }

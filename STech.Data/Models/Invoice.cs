@@ -35,6 +35,12 @@ public partial class Invoice
 
     public string? EmployeeId { get; set; }
 
+    public bool? IsCancelled { get; set; }
+
+    public DateTime? CancelledDate { get; set; }
+
+    public DateTime? CompletedDate { get; set; }
+
     public virtual Customer? Customer { get; set; }
 
     public virtual DeliveryMethod DeliveryMed { get; set; } = null!;
