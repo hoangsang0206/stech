@@ -42,7 +42,6 @@
 .account-content-wrapper {
     border-left: 1px solid #ccc;
     height: 100%;
-    padding-left: 2rem;
     position: relative;
 }
 
@@ -194,4 +193,11 @@ input[name="address-type"]:checked ~ label > .address-type {
     color: var(--primary-color);
     border: 1px solid var(--primary-color);
     border-radius: var(--radius);
+}
+
+
+@media screen and (max-width: 576px) {
+    .account-content-wrapper {
+        border: none;
+    }
 }

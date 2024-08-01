@@ -521,8 +521,30 @@ button:disabled:hover {
     padding: 0.6rem 0.8rem;
 }
 
-/* ----------------------------- */
+.page-btn-nav {
+    display: flex;
+    align-items: center;
+    border-radius: .4rem;
+    background: #f2ebeb;
+    padding: .2rem;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
 
+.page-btn-nav-item {
+    border-radius: .3rem;
+    padding: .5rem 1rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.page-btn-nav-item.active {
+    background: #fff;
+    font-weight: 500;
+}
+
+
+/* ----------------------------- */
 .web-scroll-block {
     overflow: hidden;
 }

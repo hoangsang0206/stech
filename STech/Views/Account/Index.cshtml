@@ -52,7 +52,7 @@
         </nav>
     </div>
     <div class="col-12 col-sm-8 col-md-9 p-0">
-        <div class="account-content-wrapper">
+        <div class="account-content-wrapper p-0 p-sm-4">
             <div class="account-content current" data-sidebar="profile">
                 <div class="d-flex gap-4">
                     <div class="user-image-wrapper position-relative">
@@ -98,6 +98,17 @@
                 </div>
 
                 <div class="account-content-box mt-3">
+                    <div class="d-inline-block overflow-x-auto">
+                        <div class="page-btn-nav">
+                            <div class="page-btn-nav-item active" data-load-orders="all">Tất cả</div>
+                            <div class="page-btn-nav-item" data-load-orders="completed">Đã giao hàng</div>
+                            <div class="page-btn-nav-item" data-load-orders="uncompleted">Chờ giao hàng</div>
+                            <div class="page-btn-nav-item" data-load-orders="paid">Đã thanh toán</div>
+                            <div class="page-btn-nav-item" data-load-orders="unpaid">Chưa thanh toán</div>
+                            <div class="page-btn-nav-item" data-load-orders="cancelled">Đã hủy</div>
+                        </div>
+                    </div>
+
                     <div class="page-table-wrapper">
                         <table class="page-table user-order-list">
                         </table>

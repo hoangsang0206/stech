@@ -464,7 +464,7 @@ namespace STech.Controllers
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            UnitAmount = (long)(detail.Cost / PaymentContants.USD_EXCHANGE_RATE) * 100,
+                            UnitAmount = (long)Math.Round(detail.Cost / PaymentContants.USD_EXCHANGE_RATE) * 100,
                             Currency = "usd",
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
@@ -482,7 +482,7 @@ namespace STech.Controllers
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            UnitAmount = (long)(invoice.PackingSlip.DeliveryFee / PaymentContants.USD_EXCHANGE_RATE) * 100,
+                            UnitAmount = (long)Math.Round(invoice.PackingSlip.DeliveryFee / PaymentContants.USD_EXCHANGE_RATE) * 100,
                             Currency = "usd",
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
@@ -604,12 +604,41 @@ namespace STech.Controllers
                 return View(new Tuple<Data.Models.Invoice?, IEnumerable<Breadcrumb>>(null, breadcrumbs));
             }
 
-            Data.Models.Invoice? invoice = await _orderService.GetInvoice(oId, phone);
+            Data.Models.Invoice? invoice = await _orderService.GetInvoiceWithDetails(oId, phone);
 
             ViewBag.SearchOId = oId;
             ViewBag.SearchPhone = phone;
 
             return View(new Tuple<Data.Models.Invoice?, IEnumerable<Breadcrumb>>(invoice, breadcrumbs));
+        }
+
+        [Route("order/detail/{id}"), Authorize]
+        public async Task<IActionResult> OrderDetail(string? id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            string? userId = User.FindFirstValue("Id");
+            if(userId == null)
+            {
+                return Unauthorized();
+            }
+
+            Data.Models.Invoice? invoice = await _orderService.GetInvoiceWithDetails(id);
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+            IEnumerable<Breadcrumb> breadcrumbs = new List<Breadcrumb>
+            {
+                new Breadcrumb("Đơn hàng", "/account#orders"),
+                new Breadcrumb(invoice.InvoiceId, "")
+            };
+
+            return View(new Tuple<Data.Models.Invoice, IEnumerable<Breadcrumb>>(invoice, breadcrumbs));
         }
 
         #endregion

@@ -399,11 +399,11 @@ const loadUserAddresses = () => {
     })
 }
 
-const loadOrders = () => {
+const loadOrders = (type) => {
     showWebLoader();
     $.ajax({
         type: 'GET',
-        url: '/api/orders/all',
+        url: `/api/orders/userorders?type=${type}`,
         success: (response) => {
             if (response.status) {
                 $('.user-order-list').empty();
@@ -465,7 +465,9 @@ const loadOrders = () => {
                             <td class="fweight-600">${order.total.toLocaleString('vi-VN')}đ</td>
                             <td>${payment_status}</td>
                             <td>${order_status}</td>
-                            <td></td>
+                            <td>
+                                <a href="/order/detail/${order.invoiceId}">Chi tiết</a>
+                            </td>
                         </tr>
                     `);
                 })
@@ -507,7 +509,7 @@ const showContent = () => {
                 loadUserAddresses();
                 break;
             case 'orders':
-                loadOrders();
+                loadOrders(null);
                 break;
             case 'reviews':
                 loadReviews();
@@ -692,4 +694,13 @@ tippy('.update-address', {
 tippy('.delete-address', {
     content: 'Xóa địa chỉ',
     placement: 'top'
+})
+
+
+$('.account-content-box .page-btn-nav-item').click(function() {
+    $('.account-content-box .page-btn-nav-item').removeClass('active');
+    $(this).addClass('active');
+    const type = $(this).data('load-orders');
+
+    loadOrders(type);
 })

@@ -105,6 +105,7 @@ $(".hidden-menu").mousedown((e) => {
 
 $(".overlay").mousedown(() => {
     $(".hidden-menu").removeClass("showHiddenMenu");
+    $(".mobile-sidebar").removeClass("showMobileSidebar");
     $(".overlay").removeClass("showOverlay");
 });
 

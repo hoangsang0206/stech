@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Services;
+using STech.Services.Constants;
 using System.Security.Claims;
 
 namespace STech.ApiControllers
@@ -18,8 +19,8 @@ namespace STech.ApiControllers
             _orderService = orderService;
         }
 
-        [HttpGet("all"), Authorize]
-        public async Task<IActionResult> GetOrders()
+        [HttpGet("userorders"), Authorize]
+        public async Task<IActionResult> GetOrders([FromQuery] string? type)
         {
             string? userId = User.FindFirstValue("Id");
 
@@ -30,6 +31,27 @@ namespace STech.ApiControllers
 
             IEnumerable<Invoice> invoices = await _orderService.GetUserInvoices(userId);
 
+            switch(type)
+            {
+                case "completed":
+                    invoices = invoices.Where(i => i.IsCompleted == true);
+                    break;
+                case "uncompleted":
+                    invoices = invoices.Where(i => i.IsCompleted == false && i.IsCancelled == false);
+                    break;
+                case "cancelled":
+                    invoices = invoices.Where(i => i.IsCancelled == true);
+                    break;
+                case "paid":
+                    invoices = invoices.Where(i => i.PaymentStatus == PaymentContants.Paid);
+                    break;
+                case "unpaid":
+                    invoices = invoices.Where(i => i.PaymentStatus == PaymentContants.UnPaid);
+                    break;
+                default:
+                    break;
+            }
+
             return Ok(new ApiResponse
             {
                 Status = true,
@@ -37,10 +59,10 @@ namespace STech.ApiControllers
             });
         }
 
-        [HttpGet("check")]
+        [HttpGet("one")]
         public async Task<IActionResult> CheckOrder([FromQuery] string oId, string phone)
         {
-            Invoice? invoice = await _orderService.GetInvoice(oId, phone);
+            Invoice? invoice = await _orderService.GetInvoiceWithDetails(oId, phone);
 
             if (invoice == null)
             {

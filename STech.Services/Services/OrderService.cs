@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
+using System.Numerics;
 
 namespace STech.Services.Services
 {
@@ -38,18 +39,54 @@ namespace STech.Services.Services
 
         public async Task<Invoice?> GetInvoice(string invoiceId)
         {
-            return await _context.Invoices.Where(i => i.InvoiceId == invoiceId).FirstOrDefaultAsync();
+            return await _context.Invoices
+                .Where(i => i.InvoiceId == invoiceId)
+                .FirstOrDefaultAsync();
         }
 
-        public async Task<Invoice?> GetInvoice(string invoiceId, string phone)
+        public async Task<Invoice?> GetInvoiceWithDetails(string invoiceId)
         {
             Invoice? invoice = await _context.Invoices
-                .Where(i => i.InvoiceId == invoiceId && i.RecipientPhone == phone)
-                .Include(i => i.PackingSlip)
+                .Where(i => i.InvoiceId == invoiceId)
                 .Include(i => i.InvoiceStatuses)
                 .Include(i => i.InvoiceDetails)
                 .ThenInclude(d => d.Product)
                 .ThenInclude(d => d.ProductImages)
+                .Include(i => i.PackingSlip)
+                .ThenInclude(p => p.PackingSlipStatuses)
+                .FirstOrDefaultAsync();
+
+            if (invoice != null)
+            {
+                invoice.InvoiceDetails = invoice.InvoiceDetails.Select(d => new InvoiceDetail
+                {
+                    InvoiceId = d.InvoiceId,
+                    ProductId = d.ProductId,
+                    Quantity = d.Quantity,
+                    Cost = d.Cost,
+                    Product = new Product
+                    {
+                        ProductId = d.Product.ProductId,
+                        ProductName = d.Product.ProductName,
+                        Price = d.Product.Price,
+                        ProductImages = d.Product.ProductImages.OrderBy(t => t.Id).Take(1).ToList(),
+                    }
+                }).ToList();
+            }
+
+            return invoice;
+        }
+
+        public async Task<Invoice?> GetInvoiceWithDetails(string invoiceId, string phone)
+        {
+            Invoice? invoice = await _context.Invoices
+                .Where(i => i.InvoiceId == invoiceId && i.RecipientPhone == phone)
+                .Include(i => i.InvoiceStatuses)
+                .Include(i => i.InvoiceDetails)
+                .ThenInclude(d => d.Product)
+                .ThenInclude(d => d.ProductImages)
+                .Include(i => i.PackingSlip)
+                .ThenInclude(p => p.PackingSlipStatuses)
                 .FirstOrDefaultAsync();
 
             if(invoice != null)
@@ -68,13 +105,6 @@ namespace STech.Services.Services
                         ProductImages = d.Product.ProductImages.OrderBy(t => t.Id).Take(1).ToList(),
                     }
                 }).ToList();
-            }
-
-            if (invoice?.PackingSlip != null)
-            {
-                invoice.PackingSlip.PackingSlipStatuses = await _context.PackingSlipStatuses
-                    .Where(p => p.Psid == invoice.PackingSlip.Psid)
-                    .ToListAsync();
             }
 
             return invoice;
