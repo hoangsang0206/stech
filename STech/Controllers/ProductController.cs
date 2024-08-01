@@ -25,16 +25,18 @@ namespace STech.Controllers
                 return NotFound();
             }
 
+            IEnumerable<Product> similarProducts = new List<Product>();
             List<Breadcrumb> breadcrumbs = new List<Breadcrumb>();
 
             Category? pCategory = product.Category;
             if(pCategory != null)
             {
                 breadcrumbs.Add(new Breadcrumb(pCategory.CategoryName, $"/collections/{pCategory.CategoryId}"));
+                similarProducts = await _productService.GetSimilarProducts(pCategory.CategoryId, 5);
             }
             breadcrumbs.Add(new Breadcrumb(product.ProductName, ""));
 
-            return View(new Tuple<Product, List<Breadcrumb>>(product, breadcrumbs));
+            return View(new Tuple<Product, IEnumerable<Product>, List<Breadcrumb>>(product, similarProducts, breadcrumbs));
         }
     }
 }

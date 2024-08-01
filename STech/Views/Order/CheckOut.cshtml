@@ -23,7 +23,7 @@
     <form asp-controller="Order" asp-action="PlaceOrder" method="POST" class="form-place-order">
         <input type="hidden" id="hidden-product" name="pId" value="@product?.ProductId" />
         <div class="row m-0 p-0">
-            <div class="order-col-12 col-lg-8 pe-0 pe-md-5">
+            <div class="col-12 col-lg-8 pe-0 pe-md-5">
                 <div>
                     <div>
                         @await Html.PartialAsync("PartialViews/Order_RecipientInfo", new AddAddressVM() 
@@ -51,7 +51,7 @@
                     @await Component.InvokeAsync("Payment")
                 </div>
             </div>
-            <div class="order-col-12 col-lg-4 mt-4 mt-lg-0">
+            <div class="col-12 col-lg-4 mt-4 mt-lg-0">
                 <h5>Sản phẩm</h5>
                 <div>
                     @if (product != null)
@@ -119,3 +119,7 @@
         </div>
     </form>
 </section>
+
+@section Scripts {
+    <script type="text/javascript" src="~/js/order.js"></script>
+}

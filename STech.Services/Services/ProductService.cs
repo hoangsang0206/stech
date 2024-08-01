@@ -73,6 +73,25 @@ namespace STech.Services.Services
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Product>> GetSimilarProducts(string categoryId, int numToTake)
+        {
+            return await _context.Products
+                .Where(p => p.CategoryId == categoryId && p.IsActive == true)
+                .OrderBy(p => Guid.NewGuid())
+                .Select(p => new Product()
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    OriginalPrice = p.OriginalPrice,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
+                    WarehouseProducts = p.WarehouseProducts,
+                    Brand = p.Brand,
+                })
+                .Take(numToTake)
+                .ToListAsync();
+        }
+
         public async Task<Product?> GetProduct(string id)
         {
             return await _context.Products

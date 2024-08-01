@@ -61,12 +61,14 @@
         text-decoration: line-through;
         color: #6d6e72;
         line-height: normal;
+        font-weight: 500;
+        font-size: 0.9rem;
     }
 
 .product-price span {
     color: var(--primary-color);
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: 1.05rem;
 }
 
 .product-discount-percent {
@@ -122,23 +124,22 @@
 }
 
 
+
+
 .product-detail-box {
     background: var(--content-color-white);
     padding: 1rem;
+    border-radius: var(--radius);
 }
 
 .product-info {
     padding: 2rem 1rem 1.5rem 1.5rem;
-    border-top-right-radius: 0.2rem;
-    border-bottom-right-radius: 0.2rem;
     border-left: 1px solid #e8e8e8;
 }
 
 .product-gallery {
     padding: 2rem 1.8rem 1.5rem 1.8rem;
     overflow: hidden;
-    border-top-left-radius: 0.2rem;
-    border-bottom-left-radius: 0.2rem;
 }
 
 .product-gallery img {
@@ -212,7 +213,7 @@
 .product-info-price h2 {
     color: var(--primary-color);
     font-weight: bold;
-    font-size: 2rem;
+    font-size: 1.8rem;
     margin: 0;
 }
 
@@ -234,37 +235,16 @@
     border: none;
     border-radius: 0.2rem;
     padding: 0.7rem 3rem;
+    height: 4.5rem;
     background: var(--primary-color);
     position: relative;
     overflow: hidden;
     z-index: 1;
 }
 
-/*.buy-action-btn::after {
-    content: '\f217';
-    font-family: "FontAwesome";
-    font-size: 1.8rem;
-    color: var(--content-color-white);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--primary-color);
-    opacity: 0;
-    z-index: 2;
-    display: grid;
-    place-items: center;
-    transition: var(--trans-all-03);
-}*/
-
 .buy-action-btn:not(:disabled):hover {
     outline: 2px solid var(--primary-color-hover);
 }
-
-/*.buy-action-btn:not(:disabled):hover::after {
-    opacity: 1;
-}*/
 
 .buy-action-btn:disabled {
     padding: 0.9rem 5rem;
@@ -277,151 +257,99 @@
     margin: 0;
 }
 
-.add-to-cart-btn {
+.add-to-cart-action {
     border: 2px solid var(--primary-color);
-    width: 6rem;
+    width: 5rem;
+    height: 4.5rem;
     border-radius: 0.2rem;
     background: none;
 }
 
-.add-to-cart-btn:hover {
-    border-color: var(--primary-color-hover);
-}
+    .add-to-cart-action:hover {
+        border-color: var(--primary-color-hover);
+    }
 
-.add-to-cart-btn i {
-    font-size: 1.8rem;
-    color: var(--primary-color);
-}
+    .add-to-cart-action i {
+        font-size: 1.8rem;
+        color: var(--primary-color);
+    }
 
 button:disabled {
     background: #bcbec2;
     border: none;
 }
 
-.product-gift {
-    width: 90%;
-    border: 1px solid #ffd9d9;
-    border-radius: 0.2rem;
-}
-
-.product-gift-header {
-    background: #ffd9d9;
-    padding: 0.5rem 1.7rem;
-    color: var(--primary-color);
-    font-weight: 600;
-}
-
-.product-gift-header span {
-    font-size: 1.15rem;
-}
-
-.product-gift-header i {
-    font-size: 1.2rem;
-    display: grid;
-    place-items: center;
-    margin-right: 0.7rem;
-}
-
-.product-gift-content {
-    padding: 0.3rem 1.7rem;
-}
-
-.product-gift-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.product-gift-item {
-    padding: 0.2rem 0;
-}
-
-.product-gift-item a {
-    color: #000000;
-    text-decoration: none;
-}
-
-.product-gift-item:hover a {
-    color: var(--primary-color);
-    text-decoration:underline;
-}
-
-.product-gift-item span {
-    font-size: 0.7rem;
-    border-radius: 50%;
-    background: #e30019;
-    color: #fff;
-    width: 1.2rem;
-    height: 1.2rem;
-    display: grid;
-    place-items: center;
-    font-weight: 600;
-}
-
-
-.product-contents {
-    width: calc(100% - 25rem);
-    min-height: 20rem;
-    border-radius: 0.2rem;
-    background: #ffffff;
-    padding: 1rem 1.5rem;
-}
-
-.pro-content-image img {
-    width: 70% !important;
-}
-
-.pro-ytb-content-video iframe {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 16/9;
-}
-
-.product-similar {
-    width: 25rem;
-    border-radius: 0.2rem;
-    background: #ffffff;
-    padding: 1rem 1.5rem;
-}
-
 .box-header h4 {
     font-weight: 600;
 }
 
-.product-para-table {
+.product-specifications {
     overflow-x: scroll;
 }
 
-.product-para-table table {
+.product-specs-box {
+    max-height: 15.6rem;
+    overflow: hidden;
+}
+
+.product-specs-table {
     width: 100%;
 }
 
-.product-para-table table tr td {
+.product-specs-table tr td {
     border-collapse: collapse;
     border: 1px solid #dddddd;
     padding: 0.4rem 0.7rem;
 }
 
-.product-para-table table tr td:first-child {
+.product-specs-table tr td:first-child {
     background: #f7f7f7;
-    width: 10rem;
     font-weight: 600;
 }
 
-.content-header h5 {
-    font-weight: bold;
+.product-specs-hidden .form-box {
+    width: 35rem;
+    height: 50rem;
 }
 
-.main-content {
-    font-size: 1.1rem;
+.product-specs-hidden-header {
+    background: var(--primary-color);
+    color: var(--content-color-white);
+    padding: 1rem;
 }
 
-.product-description span {
-    font-size: 1.15rem;
-    font-weight: 500;
+.view-product-info {
+    border: none;
+    background: var(--content-color-white);
+    color: #0c6cf2;
+    border: 2px solid #0c6cf2;
+    border-radius: var(--radius);
+    padding: 0.4rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
 }
+    .view-product-info:hover, .view-product-info:active {
+        color: #6393ed;
+        border-color: #6393ed;
+    }
+
+
 /*For mobile -------------------------------------------*/
+@media screen and (max-width: 576px) {
+    .add-to-cart-action {
+    width: 100%;
+}
+}
+
 @media screen and (max-width: 767px) {
+    .product-gallery {
+        padding: 1rem;
+    }
+
+    .product-info {
+        padding: 1rem;
+    }
+
     .product-info-name h3 {
         font-size: 1.3rem;
     }
@@ -434,27 +362,19 @@ button:disabled {
         font-size: 1.5rem;
     }
 
-    .product-cts-wrapper {
-        flex-direction: column-reverse;
-    }
-
-    .product-contents {
-        width: 100%;
-    }
-
-    .product-similar {
-        width: 100%;
-    }
-
     .buy-action-btn {
-        padding: 0.7rem 1rem;
+        height: 4rem;
     }
 
-    .buy-action-btn span {
-        font-size: 0.8rem;
-    }
+        .buy-action-btn h4 {
+            font-size: 1.1rem;
+        }
 
-    .product-description span {
-        font-size: 1rem;
-    }
+        .buy-action-btn span {
+            font-size: 0.8rem;
+        }
+
+        .add-to-cart-action {
+            height: 4rem;
+        }
 }
