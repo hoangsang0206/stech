@@ -626,7 +626,7 @@ namespace STech.Controllers
                 return Unauthorized();
             }
 
-            Data.Models.Invoice? invoice = await _orderService.GetInvoiceWithDetails(id);
+            Data.Models.Invoice? invoice = await _orderService.GetUserInvoiceWithDetails(id, userId);
             if (invoice == null)
             {
                 return NotFound();

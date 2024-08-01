@@ -1,11 +1,4 @@
-﻿
-.account-page {
-    background: var(--content-color-white);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-}
-
-.account-sidebar {
+﻿.account-sidebar {
     background: var(--content-color-white);
     padding-right: 1rem;
 }
@@ -66,7 +59,7 @@
     width: 100%;
     max-height: 40rem;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: auto;
 }
 
 
@@ -193,6 +186,7 @@ input[name="address-type"]:checked ~ label > .address-type {
     color: var(--primary-color);
     border: 1px solid var(--primary-color);
     border-radius: var(--radius);
+    white-space: nowrap;
 }
 
 
@@ -200,4 +194,24 @@ input[name="address-type"]:checked ~ label > .address-type {
     .account-content-wrapper {
         border: none;
     }
+
+    .account-sidebar {
+        padding-right: 0;
+    }
+
+    .account-sidebar > ul {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .5s ease;
+    }
+
+        .account-sidebar > ul.show {
+            position: static;
+            opacity: 0;
+            visibility: visible;
+            opacity: 1;
+        }
 }

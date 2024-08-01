@@ -1,4 +1,9 @@
-﻿$('.register form').submit(function (e) {
+﻿$('.click-show-sidebar').click(() => {
+    $('.account-sidebar > ul').toggleClass('show')
+})
+
+
+$('.register form').submit(function (e) {
     e.preventDefault();
     const userName = $(this).find('#RegUserName').val();
     const password = $(this).find('#RegPassword').val();
@@ -238,6 +243,7 @@ const hideFormUploadImage = () => {
     $('#preview-image').removeAttr('src');
     $('.upload-image').removeClass('show');
     $('#user-image').val(null);
+    $('#user-image-cropped').val(null);
     $('.form-upload-image').find('.form-submit-btn').prop('disabled', true);
 }
 
@@ -249,7 +255,7 @@ $('.form-edit-image').submit(function (e) {
             const croppedImage = new File([blob], 'user-image.png', { type: 'image/png' });
             const inputFiles = new DataTransfer();
             inputFiles.items.add(croppedImage);
-            $('#user-image')[0].files = inputFiles.files;
+            $('#user-image-cropped')[0].files = inputFiles.files;
             $('.drag-and-click-upload-image').addClass('hide');
             $('.preview-image-wrapper').addClass('show');
             $('#preview-image').attr('src', URL.createObjectURL(croppedImage))
@@ -299,7 +305,7 @@ $('#user-image').change(function (e) {
 $('.form-upload-image').submit(function (e) {
     e.preventDefault();
     const formData = new FormData();
-    const file = $(this).find('#user-image').prop('files')[0];
+    const file = $(this).find('#user-image-cropped').prop('files')[0];
     formData.append('file', file);
 
     if (formData) {

@@ -4,6 +4,7 @@ using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Services;
 using STech.Services.Constants;
+using STech.Utils;
 using System.Security.Claims;
 
 namespace STech.ApiControllers
@@ -13,10 +14,12 @@ namespace STech.ApiControllers
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService _orderService;
+        private readonly IWebHostEnvironment _env;
 
-        public OrdersController(IOrderService orderService)
+        public OrdersController(IOrderService orderService, IWebHostEnvironment env)
         {
             _orderService = orderService;
+            _env = env;
         }
 
         [HttpGet("userorders"), Authorize]
@@ -74,6 +77,43 @@ namespace STech.ApiControllers
                 Status = true,
                 Data = invoice
             });
+        }
+
+        [HttpGet("download-invoice")]
+        public async Task<IActionResult> DownloadInvoice([FromQuery] string oId, string? phone)
+        {
+            Invoice? invoice;
+            byte[] file;
+
+            if(User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                string? userId = User.FindFirstValue("Id");
+
+                if (userId == null)
+                {
+                    return Unauthorized();
+                }
+
+                invoice = await _orderService.GetUserInvoiceWithDetails(oId, userId);
+            }
+            else
+            {
+                if(string.IsNullOrEmpty(phone))
+                {
+                    return BadRequest();
+                }
+
+                invoice = await _orderService.GetInvoiceWithDetails(oId, phone);
+            }
+
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+            file = PrintInvoiceUtils.CreatePdf(_env, invoice);
+
+            return File(file, "application/pdf", $"HĐ_{invoice.InvoiceId}.pdf");
         }
     }
 }

@@ -44,10 +44,11 @@ namespace STech.Services.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<Invoice?> GetInvoiceWithDetails(string invoiceId)
+        public async Task<Invoice?> GetUserInvoiceWithDetails(string invoiceId, string userId)
         {
             Invoice? invoice = await _context.Invoices
-                .Where(i => i.InvoiceId == invoiceId)
+                .Where(i => i.InvoiceId == invoiceId && i.UserId == userId)
+                .Include(i => i.PaymentMed)
                 .Include(i => i.InvoiceStatuses)
                 .Include(i => i.InvoiceDetails)
                 .ThenInclude(d => d.Product)
@@ -68,6 +69,7 @@ namespace STech.Services.Services
                     {
                         ProductId = d.Product.ProductId,
                         ProductName = d.Product.ProductName,
+                        Warranty = d.Product.Warranty,
                         Price = d.Product.Price,
                         ProductImages = d.Product.ProductImages.OrderBy(t => t.Id).Take(1).ToList(),
                     }
@@ -81,6 +83,7 @@ namespace STech.Services.Services
         {
             Invoice? invoice = await _context.Invoices
                 .Where(i => i.InvoiceId == invoiceId && i.RecipientPhone == phone)
+                .Include(i => i.PaymentMed)
                 .Include(i => i.InvoiceStatuses)
                 .Include(i => i.InvoiceDetails)
                 .ThenInclude(d => d.Product)
@@ -101,6 +104,7 @@ namespace STech.Services.Services
                     {
                         ProductId = d.Product.ProductId,
                         ProductName = d.Product.ProductName,
+                        Warranty = d.Product.Warranty,
                         Price = d.Product.Price,
                         ProductImages = d.Product.ProductImages.OrderBy(t => t.Id).Take(1).ToList(),
                     }

@@ -515,6 +515,7 @@ button:disabled:hover {
     font-weight: 500;
     text-align: left;
     padding: 0.6rem 0.8rem;
+    white-space: nowrap;
 }
 
 .page-table td {
@@ -1967,7 +1968,7 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
     }
 
     .page-container-padding {
-        padding: 0 0.5rem 1rem 0.5rem;
+        padding: 1rem 0.5rem 1rem 0.5rem;
     }
 
     header {

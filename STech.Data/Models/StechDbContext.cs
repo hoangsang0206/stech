@@ -254,6 +254,11 @@ public partial class StechDbContext : DbContext
                 .HasForeignKey(d => d.EmployeeId)
                 .HasConstraintName("FK_Invoice_Employee");
 
+            entity.HasOne(d => d.PaymentMed).WithMany(p => p.Invoices)
+                .HasForeignKey(d => d.PaymentMedId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Invoice_PaymentMethod");
+
             entity.HasOne(d => d.User).WithMany(p => p.Invoices)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_Invoice_User");

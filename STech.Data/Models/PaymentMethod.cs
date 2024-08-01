@@ -14,4 +14,6 @@ public partial class PaymentMethod
     public bool? IsActive { get; set; }
 
     public int Sort { get; set; }
+
+    public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 }
