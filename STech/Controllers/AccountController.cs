@@ -1,15 +1,11 @@
-﻿using Azure.Core;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.DotNet.Scaffolding.Shared;
-using Newtonsoft.Json.Linq;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Services;
 using System.Security.Claims;
-using System.Security.Policy;
 
 namespace STech.Controllers
 {
@@ -78,19 +74,26 @@ namespace STech.Controllers
                 return BadRequest();
             }
 
-            AuthenticationProperties properties = new AuthenticationProperties { RedirectUri = Url.Action("ExternalLoginCallback") };
-            properties.Items["returnUrl"] = returnUrl;
+            AuthenticationProperties properties = new AuthenticationProperties { 
+                RedirectUri = Url.Action("ExternalLoginCallback", "Account", new { returnUrl }) 
+            };
 
             return Challenge(properties, provider);
         }
 
-        public async Task<IActionResult> ExternalLoginCallback()
+        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl, string? remoteError)
         {
+            returnUrl ??= "/";
+
+            if(remoteError != null)
+            {
+                return Redirect(returnUrl);
+            }
+
             AuthenticateResult result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             if (result.Succeeded)
             {
                 IEnumerable<Claim> claims = result.Principal.Claims;
-                string returnUrl = result.Properties.Items["returnUrl"] ?? "/";
                 string id = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
                 string? email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using STech.Data.Models;
 using STech.Services;
 using STech.Services.Services;
@@ -53,12 +55,28 @@ builder.Services.AddAuthentication(options =>
     facebookOptions.ClaimActions.MapJsonKey("picture", "picture.data.url");
     facebookOptions.Fields.Add("picture");
 
-    facebookOptions.Events.OnCreatingTicket = context =>
+    facebookOptions.Events = new OAuthEvents
     {
-        string picture = context.User.GetProperty("picture").GetProperty("data").GetProperty("url").GetString() ?? "";
-        context.Identity?.AddClaim(new Claim("picture", picture));
-        return Task.CompletedTask;
+        OnCreatingTicket = context =>
+        {
+            string picture = context.User.GetProperty("picture").GetProperty("data").GetProperty("url").GetString() ?? "";
+            context.Identity?.AddClaim(new Claim("picture", picture));
+            return Task.CompletedTask;
+        },
+        OnAccessDenied = context =>
+        {
+            context.Response.Redirect("/error/login-error");
+            context.HandleResponse();
+            return Task.CompletedTask;
+        },
+        OnRemoteFailure = context =>
+        {
+            context.Response.Redirect("/error/login-error");
+            context.HandleResponse();
+            return Task.CompletedTask;
+        },
     };
+
 })
 .AddGoogle(googleOptions =>
 {
@@ -68,6 +86,22 @@ builder.Services.AddAuthentication(options =>
     googleOptions.ClientSecret = facebookAuthNSection["ClientSecret"] ?? "";
     googleOptions.SaveTokens = true;
     googleOptions.ClaimActions.MapJsonKey("picture", "picture");
+
+    googleOptions.Events = new OAuthEvents
+    {
+        OnAccessDenied = context =>
+        {
+            context.Response.Redirect("/error/login-error");
+            context.HandleResponse();
+            return Task.CompletedTask;
+        },
+        OnRemoteFailure = context =>
+        {
+            context.Response.Redirect("/error/login-error");
+            context.HandleResponse();
+            return Task.CompletedTask;
+        },
+    };
 });
 
 
@@ -125,6 +159,12 @@ else
 
 app.UseStaticFiles();
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "Areas", "Admin", "wwwroot")),
+    RequestPath = "/admin"
+});
+
 app.UseRouting();
 
 app.UseCors();
@@ -134,6 +174,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSession();
+
+
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

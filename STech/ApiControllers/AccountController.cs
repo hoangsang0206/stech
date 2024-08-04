@@ -79,7 +79,7 @@ namespace STech.ApiControllers
                 return Ok(new ApiResponse
                 {
                     Status = true,
-                    Data = login.ReturnUrl ?? "/"
+                    Data = user.RoleId == "admin" ? "/admin" : login.ReturnUrl ?? "/"
                 });
             }
             else
@@ -132,7 +132,7 @@ namespace STech.ApiControllers
                     return Ok(new ApiResponse
                     {
                         Status = true,
-                        Data = register.ReturnUrl ?? "/"
+                        Data = user.RoleId == "admin" ? "/admin" : register.ReturnUrl ?? "/"
                     });
                 }
 
@@ -341,7 +341,7 @@ namespace STech.ApiControllers
             UserAddress? address = await _userService.GetUserMainAddress(userId);
             return Ok(new ApiResponse
             {
-                Status = true,
+                Status = address != null,
                 Data = address
             });
         }

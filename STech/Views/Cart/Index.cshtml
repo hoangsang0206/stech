@@ -15,9 +15,9 @@
                 <div class="col-12 col-sm-8 m-0 p-0">
                     <div class="cart-products">
                         <div class="row m-0 p-0 pb-3 d-none d-md-flex">
-                            <div class="col-7 fw-bold">Sản phẩm</div>
-                            <div class="col-3 fw-bold ps-3">Số lượng</div>
-                            <div class="col-2 fw-bold text-end">Thành tiền</div>
+                            <div class="col-7 col-md-7 fw-bold">Sản phẩm</div>
+                            <div class="col-3 col-md-3 fw-bold ps-3">Số lượng</div>
+                            <div class="col-2 col-md-2 fw-bold text-end">Thành tiền</div>
                         </div>
                         @foreach (UserCart cart in Model.Item1)
                         {
@@ -31,8 +31,8 @@
                             ProductImage pImage = cart.Product.ProductImages.FirstOrDefault() ?? new ProductImage();
                             string src = pImage.ImageSrc ?? "~/images/no-image.jpg";
 
-                            <div class="row m-0 p-0 d-none d-md-flex">
-                                <div class="col-7">
+                            <div class="row m-0 p-0">
+                                <div class="col-12 col-md-7 ps-0 ps-md-2">
                                     <div class="cart-product row m-0 p-0">
                                         <div class="col-2 m-0 p-1 cart-product-image">
                                             <img class="w-100" src="@src" alt="" />
@@ -43,13 +43,29 @@
                                                     <h6>@cart.Product.ProductName</h6>
                                                 </a>
                                             </div>
-                                            <div class="mt-2">
+                                            <div class="mt-2 d-flex align-items-center justify-content-between">
                                                 <span class="cart-product-price">@(CurrencyFormatter.Format(cart.Product.Price))</span>
+                                                <div class="ps-3 d-flex d-md-none gap-3 align-items-center">
+                                                    <div class="cart-product-quantity d-flex">
+                                                        <button type="button" class="update-quantity decrease-qty"
+                                                                data-product="@cart.ProductId" data-update="minus">
+                                                            <i class="fa-solid fa-minus"></i>
+                                                        </button>
+                                                        <input type="number" name="quantity" value="@cart.Quantity" data-product="@cart.ProductId" min="1" />
+                                                        <button type="button" class="update-quantity increase-qty"
+                                                                data-product="@cart.ProductId" data-update="plus">
+                                                            <i class="fa-solid fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <a class="delete-cart-item" href="/cart/delete?id=@cart.ProductId">
+                                                        <i class="fa-regular fa-trash-can"></i>
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-3 ps-3 d-flex gap-3 align-items-center">
+                                <div class="col-3 col-md-3 ps-3 d-none d-md-flex gap-3 align-items-center">
                                     <div class="cart-product-quantity d-flex">
                                         <button type="button" class="update-quantity decrease-qty"
                                                 data-product="@cart.ProductId" data-update="minus">
@@ -65,7 +81,7 @@
                                         <i class="fa-regular fa-trash-can"></i>
                                     </a>
                                 </div>
-                                <div class="col-2 text-end">
+                                <div class="col-2 col-md-2 d-none d-md-block text-end">
                                     <p class="cart-product-total-price fw-bold" style="font-size: 1.05rem" data-product="@cart.ProductId">@(CurrencyFormatter.Format(cart.Product.Price * cart.Quantity))</p>
                                 </div>
                             </div>

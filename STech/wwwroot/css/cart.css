@@ -163,6 +163,19 @@ input[name="quantity"] {
 
 /*For mobile -------------------------------------------*/
 @media screen and (max-width: 767px) {
+    .cart-products,
+    .cart-shipping-fee,
+    .cart-total {
+        padding: 1rem 0.6rem;
+    }
+
+    .update-quantity {
+        padding: 0.2rem 0.4rem;
+    }
+
+    input[name="quantity"] {
+
+    }
 }
 
 /* For desktop */

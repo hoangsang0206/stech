@@ -13,9 +13,80 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Areas\Admin\wwwroot\css\fonts\SFProDisplay\SF-Pro-Display-Bold.woff2" />
+    <None Remove="Areas\Admin\wwwroot\css\fonts\SFProDisplay\SF-Pro-Display-Light.woff2" />
+    <None Remove="Areas\Admin\wwwroot\css\fonts\SFProDisplay\SF-Pro-Display-Medium.woff2" />
+    <None Remove="Areas\Admin\wwwroot\css\fonts\SFProDisplay\SF-Pro-Display-Regular.woff2" />
+    <None Remove="Areas\Admin\wwwroot\css\fonts\SFProDisplay\SF-Pro-Display-Semibold.woff2" />
+    <None Remove="Areas\Admin\wwwroot\favicon.ico" />
+    <None Remove="Areas\Admin\wwwroot\images\emotes\404.png" />
+    <None Remove="Areas\Admin\wwwroot\images\emotes\genshin-impact-emote.png" />
+    <None Remove="Areas\Admin\wwwroot\images\logo\stech-logo-colors.png" />
+    <None Remove="Areas\Admin\wwwroot\images\logo\stech-logo-mobile.png" />
+    <None Remove="Areas\Admin\wwwroot\images\logo\stech-logo-text-color.png" />
+    <None Remove="Areas\Admin\wwwroot\images\logo\stech-logo.png" />
+    <None Remove="Areas\Admin\wwwroot\images\no-image.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\js\address.js" />
     <_ContentIncludedByDefault Remove="wwwroot\js\order.js" />
     <_ContentIncludedByDefault Remove="wwwroot\js\product.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Areas\Admin\wwwroot\css\fonts\SFProDisplay\SF-Pro-Display-Bold.woff2">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\Admin\wwwroot\css\fonts\SFProDisplay\SF-Pro-Display-Light.woff2">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\Admin\wwwroot\css\fonts\SFProDisplay\SF-Pro-Display-Medium.woff2">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\Admin\wwwroot\css\fonts\SFProDisplay\SF-Pro-Display-Regular.woff2">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\Admin\wwwroot\css\fonts\SFProDisplay\SF-Pro-Display-Semibold.woff2">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\Admin\wwwroot\favicon.ico">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\Admin\wwwroot\images\emotes\404.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\Admin\wwwroot\images\emotes\genshin-impact-emote.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\Admin\wwwroot\images\logo\stech-logo-colors.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\Admin\wwwroot\images\logo\stech-logo-mobile.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\Admin\wwwroot\images\logo\stech-logo-text-color.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\Admin\wwwroot\images\logo\stech-logo.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Areas\Admin\wwwroot\images\no-image.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -29,12 +100,18 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
     <PackageReference Include="Stripe.net" Version="45.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Areas\Admin\Views\Shared\Components\" />
+    <Folder Include="Areas\Admin\Views\Shared\PartialViews\" />
+    <Folder Include="Areas\Admin\wwwroot\images\icons\" />
+    <Folder Include="Areas\Admin\wwwroot\js\" />
     <Folder Include="wwwroot\images\logo\" />
   </ItemGroup>
 
