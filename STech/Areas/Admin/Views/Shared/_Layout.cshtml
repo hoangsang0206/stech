@@ -21,9 +21,21 @@
 
 </head>
 <body>
-    <main>
-        @RenderBody()
-    </main>
+    
+    <div class="container-fluid p-0 d-flex web-wrapper">
+        @await Html.PartialAsync("PartialViews/_Sidebar")
+
+        <div class="main flex-grow-1">
+            @{
+                string? userId = User.FindFirst("Id")?.Value;
+                await Component.InvokeAsync("AdminHeader", userId);
+            }
+
+            <main>
+                @RenderBody()
+            </main>
+        </div>
+    </div>
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -41,6 +53,8 @@
 
     <script src="@("https://unpkg.com/@popperjs/core@2")"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
+
+    <script type="text/javascript" src="~/admin/js/script.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>
