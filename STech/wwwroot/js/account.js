@@ -363,7 +363,7 @@ const loadOrders = (type) => {
                             <td>${payment_status}</td>
                             <td>${order_status}</td>
                             <td>
-                                <a href="/order/detail/${order.invoiceId}">Chi tiết</a>
+                                <a class="text-nowrap" href="/order/detail/${order.invoiceId}">Chi tiết</a>
                             </td>
                         </tr>
                     `);

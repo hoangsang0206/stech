@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -31,5 +32,6 @@ public partial class UserAddress
 
     public string AddressType { get; set; } = null!;
 
+    [JsonIgnore]
     public virtual User User { get; set; } = null!;
 }

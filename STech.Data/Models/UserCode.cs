@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -19,5 +20,6 @@ public partial class UserCode
 
     public bool? IsExpired { get; set; }
 
+    [JsonIgnore]
     public virtual User User { get; set; } = null!;
 }

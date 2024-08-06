@@ -10,5 +10,7 @@ namespace STech.Services
         Task<Invoice?> GetUserInvoiceWithDetails(string invoiceId, string userId);
         Task<IEnumerable<Invoice>> GetUserInvoices(string userId);
         Task<bool> UpdateInvoice(Invoice invoice);
+
+        Task<IEnumerable<Invoice>> GetInvoices();
     }
 }

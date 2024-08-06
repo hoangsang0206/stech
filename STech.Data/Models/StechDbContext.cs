@@ -45,8 +45,6 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<PackingSlip> PackingSlips { get; set; }
 
-    public virtual DbSet<PackingSlipStatus> PackingSlipStatuses { get; set; }
-
     public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
 
     public virtual DbSet<Product> Products { get; set; }
@@ -209,6 +207,7 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.InvoiceId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.AcceptedDate).HasColumnType("datetime");
             entity.Property(e => e.CancelledDate).HasColumnType("datetime");
             entity.Property(e => e.CompletedDate).HasColumnType("datetime");
             entity.Property(e => e.CustomerId)
@@ -378,26 +377,6 @@ public partial class StechDbContext : DbContext
                 .HasForeignKey<PackingSlip>(d => d.InvoiceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PackingSlip_Invoice");
-        });
-
-        modelBuilder.Entity<PackingSlipStatus>(entity =>
-        {
-            entity.HasKey(e => new { e.Id, e.Psid }).HasName("PK__PackingS__49D4EC922CAA1381");
-
-            entity.ToTable("PackingSlipStatus");
-
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            entity.Property(e => e.Psid)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("PSId");
-            entity.Property(e => e.DateUpdated).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(200);
-
-            entity.HasOne(d => d.Ps).WithMany(p => p.PackingSlipStatuses)
-                .HasForeignKey(d => d.Psid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PSStatus_PackingSlip");
         });
 
         modelBuilder.Entity<PaymentMethod>(entity =>

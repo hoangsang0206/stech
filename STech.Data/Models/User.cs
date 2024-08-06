@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -35,11 +36,13 @@ public partial class User
 
     public string? AuthenticationProvider { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
     public virtual Role Role { get; set; } = null!;
 
     public virtual ICollection<UserAddress> UserAddresses { get; set; } = new List<UserAddress>();
 
+    [JsonIgnore]
     public virtual ICollection<UserCart> UserCarts { get; set; } = new List<UserCart>();
 }

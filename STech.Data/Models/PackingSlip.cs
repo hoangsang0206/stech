@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -21,7 +22,6 @@ public partial class PackingSlip
 
     public virtual Employee? Employee { get; set; }
 
+    [JsonIgnore]
     public virtual Invoice Invoice { get; set; } = null!;
-
-    public virtual ICollection<PackingSlipStatus> PackingSlipStatuses { get; set; } = new List<PackingSlipStatus>();
 }

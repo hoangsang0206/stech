@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -19,5 +20,6 @@ public partial class WarehouseExportDetail
 
     public virtual Product Product { get; set; } = null!;
 
+    [JsonIgnore]
     public virtual WarehouseExport We { get; set; } = null!;
 }

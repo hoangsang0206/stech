@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
-using System.Numerics;
 
 namespace STech.Services.Services
 {
@@ -54,7 +53,6 @@ namespace STech.Services.Services
                 .ThenInclude(d => d.Product)
                 .ThenInclude(d => d.ProductImages)
                 .Include(i => i.PackingSlip)
-                .ThenInclude(p => p.PackingSlipStatuses)
                 .FirstOrDefaultAsync();
 
             if (invoice != null)
@@ -89,7 +87,6 @@ namespace STech.Services.Services
                 .ThenInclude(d => d.Product)
                 .ThenInclude(d => d.ProductImages)
                 .Include(i => i.PackingSlip)
-                .ThenInclude(p => p.PackingSlipStatuses)
                 .FirstOrDefaultAsync();
 
             if(invoice != null)
@@ -134,5 +131,18 @@ namespace STech.Services.Services
             _context.Invoices.Update(invoice);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        #region ForAdmin
+        
+        public async Task<IEnumerable<Invoice>> GetInvoices()
+        {
+            return await _context.Invoices
+                .Include(i => i.InvoiceStatuses)
+                .Include(i => i.InvoiceDetails)
+                .OrderByDescending(i => i.OrderDate)
+                .ToListAsync();
+        }
+
+        #endregion
     }
 }

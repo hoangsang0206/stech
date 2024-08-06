@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -41,10 +42,16 @@ public partial class Invoice
 
     public DateTime? CompletedDate { get; set; }
 
+    public bool? IsAccepted { get; set; }
+
+    public DateTime? AcceptedDate { get; set; }
+
+    [JsonIgnore]
     public virtual Customer? Customer { get; set; }
 
     public virtual DeliveryMethod DeliveryMed { get; set; } = null!;
 
+    [JsonIgnore]
     public virtual Employee? Employee { get; set; }
 
     public virtual ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new List<InvoiceDetail>();
@@ -55,7 +62,9 @@ public partial class Invoice
 
     public virtual PaymentMethod PaymentMed { get; set; } = null!;
 
+    [JsonIgnore]
     public virtual User? User { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<WarehouseExport> WarehouseExports { get; set; } = new List<WarehouseExport>();
 }

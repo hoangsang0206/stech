@@ -28,8 +28,8 @@
         <div class="main flex-grow-1">
             @{
                 string? userId = User.FindFirst("Id")?.Value;
-                await Component.InvokeAsync("AdminHeader", userId);
             }
+            @await Component.InvokeAsync("AdminHeader", userId)
 
             <main>
                 @RenderBody()

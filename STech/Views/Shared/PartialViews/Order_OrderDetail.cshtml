@@ -144,13 +144,7 @@
                     <p class="order-detail-box-title">Trạng thái đơn hàng</p>
                     <div>
                         @{
-                            IEnumerable<InvoiceStatus> invoiceStatuses = Model.InvoiceStatuses.OrderByDescending(x => x.DateUpdated);
-                            IEnumerable<PackingSlipStatus> packingSlipStatuses = Model.PackingSlip?.PackingSlipStatuses
-                                                            .OrderByDescending(x => x.DateUpdated).ToList() ?? new List<PackingSlipStatus>();
-
-                            var statuses = invoiceStatuses.Select(x => new { x.Status, x.DateUpdated })
-                                    .Concat(packingSlipStatuses.Select(x => new { x.Status, x.DateUpdated }))
-                                    .OrderByDescending(x => x.DateUpdated);
+                            IEnumerable<InvoiceStatus> statuses = Model.InvoiceStatuses.OrderByDescending(x => x.DateUpdated);
 
                             bool isFist = true;
 

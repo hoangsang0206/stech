@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -37,6 +38,7 @@ public partial class Product
 
     public virtual Category? Category { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new List<InvoiceDetail>();
 
     public virtual ICollection<ProductAttribute> ProductAttributes { get; set; } = new List<ProductAttribute>();
@@ -47,8 +49,10 @@ public partial class Product
 
     public virtual ICollection<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();
 
+    [JsonIgnore]
     public virtual ICollection<UserCart> UserCarts { get; set; } = new List<UserCart>();
 
+    [JsonIgnore]
     public virtual ICollection<WarehouseExportDetail> WarehouseExportDetails { get; set; } = new List<WarehouseExportDetail>();
 
     public virtual ICollection<WarehouseProduct> WarehouseProducts { get; set; } = new List<WarehouseProduct>();
