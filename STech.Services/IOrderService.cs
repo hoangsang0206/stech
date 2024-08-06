@@ -11,6 +11,6 @@ namespace STech.Services
         Task<IEnumerable<Invoice>> GetUserInvoices(string userId);
         Task<bool> UpdateInvoice(Invoice invoice);
 
-        Task<IEnumerable<Invoice>> GetInvoices();
+        Task<(IEnumerable<Invoice>, int)> GetInvoices(int page, string? filterBy, string? sortBy);
     }
 }

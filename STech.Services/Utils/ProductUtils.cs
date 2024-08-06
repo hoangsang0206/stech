@@ -1,11 +1,9 @@
 ﻿using STech.Data.Models;
 
-namespace STech.Utils
+namespace STech.Services.Utils
 {
     public static class ProductUtils
     {
-        public static readonly int productsPerPage = 40;
-
         public static IEnumerable<Product> Sort(this IEnumerable<Product> products, string? value)
         {
             if(value == null)
@@ -39,16 +37,16 @@ namespace STech.Utils
             return sortedProduct;
         }
 
-        public static IEnumerable<Product> Pagnigate(this IEnumerable<Product> products, int page)
+        public static IEnumerable<Product> Pagnigate(this IEnumerable<Product> products, int page, int numToTake)
         {
             if(page <= 0)
             {
                 page = 1;
             }
 
-            int noOfProductToSkip = (page - 1) * productsPerPage;
+            int noOfProductToSkip = (page - 1) * numToTake;
 
-            products = products.Skip(noOfProductToSkip).Take(productsPerPage).ToList();
+            products = products.Skip(noOfProductToSkip).Take(numToTake).ToList();
 
             return products;
         }

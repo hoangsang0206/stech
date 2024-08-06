@@ -15,9 +15,9 @@ namespace STech.Areas.Admin.Controllers
             _orderService = orderService;
         }
 
-        public async Task<IActionResult> Index(string? filter_by, int page = 1)
+        public async Task<IActionResult> Index(int page = 1, string? filter_by = null, string? sortBy = null)
         {
-            IEnumerable<Invoice> invoices = await _orderService.GetInvoices();
+            var (invoices, totalPage ) = await _orderService.GetInvoices(page, filter_by, sortBy);
 
             return View(invoices);
         }

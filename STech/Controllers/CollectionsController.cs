@@ -26,6 +26,7 @@ namespace STech.Controllers
                 return NotFound();
             }
 
+            int totalPage = 1;
             IEnumerable<Product> products = new List<Product>();
             Category category = new Category();
             List<Breadcrumb> breadcrumbs = new List<Breadcrumb>();
@@ -33,28 +34,25 @@ namespace STech.Controllers
 
             if (id == "all")
             {
-                products = await _productService.GetAll();
+                (products, totalPage) = await _productService.GetAll(page, sort);
                 breadcrumbs.Add(new Breadcrumb("Tất cả sản phẩm", ""));
                 title = "Tất cả sản phẩm - STech";
             }
             else
             {
                 category = await _categoryService.GetOne(id);
-                products = await _productService.GetByCategory(id);
+                (products, totalPage) = await _productService.GetByCategory(id, page, sort);
                 breadcrumbs.Add(new Breadcrumb("Danh sách sản phẩm", "/collections/all"));
                 breadcrumbs.Add(new Breadcrumb(category.CategoryName, ""));
                 title = "Danh sách " + category.CategoryName;
             }
-
-            int totalPage = Convert.ToInt32(Math.Ceiling(
-                Convert.ToDouble(products.Count()) / Convert.ToDouble(ProductUtils.productsPerPage)));
 
             ViewBag.Sort = sort;
             ViewBag.Page = page;
             ViewBag.TotalPage = totalPage;
 
             ViewData["Title"] = title;
-            return View(new Tuple<IEnumerable<Product>, List<Breadcrumb>>(products.Sort(sort).Pagnigate(page), breadcrumbs));
+            return View(new Tuple<IEnumerable<Product>, List<Breadcrumb>>(products, breadcrumbs));
         }
     }
 }

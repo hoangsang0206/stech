@@ -20,7 +20,7 @@ namespace STech.ApiControllers
         [HttpGet]
         public async Task<IActionResult> Search(string q)
         {
-            IEnumerable<Product> products = await _productService.SearchByName(q);
+            var (products, totalPage) = await _productService.SearchByName(q, 1, null);
             return Ok(new ApiResponse
             {
                 Status = true,

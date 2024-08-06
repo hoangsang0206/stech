@@ -1,11 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
+using STech.Services.Utils;
 
 namespace STech.Services.Services
 {
     public class OrderService : IOrderService
     {
         private readonly StechDbContext _context;
+
+        private readonly int NumOfInvoicePerPage = 50;
 
         public OrderService(StechDbContext context)
         {
@@ -134,13 +137,19 @@ namespace STech.Services.Services
 
         #region ForAdmin
         
-        public async Task<IEnumerable<Invoice>> GetInvoices()
+        public async Task<(IEnumerable<Invoice>, int)> GetInvoices(int page, string? filterBy, string? sortBy)
         {
-            return await _context.Invoices
+            IEnumerable<Invoice> invoices = await _context.Invoices
                 .Include(i => i.InvoiceStatuses)
                 .Include(i => i.InvoiceDetails)
-                .OrderByDescending(i => i.OrderDate)
                 .ToListAsync();
+
+            invoices.FilterBy(filterBy);
+
+            int totalPage = Convert.ToInt32(Math.Ceiling(
+                Convert.ToDouble(invoices.Count()) / Convert.ToDouble(NumOfInvoicePerPage)));
+
+            return (invoices.Paginate(page, NumOfInvoicePerPage).SortBy(sortBy), totalPage);
         }
 
         #endregion

@@ -1,22 +1,20 @@
-﻿using Azure;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using STech.Services.Utils;
 
 namespace STech.Services.Services
 {
     public class ProductService : IProductService
     {
         private readonly StechDbContext _context;
+
+        private readonly int NumOfProductPerPage = 40;
+
         public ProductService(StechDbContext context) => _context = context;
 
-        public async Task<IEnumerable<Product>> GetAll()
+        public async Task<(IEnumerable<Product>, int)> GetAll(int page, string? sort)
         {
-            return await _context.Products
+            IEnumerable<Product> products = await _context.Products
                 .Where(p => p.IsActive == true)
                 .Select(p => new Product()
                 {
@@ -29,19 +27,25 @@ namespace STech.Services.Services
                     Brand = p.Brand,
                 })
                 .ToListAsync();
+
+            int totalPage = Convert.ToInt32(Math.Ceiling(
+                Convert.ToDouble(products.Count()) / Convert.ToDouble(NumOfProductPerPage)));
+
+            return (products.Sort(sort).Pagnigate(page, NumOfProductPerPage), totalPage);
         }
 
 
 
-        public async Task<IEnumerable<Product>> SearchByName(string q)
+        public async Task<(IEnumerable<Product>, int)> SearchByName(string q, int page, string? sort)
         {
             if(q == null)
             {
-                return new List<Product>();
+                return (new List<Product>(), 1);
             }
 
             string[] keywords = q.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            return await _context.Products
+
+            IEnumerable<Product> products = await _context.Products
                 .Where(p => keywords.All(key =>  p.ProductName.Contains(key)) && p.IsActive == true)
                 .Select(p => new Product()
                 {
@@ -54,11 +58,16 @@ namespace STech.Services.Services
                     Brand = p.Brand,
                 })
                 .ToListAsync();
+
+            int totalPage = Convert.ToInt32(Math.Ceiling(
+                Convert.ToDouble(products.Count()) / Convert.ToDouble(NumOfProductPerPage)));
+
+            return (products, totalPage);
         }
 
-        public async Task<IEnumerable<Product>> GetByCategory(string categoryId)
+        public async Task<(IEnumerable<Product>, int)> GetByCategory(string categoryId, int page, string? sort)
         {
-            return await _context.Products
+            IEnumerable<Product> products = await _context.Products
                 .Where(p => p.CategoryId == categoryId && p.IsActive == true)
                 .Select(p => new Product()
                 {
@@ -71,6 +80,11 @@ namespace STech.Services.Services
                     Brand = p.Brand,
                 })
                 .ToListAsync();
+
+            int totalPage = Convert.ToInt32(Math.Ceiling(
+                Convert.ToDouble(products.Count()) / Convert.ToDouble(NumOfProductPerPage)));
+
+            return (products.Sort(sort).Pagnigate(page, NumOfProductPerPage), totalPage);
         }
 
         public async Task<IEnumerable<Product>> GetSimilarProducts(string categoryId, int numToTake)

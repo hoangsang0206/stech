@@ -18,10 +18,7 @@ namespace STech.Controllers
 
         public async Task<IActionResult> Index(string q, string? sort, int page = 1)
         {
-            IEnumerable<Product> products = await _productService.SearchByName(q);
-
-            int totalPage = Convert.ToInt32(Math.Ceiling(
-                Convert.ToDouble(products.Count()) / Convert.ToDouble(ProductUtils.productsPerPage)));
+            var (products, totalPage) = await _productService.SearchByName(q, page, sort);
 
             List<Breadcrumb> breadcrumbs = new List<Breadcrumb>
             {
@@ -34,7 +31,7 @@ namespace STech.Controllers
             ViewBag.Page = page;
             ViewBag.TotalPage = totalPage;
 
-            return View(new Tuple<IEnumerable<Product>, List<Breadcrumb>>(products.Sort(sort).Pagnigate(page), breadcrumbs));
+            return View(new Tuple<IEnumerable<Product>, List<Breadcrumb>>(products, breadcrumbs));
         }
     }
 }
