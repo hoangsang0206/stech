@@ -33,6 +33,28 @@
     font-display: swap;
 }
 
+:root {
+    --primary-color: #6941c6;
+    --primary-color-hover: #9e7eeb;
+    --primary-active-bg-color: #f3ecfe;
+    --primary-background-color: #f5f5f5;
+    --primary-content-color: #fff;
+    --primary-text-color: #000;
+    --sidebar-text-color: #717171;
+
+    --radius: 0.3rem;
+    --loader-color: var(--loader-color-light);
+    --loader-color-light: #fff;
+    --loader-color-dark: #000;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'SF Pro Display';
+    font-size: 0.95rem;
+}
+
 /*----Loaders ---------------------------------------------*/
 /*-----------------------------------*/
 @keyframes ldio-gmrbyawnrc {
@@ -176,24 +198,6 @@
 
 /*-------------------------------------------*/
 
-
-:root {
-    --primary-color: #6941c6;
-    --primary-color-hover: #9e7eeb;
-    --primary-active-bg-color: #f3ecfe;
-    --primary-background-color: #f5f5f5;
-    --primary-content-color: #fff;
-    --primary-text-color: #000;
-    --sidebar-text-color: #717171;
-    --radius: 0.3rem;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    font-family: 'SF Pro Display';
-    font-size: 0.95rem;
-}
 
 /* ---------------------------------------------  */
 .cursor-pointer {
@@ -459,6 +463,7 @@ button:disabled {
 .page-table-wrapper {
     border-radius: 0.3rem;
     border: 1px solid #eaeaea;
+    overflow-x: auto;
 }
 
 .page-table {
@@ -498,14 +503,18 @@ button:disabled {
         outline: 2px solid var(--primary-color-hover);
     }
 
+.page-btn-nav-wrapper {
+    margin-bottom: 1rem;
+    display: flex;
+    overflow-x: auto;
+}
+
 .page-btn-nav {
     display: flex;
     align-items: center;
     border-radius: .4rem;
     background: #f2ebeb;
     padding: .2rem;
-    overflow: hidden;
-    margin-bottom: 1rem;
 }
 
 .page-btn-nav-item {
@@ -776,6 +785,7 @@ text-overflow-2 {
 
 .notification-content {
     width: 25rem;
+    right: -5rem;
 }
 
     .user-action.show,
@@ -807,10 +817,14 @@ text-overflow-2 {
     color: var(--primary-color);
 }
 
+.main {
+    overflow-y: auto;
+}
+
 .main > main {
     padding: .7rem 1rem 1rem 1rem;
     height: 100%;
-    overflow-y: auto;
+    overflow-x: auto;
 }
 
 @media screen and (min-width: 768px) {

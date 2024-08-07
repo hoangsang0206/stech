@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using STech.Filters;
 
 namespace STech.Areas.Admin.Controllers
 {
-    [Area("Admin"), Authorize(Roles = "admin")]
+    [Area("Admin"), AdminAuthorize]
     public class HomeController : Controller
     {
         public IActionResult Index()

@@ -7,7 +7,7 @@
 
 <section class="page-wrapper">
 
-    <div class="d-inline-block overflow-x-auto">
+    <div class="page-btn-nav-wrapper">
         <div class="page-btn-nav">
             <div class="page-btn-nav-item @(ViewBag.ActivePageNav == "unaccepted" ? "active" : "")" data-load-orders="unaceppted">Chờ xác nhận</div>
             <div class="page-btn-nav-item @(ViewBag.ActivePageNav == "accepted" ? "active" : "")" data-load-orders="accepted">Chờ giao hàng</div>
@@ -106,3 +106,7 @@
     </div>
 
 </section>
+
+@section Scripts {
+    <script src="~/admin/js/orders.js"></script>
+}

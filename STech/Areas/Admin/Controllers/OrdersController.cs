@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
+using STech.Filters;
 using STech.Services;
 
 namespace STech.Areas.Admin.Controllers
 {
-    [Area("Admin"), Authorize(Roles = "admin")]
+    [Area("Admin"), AdminAuthorize]
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;
