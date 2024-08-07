@@ -142,9 +142,10 @@ namespace STech.Services.Services
             IEnumerable<Invoice> invoices = await _context.Invoices
                 .Include(i => i.InvoiceStatuses)
                 .Include(i => i.InvoiceDetails)
+                .Include(i => i.PaymentMed)
                 .ToListAsync();
 
-            invoices.FilterBy(filterBy);
+            invoices = invoices.FilterBy(filterBy);
 
             int totalPage = Convert.ToInt32(Math.Ceiling(
                 Convert.ToDouble(invoices.Count()) / Convert.ToDouble(NumOfInvoicePerPage)));

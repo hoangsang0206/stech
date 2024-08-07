@@ -12,3 +12,8 @@ $('.show-notification').click(function () {
     $('.notification-content').toggleClass('show');
     $(this).toggleClass('active');
 })
+
+$('.page-btn-nav-item').click(function () {
+    $('.page-btn-nav-item').removeClass('active');
+    $(this).addClass('active');
+})

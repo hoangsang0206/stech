@@ -28,7 +28,7 @@ public partial class Invoice
 
     public string? Note { get; set; }
 
-    public bool? IsCompleted { get; set; }
+    public bool IsCompleted { get; set; }
 
     public string? CustomerId { get; set; }
 
@@ -36,13 +36,13 @@ public partial class Invoice
 
     public string? EmployeeId { get; set; }
 
-    public bool? IsCancelled { get; set; }
+    public bool IsCancelled { get; set; }
 
     public DateTime? CancelledDate { get; set; }
 
     public DateTime? CompletedDate { get; set; }
 
-    public bool? IsAccepted { get; set; }
+    public bool IsAccepted { get; set; }
 
     public DateTime? AcceptedDate { get; set; }
 

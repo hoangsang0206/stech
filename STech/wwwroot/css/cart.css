@@ -174,7 +174,7 @@ input[name="quantity"] {
     }
 
     input[name="quantity"] {
-
+        width: 2rem;
     }
 }
 

@@ -34,17 +34,21 @@ namespace STech.Services.Utils
                     return invoices.Where(i => i.PaymentStatus == PaymentContants.UnPaid)
                         .OrderByDescending(i => i.OrderDate).ToList();
 
+                case "accepted":
+                    return invoices.Where(i => i.IsAccepted && !i.IsCancelled && !i.IsCompleted)
+                        .OrderByDescending(i => i.OrderDate).ToList();
+
                 case "unaccepted":
                     return invoices
-                        .Where(i => i.IsAccepted == false && i.IsCancelled == false && i.IsCompleted == false)
+                        .Where(i => !i.IsAccepted && !i.IsCancelled && !i.IsCompleted)
                         .OrderByDescending(i => i.OrderDate).ToList();
 
                 case "completed":
-                    return invoices.Where(i => i.IsCompleted == true)
+                    return invoices.Where(i => i.IsCompleted)
                         .OrderByDescending(i => i.OrderDate).ToList();
 
                 case "cancelled":
-                    return invoices.Where(i => i.IsCancelled == true)
+                    return invoices.Where(i => i.IsCancelled)
                         .OrderByDescending(i => i.OrderDate).ToList();
 
                 default:

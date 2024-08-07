@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "Danh sách đơn hàng - STech";
+    ViewData["PageTitle"] = "Đơn hàng";
+}
+
+@model IEnumerable<Invoice>
+
+<section class="page-wrapper">
+
+    <div class="d-inline-block overflow-x-auto">
+        <div class="page-btn-nav">
+            <div class="page-btn-nav-item @(ViewBag.ActivePageNav == "unaccepted" ? "active" : "")" data-load-orders="unaceppted">Chờ xác nhận</div>
+            <div class="page-btn-nav-item @(ViewBag.ActivePageNav == "accepted" ? "active" : "")" data-load-orders="accepted">Chờ giao hàng</div>
+            <div class="page-btn-nav-item @(ViewBag.ActivePageNav == "paid" ? "active" : "")" data-load-orders="paid">Đã thanh toán</div>
+            <div class="page-btn-nav-item @(ViewBag.ActivePageNav == "unpaid" ? "active" : "")" data-load-orders="unpaid">Chưa thanh toán</div>
+            <div class="page-btn-nav-item @(ViewBag.ActivePageNav == "completed" ? "active" : "")" data-load-orders="completed">Đã giao hàng</div>
+            <div class="page-btn-nav-item @(ViewBag.ActivePageNav == "cancelled" ? "active" : "")" data-load-orders="cancelled">Đã hủy</div>
+            <div class="page-btn-nav-item @(ViewBag.ActivePageNav == "all" ? "active" : "")" data-load-orders="all">Tất cả đơn hàng</div>
+        </div>
+    </div>
+
+    <div class="page-table-wrapper">
+        <table class="page-table order-list">
+            <tr class="page-table-header">
+                <th>STT</th>
+                <th>Mã đơn hàng</th>
+                <th>Ngày đặt</th>
+                <th>Số SP</th>
+                <th>Thành tiền</th>
+                <th>PT thanh toán</th>
+                <th>TT thanh toán</th>
+                <th>Trạng thái</th>
+                <th></th>
+            </tr>
+
+            @{
+                int index = 0;
+            }
+
+            @foreach (Invoice invoice in Model)
+            {
+                index++;
+                string payment_status = "";
+                string order_status = "";
+                int total_items = invoice.InvoiceDetails.Sum(x => x.Quantity);
+
+                switch (invoice.PaymentStatus)
+                {
+                    case "paid":
+                        payment_status = "<span class=\"page-badge badge-success\">Đã thanh toán</span>";
+                        break;
+
+                    case "unpaid":
+                        payment_status = "<span class=\"page-badge badge-warning\">Chờ thanh toán</span>";
+                        break;
+
+                    case "payment-failed":
+                        payment_status = "<span class=\"page-badge badge-error\">Thanh toán thất bại</span>";
+                        break;
+
+                }
+
+                if (invoice.IsCancelled)
+                {
+                    order_status = "<span class=\"page-badge badge-error\">Đã hủy</span>";
+                }
+                else if(invoice.IsCompleted)
+                {
+                    order_status = "<span class=\"page-badge badge-success\">Đã giao hàng</span>";
+                }
+                else if(invoice.IsAccepted)
+                {
+                    order_status = "<span class=\"page-badge badge-warning\">Chờ giao hàng</span>";
+                }
+                else
+                {
+                    order_status = "<span class=\"page-badge badge-warning\">Chờ xác nhận</span>";
+                }
+
+                <tr>
+                    <td class="fweight-600">@index</td>
+                    <td>@invoice.InvoiceId</td>
+                    <td>@invoice.OrderDate?.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@total_items</td>
+                    <td class="fweight-600">@CurrencyFormatter.Format(invoice.Total)</td>
+                    <td>@invoice.PaymentMed.PaymentName</td>
+                    <td>@Html.Raw(payment_status)</td>
+                    <td>@Html.Raw(order_status)</td>
+                    <td>
+                        <div class="d-flex gap-1 align-items-center justify-content-end">
+                            <button class="page-table-btn btn-lightblue view-order">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button class="page-table-btn btn-blue print-order">
+                                <i class="fa-solid fa-print"></i>
+                            </button>
+                            <button class="page-table-btn btn-green accept-order">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+
+</section>

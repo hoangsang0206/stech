@@ -8,6 +8,8 @@ namespace STech.Areas.Admin.Controllers
     {
         public IActionResult Index()
         {
+
+            ViewBag.ActiveSidebar = "home";
             return View();
         }
     }

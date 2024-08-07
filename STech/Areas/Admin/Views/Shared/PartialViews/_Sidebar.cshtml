@@ -7,16 +7,16 @@
     <div class="sidebar-main flex-grow-1 overflow-y-auto">
         <ul class="p-0">
             <li>
-                <div class="sidebar-item active">
-                    <a class="sidebar-link active" href="javascript:void(0)">
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "home" ? "active" : "")">
+                    <a class="sidebar-link" href="/admin">
                         <i class="sidebar-icon fa-solid fa-house"></i>
                         <span class="sidebar-text">Tổng quan</span>
                     </a>
                 </div>
             </li>
             <li>
-                <div class="sidebar-item">
-                    <a class="sidebar-link" href="javascript:void(0)">
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "orders" ? "active" : "")">
+                    <a class="sidebar-link" href="/admin/orders">
                         <i class="sidebar-icon fa-solid fa-cart-flatbed"></i>
                         <span class="sidebar-text">Đơn hàng</span>
                     </a>
@@ -25,25 +25,28 @@
                 <div class="sidebar-expandation">
                     <ul>
                         <li>
-                            <a href="javascript:void(0)">Mới nhất</a>
+                            <a href="/admin/orders/create">Tạo dơn hàng</a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)">Chờ xác nhận</a>
+                            <a href="/admin/orders?filter_by=unaccepted">Chờ xác nhận</a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)">Chờ giao hàng</a>
+                            <a href="/admin/orders?filter_by=accepted">Chờ giao hàng</a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)">Đã giao hàng</a>
+                            <a href="/admin/orders?filter_by=completed">Đã giao hàng</a>
                         </li>
                         <li>
-                            <a href="javascript:void(0)">Đã hủy</a>
+                            <a href="/admin/orders?filter_by=cancelled">Đã hủy</a>
+                        </li>
+                        <li>
+                            <a href="/admin/orders?filter_by=all">Tất cả đơn hàng</a>
                         </li>
                     </ul>
                 </div>
             </li>
             <li>
-                <div class="sidebar-item">
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "customers" ? "active" : "")">
                     <a class="sidebar-link" href="javascript:void(0)">
                         <i class="sidebar-icon fa-solid fa-users"></i>
                         <span class="sidebar-text">Khách hàng</span>
@@ -51,7 +54,7 @@
                 </div>
             </li>
             <li>
-                <div class="sidebar-item">
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "products" ? "active" : "")">
                     <a class="sidebar-link" href="javascript:void(0)">
                         <i class="sidebar-icon fa-solid fa-boxes-packing"></i>
                         <span class="sidebar-text">Sản phẩm</span>
@@ -60,7 +63,7 @@
                 </div>
             </li>
             <li>
-                <div class="sidebar-item">
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "categories" ? "active" : "")">
                     <a class="sidebar-link" href="javascript:void(0)">
                         <i class="sidebar-icon fa-solid fa-table-list"></i>
                         <span class="sidebar-text">Danh mục/Hãng</span>
@@ -69,7 +72,7 @@
                 </div>
             </li>
             <li>
-                <div class="sidebar-item">
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "sales" ? "active" : "")">
                     <a class="sidebar-link" href="javascript:void(0)">
                         <i class="sidebar-icon fa-solid fa-tags"></i>
                         <span class="sidebar-text">Khuyến mãi</span>
@@ -78,7 +81,7 @@
                 </div>
             </li>
             <li>
-                <div class="sidebar-item">
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "employees" ? "active" : "")">
                     <a class="sidebar-link" href="javascript:void(0)">
                         <i class="sidebar-icon fa-solid fa-users-gear"></i>
                         <span class="sidebar-text">Nhân viên</span>
@@ -86,7 +89,7 @@
                 </div>
             </li>
             <li>
-                <div class="sidebar-item">
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "reports" ? "active" : "")">
                     <a class="sidebar-link" href="javascript:void(0)">
                         <i class="sidebar-icon fa-solid fa-chart-bar"></i>
                         <span class="sidebar-text">Báo cáo</span>
@@ -94,7 +97,7 @@
                 </div>
             </li>
             <li>
-                <div class="sidebar-item">
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "others" ? "active" : "")">
                     <a class="sidebar-link" href="javascript:void(0)">
                         <i class="sidebar-icon fa-solid fa-ellipsis"></i>
                         <span class="sidebar-text">Khác</span>

@@ -6,7 +6,7 @@
             <h5 style="font-weight: bold" class="m-0">Mã ĐH: @Model.InvoiceId</h5>
             <div class="d-flex align-items-center gap-2">
                 @{
-                    if (Model.IsCancelled == true)
+                    if (Model.IsCancelled)
                     {
                         <span class="page-badge badge-error">Đã hủy</span>
                     }
