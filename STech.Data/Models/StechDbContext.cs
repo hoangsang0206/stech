@@ -573,6 +573,9 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.Dob).HasColumnName("DOB");
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.EmailConfirmed).HasDefaultValue(false);
+            entity.Property(e => e.EmployeeId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.FullName).HasMaxLength(50);
             entity.Property(e => e.Gender).HasMaxLength(10);
             entity.Property(e => e.IsActive).HasDefaultValue(false);
@@ -588,6 +591,10 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.Username)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+
+            entity.HasOne(d => d.Employee).WithMany(p => p.Users)
+                .HasForeignKey(d => d.EmployeeId)
+                .HasConstraintName("FK_USER_EMPLOYEE");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)

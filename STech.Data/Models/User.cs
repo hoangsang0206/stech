@@ -10,6 +10,7 @@ public partial class User
 
     public string Username { get; set; } = null!;
 
+    [JsonIgnore]
     public string PasswordHash { get; set; } = null!;
 
     public string? Email { get; set; }
@@ -22,6 +23,7 @@ public partial class User
 
     public string? Avatar { get; set; }
 
+    [JsonIgnore]
     public string RandomKey { get; set; } = null!;
 
     public string? FullName { get; set; }
@@ -36,11 +38,17 @@ public partial class User
 
     public string? AuthenticationProvider { get; set; }
 
+    public string? EmployeeId { get; set; }
+
+    [JsonIgnore]
+    public virtual Employee? Employee { get; set; }
+
     [JsonIgnore]
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
     public virtual Role Role { get; set; } = null!;
 
+    [JsonIgnore]
     public virtual ICollection<UserAddress> UserAddresses { get; set; } = new List<UserAddress>();
 
     [JsonIgnore]

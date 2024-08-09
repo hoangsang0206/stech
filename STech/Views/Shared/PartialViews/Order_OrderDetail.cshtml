@@ -40,10 +40,10 @@
                 }
             </div>
             <div class="flex-grow-1 d-flex justify-content-end">
-                <button class="dowload-invoice btn btn-primary">
+                <a class="dowload-invoice btn btn-primary" href="/api/orders/download-invoice?oId=@Model.InvoiceId&phone=@Model.RecipientPhone" download="HĐ_@(Model.InvoiceId).pdf">
                     <i class="fa-solid fa-download"></i>
                     <span>Tải hóa đơn</span>
-                </button>
+                </a>
             </div>
         </div>
         <div class="mt-2">
@@ -146,7 +146,7 @@
                         @{
                             IEnumerable<InvoiceStatus> statuses = Model.InvoiceStatuses.OrderByDescending(x => x.DateUpdated);
 
-                            bool isFist = true;
+                            bool isFirst = true;
 
                             <ul class="delivery-timeline p-0 m-0">
                                 @if(Model.IsCancelled == true)
@@ -167,7 +167,7 @@
                                         </div>
                                     </li>
 
-                                    isFist = false;
+                                    isFirst = false;
                                 }
                                 else if (Model.IsCompleted == true)
                                 {
@@ -187,12 +187,12 @@
                                         </div>
                                     </li>
 
-                                    isFist = false;
+                                    isFirst = false;
                                 }
 
                                 @foreach (var status in statuses)
                                 {
-                                    <li class="timeline-item @(isFist ? "timeline-first" : "") d-flex">
+                                    <li class="timeline-item @(isFirst ? "timeline-first" : "") d-flex">
                                         <div class="timeline-time">
                                             <div class="text-end">@status.DateUpdated?.Date.ToString("dd/MM/yyyy")</div>
                                             <div class="text-end">@status.DateUpdated?.TimeOfDay.ToString(@"hh\:mm")</div>
@@ -205,10 +205,10 @@
                                         </div>
                                     </li>
 
-                                    isFist = false;
+                                    isFirst = false;
                                 }
 
-                                <li class="timeline-item @(isFist ? "timeline-first" : "") d-flex">
+                                <li class="timeline-item @(isFirst ? "timeline-first" : "") d-flex">
                                     <div class="timeline-time">
                                         <div class="text-end">@Model.OrderDate?.Date.ToString("dd/MM/yyyy")</div>
                                         <div class="text-end">@Model.OrderDate?.TimeOfDay.ToString(@"hh\:mm")</div>

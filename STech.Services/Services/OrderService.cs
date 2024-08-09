@@ -8,7 +8,7 @@ namespace STech.Services.Services
     {
         private readonly StechDbContext _context;
 
-        private readonly int NumOfInvoicePerPage = 50;
+        private readonly int NumOfInvoicePerPage = 20;
 
         public OrderService(StechDbContext context)
         {
@@ -114,6 +114,40 @@ namespace STech.Services.Services
             return invoice;
         }
 
+        public async Task<Invoice?> GetInvoiceWithDetails(string invoiceId)
+        {
+            Invoice? invoice = await _context.Invoices
+                .Where(i => i.InvoiceId == invoiceId)
+                .Include(i => i.PaymentMed)
+                .Include(i => i.InvoiceStatuses)
+                .Include(i => i.InvoiceDetails)
+                .ThenInclude(d => d.Product)
+                .ThenInclude(d => d.ProductImages)
+                .Include(i => i.PackingSlip)
+                .FirstOrDefaultAsync();
+
+            if (invoice != null)
+            {
+                invoice.InvoiceDetails = invoice.InvoiceDetails.Select(d => new InvoiceDetail
+                {
+                    InvoiceId = d.InvoiceId,
+                    ProductId = d.ProductId,
+                    Quantity = d.Quantity,
+                    Cost = d.Cost,
+                    Product = new Product
+                    {
+                        ProductId = d.Product.ProductId,
+                        ProductName = d.Product.ProductName,
+                        Warranty = d.Product.Warranty,
+                        Price = d.Product.Price,
+                        ProductImages = d.Product.ProductImages.OrderBy(t => t.Id).Take(1).ToList(),
+                    }
+                }).ToList();
+            }
+
+            return invoice;
+        }
+
         public async Task<IEnumerable<Invoice>> GetUserInvoices(string userId)
         {
             if (string.IsNullOrEmpty(userId))
@@ -135,8 +169,18 @@ namespace STech.Services.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
-        #region ForAdmin
-        
+        public async Task<bool> AddInvoiceStatus(InvoiceStatus invoiceStatus)
+        {
+            await _context.InvoiceStatuses.AddAsync(invoiceStatus);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> UpdateInvoiceStatus(InvoiceStatus invoiceStatus)
+        {
+            _context.InvoiceStatuses.Update(invoiceStatus);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
         public async Task<(IEnumerable<Invoice>, int)> GetInvoices(int page, string? filterBy, string? sortBy)
         {
             IEnumerable<Invoice> invoices = await _context.Invoices
@@ -153,6 +197,6 @@ namespace STech.Services.Services
             return (invoices.Paginate(page, NumOfInvoicePerPage).SortBy(sortBy), totalPage);
         }
 
-        #endregion
+        
     }
 }

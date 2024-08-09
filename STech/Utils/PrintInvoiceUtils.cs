@@ -77,7 +77,7 @@ namespace STech.Utils
                 Cell cusCell5 = new Cell(1, 1)
                  .Add(new Paragraph("Ghi chú:"));
                 Cell cusCell51 = new Cell(1, 2)
-                .Add(new Paragraph(invoice.Note));
+                .Add(new Paragraph(invoice.Note ?? ""));
 
                 customerTable.AddCell(cusCell1.SetBorder(Border.NO_BORDER));
                 customerTable.AddCell(cusCell11.SetBorder(Border.NO_BORDER));

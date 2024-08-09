@@ -7,10 +7,7 @@ using STech.Services.Constants;
 using STech.Services.Services;
 using STech.Services.Utils;
 using STech.Utils;
-using Stripe;
 using Stripe.Checkout;
-using Stripe.Climate;
-using System.Net;
 using System.Security.Claims;
 using System.Text.Json;
 

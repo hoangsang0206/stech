@@ -29,5 +29,8 @@ public partial class Employee
     public virtual ICollection<PackingSlip> PackingSlips { get; set; } = new List<PackingSlip>();
 
     [JsonIgnore]
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
+
+    [JsonIgnore]
     public virtual ICollection<WarehouseExport> WarehouseExports { get; set; } = new List<WarehouseExport>();
 }
