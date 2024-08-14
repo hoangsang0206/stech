@@ -38,7 +38,7 @@ namespace STech.Services.Services
 
         public async Task<(IEnumerable<Product>, int)> SearchByName(string q, int page, string? sort)
         {
-            if(q == null)
+            if(string.IsNullOrEmpty(q))
             {
                 return (new List<Product>(), 1);
             }
@@ -47,6 +47,36 @@ namespace STech.Services.Services
 
             IEnumerable<Product> products = await _context.Products
                 .Where(p => keywords.All(key =>  p.ProductName.Contains(key)) && p.IsActive == true)
+                .Select(p => new Product()
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    OriginalPrice = p.OriginalPrice,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
+                    WarehouseProducts = p.WarehouseProducts,
+                    Brand = p.Brand,
+                })
+                .ToListAsync();
+
+            int totalPage = Convert.ToInt32(Math.Ceiling(
+                Convert.ToDouble(products.Count()) / Convert.ToDouble(NumOfProductPerPage)));
+
+            return (products, totalPage);
+        }
+
+        public async Task<(IEnumerable<Product>, int)> SearchByName(string q, int page, string? sort, string warehouseId)
+        {
+            if (string.IsNullOrEmpty(q))
+            {
+                return (new List<Product>(), 1);
+            }
+
+            string[] keywords = q.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            IEnumerable<Product> products = await _context.Products
+                .Where(p => keywords.All(key => p.ProductName.Contains(key)) && p.IsActive == true 
+                    && p.WarehouseProducts.Any(w => w.WarehouseId == warehouseId))
                 .Select(p => new Product()
                 {
                     ProductId = p.ProductId,
@@ -133,6 +163,25 @@ namespace STech.Services.Services
         {
             return await _context.Products
                 .Where(p => p.ProductId == id && p.IsActive == true)
+                .Select(p => new Product
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    OriginalPrice = p.OriginalPrice,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
+                    WarehouseProducts = p.WarehouseProducts,
+                    Brand = p.Brand,
+                    Category = p.Category,
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<Product?> GetProductWithBasicInfo(string id, string warehouseId)
+        {
+            return await _context.Products
+                .Where(p => p.ProductId == id && p.IsActive == true 
+                        && p.WarehouseProducts.Any(w => w.WarehouseId == warehouseId))
                 .Select(p => new Product
                 {
                     ProductId = p.ProductId,

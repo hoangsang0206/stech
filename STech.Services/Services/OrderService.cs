@@ -197,6 +197,16 @@ namespace STech.Services.Services
             return (invoices.Paginate(page, NumOfInvoicePerPage).SortBy(sortBy), totalPage);
         }
 
-        
+        public async Task<IEnumerable<Invoice>> SearchInvoices(string query)
+        {
+            IEnumerable<Invoice> invoices = await _context.Invoices
+                .Include(i => i.InvoiceStatuses)
+                .Include(i => i.InvoiceDetails)
+                .Include(i => i.PaymentMed)
+                .Where(i => i.InvoiceId.Contains(query) || i.RecipientPhone.Contains(query))
+                .ToListAsync();
+
+            return invoices;
+        }
     }
 }

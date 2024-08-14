@@ -14,5 +14,6 @@ namespace STech.Services
         Task<bool> AddInvoiceStatus(InvoiceStatus invoiceStatus);
         Task<bool> UpdateInvoiceStatus(InvoiceStatus invoiceStatus);
         Task<(IEnumerable<Invoice>, int)> GetInvoices(int page, string? filterBy, string? sortBy);
+        Task<IEnumerable<Invoice>> SearchInvoices(string query);
     }
 }

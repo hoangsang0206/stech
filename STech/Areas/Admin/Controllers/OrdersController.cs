@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
+using STech.Data.ViewModels;
 using STech.Filters;
 using STech.Services;
 
@@ -26,6 +27,21 @@ namespace STech.Areas.Admin.Controllers
             ViewBag.CurrentPage = page;
 
             return View(invoices);
+        }
+
+        [Route("admin/orders/search/{query}")]
+        public async Task<IActionResult> SearchOrders(string query)
+        {
+            IEnumerable<Invoice> invoices = await _orderService.SearchInvoices(query);
+
+            ViewBag.ActiveSidebar = "orders";
+            return View("Index", invoices);
+        }
+
+        public IActionResult Create()
+        {
+            ViewBag.ActiveSidebar = "orders";
+            return View();
         }
     }
 }

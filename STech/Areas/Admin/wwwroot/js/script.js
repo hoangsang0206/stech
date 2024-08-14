@@ -1,4 +1,9 @@
-﻿const updateParams = (params) => {
+﻿const updateUrlPath = (newPath) => {
+    const url = window.location.protocol + '//' + window.location.host + newPath;
+    history.pushState({}, '', url);
+}
+
+const updateParams = (params) => {
     const url = new URL(window.location.href);
     const _params = new URLSearchParams(url.search);
 
@@ -117,6 +122,19 @@ const showConfirmDialog = (title, message, callback) => {
     });
 }
 
+const showForm = (form_container) => {
+    $(form_container).addClass('show');
+
+    $(form_container).find('.close-form').click(() => {
+        closeForm(form_container);
+    })
+}
+
+const closeForm = (form_container) => {
+    $(form_container).removeClass('show');
+}
+
+
 const loadPagination = (totalPages, currentPage) => {
     $('.pagination-box').empty();
 
@@ -208,4 +226,44 @@ $(document).click((e) => {
 $('.filter-btn').click(function () {
     $('.filter-contents').removeClass('show');
     $(this).siblings('.filter-contents').toggleClass('show');
+})
+
+
+$('.page-dropdown-btn').click(function () {
+    $(this).siblings('.page-dropdown-content').toggleClass('show');
+})
+
+$('.page-dropdown-item').click(function () {
+    const value = $(this).data('value');
+    const text = $(this).data('text');
+
+    $('.page-dropdown-item').removeClass('selected');
+    $(this).addClass('selected');
+
+    const dropdown_btn = $(this).closest('.page-dropdown').find('.page-dropdown-btn');
+    dropdown_btn.data('selected', value);
+    dropdown_btn.find('span').html(text);
+
+    dropdown_btn.siblings('.page-dropdown-content').removeClass('show');
+})
+
+
+function checkInputValid(_input) {
+    if (_input) {
+        if (_input.val().length > 0) {
+            _input.addClass('input-valid');
+        }
+        else {
+            _input.removeClass('input-valid');
+        }
+    }
+}
+
+$('.form-input').not('select').toArray().forEach((input) => {
+    const _input = $(input);
+
+    _input.on({
+        focus: () => { checkInputValid(_input) },
+        change: () => { checkInputValid(_input) }
+    });
 })

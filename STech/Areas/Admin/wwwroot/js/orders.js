@@ -1,11 +1,103 @@
-﻿const loadOrders = (page, filer_by, sort_by) => {
+﻿const updateOrderList = (invoices) => { 
+    $('.order-list').empty().append(`
+        <tr class="page-table-header">
+            <th>STT</th>
+            <th>Mã đơn hàng</th>
+            <th>Ngày đặt</th>
+            <th>Số SP</th>
+            <th>Thành tiền</th>
+            <th>PT thanh toán</th>
+            <th>TT thanh toán</th>
+            <th>Trạng thái</th>
+            <th></th>
+        </tr>
+    `);
+
+    let index = 0;
+    invoices.forEach((invoice) => {
+        index++;
+
+        let payment_status = ``;
+        let order_status = ``;
+
+        const order_date = new Date(invoice.orderDate);
+        const day = String(order_date.getDate()).padStart(2, '0');
+        const month = String(order_date.getMonth() + 1).padStart(2, '0');
+        const year = order_date.getFullYear();
+        const hours = String(order_date.getHours()).padStart(2, '0');
+        const minutes = String(order_date.getMinutes()).padStart(2, '0');
+
+        const total_items = invoice.invoiceDetails.reduce((accumulator, item) => {
+            return accumulator + item.quantity;
+        }, 0);
+
+        switch (invoice.paymentStatus) {
+            case "paid":
+                payment_status = '<span class="page-badge badge-success">Đã thanh toán</span>';
+                break;
+
+            case "unpaid":
+                payment_status = '<span class="page-badge badge-warning">Chờ thanh toán</span>';
+                break;
+
+            case "payment-failed":
+                payment_status = '<span class="page-badge badge-error">Thanh toán thất bại</span>';
+                break;
+
+        }
+
+        if (invoice.isCancelled) {
+            order_status = '<span class="page-badge badge-error">Đã hủy</span>';
+        }
+        else if (invoice.isCompleted) {
+            order_status = '<span class="page-badge badge-success">Đã giao hàng</span>';
+        }
+        else if (invoice.isAccepted) {
+            order_status = '<span class="page-badge badge-warning">Chờ giao hàng</span>';
+        }
+        else {
+            order_status = '<span class="page-badge badge-warning">Chờ xác nhận</span>';
+        }
+
+        $('.order-list').append(`
+            <tr>
+                <td class="fweight-600">${index}</td>
+                <td>${invoice.invoiceId}</td>
+                <td>${day}/${month}/${year} ${hours}:${minutes}</td>
+                <td>${total_items}</td>
+                <td class="fweight-600">${invoice.total.toLocaleString('vi-VN')}đ</td>
+                <td>${invoice.paymentMed.paymentName}</td>
+                <td>${payment_status}</td>
+                <td>${order_status}</td>
+                <td>
+                    <div class="d-flex gap-1 align-items-center justify-content-end">
+                        <button class="page-table-btn btn-lightblue view-order" data-order="${invoice.invoiceId}">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                        <button class="page-table-btn btn-blue print-order" data-order="${invoice.invoiceId}">
+                            <i class="fa-solid fa-print"></i>
+                        </button>
+                        ${!invoice.isAccepted && !invoice.isCancelled ?
+                            `<button class="page-table-btn btn-green accept-order" data-order="${invoice.invoiceId}">
+                                <i class="fa-solid fa-check"></i>
+                            </button>` : ''}
+                    </div>
+                </td>
+            </tr>
+        `);
+    });
+}
+
+const loadOrders = (page, filer_by, sort_by) => {
+    $('#search').val(null);
+
+    updateUrlPath(`/admin/orders`);
     updateParams({
         page: page,
         filter_by: filer_by,
         sort_by: sort_by
     });
 
-    hideWebLoader(0);
     showWebLoader();
 
     $.ajax({
@@ -15,96 +107,8 @@
             hideWebLoader(500);
 
             if (response.status) {
-                $('.order-list').empty().append(`
-                    <tr class="page-table-header">
-                        <th>STT</th>
-                        <th>Mã đơn hàng</th>
-                        <th>Ngày đặt</th>
-                        <th>Số SP</th>
-                        <th>Thành tiền</th>
-                        <th>PT thanh toán</th>
-                        <th>TT thanh toán</th>
-                        <th>Trạng thái</th>
-                        <th></th>
-                    </tr>
-                `);
-
                 loadPagination(response.data.totalPages, response.data.currentPage);
-
-                let index = 0;
-
-                response.data.invoices.forEach((invoice) => {
-                    index++;
-
-                    let payment_status = ``;
-                    let order_status = ``;
-
-                    const order_date = new Date(invoice.orderDate);
-                    const day = String(order_date.getDate()).padStart(2, '0');
-                    const month = String(order_date.getMonth() + 1).padStart(2, '0');
-                    const year = order_date.getFullYear();
-                    const hours = String(order_date.getHours()).padStart(2, '0');
-                    const minutes = String(order_date.getMinutes()).padStart(2, '0');
-
-                    const total_items = invoice.invoiceDetails.reduce((accumulator, item) => {
-                        return accumulator + item.quantity;
-                    }, 0);
-
-                    switch (invoice.paymentStatus) { 
-                        case "paid":
-                            payment_status = '<span class="page-badge badge-success">Đã thanh toán</span>';
-                            break;
-
-                        case "unpaid":
-                            payment_status = '<span class="page-badge badge-warning">Chờ thanh toán</span>';
-                            break;
-
-                        case "payment-failed":
-                            payment_status = '<span class="page-badge badge-error">Thanh toán thất bại</span>';
-                            break;
-
-                    }
-
-                    if (invoice.isCancelled) {
-                        order_status = '<span class="page-badge badge-error">Đã hủy</span>';
-                    }
-                    else if (invoice.isCompleted) {
-                        order_status = '<span class="page-badge badge-success">Đã giao hàng</span>';
-                    }
-                    else if (invoice.isAccepted) {
-                        order_status = '<span class="page-badge badge-warning">Chờ giao hàng</span>';
-                    }
-                    else {
-                        order_status = '<span class="page-badge badge-warning">Chờ xác nhận</span>';
-                    }
-
-                    $('.order-list').append(`
-                        <tr>
-                            <td class="fweight-600">${index}</td>
-                            <td>${invoice.invoiceId}</td>
-                            <td>${day}/${month}/${year} ${hours}:${minutes}</td>
-                            <td>${total_items}</td>
-                            <td class="fweight-600">${invoice.total.toLocaleString('vi-VN')}đ</td>
-                            <td>${invoice.paymentMed.paymentName}</td>
-                            <td>${payment_status}</td>
-                            <td>${order_status}</td>
-                            <td>
-                                <div class="d-flex gap-1 align-items-center justify-content-end">
-                                    <button class="page-table-btn btn-lightblue view-order" data-order="${invoice.invoiceId}">
-                                        <i class="fa-solid fa-eye"></i>
-                                    </button>
-                                    <button class="page-table-btn btn-blue print-order" data-order="${invoice.invoiceId}">
-                                        <i class="fa-solid fa-print"></i>
-                                    </button>
-                                    ${!invoice.isAccepted && !invoice.isCancelled ?
-                                        `<button class="page-table-btn btn-green accept-order" data-order="${invoice.invoiceId}">
-                                            <i class="fa-solid fa-check"></i>
-                                        </button>` : ''}
-                                </div>
-                            </td>
-                        </tr>
-                    `);
-                });
+                updateOrderList(response.data.invoices);
             }
         },
         error: () => {
@@ -211,5 +215,32 @@ $(document).on('click', '.print-order', async function () {
         } catch (error) {
             showDialog('error', 'Không thể tải hóa đơn', error);
         }
+    }
+})
+
+$('.search-orders').submit(function (e) {
+    e.preventDefault();
+
+    const value = $(this).find('#search').val();
+
+    if (value) {
+        showWebLoader();
+        updateUrlPath(`/admin/orders/search/${value}`);
+        $.ajax({
+            type: 'GET',
+            url: `/api/admin/orders/search/${value}`,
+            success: (response) => {
+                if (response.status) {
+                    $('.orders-nav').removeClass('active')
+                    hideWebLoader(500);
+                    updateOrderList(response.data);
+                    loadPagination(1, 1);
+                }
+            },
+            error: () => {
+                hideWebLoader(0);
+                showErrorDialog();
+            }
+        })
     }
 })

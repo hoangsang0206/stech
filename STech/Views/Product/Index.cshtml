@@ -74,12 +74,24 @@
                     @if (inStock > 0)
                     {
                         <div class="d-flex flex-column flex-sm-row gap-3">
-                            <button class="buy-action-btn" onclick="window.location.href='/order/checkout?pId=@product.ProductId'">
-                                <div>
-                                    <h4>MUA NGAY</h4>
-                                    <span>Giao tận nơi hoặc nhận tại cửa hàng</span>
-                                </div>
-                            </button>
+                            @if(User.Identity != null && User.Identity.IsAuthenticated)
+                                        {
+                                <button class="buy-action-btn" onclick="window.location.href='/order/checkout?pId=@product.ProductId'">
+                                    <div>
+                                        <h4>MUA NGAY</h4>
+                                        <span>Giao tận nơi hoặc nhận tại cửa hàng</span>
+                                    </div>
+                                </button>
+                            } 
+                            else
+                            {
+                               <button class="buy-action-btn not-logged-in">
+                                    <div>
+                                        <h4>MUA NGAY</h4>
+                                        <span>Giao tận nơi hoặc nhận tại cửa hàng</span>
+                                    </div>
+                                </button>
+                            }
                             <button class="add-to-cart-action" data-product="@product.ProductId">
                                 <i class="fa-solid fa-cart-plus"></i>
                             </button>
