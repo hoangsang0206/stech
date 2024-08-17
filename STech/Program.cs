@@ -119,6 +119,9 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<ICustomerService, STech.Services.Services.CustomerService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IDeliveryService, DeliveryService>();
 
 builder.Services.AddSingleton(new AddressService(Path.Combine(builder.Environment.ContentRootPath, "..", "STech.Data")));
 

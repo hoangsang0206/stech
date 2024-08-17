@@ -14,15 +14,26 @@ public partial class Employee
 
     public string Email { get; set; } = null!;
 
-    public string Address { get; set; } = null!;
-
     public DateOnly? Dob { get; set; }
 
     public string Gender { get; set; } = null!;
 
     public string CitizenId { get; set; } = null!;
 
-    [JsonIgnore]
+    public string Address { get; set; } = null!;
+
+    public string Ward { get; set; } = null!;
+
+    public string WardCode { get; set; } = null!;
+
+    public string District { get; set; } = null!;
+
+    public string DistrictCode { get; set; } = null!;
+
+    public string Province { get; set; } = null!;
+
+    public string ProvinceCode { get; set; } = null!;
+
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
     [JsonIgnore]

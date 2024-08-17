@@ -89,7 +89,7 @@ namespace STech.Controllers
         {
             DateTime date = DateTime.Now;
             Data.Models.Invoice invoice = new Data.Models.Invoice();
-            invoice.InvoiceId = date.ToString("ddMMyy") + RandomUtils.GenerateRandomString(8).ToUpper();
+            invoice.InvoiceId = date.ToString("yyyyMMdd") + RandomUtils.GenerateRandomString(8).ToUpper();
             invoice.OrderDate = date;
             invoice.PaymentMedId = paymentMethod.PaymentMedId;
             invoice.PaymentStatus = PaymentContants.UnPaid;
@@ -108,8 +108,8 @@ namespace STech.Controllers
         {
             PackingSlip packingSlip = new PackingSlip();
             packingSlip.InvoiceId = invoice.InvoiceId;
-            packingSlip.Psid = DateTime.Now.ToString("ddMMyy") + "SHIP" + RandomUtils.GenerateRandomString(8).ToUpper();
-            packingSlip.DeliveryFee = await CalculateShippingFee(address);
+            packingSlip.Psid = DateTime.Now.ToString("yyyyMMdd") + RandomUtils.GenerateRandomString(8).ToUpper();
+            packingSlip.DeliveryFee = invoice.DeliveryMedId == DeliveryContants.COD ? await CalculateShippingFee(address) : 0;
             packingSlip.IsCompleted = false;
 
             return packingSlip;
@@ -212,7 +212,7 @@ namespace STech.Controllers
                     if(whE == null)
                     {
                         whE = new WarehouseExport();
-                        whE.Weid = DateTime.Now.ToString("ddMMyy") + "EX" + RandomUtils.GenerateRandomString(8).ToUpper();
+                        whE.Weid = DateTime.Now.ToString("yyyyMMdd") + RandomUtils.GenerateRandomString(8).ToUpper();
                         whE.WarehouseId = wp.WarehouseId;
                         whE.InvoiceId = invoice.InvoiceId;
                         whE.DateCreate = DateTime.Now;

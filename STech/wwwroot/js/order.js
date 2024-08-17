@@ -1,11 +1,14 @@
 ﻿const calculateOrderShippingFee = (wardCode, districtCode, cityCode) => {
+    const shipping_med = $('input[name="DeliveryMethod"]:checked').val() || 'cod';
+
     $.ajax({
         type: 'GET',
         url: '/api/shipping/fee',
         data: {
             city: cityCode,
             district: districtCode,
-            ward: wardCode
+            ward: wardCode,
+            shipmed: shipping_med
         },
         success: (response) => {
             if (response.status) {
@@ -20,6 +23,15 @@
     })
 }
 
+$('input[name="DeliveryMethod"]').on('change', function () {
+    const cityCode = $('#recipient-city').val();
+    const districtCode = $('#recipient-district').val();
+    const wardCode = $('#recipient-ward').val();
+
+    if (cityCode && districtCode && wardCode) {
+        calculateOrderShippingFee(wardCode, districtCode, cityCode);
+    }
+})
 
 $(document).ready(() => {
     const cityCode = $('#hidden-city').val();

@@ -267,3 +267,16 @@ $('.form-input').not('select').toArray().forEach((input) => {
         change: () => { checkInputValid(_input) }
     });
 })
+
+$(document).on('change', '.page-radio-input input', function () {
+    const name = $(this).attr('name');
+    $(`.page-radio-input input[name="${name}"]`).closest('label').removeClass('checked');
+    $(this).closest('label').addClass('checked')
+})
+
+
+$('form').on('reset', function () {
+    clearFormInput($(this));
+
+    $(this).closest('.form-container').removeClass('show');
+})

@@ -48,5 +48,29 @@ namespace STech.ApiControllers
 
             return Ok(district.wards);
         }
+
+        [HttpGet("address/{wardCode}/{districtCode}/{cityCode}")]
+        public IActionResult GetAddress(string wardCode, string districtCode, string cityCode)
+        {
+            if(cityCode == null || districtCode == null || wardCode == null)
+            {
+                return BadRequest();
+            }
+
+            AddressVM.City? city = _addressService.Address.Cities.FirstOrDefault(c => c.code == cityCode);
+            AddressVM.District? district = city?.districts.FirstOrDefault(d => d.code == districtCode);
+            AddressVM.Ward? ward = district?.wards.FirstOrDefault(w => w.code == wardCode);
+
+            return Ok(new ApiResponse
+            {
+                Status = true,
+                Data = new
+                {
+                    City = city,
+                    District = district,
+                    Ward = ward
+                }
+            });
+        }
     }
 }

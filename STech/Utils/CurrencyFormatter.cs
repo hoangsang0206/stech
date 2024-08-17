@@ -14,6 +14,11 @@ namespace STech.Utils
                 return "";
             }
 
+            if(amount.Value == 0)
+            {
+                return "0" + CURRENCY_UNIT;
+            }
+
             CultureInfo cultureInfo = new CultureInfo(CULTURE_INFO);
             return amount.Value.ToString("##,###", cultureInfo) + CURRENCY_UNIT;
         }

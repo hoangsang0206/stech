@@ -532,7 +532,6 @@ button:disabled {
     visibility: hidden;
     place-items: center;
     z-index: 30;
-    cursor: pointer;
     transition: all .4s ease;
 }
 
@@ -584,8 +583,13 @@ button:disabled {
     font-weight: bold;
 }
 
-.form-submit-btn {
+.form-btn-wrapper {
+    display: flex;
+    gap: .6rem;
     margin-top: 1rem;
+}
+
+.form-submit-btn {
     width: 100%;
     border: none;
     background: var(--primary-color);
@@ -599,14 +603,11 @@ button:disabled {
     white-space: nowrap;
 }
 
-    .form-submit-btn:disabled {
-        background: var(--primary-color);
-    }
 
     .form-submit-btn.page-btn-sm {
         width: auto;
         padding: 0.6rem 1.5rem;
-        font-size: 1rem;
+        font-size: .95rem;
     }
 
     .form-submit-btn:not(:disabled):hover {
@@ -614,11 +615,10 @@ button:disabled {
     }
 
 .form-reset-btn {
-    margin-top: 1rem;
     border: 2px solid var(--primary-color-hover);
     background: var(--primary-content-color);
     color: var(--primary-color-hover);
-    font-size: 1rem;
+    font-size: .95rem;
     font-weight: 600;
     border-radius: 0.3rem;
     padding: 0.6rem 1.5rem;
@@ -637,7 +637,7 @@ button:disabled {
 
 .close-form {
     cursor: pointer;
-    padding: .5rem;
+    padding: .3rem .5rem;
     border-radius: var(--radius);
     display: grid;
     place-items: center;
@@ -761,6 +761,8 @@ button:disabled {
 
 .page-radio-input label {
     cursor: pointer;
+    display: flex;
+    gap: .5rem;
 }
 
     .page-radio-input label.checked * {
@@ -810,6 +812,10 @@ button:disabled {
     .page-table-btn:hover, .page-btn:hover {
         outline: 2px solid var(--primary-color-hover);
     }
+
+.page-btn {
+    padding: .3rem .6rem;
+}
 
 .page-btn-nav-wrapper {
     display: flex;
@@ -899,7 +905,7 @@ button:disabled {
 
     .btn-red:hover,
     .btn-red:active {
-        outline: 2px solid #f37684;
+        outline: 2px solid #f37684 !important;
     }
 
 .btn-green {
@@ -908,7 +914,7 @@ button:disabled {
 
     .btn-green:hover,
     .btn-green:active {
-        outline: 2px solid #8ff480;
+        outline: 2px solid #8ff480 !important;
     }
 
 .btn-blue {
@@ -917,7 +923,7 @@ button:disabled {
 
     .btn-blue:hover,
     .btn-blue:active {
-        outline: 2px solid #518bf6;
+        outline: 2px solid #518bf6 !important;
     }
 
 .btn-lightblue {
@@ -926,7 +932,20 @@ button:disabled {
 
     .btn-lightblue:hover,
     .btn-lightblue:active {
-        outline: 2px solid #8ae4f8;
+        outline: 2px solid #8ae4f8 !important;
+    }
+
+.btn-border-only {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    background: none;
+    outline: none !important;
+}
+
+    .btn-border-only:hover,
+    .btn-border-only.active {
+        border-color: var(--primary-color-hover);
+        color: var(--primary-color-hover);
     }
 
 .search-wrapper {
@@ -1040,6 +1059,7 @@ button:disabled {
 }
 
 .page-content-box {
+    background: var(--primary-content-color);
     border-radius: var(--radius);
     border: 1px solid var(--border-color);
     padding: 1rem;
@@ -1107,6 +1127,17 @@ button:disabled {
 .page-search-results.show {
     display: block;
 }
+
+.page-search-result-item label {
+    padding: .5rem 1rem;
+    cursor: pointer;
+}
+
+    .page-search-result-item label:hover,
+    .page-search-result-item input:checked ~ label {
+        background-color: var(--checked-label-bg);
+        color: #fff;
+    }
 
 .text-product-name {
     font-size: 1rem;

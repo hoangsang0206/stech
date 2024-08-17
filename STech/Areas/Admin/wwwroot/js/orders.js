@@ -1,4 +1,14 @@
-﻿const updateOrderList = (invoices) => { 
+﻿const formatCurrency = (amout) => {
+    const _amout = parseFloat(amout);
+
+    if (_amout === 0) {
+        return '0đ';
+    }
+
+    return _amout.toLocaleString('vi-VN') + 'đ';
+}
+
+const updateOrderList = (invoices) => { 
     $('.order-list').empty().append(`
         <tr class="page-table-header">
             <th>STT</th>
@@ -65,7 +75,7 @@
                 <td>${invoice.invoiceId}</td>
                 <td>${day}/${month}/${year} ${hours}:${minutes}</td>
                 <td>${total_items}</td>
-                <td class="fweight-600">${invoice.total.toLocaleString('vi-VN')}đ</td>
+                <td class="fweight-600">${formatCurrency(invoice.total)}</td>
                 <td>${invoice.paymentMed.paymentName}</td>
                 <td>${payment_status}</td>
                 <td>${order_status}</td>
@@ -77,7 +87,7 @@
                         <button class="page-table-btn btn-blue print-order" data-order="${invoice.invoiceId}">
                             <i class="fa-solid fa-print"></i>
                         </button>
-                        ${!invoice.isAccepted && !invoice.isCancelled ?
+                        ${!invoice.isAccepted && !invoice.isCancelled && !invoice.isCompleted ?
                             `<button class="page-table-btn btn-green accept-order" data-order="${invoice.invoiceId}">
                                 <i class="fa-solid fa-check"></i>
                             </button>` : ''}

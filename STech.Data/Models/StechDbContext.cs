@@ -142,13 +142,25 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.CustomerId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.Address).HasMaxLength(200);
+            entity.Property(e => e.Address).HasMaxLength(50);
             entity.Property(e => e.CustomerName).HasMaxLength(50);
+            entity.Property(e => e.District).HasMaxLength(30);
+            entity.Property(e => e.DistrictCode)
+                .HasMaxLength(30)
+                .IsUnicode(false);
             entity.Property(e => e.Dob).HasColumnName("DOB");
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.Gender).HasMaxLength(10);
             entity.Property(e => e.Phone)
                 .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.Province).HasMaxLength(30);
+            entity.Property(e => e.ProvinceCode)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.Ward).HasMaxLength(50);
+            entity.Property(e => e.WardCode)
+                .HasMaxLength(50)
                 .IsUnicode(false);
         });
 
@@ -185,9 +197,13 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.EmployeeId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.Address).HasMaxLength(200);
+            entity.Property(e => e.Address).HasMaxLength(50);
             entity.Property(e => e.CitizenId)
                 .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.District).HasMaxLength(30);
+            entity.Property(e => e.DistrictCode)
+                .HasMaxLength(30)
                 .IsUnicode(false);
             entity.Property(e => e.Dob).HasColumnName("DOB");
             entity.Property(e => e.Email)
@@ -197,6 +213,14 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.Gender).HasMaxLength(10);
             entity.Property(e => e.Phone)
                 .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.Province).HasMaxLength(30);
+            entity.Property(e => e.ProvinceCode)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.Ward).HasMaxLength(50);
+            entity.Property(e => e.WardCode)
+                .HasMaxLength(50)
                 .IsUnicode(false);
         });
 

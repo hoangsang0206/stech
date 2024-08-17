@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Services;
+using STech.Services.Constants;
 using STech.Services.Services;
 using STech.Services.Utils;
 
@@ -15,17 +16,34 @@ namespace STech.ApiControllers
         private readonly IGeocodioService _geocodioService;
         private readonly IWarehouseService _warehouseService;
         private readonly AddressService _addressService;
+        private readonly IDeliveryService _deliveryService;
 
-        public ShippingController(IGeocodioService geocodioService, IWarehouseService warehouseService, AddressService addressService)
+        public ShippingController(IGeocodioService geocodioService, IWarehouseService warehouseService, 
+            AddressService addressService, IDeliveryService deliveryService)
         {
             _geocodioService = geocodioService;
             _warehouseService = warehouseService;
             _addressService = addressService;
+            _deliveryService = deliveryService;
         }
 
         [HttpGet("fee")]
-        public async Task<IActionResult> CalculateShippingFee(string city, string district, string ward)
+        public async Task<IActionResult> CalculateShippingFee(string city, string district, string ward, string shipmed)
         {
+            DeliveryMethod? deliveryMethod = await _deliveryService.GetDeliveryMethodById(shipmed);
+
+            if (deliveryMethod != null && deliveryMethod.DeliveryMedId == DeliveryContants.Store)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = true,
+                    Data = new
+                    {
+                        Fee = 0
+                    }
+                });
+            }
+
             AddressVM.City _city = _addressService.Address.Cities.FirstOrDefault(c => c.code == city) ?? new AddressVM.City();
             AddressVM.District _district = _city.districts.FirstOrDefault(c => c.code == district) ?? new AddressVM.District();
             AddressVM.Ward _ward = _district.wards.FirstOrDefault(c => c.code == ward) ?? new AddressVM.Ward();

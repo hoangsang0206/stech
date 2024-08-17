@@ -196,7 +196,8 @@ const calculateShippingFee = (form, wardCode, districtCode, cityCode) => {
             data: {
                 city: cityCode,
                 district: districtCode,
-                ward: wardCode
+                ward: wardCode,
+                shipmed :'cod'
             },
             success: (response) => {
                 if (response.status) {

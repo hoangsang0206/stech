@@ -2,7 +2,7 @@
     $(form).find('.district-select').empty();
     $(form).find('.district-select').append('<option value="" selected>Chọn quận/huyện</option>');
     $(form).find('.ward-select').empty();
-    $(form).find('.ward-select').append('<option value="" selected>Chọn phường/xã</option>');
+    $(form).find('.ward-select').append('<option value="" selected>Chọn xã/phường</option>');
 
     if (cityCode) {
         $.ajax({
@@ -21,7 +21,7 @@
 
 const loadWards = (form, districtCode, wardCode) => {
     $(form).find('.ward-select').empty();
-    $(form).find('.ward-select').append('<option value="" selected>Chọn phường/xã</option>');
+    $(form).find('.ward-select').append('<option value="" selected>Chọn xã/phường</option>');
 
     if (districtCode) {
         $.ajax({

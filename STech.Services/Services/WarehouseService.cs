@@ -46,6 +46,11 @@ namespace STech.Services.Services
             return warehouse;
         }
 
+        public async Task<Warehouse?> GetWarehouseById(string warehouseId)
+        {
+            return await _context.Warehouses.FindAsync(warehouseId);
+        }
+
         public async Task<IEnumerable<WarehouseProduct>> GetWarehouseProducts(string productId)
         {
             return await _context.WarehouseProducts

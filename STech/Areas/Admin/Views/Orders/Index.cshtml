@@ -103,7 +103,7 @@
                             <button class="page-table-btn btn-blue print-order" data-order="@invoice.InvoiceId">
                                 <i class="fa-solid fa-print"></i>
                             </button>
-                            @if(!invoice.IsAccepted && !invoice.IsCancelled)
+                            @if(!invoice.IsAccepted && !invoice.IsCancelled && !invoice.IsCompleted)
                             {
                                 <button class="page-table-btn btn-green accept-order" data-order="@invoice.InvoiceId">
                                     <i class="fa-solid fa-check"></i>
