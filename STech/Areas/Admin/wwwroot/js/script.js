@@ -1,4 +1,32 @@
-﻿const updateUrlPath = (newPath) => {
+﻿//Lazy loading image
+function loadImg(img) {
+    const url = img.getAttribute('lazy-src');
+
+    img.removeAttribute('lazy-src');
+    img.setAttribute('src', url);
+    img.classList.add('img-loaded');
+}
+
+function lazyLoading() {
+    if ('IntersectionObserver' in window) {
+        var lazyImages = document.querySelectorAll('[lazy-src]');
+        let observer = new IntersectionObserver((entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('img-loaded')) {
+                    loadImg(entry.target);
+                }
+            })
+        }));
+
+        lazyImages.forEach(img => {
+            observer.observe(img);
+        });
+    }
+}
+
+$(document).ready(lazyLoading);
+
+const updateUrlPath = (newPath) => {
     const url = window.location.protocol + '//' + window.location.host + newPath;
     history.pushState({}, '', url);
 }
@@ -89,6 +117,16 @@ const showDialog = (type, title, message) => {
     })
 }
 
+const showDialogWithCallback = (type, title, message, callback) => {
+    Swal.fire({
+        title: title,
+        text: message,
+        icon: type,
+    }).then(() => {
+        callback();
+    })
+}
+
 const showHtmlDialog = (type, title, html) => {
     Swal.fire({
         title: title,
@@ -125,7 +163,7 @@ const showConfirmDialog = (title, message, callback) => {
 const showForm = (form_container) => {
     $(form_container).addClass('show');
 
-    $(form_container).find('.close-form').click(() => {
+    $(form_container).find('.close-form, .close-form-text').click(() => {
         closeForm(form_container);
     })
 }

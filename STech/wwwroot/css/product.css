@@ -8,6 +8,10 @@
     height: 100%;
 }
 
+    .product-box:hover {
+        border-color: #c5c5c5;
+    }
+
 .out-of-stock {
     border-radius: 0.2rem;
     padding: 0.2rem 0.5rem;

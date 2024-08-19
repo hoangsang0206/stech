@@ -12,7 +12,7 @@ namespace STech.Services.Services
 
         public ProductService(StechDbContext context) => _context = context;
 
-        public async Task<(IEnumerable<Product>, int)> GetAll(int page, string? sort)
+        public async Task<(IEnumerable<Product>, int)> GetAll(int page, string? sort, string? filter_type, string? filter_value)
         {
             IEnumerable<Product> products = await _context.Products
                 .Where(p => p.IsActive == true)
@@ -225,6 +225,37 @@ namespace STech.Services.Services
 
             return product.WarehouseProducts
                 .Sum(p => p.Quantity);
+        }
+
+
+        public async Task<bool> DeleteProduct(string id)
+        {
+            Product? product = await _context.Products.FindAsync(id);
+
+            if (product == null)
+            {
+                return false;
+            }
+
+            product.IsDeleted = true;
+
+            _context.Products.Update(product);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        
+        public async Task<bool> PermanentlyDeleteProduct(string id)
+        {
+            Product? product = await _context.Products
+                .Where(p => p.ProductId == id && p.IsDeleted == true)
+                .FirstOrDefaultAsync();
+
+            if (product == null)
+            {
+                return false;
+            }
+
+            _context.Products.Remove(product);
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

@@ -50,5 +50,40 @@ namespace STech.Services.Utils
 
             return products;
         }
+
+        public static IEnumerable<Product> Filter(this IEnumerable<Product> products, string? filter_type, string? filter_value)
+        {
+            switch(filter_type)
+            {
+                case "specs":
+                    string[] specs = filter_value?.Split(",") ?? [] ;
+                    
+                    break;
+
+                case "price":
+                    string[]? priceRange = filter_value?.Split(",");
+                    if(priceRange != null && priceRange.Length == 2)
+                    {
+                        decimal _minPrice = Convert.ToDecimal(priceRange[0]);
+                        decimal _maxPrice = Convert.ToDecimal(priceRange[1]);
+
+                        products = products.Where(p => p.Price >= _minPrice && p.Price <= _maxPrice).ToList();
+                    }
+
+                    break;
+
+                case "brands":
+                    string[] brands = filter_value?.Split(",") ?? [];
+                    products = products.Where(p => brands.Contains(p.BrandId)).ToList();
+                    break;
+
+                case "categories":
+                    string[]? categories= filter_value?.Split(",") ?? [];
+                    products = products.Where(p => categories.Contains(p.CategoryId)).ToList();
+                    break;
+            }
+
+            return products;
+        }
     }
 }

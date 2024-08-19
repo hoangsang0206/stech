@@ -31,6 +31,7 @@ namespace STech.Services.Services
 
             await _context.InvoiceStatuses.AddRangeAsync(invoiceStatuses);
             await _context.InvoiceDetails.AddRangeAsync(invoiceDetails);
+
             if (packingSlip != null)
             {
                 await _context.PackingSlips.AddAsync(packingSlip);

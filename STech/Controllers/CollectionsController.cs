@@ -34,7 +34,7 @@ namespace STech.Controllers
 
             if (id == "all")
             {
-                (products, totalPage) = await _productService.GetAll(page, sort);
+                (products, totalPage) = await _productService.GetAll(page, sort, null, null);
                 breadcrumbs.Add(new Breadcrumb("Tất cả sản phẩm", ""));
                 title = "Tất cả sản phẩm - STech";
             }

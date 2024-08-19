@@ -8,6 +8,27 @@
     return _amout.toLocaleString('vi-VN') + 'đ';
 }
 
+const tippyButtons = () => {
+    tippy('.view-order', {
+        content: 'Xem chi tiết',
+        placement: 'top'
+    })
+
+    tippy('.print-order', {
+        content: 'In hóa đơn',
+        placement: 'top'
+    })
+
+    tippy('.accept-order', {
+        content: 'Xác nhận đơn hàng',
+        placement: 'top'
+    })
+}
+
+$(document).ready(() => {
+    tippyButtons();
+})
+
 const updateOrderList = (invoices) => { 
     $('.order-list').empty().append(`
         <tr class="page-table-header">
@@ -96,6 +117,8 @@ const updateOrderList = (invoices) => {
             </tr>
         `);
     });
+
+    tippyButtons();
 }
 
 const loadOrders = (page, filer_by, sort_by) => {
@@ -147,25 +170,6 @@ $(document).on('click', '.pagination-item:not(.current)', function () {
     }
 })
 
-
-tippy('.view-order', {
-    content: 'Xem chi tiết',
-    placement: 'top'
-})
-
-tippy('.print-order', {
-    content: 'In hóa đơn',
-    placement: 'top'
-})
-
-tippy('.accept-order', {
-    content: 'Xác nhận đơn hàng',
-    placement: 'top'
-})
-
-$(document).on('click', '.view-order', function () { 
-
-})
 
 $(document).on('click', '.accept-order', function () {
     showConfirmDialog('Xác nhận đơn hàng', 'Bạn có chắc chắn muốn xác nhận đơn hàng này không?', () => {
@@ -253,4 +257,9 @@ $('.search-orders').submit(function (e) {
             }
         })
     }
+})
+
+
+$(document).on('click', '.view-order', function () {
+    showForm('.order-detail-wrapper');
 })

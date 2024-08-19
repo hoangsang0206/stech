@@ -81,8 +81,11 @@
                 <div class="login-btn">
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
-                        <a href="/account" class="logged-in-link">
-                            <span>@User.Identity.Name</span>
+                        <a href="/account" class="header-user-image">
+                            @{
+                                string avatar = User.FindFirst("Avatar")?.Value ?? "/images/no-image.jpg";
+                            }
+                            <img src="@avatar" alt="" />
                         </a>
                         <div class="login-info-box account-logged position-absolute">
                             <a href="/account">
