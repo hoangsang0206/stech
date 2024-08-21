@@ -2,7 +2,7 @@
 
 @{
     ProductImage pImage = Model.ProductImages.FirstOrDefault() ?? new ProductImage();
-    string src = pImage.ImageSrc ?? "~/images/no-image.jpg";
+    string src = pImage.ImageSrc ?? "/images/no-image.jpg";
     int qty = Model.WarehouseProducts.Sum(wh => wh.Quantity);
 
     double discountPercent = 0;

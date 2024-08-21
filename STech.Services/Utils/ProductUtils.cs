@@ -51,35 +51,50 @@ namespace STech.Services.Utils
             return products;
         }
 
-        public static IEnumerable<Product> Filter(this IEnumerable<Product> products, string? filter_type, string? filter_value)
+        public static IEnumerable<Product> Filter(this IEnumerable<Product> products, string? brands, string? categories, string? status, string? price_range)
         {
-            switch(filter_type)
+            string[] filter_brands = brands?.Split(',') ?? [];
+            string[] filter_categories = categories?.Split(',') ?? [];
+            string[] filter_price_range = price_range?.Split(',') ?? [];
+
+            if (filter_brands.Length > 0)
             {
-                case "specs":
-                    string[] specs = filter_value?.Split(",") ?? [] ;
-                    
+                products = products.Where(p => filter_brands.Contains(p.BrandId)).ToList();
+            }
+
+            if (filter_categories.Length > 0)
+            {
+                products = products.Where(p => filter_categories.Contains(p.CategoryId)).ToList();
+            }
+
+            if(filter_price_range.Length >= 2)
+            {
+                products = products.Where(p => p.Price >= Convert.ToDecimal(filter_price_range[0]) && p.Price <= Convert.ToDecimal(filter_price_range[1])).ToList();
+            }
+
+            switch (status)
+            {
+                case "in-stock":
+                    products = products.Where(p => p.WarehouseProducts.Sum(wp => wp.Quantity) > 0).ToList();
                     break;
 
-                case "price":
-                    string[]? priceRange = filter_value?.Split(",");
-                    if(priceRange != null && priceRange.Length == 2)
-                    {
-                        decimal _minPrice = Convert.ToDecimal(priceRange[0]);
-                        decimal _maxPrice = Convert.ToDecimal(priceRange[1]);
-
-                        products = products.Where(p => p.Price >= _minPrice && p.Price <= _maxPrice).ToList();
-                    }
-
+                case "out-of-stock":
+                    products = products.Where(p => p.WarehouseProducts.Sum(wp => wp.Quantity) <= 0).ToList();
                     break;
 
-                case "brands":
-                    string[] brands = filter_value?.Split(",") ?? [];
-                    products = products.Where(p => brands.Contains(p.BrandId)).ToList();
+                case "inactive":
+                    products = products.Where(p => p.IsActive == false).ToList();
                     break;
 
-                case "categories":
-                    string[]? categories= filter_value?.Split(",") ?? [];
-                    products = products.Where(p => categories.Contains(p.CategoryId)).ToList();
+                case "activated":
+                    products = products.Where(p => p.IsActive == true).ToList();
+                    break;
+
+                case "deleted":
+                    products = products.Where(p => p.IsDeleted == true).ToList();
+                    break;
+                default:
+                    products = products.Where(p => p.IsActive == true).ToList();
                     break;
             }
 

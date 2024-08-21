@@ -567,10 +567,7 @@ $("#search").keyup(function () {
 
                         const products = response.data.slice(0, maxItems);
                         products.map(item => {
-                            let src = '/images/no-image.jpg';
-                            if (item.productImages) {
-                                src = item.productImages[0].imageSrc;
-                            }
+                            const src = item.productImages[0]?.imageSrc || '/images/no-image.jpg';
 
                             $('.ajax-search-items').append(`<a href="/product/${item.productId}"> 
                                 <div class="ajax-search-item d-flex justify-content-between align-items-center">

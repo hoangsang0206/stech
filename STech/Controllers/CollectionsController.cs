@@ -19,7 +19,7 @@ namespace STech.Controllers
             _productService = productService;
         }
 
-        public async Task<IActionResult> Index(string id, string? sort, int page = 1)
+        public async Task<IActionResult> Index(string id, string? brands, string? price_range, string? sort, int page = 1)
         {
             if(id == null)
             {
@@ -34,7 +34,7 @@ namespace STech.Controllers
 
             if (id == "all")
             {
-                (products, totalPage) = await _productService.GetAll(page, sort, null, null);
+                (products, totalPage) = await _productService.GetProducts(brands, null, null, price_range, null, sort, page);
                 breadcrumbs.Add(new Breadcrumb("Tất cả sản phẩm", ""));
                 title = "Tất cả sản phẩm - STech";
             }

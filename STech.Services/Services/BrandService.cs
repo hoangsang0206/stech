@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace STech.Services.Services
 {
@@ -17,10 +12,10 @@ namespace STech.Services.Services
         {
             if(isExcept)
             {
-                return await _context.Brands.Where(b => b.BrandId != "khac").ToListAsync();
+                return await _context.Brands.Where(b => b.BrandId != "khac").OrderBy(b => b.BrandName).ToListAsync();
             }
 
-            return await _context.Brands.ToListAsync();
+            return await _context.Brands.OrderBy(b => b.BrandName).ToListAsync();
         }
     }
 }

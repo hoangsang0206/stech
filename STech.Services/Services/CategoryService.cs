@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace STech.Services.Services
 {
@@ -17,10 +12,10 @@ namespace STech.Services.Services
         {
             if(isExcept)
             {
-                return await _context.Categories.Where(c => c.CategoryId != "khac").ToListAsync();
+                return await _context.Categories.Where(c => c.CategoryId != "khac").OrderBy(c => c.CategoryName).ToListAsync();
             }
 
-            return await _context.Categories.ToListAsync();
+            return await _context.Categories.OrderBy(c => c.CategoryName).ToListAsync();
         }
 
         public async Task<IEnumerable<Category>> GetRandomWithProducts(int numCategories, int numProducts)

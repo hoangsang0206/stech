@@ -12,10 +12,10 @@ namespace STech.Services.Services
 
         public ProductService(StechDbContext context) => _context = context;
 
-        public async Task<(IEnumerable<Product>, int)> GetAll(int page, string? sort, string? filter_type, string? filter_value)
+        public async Task<(IEnumerable<Product>, int)> GetProducts(string? brands, string? categories, string? status, string? price_range, string? warehouse_id, string? sort, int page = 1)
         {
             IEnumerable<Product> products = await _context.Products
-                .Where(p => p.IsActive == true)
+                .Where(p => warehouse_id == null || p.WarehouseProducts.Any(w => w.WarehouseId == warehouse_id))
                 .Select(p => new Product()
                 {
                     ProductId = p.ProductId,
@@ -23,10 +23,15 @@ namespace STech.Services.Services
                     OriginalPrice = p.OriginalPrice,
                     Price = p.Price,
                     ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
-                    WarehouseProducts = p.WarehouseProducts,
-                    Brand = p.Brand,
+                    WarehouseProducts = warehouse_id == null ? p.WarehouseProducts: p.WarehouseProducts.Where(wp => wp.WarehouseId == warehouse_id).ToList(),
+                    BrandId = p.BrandId,
+                    CategoryId = p.CategoryId,
+                    IsActive = p.IsActive,
+                    IsDeleted = p.IsDeleted,      
                 })
                 .ToListAsync();
+
+            products = products.Filter(brands, categories, status, price_range);
 
             int totalPage = Convert.ToInt32(Math.Ceiling(
                 Convert.ToDouble(products.Count()) / Convert.ToDouble(NumOfProductPerPage)));

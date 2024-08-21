@@ -809,15 +809,19 @@ button:disabled {
     background: #f4f3f3;
 }
 
-.page-table tr:not(:last-child) {
-    border-bottom: 1px solid #eaeaea;
-}
-
 .page-table th {
     font-weight: 500;
     text-align: left;
     padding: 0.8rem;
     white-space: nowrap;
+}
+
+.page-table tbody tr:not(:last-child) {
+    border-bottom: 1px solid #eaeaea;
+}
+
+.page-table tbody tr:has(input[type="checkbox"]:checked) {
+    background: #DFF5FF;
 }
 
 .page-table td {
@@ -843,11 +847,11 @@ button:disabled {
 }
 
 .page-btn-small {
-    padding: .2rem .5rem;
+    padding: .1rem .4rem;
 }
 
 .page-btn-small i {
-    font-size: .9rem;
+    font-size: .85rem;
 }
 
 .page-btn-nav-wrapper {
@@ -1017,6 +1021,27 @@ button:disabled {
         background: var(--primary-color-hover);
     }
 
+.display-grid {
+    display: grid;
+    grid-gap: .3rem
+}
+
+    .display-grid.columns-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .display-grid.columns-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .display-grid.columns-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .display-grid.columns-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
 .filters-box {
     display: flex;
     align-items: center;
@@ -1095,7 +1120,8 @@ button:disabled {
 
     .filter-content-item:hover,
     .filter-content-item.active,
-    .filter-content-item:has(input[type="checkbox"]:checked){
+    .filter-content-item:has(input[type="checkbox"]:checked),
+    .filter-content-item:has(input[type="radio"]:checked) {
         background: var(--primary-color-hover);
         border-color: var(--primary-color-hover);
         color: #fff;
@@ -1111,9 +1137,12 @@ button:disabled {
 
 .filter-submit-action,
 .filter-cancel-action {
-    font-size: 1rem;
     font-weight: 500;
-    padding: .5rem .8rem;
+    padding: .4rem .8rem;
+}
+
+.filter-submit-action {
+    border: 2px solid var(--color-blue);
 }
 
 .filter-cancel-action {
@@ -1269,6 +1298,7 @@ button:disabled {
     .page-dropdown-btn span {
         flex-grow: 1;
         padding: 0.5rem 1rem;
+        white-space: nowrap;
     }
 
     .page-dropdown-btn i {
@@ -1310,6 +1340,7 @@ button:disabled {
     padding: 0.5rem 1rem;
     cursor: pointer;
     transition: background .3s ease;
+    white-space: nowrap;
 }
 
     .page-dropdown-item:hover,

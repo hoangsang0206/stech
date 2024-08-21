@@ -176,7 +176,7 @@ const closeForm = (form_container) => {
 const loadPagination = (totalPages, currentPage) => {
     $('.pagination-box').empty();
 
-    if (totalPages < 1) {
+    if (totalPages <= 1) {
         return;
     }
 
@@ -259,16 +259,23 @@ $(document).click((e) => {
     if ($(e.target).closest('.filter-contents, .filter-btn').length <= 0) {
         $('.filter-contents').removeClass('show');
     }
+
+    if ($(e.target).closest('.page-dropdown-content, .page-dropdown-btn').length <= 0) {
+        $('.page-dropdown-content').removeClass('show');
+    }
 })
 
 $('.filter-btn').click(function () {
-    $('.filter-contents').removeClass('show');
-    $(this).siblings('.filter-contents').toggleClass('show');
+    const current_filter_contents = $(this).siblings('.filter-contents');
+    $('.filter-contents').not(current_filter_contents).removeClass('show');
+    current_filter_contents.toggleClass('show');
 })
 
 
 $('.page-dropdown-btn').click(function () {
-    $(this).siblings('.page-dropdown-content').toggleClass('show');
+    const current_dropdown_content = $(this).siblings('.page-dropdown-content');
+    $('.page-dropdown-content').not(current_dropdown_content).removeClass('show');
+    current_dropdown_content.toggleClass('show');
 })
 
 $('.page-dropdown-item').click(function () {
@@ -284,7 +291,6 @@ $('.page-dropdown-item').click(function () {
 
     dropdown_btn.siblings('.page-dropdown-content').removeClass('show');
 })
-
 
 function checkInputValid(_input) {
     if (_input) {
@@ -317,4 +323,10 @@ $('form').on('reset', function () {
     clearFormInput($(this));
 
     $(this).closest('.form-container').removeClass('show');
+})
+
+$('#page-table-checkbox-all').on('change', function () {
+    const isChecked = $(this).prop('checked');
+
+    $(this).closest('.page-table').find('input[name="page-table-checkbox"]').prop('checked', isChecked);
 })

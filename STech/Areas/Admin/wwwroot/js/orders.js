@@ -30,19 +30,7 @@ $(document).ready(() => {
 })
 
 const updateOrderList = (invoices) => { 
-    $('.order-list').empty().append(`
-        <tr class="page-table-header">
-            <th>STT</th>
-            <th>Mã đơn hàng</th>
-            <th>Ngày đặt</th>
-            <th>Số SP</th>
-            <th>Thành tiền</th>
-            <th>PT thanh toán</th>
-            <th>TT thanh toán</th>
-            <th>Trạng thái</th>
-            <th></th>
-        </tr>
-    `);
+    $('.order-list').empty();
 
     let index = 0;
     invoices.forEach((invoice) => {

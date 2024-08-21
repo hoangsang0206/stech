@@ -23,7 +23,7 @@ namespace STech.Areas.Admin.Controllers
             ViewBag.ActivePageNav = filter_by;
             ViewBag.ActiveSidebar = "orders";
 
-            ViewBag.TotalPage = totalPage;
+            ViewBag.TotalPages = totalPage;
             ViewBag.CurrentPage = page;
 
             return View(invoices);

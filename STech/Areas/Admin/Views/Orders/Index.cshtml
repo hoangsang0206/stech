@@ -20,140 +20,103 @@
             </div>
         </div>
 
-        <form class="search-form search-orders">
-            <input type="text" id="search" placeholder="Tìm theo mã đơn/số điện thoại" required />
-            <button type="submit">
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-        </form>
+        @await Html.PartialAsync("PartialViews/_PageSearchForm", new Tuple<string, string>("search-orders", "Tìm theo mã đơn/số điện thoại"))
     </div>
 
     <div class="page-table-wrapper mt-2">
-        <table class="page-table order-list">
-            <tr class="page-table-header">
-                <th>STT</th>
-                <th>Mã đơn hàng</th>
-                <th>Ngày đặt</th>
-                <th>Số SP</th>
-                <th>Thành tiền</th>
-                <th>PT thanh toán</th>
-                <th>TT thanh toán</th>
-                <th>Trạng thái</th>
-                <th></th>
-            </tr>
-
-            @{
-                int index = 0;
-            }
-
-            @foreach (Invoice invoice in Model)
-            {
-                index++;
-                string payment_status = "";
-                string order_status = "";
-                int total_items = invoice.InvoiceDetails.Sum(x => x.Quantity);
-
-                switch (invoice.PaymentStatus)
-                {
-                    case PaymentContants.Paid:
-                        payment_status = "<span class=\"page-badge badge-success\">Đã thanh toán</span>";
-                        break;
-
-                    case PaymentContants.UnPaid:
-                        payment_status = "<span class=\"page-badge badge-warning\">Chờ thanh toán</span>";
-                        break;
-
-                    case PaymentContants.PaymentFailed:
-                        payment_status = "<span class=\"page-badge badge-error\">Thanh toán thất bại</span>";
-                        break;
-
-                }
-
-                if (invoice.IsCancelled)
-                {
-                    order_status = "<span class=\"page-badge badge-error\">Đã hủy</span>";
-                }
-                else if(invoice.IsCompleted)
-                {
-                    order_status = "<span class=\"page-badge badge-success\">Đã giao hàng</span>";
-                }
-                else if(invoice.IsAccepted)
-                {
-                    order_status = "<span class=\"page-badge badge-warning\">Chờ giao hàng</span>";
-                }
-                else
-                {
-                    order_status = "<span class=\"page-badge badge-warning\">Chờ xác nhận</span>";
-                }
-
+        <table class="page-table">
+            <thead class="page-table-header">
                 <tr>
-                    <td class="fweight-600">@index</td>
-                    <td>@invoice.InvoiceId</td>
-                    <td>@invoice.OrderDate?.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@total_items</td>
-                    <td class="fweight-600">@CurrencyFormatter.Format(invoice.Total)</td>
-                    <td>@invoice.PaymentMed.PaymentName</td>
-                    <td>@Html.Raw(payment_status)</td>
-                    <td>@Html.Raw(order_status)</td>
-                    <td>
-                        <div class="d-flex gap-1 align-items-center justify-content-end">
-                            <button class="page-table-btn btn-lightblue view-order" data-order="@invoice.InvoiceId">
-                                <i class="fa-solid fa-eye"></i>
-                            </button>
-                            <button class="page-table-btn btn-blue print-order" data-order="@invoice.InvoiceId">
-                                <i class="fa-solid fa-print"></i>
-                            </button>
-                            @if(!invoice.IsAccepted && !invoice.IsCancelled && !invoice.IsCompleted)
-                            {
-                                <button class="page-table-btn btn-green accept-order" data-order="@invoice.InvoiceId">
-                                    <i class="fa-solid fa-check"></i>
-                                </button>
-                            }
-                        </div>
-                    </td>
+                    <th>STT</th>
+                    <th>Mã đơn hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Số SP</th>
+                    <th>Thành tiền</th>
+                    <th>PT thanh toán</th>
+                    <th>TT thanh toán</th>
+                    <th>Trạng thái</th>
+                    <th></th>
                 </tr>
-            }
+            </thead>
+
+            <tbody class="order-list">
+                @{
+                    int index = 0;
+                }
+
+                @foreach (Invoice invoice in Model)
+                {
+                    index++;
+                    string payment_status = "";
+                    string order_status = "";
+                    int total_items = invoice.InvoiceDetails.Sum(x => x.Quantity);
+
+                    switch (invoice.PaymentStatus)
+                    {
+                        case PaymentContants.Paid:
+                            payment_status = "<span class=\"page-badge badge-success\">Đã thanh toán</span>";
+                            break;
+
+                        case PaymentContants.UnPaid:
+                            payment_status = "<span class=\"page-badge badge-warning\">Chờ thanh toán</span>";
+                            break;
+
+                        case PaymentContants.PaymentFailed:
+                            payment_status = "<span class=\"page-badge badge-error\">Thanh toán thất bại</span>";
+                            break;
+
+                    }
+
+                    if (invoice.IsCancelled)
+                    {
+                        order_status = "<span class=\"page-badge badge-error\">Đã hủy</span>";
+                    }
+                    else if (invoice.IsCompleted)
+                    {
+                        order_status = "<span class=\"page-badge badge-success\">Đã giao hàng</span>";
+                    }
+                    else if (invoice.IsAccepted)
+                    {
+                        order_status = "<span class=\"page-badge badge-warning\">Chờ giao hàng</span>";
+                    }
+                    else
+                    {
+                        order_status = "<span class=\"page-badge badge-warning\">Chờ xác nhận</span>";
+                    }
+
+                    <tr>
+                        <td class="fweight-600">@index</td>
+                        <td>@invoice.InvoiceId</td>
+                        <td>@invoice.OrderDate?.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@total_items</td>
+                        <td class="fweight-600">@CurrencyFormatter.Format(invoice.Total)</td>
+                        <td>@invoice.PaymentMed.PaymentName</td>
+                        <td>@Html.Raw(payment_status)</td>
+                        <td>@Html.Raw(order_status)</td>
+                        <td>
+                            <div class="d-flex gap-1 align-items-center justify-content-end">
+                                <button class="page-table-btn btn-lightblue view-order" data-order="@invoice.InvoiceId">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                                <button class="page-table-btn btn-blue print-order" data-order="@invoice.InvoiceId">
+                                    <i class="fa-solid fa-print"></i>
+                                </button>
+                                @if (!invoice.IsAccepted && !invoice.IsCancelled && !invoice.IsCompleted)
+                                {
+                                    <button class="page-table-btn btn-green accept-order" data-order="@invoice.InvoiceId">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
 
         </table>
     </div>
 
-    <div class="d-flex justify-content-end mt-2 w-100">
-        @if(ViewBag.TotalPage > 1)
-        {
-            int maxPagesToShow = 4;
-            int currentPage = ViewBag.CurrentPage;
-            int totalPages = ViewBag.TotalPage;
-
-            int startPage = Math.Max(1, currentPage - maxPagesToShow / 2);
-            int endPage = Math.Min(totalPages, startPage + maxPagesToShow - 1);
-
-            if ((endPage - startPage + 1) < maxPagesToShow)
-            {
-                startPage = Math.Max(1, endPage - maxPagesToShow + 1);
-            }
-
-            <div class="pagination-box">
-                @if (currentPage > 1)
-                {
-                    <a href="javascript:void(0)" class="pagination-item" data-page="previous">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </a>
-                }
-
-                @for (int i = startPage; i <= endPage; i++)
-                {
-                    <a href="javascript:void(0)" class="pagination-item @(i == currentPage ? "current" : "")" data-page="@i">@i</a>
-                }
-
-                @if (currentPage < totalPages)
-                {
-                    <a href="javascript:void(0)" class="pagination-item" data-page="next">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </a>
-                }
-            </div>
-        }
-    </div>
+    @await Html.PartialAsync("PartialViews/_Pagination", new Tuple<int, int>(ViewBag.CurrentPage, ViewBag.TotalPages))
 
 </section>
 
