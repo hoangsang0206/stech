@@ -295,6 +295,9 @@ namespace STech.ApiControllers
             }
 
             user.Avatar = $"{blobUrl}{blobContainerName}/{path}";
+
+            await UserSignIn(user);
+
             if(await _userService.UpdateUser(user))
             {
                 return Ok(new ApiResponse

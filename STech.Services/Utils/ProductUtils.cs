@@ -75,15 +75,28 @@ namespace STech.Services.Utils
             switch (status)
             {
                 case "in-stock":
-                    products = products.Where(p => p.WarehouseProducts.Sum(wp => wp.Quantity) > 0).ToList();
+                    products = products.Where(p => p.IsActive == true && p.WarehouseProducts.Sum(wp => wp.Quantity) > 0).ToList();
+                    break;
+
+                case "out-of-stock-soon":
+                    products = products
+                        .Where(p => p.IsActive == true)
+                        .Where(p =>
+                        {
+                            int totalQuantity = p.WarehouseProducts.Sum(wp => wp.Quantity);
+
+                            return totalQuantity > 0 && totalQuantity <= 5;
+                        
+                        })
+                        .ToList();
                     break;
 
                 case "out-of-stock":
-                    products = products.Where(p => p.WarehouseProducts.Sum(wp => wp.Quantity) <= 0).ToList();
+                    products = products.Where(p => p.IsActive == true && p.WarehouseProducts.Sum(wp => wp.Quantity) <= 0).ToList();
                     break;
 
                 case "inactive":
-                    products = products.Where(p => p.IsActive == false).ToList();
+                    products = products.Where(p => p.IsActive == false && p.IsDeleted == false).ToList();
                     break;
 
                 case "activated":

@@ -20,7 +20,7 @@
             </div>
         </div>
 
-        @await Html.PartialAsync("PartialViews/_PageSearchForm", new Tuple<string, string>("search-orders", "Tìm theo mã đơn/số điện thoại"))
+        @await Html.PartialAsync("PartialViews/_PageSearchForm", new Tuple<string, string, string>("search-orders", "Tìm theo mã đơn/số điện thoại", ViewBag.SearchValue))
     </div>
 
     <div class="page-table-wrapper mt-2">

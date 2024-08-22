@@ -12,6 +12,8 @@ namespace STech.Services.Services
 
         public ProductService(StechDbContext context) => _context = context;
 
+
+        #region GET
         public async Task<(IEnumerable<Product>, int)> GetProducts(string? brands, string? categories, string? status, string? price_range, string? warehouse_id, string? sort, int page = 1)
         {
             IEnumerable<Product> products = await _context.Products
@@ -27,7 +29,8 @@ namespace STech.Services.Services
                     BrandId = p.BrandId,
                     CategoryId = p.CategoryId,
                     IsActive = p.IsActive,
-                    IsDeleted = p.IsDeleted,      
+                    IsDeleted = p.IsDeleted,
+                    DateDeleted = p.DateDeleted,
                 })
                 .ToListAsync();
 
@@ -60,17 +63,21 @@ namespace STech.Services.Services
                     Price = p.Price,
                     ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
                     WarehouseProducts = p.WarehouseProducts,
-                    Brand = p.Brand,
+                    BrandId = p.BrandId,
+                    CategoryId = p.CategoryId,
+                    IsActive = p.IsActive,
+                    IsDeleted = p.IsDeleted,
+                    DateDeleted = p.DateDeleted,
                 })
                 .ToListAsync();
 
             int totalPage = Convert.ToInt32(Math.Ceiling(
                 Convert.ToDouble(products.Count()) / Convert.ToDouble(NumOfProductPerPage)));
 
-            return (products, totalPage);
+            return (products.Sort(sort).Pagnigate(page, NumOfProductPerPage), totalPage);
         }
 
-        public async Task<(IEnumerable<Product>, int)> SearchByName(string q, int page, string? sort, string warehouseId)
+        public async Task<(IEnumerable<Product>, int)> SearchProducts(string q, int page, string? sort, string? warehouseId)
         {
             if (string.IsNullOrEmpty(q))
             {
@@ -80,8 +87,8 @@ namespace STech.Services.Services
             string[] keywords = q.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             IEnumerable<Product> products = await _context.Products
-                .Where(p => keywords.All(key => p.ProductName.Contains(key)) && p.IsActive == true 
-                    && p.WarehouseProducts.Any(w => w.WarehouseId == warehouseId))
+                .Where(p => (p.ProductId == q || keywords.All(key => p.ProductName.Contains(key)))
+                    && (warehouseId != null ? p.WarehouseProducts.Any(w => w.WarehouseId == warehouseId) : true))
                 .Select(p => new Product()
                 {
                     ProductId = p.ProductId,
@@ -90,14 +97,18 @@ namespace STech.Services.Services
                     Price = p.Price,
                     ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
                     WarehouseProducts = p.WarehouseProducts,
-                    Brand = p.Brand,
+                    BrandId = p.BrandId,
+                    CategoryId = p.CategoryId,
+                    IsActive = p.IsActive,
+                    IsDeleted = p.IsDeleted,
+                    DateDeleted = p.DateDeleted,
                 })
                 .ToListAsync();
 
             int totalPage = Convert.ToInt32(Math.Ceiling(
                 Convert.ToDouble(products.Count()) / Convert.ToDouble(NumOfProductPerPage)));
 
-            return (products, totalPage);
+            return (products.Sort(sort).Pagnigate(page, NumOfProductPerPage), totalPage);
         }
 
         public async Task<(IEnumerable<Product>, int)> GetByCategory(string categoryId, int page, string? sort)
@@ -232,6 +243,10 @@ namespace STech.Services.Services
                 .Sum(p => p.Quantity);
         }
 
+        #endregion GET
+
+
+        #region DELETE
 
         public async Task<bool> DeleteProduct(string id)
         {
@@ -242,12 +257,36 @@ namespace STech.Services.Services
                 return false;
             }
 
+            product.IsActive = false;
             product.IsDeleted = true;
+            product.DateDeleted = DateTime.Now;
 
             _context.Products.Update(product);
             return await _context.SaveChangesAsync() > 0;
         }
-        
+
+        public async Task<bool> DeleteProducts(string[] ids)
+        {
+            IEnumerable<Product> products = await _context.Products
+                .Where(p => ids.Contains(p.ProductId))
+                .ToListAsync();
+
+            if (products.Count() == 0)
+            {
+                return false;
+            }
+
+            foreach(Product product in products)
+            {
+                product.IsActive = false;
+                product.IsDeleted = true;
+                product.DateDeleted = DateTime.Now;
+            }
+
+            _context.Products.UpdateRange(products);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
         public async Task<bool> PermanentlyDeleteProduct(string id)
         {
             Product? product = await _context.Products
@@ -262,5 +301,149 @@ namespace STech.Services.Services
             _context.Products.Remove(product);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<bool> PermanentlyDeleteProducts(string[] ids)
+        {
+            IEnumerable<Product> products = await _context.Products
+                .Where(p => ids.Contains(p.ProductId) && p.IsDeleted == true)
+                .ToListAsync();
+
+            if (products.Count() == 0)
+            {
+                return false;
+            }
+
+            _context.Products.RemoveRange(products);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        #endregion DELETE
+
+
+        #region RESTORE
+
+        public async Task<bool> RestoreProduct(string id)
+        {
+            Product? product = await _context.Products
+                .Where(p => p.ProductId == id && p.IsDeleted == true)
+                .FirstOrDefaultAsync();
+
+            if (product == null)
+            {
+                return false;
+            }
+
+            product.IsDeleted = false;
+            product.DateDeleted = null;
+
+            _context.Products.Update(product);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> RestoreProducts(string[] ids)
+        {
+            IEnumerable<Product> products = await _context.Products
+                .Where(p => ids.Contains(p.ProductId) && p.IsDeleted == true)
+                .ToListAsync();
+
+            if (products.Count() == 0)
+            {
+                return false;
+            }
+
+            foreach(Product product in products)
+            {
+                product.IsDeleted = false;
+                product.DateDeleted = null;
+            }
+
+            _context.Products.UpdateRange(products);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        #endregion RESTORE
+
+        #region ACTIVATE
+
+        public async Task<bool> ActivateProduct(string id)
+        {
+            Product? product = await _context.Products
+               .Where(p => p.ProductId == id && p.IsActive == false && p.IsDeleted != true)
+               .FirstOrDefaultAsync();
+
+            if (product == null)
+            {
+                return false;
+            }
+
+            product.IsActive = true;
+
+            _context.Products.Update(product);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        public async Task<bool> ActivateProducts(string[] ids)
+        {
+
+            IEnumerable<Product> products = await _context.Products
+                .Where(p => ids.Contains(p.ProductId) && p.IsActive == false && p.IsDeleted != true)
+                .ToListAsync();
+
+            if (products.Count() == 0)
+            {
+                return false;
+            }
+
+            foreach (Product product in products)
+            {
+                product.IsActive = true;
+            }
+
+            _context.Products.UpdateRange(products);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        #endregion ACTIVATE
+
+        #region DEACTIVATE
+
+        public async Task<bool> DeActivateProduct(string id)
+        {
+            Product? product = await _context.Products
+               .Where(p => p.ProductId == id && p.IsActive == true && p.IsDeleted != true)
+               .FirstOrDefaultAsync();
+
+            if (product == null)
+            {
+                return false;
+            }
+
+            product.IsActive = false;
+
+            _context.Products.Update(product);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> DeActivateProducts(string[] ids)
+        {
+
+            IEnumerable<Product> products = await _context.Products
+                .Where(p => ids.Contains(p.ProductId) && p.IsActive == true && p.IsDeleted != true)
+                .ToListAsync();
+
+            if (products.Count() == 0)
+            {
+                return false;
+            }
+
+            foreach (Product product in products)
+            {
+                product.IsActive = false;
+            }
+
+            _context.Products.UpdateRange(products);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        #endregion DEACTIVATE
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -21,10 +22,13 @@ public partial class WarehouseExport
 
     public string WarehouseId { get; set; } = null!;
 
+    [JsonIgnore]
     public virtual Employee? Employee { get; set; }
 
+    [JsonIgnore]
     public virtual Invoice? Invoice { get; set; }
 
+    [JsonIgnore]
     public virtual Warehouse Warehouse { get; set; } = null!;
 
     public virtual ICollection<WarehouseExportDetail> WarehouseExportDetails { get; set; } = new List<WarehouseExportDetail>();

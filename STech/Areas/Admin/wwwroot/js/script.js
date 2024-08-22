@@ -328,5 +328,15 @@ $('form').on('reset', function () {
 $('#page-table-checkbox-all').on('change', function () {
     const isChecked = $(this).prop('checked');
 
-    $(this).closest('.page-table').find('input[name="page-table-checkbox"]').prop('checked', isChecked);
+    $(this).closest('.page-table').find('input[name="page-table-checkbox"]').prop('checked', isChecked).trigger('change');
+})
+
+$(document).on('change', 'input[name="page-table-checkbox"]', () => {
+    const checkedItems = $('input[name="page-table-checkbox"]:checked').length || 0;
+
+    if (checkedItems > 0) {
+        $('.hidden-action').addClass('show');
+    } else {
+        $('.hidden-action').removeClass('show');
+    }
 })

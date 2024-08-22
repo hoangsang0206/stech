@@ -248,8 +248,15 @@ namespace STech.Controllers
         private Data.Models.Invoice? GetInvoiceFromSession()
         {
             string invoiceJson = HttpContext.Session.GetString("Invoice") ?? "";
+            string whExportsJson = HttpContext.Session.GetString("WarehouseExports") ?? "";
             HttpContext.Session.Remove("Invoice");
+            HttpContext.Session.Remove("WarehouseExports");
             Data.Models.Invoice? invoice = JsonSerializer.Deserialize<Data.Models.Invoice>(invoiceJson);
+            
+            if(invoice != null)
+            {
+                invoice.WarehouseExports = JsonSerializer.Deserialize<List<WarehouseExport>>(whExportsJson) ?? new List<WarehouseExport>();
+            }
 
             return invoice;
         }
@@ -387,7 +394,10 @@ namespace STech.Controllers
 
                 invoice.WarehouseExports = await CreateWarehouseExports(invoice, address);
 
+                string str = JsonSerializer.Serialize(invoice);
+
                 HttpContext.Session.SetString("Invoice", JsonSerializer.Serialize(invoice));
+                HttpContext.Session.SetString("WarehouseExports", JsonSerializer.Serialize(invoice.WarehouseExports));
                 HttpContext.Session.SetString("OrderFromCart", order.pId == null ? "true" : "false");
 
                 switch (order.PaymentMethod)

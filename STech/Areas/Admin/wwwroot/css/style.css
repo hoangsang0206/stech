@@ -846,6 +846,11 @@ button:disabled {
     padding: .3rem .6rem;
 }
 
+.page-btn i {
+    margin-right: .3rem;
+    font-size: .9rem;
+}
+
 .page-btn-small {
     padding: .1rem .4rem;
 }
@@ -1388,7 +1393,15 @@ button:disabled {
     }
 
 
+.hidden-action {
+    display: none !important;
+}
 
+.hidden-action.show {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
 
 
 

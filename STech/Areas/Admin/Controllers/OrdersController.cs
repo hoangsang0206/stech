@@ -35,6 +35,10 @@ namespace STech.Areas.Admin.Controllers
             IEnumerable<Invoice> invoices = await _orderService.SearchInvoices(query);
 
             ViewBag.ActiveSidebar = "orders";
+            ViewBag.SearchValue = query;
+            ViewBag.TotalPages = 1;
+            ViewBag.CurrentPage = 1;
+
             return View("Index", invoices);
         }
 
