@@ -168,7 +168,7 @@ const renderProducts = (products) => {
                             ${status_badge}
                         </div>
 
-                        <a href="/admin/products/${product.productId}" class="page-btn-small btn-lightblue">
+                        <a href="/admin/products/1/${product.productId}" class="page-btn-small btn-lightblue">
                             <i class="fa-regular fa-pen-to-square"></i>
                         </a>
 
@@ -212,7 +212,7 @@ const renderProducts = (products) => {
                     </td>
                     <td>
                         <div class="d-flex gap-1 align-items-center justify-content-end">
-                            <a class="page-table-btn btn-lightblue" href="/admin/products/${product.productId}">
+                            <a class="page-table-btn btn-lightblue" href="/admin/products/1/${product.productId}">
                                 <i class="fa-regular fa-pen-to-square"></i>
                             </a>
                             ${product.isDeleted !== true
@@ -583,7 +583,7 @@ $('.search-products').submit(function (e) {
 
             $('.empty-message').addClass('d-none');
             renderProducts(response.data.products);
-            loadPagination(response.data.totalPages, response.data.currentPage);
+            loadPagination(1, 1);
         },
         error: () => {
             showErrorDialog();

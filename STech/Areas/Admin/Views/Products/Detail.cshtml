@@ -1,18 +1,252 @@
-﻿@model Product
+﻿@model Tuple<Product, IEnumerable<Category>, IEnumerable<Brand>>
 
 @{
-    ViewData["Title"] = $"Chi tiết sản phẩm - {Model.ProductId}";
+    ProductVM productVM = new ProductVM();
+
+    Product product = Model.Item1;
+    IEnumerable<Category> categories = Model.Item2;
+    IEnumerable<Brand> brands = Model.Item3;
+
+    ViewData["Title"] = $"Chi tiết sản phẩm - {product.ProductId}";
     ViewData["PageTitle"] = "Chi tiết sản phẩm";
+
+    int total_qty = product.WarehouseProducts.Sum(x => x.Quantity);
+
+    string status_badge = "<span class=\"page-badge badge-success\">Còn hàng</span>";
+
+    if (product.IsDeleted == true)
+    {
+        status_badge = "<span class=\"page-badge badge-error\">Đã xóa</span>";
+    }
+    else if (!product.IsActive == true)
+    {
+        status_badge = "<span class=\"page-badge badge-warning\">Chưa kích hoạt</span>";
+    }
+    else if (total_qty <= 0)
+    {
+        status_badge = "<span class=\"page-badge badge-error\">Hết hàng</span>";
+    }
+    else if (total_qty <= 5)
+    {
+        status_badge = "<span class=\"page-badge badge-warning\">Sắp hết hàng</span>";
+    }
 }
 
-<section class="page-wrapper">
+<form id="update-product">
+    <div class="row m-0 p-0">
+        <div class="col-12 col-lg-8 p-0">
+            <div class="page-content-box no-border">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="page-content-header">
+                        Thông tin chung
+                    </div>
 
-</section>
+                    @Html.Raw(status_badge)
+                </div>
+
+                <div class="row p-0 m-0">
+
+                    <div class="page-input-box">
+                        <label>Mã sản phẩm</label>
+                        <div class="page-input">
+                            <input asp-for="@productVM.ProductId" type="text" id="product_id" placeholder="Nhập mã sản phẩm" value="@product.ProductId" readonly />
+                        </div>
+                        <span asp-validation-for="@productVM.ProductId"></span>
+                    </div>
+
+                    <div class="page-input-box">
+                        <label>Tên sản phẩm</label>
+                        <div class="page-input">
+                            <input asp-for="@productVM.ProductName" type="text" id="product_name" placeholder="Nhập tên sản phẩm" value="@product.ProductName" />
+                        </div>
+                        <span asp-validation-for="@productVM.ProductName"></span>
+                    </div>
+
+                    <div class="row m-0 p-0">
+                        <div class="col-12 col-lg-6">
+                            <div class="page-input-box">
+                                <label>Giá bán</label>
+                                <div class="page-input">
+                                    <input asp-for="@productVM.Price" type="text" id="product_price" placeholder="Nhập giá bán" value="@product.Price" />
+                                </div>
+                                <span asp-validation-for="@productVM.Price"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="page-input-box">
+                                <label>Giá so sánh</label>
+                                <div class="page-input">
+                                    <input asp-for="@productVM.OriginalPrice" type="text" id="product_original_price" placeholder="Nhập giá so sánh" value="@product.OriginalPrice" />
+                                </div>
+                                <span asp-validation-for="@productVM.OriginalPrice"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row m-0 p-0">
+                        <div class="col-12 col-lg-6">
+                            <div class="page-input-box">
+                                <label>Năm sản xuất</label>
+                                <div class="page-input">
+                                    <input asp-for="@productVM.ManufacturedYear" type="text" id="product_manufactured_year" placeholder="Nhập năm sản xuất" value="@product.ManufacturedYear" />
+                                </div>
+                                <span asp-validation-for="@productVM.ManufacturedYear"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="page-input-box">
+                                <label>Thời gian bảo hành (tháng)</label>
+                                <div class="page-input">
+                                    <input asp-for="@productVM.Warranty" type="text" id="product_warranty" placeholder="Nhập thời gian bảo hành" value="@product.Warranty" />
+                                </div>
+                                <span asp-validation-for="@productVM.Warranty"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row m-0 p-0">
+                        <div class="col-12 col-lg-6">
+                            <div class="page-input-box">
+                                <label>Hãng sản xuất</label>
+                                <div class="page-input">
+                                    <select asp-for="@productVM.BrandId" id="product_brand">
+                                        <option selected>Chọn hãng sản xuất</option>
+                                        @foreach(Brand brand in brands)
+                                        {
+                                            if (brand.BrandId == product.BrandId)
+                                            {
+                                                <option value="@brand.BrandId" selected>@brand.BrandName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@brand.BrandId">@brand.BrandName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <span asp-validation-for="@productVM.BrandId"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="page-input-box">
+                                <label>Danh mục</label>
+                                <div class="page-input">
+                                    <select asp-for="@productVM.CategoryId" id="product_category">
+                                        <option selected>Chọn danh mục</option>
+                                        @foreach (Category category in categories)
+                                        {
+                                            if(category.CategoryId == product.CategoryId)
+                                            {
+                                                <option value="@category.CategoryId" selected>@category.CategoryName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@category.CategoryId">@category.CategoryName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <span asp-validation-for="@productVM.CategoryId"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="page-content-box no-border mt-3">
+                <div class="page-content-header">
+                    Hình ảnh
+                </div>
+
+                <div class="display-grid columns-5 gap-2">
+                   @foreach(ProductImage image in product.ProductImages)
+                   {
+                        <div>
+                            <img src="@image.ImageSrc" alt="" style="width: 100%" class="box-shadow" data-status="" data-image-id="@image.Id" />
+                        </div>
+                   }
+                </div>
+            </div>
+
+
+
+            <div class="page-content-box no-border mt-3">
+                <div class="page-content-header">
+                    Mô tả ngắn
+                </div>
+
+                <div>
+                    <div id="short-description-editor">
+                        @Html.Raw(product.ShortDescription)
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-content-box no-border mt-3">
+                <div class="page-content-header">
+                    Mô tả sản phẩm
+                </div>
+
+                <div>
+                    <div id="description-editor">
+                        @Html.Raw(product.Description)
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-content-box no-border mt-3">
+                <div class="page-content-header">
+                    Thông số kỹ thuật
+                </div>
+
+                <div>
+                    
+                </div>
+            </div>
+
+            <div class="page-content-box no-border d-flex justify-content-end mt-3">
+                <button type="submit" class="form-submit-btn page-btn-sm btn-green">Lưu thay đổi</button>
+            </div>
+
+        </div>
+
+        <div class="col-12 col-lg-4 p-0 ps-lg-4">
+            <div class="page-content-box no-border">
+                <div class="page-content-header">
+                    Chi tiết tồn kho
+                </div>
+
+                <span>Quản lý tồn kho ở <a href="/admin/warehouse/product/@product.ProductId">đây</a></span>
+
+
+
+            </div>
+
+            <div class="page-content-box no-border mt-3">
+                <div class="page-content-header">
+                    Đánh giá sản phẩm
+                </div>
+
+                <div>
+
+                </div>
+
+                <span>Quản lý đánh giá sản phẩm ở <a href="/admin/reviews/product/@product.ProductId">đây</a></span>
+
+            </div>
+
+        </div>
+
+    </div>
+</form>
 
 @section Styles {
     <link type="text/css" rel="stylesheet" href="~/admin/css/product.css" />
+    <link type="text/css" href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet" />
 }
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
     <script type="text/javascript" src="~/admin/js/product.js"></script>
 }

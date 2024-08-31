@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-namespace STech.Areas.Admin.ViewModels
+namespace STech.Data.ViewModels
 {
     public class AdminOrderVM
     {

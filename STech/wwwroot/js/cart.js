@@ -74,7 +74,7 @@ $(document).ready(() => {
 
 
 
-$('.add-to-cart-action, .btn-add-to-cart').click(function() {
+$('.add-to-cart-action, .btn-add-to-cart, .click-add-to-card').click(function() {
     const productID = $(this).data('product');
 
     if (productID) {

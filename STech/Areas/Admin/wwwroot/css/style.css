@@ -746,13 +746,13 @@ button:disabled {
 
 .page-input-box {
     width: 100%;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
 }
 
     .page-input-box label {
         margin-bottom: 0.3rem;
         font-size: 1rem;
-        font-weight: normal;
+        font-weight: 500;
     }
 
 .page-input {
@@ -762,6 +762,11 @@ button:disabled {
     display: flex;
 }
 
+    .page-input:not(:has(i)) input, .page-input:not(:has(i)) select {
+        padding-left: 1.2rem;
+        width: 100%;
+    }
+
     .page-input i {
         width: 3rem;
         display: grid;
@@ -770,13 +775,17 @@ button:disabled {
         color: #575757;
     }
 
-    .page-input input {
+    .page-input input, .page-input select {
         width: calc(100% - 3rem);
         border: none;
         outline: none;
         border-radius: 0.3rem;
         padding: 0.6rem 1.2rem 0.6rem 0;
         font-size: 0.97rem;
+    }
+
+    .page-input:has(input:focus), .page-input:has(select:focus) {
+        outline: 1px solid #9d9c9c;
     }
 
     .page-input.focused {
@@ -847,7 +856,6 @@ button:disabled {
 }
 
 .page-btn i {
-    margin-right: .3rem;
     font-size: .9rem;
 }
 
@@ -1187,6 +1195,10 @@ button:disabled {
     padding: 1rem;
 }
 
+.no-border {
+    border: none !important;
+}
+
 .page-content-header {
     font-size: 1.2rem;
     font-weight: 600;
@@ -1403,10 +1415,9 @@ button:disabled {
     gap: .5rem;
 }
 
-
-
-
-
+.box-shadow {
+    box-shadow: 1px 1px 5px #7070707b;
+}
 
 
 

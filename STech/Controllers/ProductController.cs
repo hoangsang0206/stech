@@ -20,7 +20,7 @@ namespace STech.Controllers
             }
 
             Product? product = await _productService.GetProduct(id);
-            if (product == null)
+            if (product == null || product.IsDeleted == true)
             {
                 return NotFound();
             }

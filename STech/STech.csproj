@@ -91,6 +91,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.21.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.64" />
     <PackageReference Include="itext" Version="8.0.5" />
     <PackageReference Include="itext.bouncy-castle-adapter" Version="8.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="8.0.7" />
@@ -107,6 +108,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Utils\" />
+    <Folder Include="Areas\Admin\wwwroot\editorjs\image\" />
     <Folder Include="Areas\Admin\wwwroot\images\icons\" />
     <Folder Include="wwwroot\images\logo\" />
   </ItemGroup>

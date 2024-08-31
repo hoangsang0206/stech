@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure.Storage.Blobs.Models;
+using Azure;
+using HtmlAgilityPack;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Filters;
 using STech.Services;
+using STech.Utils;
+using System.Text.RegularExpressions;
 
 namespace STech.Areas.Admin.ApiControllers
 {
@@ -13,10 +18,14 @@ namespace STech.Areas.Admin.ApiControllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IAzureService _azureService;
 
-        public ProductsController(IProductService productService)
+        private readonly string BlobPath = "product-discription-images/";
+
+        public ProductsController(IProductService productService, IAzureService azureService)
         {
             _productService = productService;
+            _azureService = azureService;
         }
 
         #region GET
@@ -69,6 +78,91 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         #endregion GET
+
+
+
+        #region POST
+
+        #endregion POST
+
+
+
+        #region PUT
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateProduct([FromBody] ProductVM productVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Dữ liệu không hợp lệ",
+                    Data = ModelState
+                });
+            }
+
+            string dataPattern = @"data:image/(?<type>.+?);base64,(?<data>[A-Za-z0-9+/=]+)";
+
+            HtmlDocument htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(productVM.Description);
+
+            List<string> srcList = new List<string>();
+
+            HtmlNodeCollection imgNodes = htmlDocument.DocumentNode.SelectNodes("//img");
+            if(imgNodes != null)
+            {
+                foreach (HtmlNode imgNode in imgNodes)
+                {
+                    string? src = imgNode.GetAttributeValue("src", null);
+                    Match match = Regex.Match(src, dataPattern);
+
+                    if (match.Success)
+                    {
+                        string base64data = match.Groups["data"].Value;
+                        string extension = match.Groups["type"].Value;
+
+                        if (!string.IsNullOrEmpty(base64data))
+                        {
+                            byte[] imageBytes = Convert.FromBase64String(base64data);
+                            string path = $"{BlobPath}{productVM.ProductId}/{RandomUtils.GenerateRandomString(20)}.{extension}";
+
+                            string? imageUrl = await _azureService.UploadImage(path, imageBytes);
+                            if (imageUrl != null)
+                            {
+                                imgNode.SetAttributeValue("src", imageUrl);
+                                imgNode.SetAttributeValue("style", "width: 100%");
+                            }
+                        }
+                    }
+
+                    srcList.Add(new Uri(imgNode.GetAttributeValue("src", null)).AbsolutePath.TrimStart('/'));
+                }
+            }
+
+            AsyncPageable<BlobItem> blobs = _azureService.GetBlobs($"{BlobPath}{productVM.ProductId}/");
+
+            await foreach (BlobItem blob in blobs)
+            {
+                if (!srcList.Contains($"{_azureService.GetContainerName()}/{blob.Name}"))
+                {
+                    await _azureService.DeleteImage(blob.Name);
+                }
+            }
+
+            productVM.Description = htmlDocument.DocumentNode.OuterHtml;
+            bool result = await _productService.UpdateProduct(productVM);
+
+            return Ok(new ApiResponse
+            {
+                Status = result,
+                Message = result ? "Cập nhật sản phẩm thành công" : "Cập nhật sản phẩm thất bại"
+            });
+        }
+
+        #endregion PUT
+
+
 
         #region PATCH
 
@@ -169,6 +263,8 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         #endregion PATCH
+
+
 
         #region DELETE
         [HttpDelete("permanently-delete/1/{id}")]

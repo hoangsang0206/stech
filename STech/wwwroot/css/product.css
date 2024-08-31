@@ -337,6 +337,11 @@ button:disabled {
         border-color: #6393ed;
     }
 
+.product-contents img {
+    max-width: 100%;
+}
+
+
 
 /*For mobile -------------------------------------------*/
 @media screen and (max-width: 576px) {

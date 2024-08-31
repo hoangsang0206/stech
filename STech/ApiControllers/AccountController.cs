@@ -21,15 +21,15 @@ namespace STech.ApiControllers
         private readonly string[] ALLOWED_IMAGE_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
         private readonly long MAX_FILE_LENGTH = 5 * 1024 * 1024;
         private readonly IUserService _userService;
-        private readonly IConfiguration _configuration;
         private readonly AddressService _addressService;
+        private readonly IAzureService _azureService;
 
-        public AccountController(IUserService userService, IConfiguration configuration, 
-            AddressService addressService)
+        public AccountController(IUserService userService, 
+            AddressService addressService, IAzureService azureService)
         {
             _userService = userService;
-            _configuration = configuration;
             _addressService = addressService;
+            _azureService = azureService;
         }
 
         #region User
@@ -268,44 +268,33 @@ namespace STech.ApiControllers
                 return BadRequest();
             }
 
-            string? blobConnectionString = _configuration["Azure:ConnectionString"];
-            string? blobContainerName = _configuration["Azure:BlobContainerName"];
-            string? blobUrl = _configuration["Azure:BlobUrl"];
-            if(blobConnectionString == null || blobContainerName == null || blobUrl == null)
-            {
-                return BadRequest();
-            }
-
             string fileName = $"{userId}-{RandomUtils.GenerateRandomString(10)}{Path.GetExtension(file.FileName)}";
-            string path = Path.Combine("user-images", fileName);
+            string path = $"user-images/{fileName}";
             
-            BlobServiceClient blobServiceClient = new BlobServiceClient(blobConnectionString);
-            BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(blobContainerName);
-            BlobClient blobClient = containerClient.GetBlobClient(path);
+            string? avatarUrl = _azureService.UploadImage(path, ConvertFile.ConvertIFormFileToByteArray(file)).Result;
 
-            using (Stream stream = file.OpenReadStream())
+            if(avatarUrl != null)
             {
-                await blobClient.UploadAsync(stream, true);
-            }
 
-            if(!string.IsNullOrEmpty(user.Avatar))
-            {
-                BlobClient oldBlobClient = containerClient.GetBlobClient(user.Avatar.Replace($"{blobUrl}{blobContainerName}/", ""));
-                await oldBlobClient.DeleteIfExistsAsync();
-            }
-
-            user.Avatar = $"{blobUrl}{blobContainerName}/{path}";
-
-            await UserSignIn(user);
-
-            if(await _userService.UpdateUser(user))
-            {
-                return Ok(new ApiResponse
+                if (!string.IsNullOrEmpty(user.Avatar))
                 {
-                    Status = true,
-                    Data = user.Avatar
-                });
+                    await _azureService.DeleteImage(user.Avatar);
+                }
+
+                user.Avatar = avatarUrl;
+
+                await UserSignIn(user);
+
+                if (await _userService.UpdateUser(user))
+                {
+                    return Ok(new ApiResponse
+                    {
+                        Status = true,
+                        Data = user.Avatar
+                    });
+                }
             }
+
 
             return BadRequest();
         }

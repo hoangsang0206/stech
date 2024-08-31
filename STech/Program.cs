@@ -135,6 +135,12 @@ builder.Services.AddSingleton<IGeocodioService, GeocodioService>(sp =>
     new GeocodioService(sp.GetRequiredService<HttpClient>(), builder.Configuration.GetSection("OpenCageGeocodio")["ApiKey"] ?? "")
 );
 
+builder.Services.AddScoped<IAzureService, AzureService>(sp =>
+{
+    IConfiguration configuration = builder.Configuration.GetSection("Azure");
+    return new AzureService(configuration["ConnectionString"] ?? "", configuration["BlobContainerName"] ?? "", configuration["BlobUrl"] ?? "");
+});
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(15);

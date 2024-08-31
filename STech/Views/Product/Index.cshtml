@@ -71,37 +71,48 @@
                 </div>
 
                 <div class="mt-3">
-                    @if (inStock > 0)
+                    @if(product.IsActive == true)
                     {
-                        <div class="d-flex flex-column flex-sm-row gap-3">
-                            @if(User.Identity != null && User.Identity.IsAuthenticated)
-                                        {
-                                <button class="buy-action-btn" onclick="window.location.href='/order/checkout?pId=@product.ProductId'">
-                                    <div>
-                                        <h4>MUA NGAY</h4>
-                                        <span>Giao tận nơi hoặc nhận tại cửa hàng</span>
-                                    </div>
+                        @if (inStock > 0)
+                        {
+                            <div class="d-flex flex-column flex-sm-row gap-3">
+                                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                                {
+                                    <button class="buy-action-btn" onclick="window.location.href='/order/checkout?pId=@product.ProductId'">
+                                        <div>
+                                            <h4>MUA NGAY</h4>
+                                            <span>Giao tận nơi hoặc nhận tại cửa hàng</span>
+                                        </div>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="buy-action-btn not-logged-in">
+                                        <div>
+                                            <h4>MUA NGAY</h4>
+                                            <span>Giao tận nơi hoặc nhận tại cửa hàng</span>
+                                        </div>
+                                    </button>
+                                }
+                                <button class="add-to-cart-action" data-product="@product.ProductId">
+                                    <i class="fa-solid fa-cart-plus"></i>
                                 </button>
-                            } 
-                            else
-                            {
-                               <button class="buy-action-btn not-logged-in">
-                                    <div>
-                                        <h4>MUA NGAY</h4>
-                                        <span>Giao tận nơi hoặc nhận tại cửa hàng</span>
-                                    </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div>
+                                <button class="buy-action-btn" disabled>
+                                    <h4>HẾT HÀNG</h4>
                                 </button>
-                            }
-                            <button class="add-to-cart-action" data-product="@product.ProductId">
-                                <i class="fa-solid fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    }
+                            </div>
+                        }
+                    } 
                     else
                     {
                         <div>
                             <button class="buy-action-btn" disabled>
-                                <h4>HẾT HÀNG</h4>
+                                <h4>SẢN PHẨM NGỪNG KINH DOANH</h4>
                             </button>
                         </div>
                     }
@@ -187,37 +198,39 @@
                         {
                             double p_discountPercent = 0;
 
-                            <div class="d-flex gap-3 cursor-pointer mb-3" onclick="window.location.href='/product/@p.ProductId'">
-                                <div>
-                                    <img style="width: 6rem" src="@(p.ProductImages.FirstOrDefault()?.ImageSrc ?? "/images/no-image.jpg")" alt="" />
+                            <div class="d-flex justify-content-between gap-3 mb-3">
+                                <div style="border-radius: var(--radius); border: 1px solid #ccc; padding: .3rem">
+                                    <img style="width: 5rem; border-radius: var(--radius)" src="@(p.ProductImages.FirstOrDefault()?.ImageSrc ?? "/images/no-image.jpg")" alt="" />
                                 </div>
-                                <div>
-                                    <div class="product-name m-0 p-0">
-                                        @p.ProductName
-                                    </div>
+                                <div class="d-flex gap-3 align-items-center justify-content-between">
                                     <div>
-                                        <div class="product-original-price">
-                                            @if (p.OriginalPrice > p.Price)
-                                            {
-                                                p_discountPercent = Convert.ToDouble((p.OriginalPrice - p.Price)
-                                                / p.OriginalPrice) * 100;
-                                                <span>@CurrencyFormatter.Format(p.OriginalPrice)</span>
-                                            }
-                                            else
-                                            {
-                                                <span style="visibility: hidden">-</span>
-                                            }
+                                        <div class="product-name m-0 p-0 cursor-pointer" onclick="window.location.href='/product/@p.ProductId'">
+                                            @p.ProductName
                                         </div>
-                                        <div class="product-price d-flex align-items-center">
-                                            <span>@CurrencyFormatter.Format(p.Price)</span>
-                                            @if (p_discountPercent > 0)
-                                            {
-                                                <div class="product-discount-percent">
-                                                    @("-" + (int)p_discountPercent + "%")
-                                                </div>
-                                            }
+                                        <div>
+                                            <div class="product-original-price">
+                                                @if (p.OriginalPrice > p.Price)
+                                                {
+                                                    p_discountPercent = Convert.ToDouble((p.OriginalPrice - p.Price)
+                                                    / p.OriginalPrice) * 100;
+                                                    <span>@CurrencyFormatter.Format(p.OriginalPrice)</span>
+                                                }
+                                            </div>
+                                            <div class="product-price d-flex align-items-center">
+                                                <span>@CurrencyFormatter.Format(p.Price)</span>
+                                                @if (p_discountPercent > 0)
+                                                {
+                                                    <div class="product-discount-percent">
+                                                        @("-" + (int)p_discountPercent + "%")
+                                                    </div>
+                                                }
+                                            </div>
                                         </div>
                                     </div>
+
+                                    <a href="javascript:void(0)" class="click-add-to-card" data-product="@p.ProductId">
+                                        <i class="fa-solid fa-cart-plus" style="font-size: 1.2rem"></i>
+                                    </a>
                                 </div>
                             </div>
                         }

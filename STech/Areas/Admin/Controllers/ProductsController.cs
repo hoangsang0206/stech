@@ -69,13 +69,21 @@ namespace STech.Areas.Admin.Controllers
             return View("Index", products);
         }
 
-        [Route("/admin/products/{id}")]
+        [Route("/admin/products/1/{id}")]
         public async Task<IActionResult> Detail(string id)
         {
             Product? product = await _productService.GetProduct(id);
 
+            if (product == null)
+            {
+                return LocalRedirect("/admin/products");
+            }
+
+            IEnumerable<Category> categories = await _categoryService.GetAll(false);
+            IEnumerable<Brand> brands = await _brandService.GetAll(false);
+
             ViewBag.ActiveSidebar = "products";
-            return View(product);
+            return View(new Tuple<Product, IEnumerable<Category>, IEnumerable<Brand>>(product, categories, brands));
         }
     }
 }

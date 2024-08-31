@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
+using STech.Data.ViewModels;
 using STech.Services.Utils;
 
 namespace STech.Services.Services
@@ -136,7 +137,7 @@ namespace STech.Services.Services
         public async Task<IEnumerable<Product>> GetSimilarProducts(string categoryId, int numToTake)
         {
             return await _context.Products
-                .Where(p => p.CategoryId == categoryId && p.IsActive == true)
+                .Where(p => p.CategoryId == categoryId && p.IsActive == true && p.WarehouseProducts.Sum(wp => wp.Quantity) > 0)
                 .OrderBy(p => Guid.NewGuid())
                 .Select(p => new Product()
                 {
@@ -155,7 +156,7 @@ namespace STech.Services.Services
         public async Task<Product?> GetProduct(string id)
         {
             return await _context.Products
-                .Where(p => p.ProductId == id && p.IsActive == true)
+                .Where(p => p.ProductId == id)
                 .Select(p => new Product
                 {
                     ProductId = p.ProductId,
@@ -164,13 +165,17 @@ namespace STech.Services.Services
                     Price = p.Price,
                     ProductImages = p.ProductImages,
                     WarehouseProducts = p.WarehouseProducts,
+                    BrandId = p.BrandId,
                     Brand = p.Brand,
                     ShortDescription = p.ShortDescription,
                     Description = p.Description,
                     ProductSpecifications = p.ProductSpecifications,
+                    CategoryId = p.CategoryId,
                     Category = p.Category,
                     ManufacturedYear = p.ManufacturedYear,
                     Warranty = p.Warranty,
+                    IsActive = p.IsActive,
+                    IsDeleted = p.IsDeleted,
                 })
                 .FirstOrDefaultAsync();
         }
@@ -244,6 +249,38 @@ namespace STech.Services.Services
         }
 
         #endregion GET
+
+
+        #region POST
+
+        #endregion POST
+
+
+        #region PUT
+
+        public async Task<bool> UpdateProduct(ProductVM product)
+        {
+            Product? _product = await _context.Products.FindAsync(product.ProductId);
+            if (_product == null)
+            {
+                return false;
+            }
+
+            _product.ProductName = product.ProductName.Trim();
+            _product.Price = product.Price;
+            _product.OriginalPrice = product.OriginalPrice;
+            _product.Warranty = product.Warranty;
+            _product.ManufacturedYear = product.ManufacturedYear;
+            _product.BrandId = product.BrandId;
+            _product.CategoryId = product.CategoryId;
+            _product.ShortDescription = product.ShortDescription;
+            _product.Description = product.Description;
+
+            _context.Products.Update(_product);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        #endregion PUT
 
 
         #region DELETE

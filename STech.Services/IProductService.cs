@@ -1,4 +1,5 @@
 ﻿using STech.Data.Models;
+using STech.Data.ViewModels;
 
 namespace STech.Services
 {
@@ -28,5 +29,7 @@ namespace STech.Services
 
         Task<bool> DeActivateProduct(string id);
         Task<bool> DeActivateProducts(string[] ids);
+
+        Task<bool> UpdateProduct(ProductVM product);
     }
 }
