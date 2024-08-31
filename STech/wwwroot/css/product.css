@@ -312,7 +312,7 @@ button:disabled {
 }
 
 .product-specs-hidden .form-box {
-    width: 35rem;
+    width: 40rem;
     height: 50rem;
 }
 
@@ -337,11 +337,35 @@ button:disabled {
         border-color: #6393ed;
     }
 
+.product-contents {
+   padding: 0 .7rem;
+}
+
+.product-contents * {
+    font-size: 1.1rem;
+}
+
 .product-contents img {
     max-width: 100%;
 }
 
+.product-contents p {
+    margin: 0;
+    padding: 0;
+}
 
+.heading-size-large {
+    font-size: 1.2rem !important;
+}
+
+.heading-size-huge {
+    font-size: 1.5rem !important;
+}
+
+.text-justify {
+    text-align: justify;
+
+}
 
 /*For mobile -------------------------------------------*/
 @media screen and (max-width: 576px) {

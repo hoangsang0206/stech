@@ -49,7 +49,50 @@ description_editor.on('text-change', () => {
     updateIframeStyles();
 })
 
+$(document).on('click', '.ql-editor img', function () {
+    $(this).closest('p').remove();
+})
 
+$(document).on('click', '.click-delete-image', function () {
+    const container = $(this).closest('.product-image-box');
+    const img = container.find('img');
+    if (img.data('image-id')) {
+        img.data('status', 'deleted');
+        container.hide();
+    } else {
+        container.remove();
+    }
+})
+
+$('.click-upload-image').click(function () {
+    $('#upload-product-images').click();
+})
+
+$('#upload-product-images').on('change', function (_e) {
+    const files = _e.target.files;
+
+    for (const file of files) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onload = (e) => {
+            $('.product-images-container').append(`
+                <div class="product-image-box position-relative box-shadow">
+                    <img src="${e.target.result}" alt="" style="width: 100%" />
+
+                    <a class="click-delete-image" href="javascript:">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </a>
+                 </div>
+            `)
+        }
+    }
+});
+
+
+
+
+//Submit
 $('#update-product').submit((e) => {
     e.preventDefault();
 
@@ -65,6 +108,14 @@ $('#update-product').submit((e) => {
     const short_description = short_des_editor.root.innerHTML;
     const description = description_editor.root.innerHTML;
 
+    const images = $('.product-image-box img').toArray().map((image) => {
+        return {
+            Id: $(image).data('image-id') || null,
+            Status: $(image).data('status') || 'old',
+            ImageSrc: $(image).attr('src'),
+        }
+    });
+
     const data = {
         ProductId: product_id,
         ProductName: product_name,
@@ -76,6 +127,7 @@ $('#update-product').submit((e) => {
         CategoryId: category_id,
         ShortDescription: short_description,
         Description: description,
+        Images: images,
     }
 
     //console.log(data);
@@ -88,7 +140,9 @@ $('#update-product').submit((e) => {
         data: JSON.stringify(data),
         success: (response) => {
             if (response.status) {
-                showDialog('info', 'Cập nhật thành công', 'Đã cập nhật thông tin sản phẩm này');
+                showDialogWithCallback('info', 'Cập nhật thành công', 'Đã cập nhật thông tin sản phẩm này', () => {
+                    window.location.reload();
+                });
             } else {
                 showDialog('error', 'Không thể cập nhật', response.message);
             }

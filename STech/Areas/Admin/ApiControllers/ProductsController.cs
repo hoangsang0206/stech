@@ -9,6 +9,7 @@ using STech.Filters;
 using STech.Services;
 using STech.Utils;
 using System.Text.RegularExpressions;
+using STech.Areas.Admin.Utils;
 
 namespace STech.Areas.Admin.ApiControllers
 {
@@ -20,7 +21,7 @@ namespace STech.Areas.Admin.ApiControllers
         private readonly IProductService _productService;
         private readonly IAzureService _azureService;
 
-        private readonly string BlobPath = "product-discription-images/";
+        private readonly string BlobDiscriptionPath = "product-discription-images/";
 
         public ProductsController(IProductService productService, IAzureService azureService)
         {
@@ -125,7 +126,7 @@ namespace STech.Areas.Admin.ApiControllers
                         if (!string.IsNullOrEmpty(base64data))
                         {
                             byte[] imageBytes = Convert.FromBase64String(base64data);
-                            string path = $"{BlobPath}{productVM.ProductId}/{RandomUtils.GenerateRandomString(20)}.{extension}";
+                            string path = $"{BlobDiscriptionPath}{productVM.ProductId}/{RandomUtils.GenerateRandomString(20)}.{extension}";
 
                             string? imageUrl = await _azureService.UploadImage(path, imageBytes);
                             if (imageUrl != null)
@@ -140,7 +141,7 @@ namespace STech.Areas.Admin.ApiControllers
                 }
             }
 
-            AsyncPageable<BlobItem> blobs = _azureService.GetBlobs($"{BlobPath}{productVM.ProductId}/");
+            AsyncPageable<BlobItem> blobs = _azureService.GetBlobs($"{BlobDiscriptionPath}{productVM.ProductId}/");
 
             await foreach (BlobItem blob in blobs)
             {
@@ -151,6 +152,55 @@ namespace STech.Areas.Admin.ApiControllers
             }
 
             productVM.Description = htmlDocument.DocumentNode.OuterHtml;
+            productVM.Description = productVM.Description?
+                .Replace("ql-size-large", "heading-size-large")
+                .Replace("ql-size-huge", "heading-size-huge")
+                .Replace("ql-align-center", "text-center")
+                .Replace("ql-align-right", "text-end")
+                .Replace("ql-align-justify", "text-justify");
+
+            productVM.ShortDescription = productVM.ShortDescription?
+                .Replace("ql-size-large", "heading-size-large")
+                .Replace("ql-size-huge", "heading-size-huge")
+                .Replace("ql-align-center", "text-center")
+                .Replace("ql-align-right", "text-end")
+                .Replace("ql-align-justify", "text-justify");
+
+            if(productVM.Images != null && productVM.Images.Count > 0)
+            {
+                foreach (ProductVM.Image image in productVM.Images)
+                {
+                    if(image.Id != null)
+                    {
+                        if(image.Status == "deleted")
+                        {
+                            await _azureService.DeleteImage(image.ImageSrc);
+                        }
+                    }
+                    else
+                    {
+                        Match match = Regex.Match(image.ImageSrc, dataPattern);
+                        if (match.Success) {
+                            string base64data = match.Groups["data"].Value;
+                            string extension = match.Groups["type"].Value;
+
+                            if (!string.IsNullOrEmpty(base64data))
+                            {
+                                byte[] imageBytes = Convert.FromBase64String(base64data);
+                                string path = $"products/{productVM.ProductId}/{FormatString.ToSlug(productVM.ProductName)}-{RandomUtils.GenerateRandomString(10)}.{extension}";
+
+                                string? imageUrl = await _azureService.UploadImage(path, imageBytes);
+                                if (imageUrl != null)
+                                {
+                                    image.ImageSrc = imageUrl;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
             bool result = await _productService.UpdateProduct(productVM);
 
             return Ok(new ApiResponse

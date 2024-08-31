@@ -34,8 +34,22 @@ namespace STech.Data.ViewModels
 
         public class Image
         {
+            public int? Id { get; set; }
+
+            public string? Status { get; set; } = "old"; //or "deleted"
+
             [Required(ErrorMessage = "Nhập đường dẫn ảnh")]
-            public string ImageUrl { get; set; } = null!;
+            public string ImageSrc { get; set; } = null!;
+        }
+
+        public List<Specification>? Specifications { get; set; }
+        public class Specification
+        {
+            [Required(ErrorMessage = "Nhập tên thông số")]
+            public string Name { get; set; } = null!;
+
+            [Required(ErrorMessage = "Nhập giá trị thông số")]
+            public string Value { get; set; } = null!;
         }
     }
 }

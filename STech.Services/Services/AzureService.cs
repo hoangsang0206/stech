@@ -48,7 +48,7 @@ namespace STech.Services.Services
 
         public async Task<bool> DeleteImage(string imageUrl)
         {
-            BlobClient blobClient = ContainerClient.GetBlobClient(imageUrl.Replace($"{BlobUrl}{BlobContainerName}/", ""));
+            BlobClient blobClient = ContainerClient.GetBlobClient(imageUrl.Replace($"{BlobUrl}/{BlobContainerName}/", ""));
             return await blobClient.DeleteIfExistsAsync();
         }
 

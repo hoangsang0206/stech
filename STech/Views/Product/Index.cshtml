@@ -140,9 +140,11 @@
                                 @Html.Raw(product.Description)
                             </div>
 
-                            <button style="width: 10rem; max-width: 100%" class="mt-3 view-product-info view-contents">
-                                Xem tất cả
-                            </button>
+                            <div class="d-flex justify-content-center">
+                                <button style="width: 15rem; max-width: 100%" class="mt-3 view-product-info view-contents">
+                                    Xem tất cả
+                                </button>
+                            </div>
                         }
                         else
                         {
@@ -278,6 +280,10 @@
         </div>
     </div>
 </section>
+
+@section Styles {
+    <link type="text/css" href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet" />
+}
 
 @section Scripts {
     <script type="text/javascript" src="~/js/product.js"></script>

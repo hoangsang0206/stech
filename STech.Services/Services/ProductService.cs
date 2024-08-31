@@ -276,6 +276,55 @@ namespace STech.Services.Services
             _product.ShortDescription = product.ShortDescription;
             _product.Description = product.Description;
 
+            if (product.Specifications != null && product.Specifications.Count > 0)
+            {
+                List<ProductSpecification> specifications = await _context.ProductSpecifications
+                    .Where(ps => ps.ProductId == product.ProductId)
+                    .ToListAsync();
+
+                _context.ProductSpecifications.RemoveRange(specifications);
+                specifications.Clear();
+                foreach (ProductVM.Specification spec in product.Specifications)
+                {
+                    specifications.Add(new ProductSpecification
+                    {
+                        ProductId = product.ProductId,
+                        SpecName = spec.Name,
+                        SpecValue = spec.Value
+                    });
+                }
+
+                _context.ProductSpecifications.AddRange(specifications);
+            }
+
+            if(product.Images != null && product.Images.Count > 0)
+            {
+                foreach(ProductVM.Image image in product.Images)
+                {
+                    if(image.Id != null)
+                    {
+                        if (image.Status == "deleted")
+                        {
+                            ProductImage? pImage = await _context.ProductImages.FindAsync(image.Id);
+                            if (pImage != null)
+                            {
+                                _context.ProductImages.Remove(pImage);
+                            }
+                        }
+                    } 
+                    else
+                    {
+                        await _context.ProductImages.AddAsync(new ProductImage
+                        {
+                            ProductId = product.ProductId,
+                            ImageSrc = image.ImageSrc
+                        });
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
             _context.Products.Update(_product);
             return await _context.SaveChangesAsync() > 0;
         }

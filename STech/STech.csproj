@@ -107,8 +107,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Utils\" />
-    <Folder Include="Areas\Admin\wwwroot\editorjs\image\" />
     <Folder Include="Areas\Admin\wwwroot\images\icons\" />
     <Folder Include="wwwroot\images\logo\" />
   </ItemGroup>

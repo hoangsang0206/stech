@@ -1,1 +1,31 @@
-﻿
+﻿.ql-editor .ql-size-large {
+    font-size: 1.2rem !important;
+}
+
+.ql-editor img {
+    cursor: url(/admin/images/icons/trash-solid-24.png), auto;
+}
+
+.ql-toolbar {
+    z-index: 10;
+    position: sticky;
+    top: 0;
+    background: #fff;
+}
+
+.click-delete-image {
+    overflow: hidden;
+    text-decoration: none;
+    color: #e30019;
+    background: none;
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+    display: none;
+}
+
+.product-image-box:hover .click-delete-image,
+.click-delete-image.show {
+    display: grid;
+    place-items: center;
+}
