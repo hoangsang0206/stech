@@ -89,8 +89,31 @@ $('#upload-product-images').on('change', function (_e) {
     }
 });
 
+$(document).on('click', '.click-delete-spec', function () {
+    $(this).closest('.product-spec').remove();
+})
 
-
+$('.click-add-spec').click(() => {
+    $('.product-specs-container').append(`
+        <div class="product-spec row m-0 mb-2 p-0">
+            <div class="col-2 p-0 pe-2">
+                <div class="page-input">
+                    <textarea name="spec-name" placeholder="Tên thông số"></textarea>
+                </div>
+            </div>
+            <div class="col-9 p-0">
+                <div class="page-input">
+                    <textarea name="spec-value" placeholder="Giá trị thông số"></textarea>
+                </div>
+            </div>
+            <div class="col-1 p-0 d-flex align-items-center justify-content-end">
+                <a href="javascript:" class="click-delete-spec">
+                    <i class="fa-regular fa-trash-can" style="font-size: 1.2rem; color: #e30019"></i>
+                </a>
+            </div>
+        </div>
+    `);
+})
 
 //Submit
 $('#update-product').submit((e) => {
@@ -116,6 +139,18 @@ $('#update-product').submit((e) => {
         }
     });
 
+    if (images == null || !images.length) {
+        showDialog('warning', 'Chưa chọn ảnh', 'Vui lòng chọn ít nhất 1 ảnh cho sản phẩm');
+        return;
+    }
+
+    const specifications = $('.product-spec').toArray().map((spec) => {
+        return {
+            Name: $(spec).find('textarea[name="spec-name"]').val() || null,
+            Value: $(spec).find('textarea[name="spec-value"]').val() || null
+        }
+    });
+
     const data = {
         ProductId: product_id,
         ProductName: product_name,
@@ -127,7 +162,8 @@ $('#update-product').submit((e) => {
         CategoryId: category_id,
         ShortDescription: short_description,
         Description: description,
-        Images: images,
+        Images: images || null,
+        Specifications: specifications || null
     }
 
     //console.log(data);
@@ -155,3 +191,107 @@ $('#update-product').submit((e) => {
         }
     })
 })
+
+$('.click-delete-product').click(function () {
+    const id = $(this).data('product');
+
+    showConfirmDialog('Xóa sản phẩm này?', 'Hành động này không thể hoàn tác', () => {
+        showWebLoader();
+        $.ajax({
+            type: 'PATCH',
+            url: `/api/admin/products/delete/1/${id}`,
+            success: (response) => {
+                hideWebLoader(0);
+                if (response.status) {
+                    showDialogWithCallback('info', 'Xóa thành công', 'Đã xóa sản phẩm này', () => {
+                        window.location.reload();
+                    });
+                } else {
+                    showDialog('error', 'Không thể xóa sản phẩm', null);
+                }
+            },
+            error: () => {
+                hideWebLoader(0);
+                showDialog('error', 'Không thể xóa sản phẩm', null);
+            }
+        })
+    })
+}) 
+
+$('.click-restore-product').click(function () {
+    const id = $(this).data('product');
+
+    showConfirmDialog('Khôi phục phẩm này?', '', () => {
+        showWebLoader();
+        $.ajax({
+            type: 'PATCH',
+            url: `/api/admin/products/restore/1/${id}`,
+            success: (response) => {
+                hideWebLoader(0);
+                if (response.status) {
+                    showDialogWithCallback('info', 'Khôi phục thành công', 'Đã khôi phục sản phẩm này', () => {
+                        window.location.reload();
+                    });
+                } else {
+                    showDialog('error', 'Không thể khôi phục sản phẩm', null);
+                }
+            },
+            error: () => {
+                hideWebLoader(0);
+                showDialog('error', 'Không thể khôi phục sản phẩm', null);
+            }
+        })
+    })
+}) 
+
+$('.click-activate-product').click(function () {
+    const id = $(this).data('product');
+
+    showConfirmDialog('Hiện sản phẩm này?', '', () => {
+        showWebLoader();
+        $.ajax({
+            type: 'PATCH',
+            url: `/api/admin/products/activate/1/${id}`,
+            success: (response) => {
+                hideWebLoader(0);
+                if (response.status) {
+                    showDialogWithCallback('info', 'Hiện sản phẩm thành công', 'Đã hiện sản phẩm này', () => {
+                        window.location.reload();
+                    });
+                } else {
+                    showDialog('error', 'Không thể hiện sản phẩm', null);
+                }
+            },
+            error: () => {
+                hideWebLoader(0);
+                showDialog('error', 'Không thể hiện sản phẩm', null);
+            }
+        })
+    })
+}) 
+
+$('.click-deactivate-product').click(function () {
+    const id = $(this).data('product');
+
+    showConfirmDialog('Ẩn sản phẩm này?', '', () => {
+        showWebLoader();
+        $.ajax({
+            type: 'PATCH',
+            url: `/api/admin/products/deactivate/1/${id}`,
+            success: (response) => {
+                hideWebLoader(0);
+                if (response.status) {
+                    showDialogWithCallback('info', 'Ẩn sản phẩm thành công', 'Đã ẩn sản phẩm này', () => {
+                        window.location.reload();
+                    });
+                } else {
+                    showDialog('error', 'Không thể ẩn sản phẩm', null);
+                }
+            },
+            error: () => {
+                hideWebLoader(0);
+                showDialog('error', 'Không thể ẩn sản phẩm', null);
+            }
+        })
+    })
+}) 

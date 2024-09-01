@@ -158,10 +158,10 @@
                 <div class="page-content-header d-flex justify-content-between">
                     Hình ảnh
 
-                    <button type="button" class="page-btn btn-border-only click-upload-image">
+                    <a href="javascript:" class="page-btn btn-border-only click-upload-image">
                         <i class="fa-solid fa-plus"></i>
                         <span>Thêm</span>
-                    </button>
+                    </a>
 
                     <input type="file" id="upload-product-images" accept="image/*" multiple hidden />
                 </div>
@@ -220,12 +220,76 @@
                     Thông số kỹ thuật
                 </div>
 
-                <div>
-                    
+                <div class="product-specs-container">
+                    <div class="row m-0 p-0">
+                        <div class="col-2 p-0 fw-bold">
+                            Tên thông số
+                        </div>
+                        <div class="col-10 p-0 fw-bold">
+                            Giá trị thông số
+                        </div>
+                    </div>
+                    @foreach(ProductSpecification spec in product.ProductSpecifications)
+                    {
+                        <div class="product-spec row m-0 mb-2 p-0">
+                            <div class="col-2 p-0 pe-2">
+                                <div class="page-input">
+                                    <textarea name="spec-name" placeholder="Tên thông số">@spec.SpecName</textarea>
+                                </div>
+                            </div>
+                            <div class="col-9 p-0">
+                                <div class="page-input">
+                                    <textarea name="spec-value" placeholder="Giá trị thông số">@spec.SpecValue</textarea>
+                                </div>
+                            </div>
+                            <div class="col-1 p-0 d-flex align-items-center justify-content-end">
+                                <a href="javascript:" class="click-delete-spec">
+                                    <i class="fa-regular fa-trash-can" style="font-size: 1.2rem; color: #e30019"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="mt-3">
+                    <a href="javascript:" class="page-btn btn-border-only click-add-spec">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Thêm thông số</span>
+                    </a>
                 </div>
             </div>
 
             <div class="page-content-box no-border d-flex justify-content-end mt-3">
+                <div class="flex-grow-1 d-flex gap-2 align-items-center">
+                    @if(product.IsDeleted == true)
+                    {
+                        <a href="javascript:" class="page-btn btn-lightblue click-restore-product" data-product="@product.ProductId">
+                            <i class="fa-solid fa-trash-can-arrow-up"></i>
+                            <span>Khôi phục sản phẩm</span>
+                        </a>
+                    } 
+                    else
+                    {
+                        <a href="javascript:" class="page-btn btn-red click-delete-product" data-product="@product.ProductId">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>Xóa sản phẩm</span>
+                        </a>
+
+                        @if (product.IsActive != true)
+                        {
+                            <a href="javascript:" class="page-btn btn-green click-activate-product" data-product="@product.ProductId">
+                                <i class="fa-regular fa-circle-check"></i>
+                                <span>Hiện sản phẩm</span>
+                            </a>
+                        } 
+                        else
+                        {
+                            <a href="javascript:" class="page-btn btn-blue click-deactivate-product" data-product="@product.ProductId">
+                                <i class="fa-regular fa-circle-xmark"></i>
+                                <span>Ẩn sản phẩm</span>
+                            </a>
+                        }
+                    }
+                </div>
                 <button type="submit" class="form-submit-btn page-btn-sm btn-green">Lưu thay đổi</button>
             </div>
 

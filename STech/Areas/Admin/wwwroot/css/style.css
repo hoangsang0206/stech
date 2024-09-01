@@ -762,7 +762,9 @@ button:disabled {
     display: flex;
 }
 
-    .page-input:not(:has(i)) input, .page-input:not(:has(i)) select {
+    .page-input:not(:has(i)) input,
+    .page-input:not(:has(i)) select,
+    .page-input:not(:has(i)) textarea {
         padding-left: 1.2rem;
         width: 100%;
     }
@@ -775,7 +777,7 @@ button:disabled {
         color: #575757;
     }
 
-    .page-input input, .page-input select {
+    .page-input input, .page-input select, .page-input textarea {
         width: calc(100% - 3rem);
         border: none;
         outline: none;
@@ -784,7 +786,9 @@ button:disabled {
         font-size: 0.97rem;
     }
 
-    .page-input:has(input:focus), .page-input:has(select:focus) {
+    .page-input:has(input:focus),
+    .page-input:has(select:focus),
+    .page-input:has(textarea:focus) {
         outline: 1px solid #9d9c9c;
     }
 

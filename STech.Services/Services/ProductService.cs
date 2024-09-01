@@ -276,14 +276,14 @@ namespace STech.Services.Services
             _product.ShortDescription = product.ShortDescription;
             _product.Description = product.Description;
 
+            List<ProductSpecification> specifications = await _context.ProductSpecifications
+                .Where(ps => ps.ProductId == product.ProductId)
+                .ToListAsync();
+
+            _context.ProductSpecifications.RemoveRange(specifications);
+            specifications.Clear();
             if (product.Specifications != null && product.Specifications.Count > 0)
             {
-                List<ProductSpecification> specifications = await _context.ProductSpecifications
-                    .Where(ps => ps.ProductId == product.ProductId)
-                    .ToListAsync();
-
-                _context.ProductSpecifications.RemoveRange(specifications);
-                specifications.Clear();
                 foreach (ProductVM.Specification spec in product.Specifications)
                 {
                     specifications.Add(new ProductSpecification
