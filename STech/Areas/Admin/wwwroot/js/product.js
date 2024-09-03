@@ -1,4 +1,9 @@
-﻿const short_des_editor = new Quill('#short-description-editor', {
+﻿const checkEditorEmpty = (editor) => {
+    const content = editor.getText().trim();
+    return content == null || content.length === 0;
+}
+
+const short_des_editor = new Quill('#short-description-editor', {
     theme: 'snow',
     placeholder: 'Mô tả ngắn cho sản phẩm',
     modules: {
@@ -128,8 +133,8 @@ $('#update-product').submit((e) => {
     const brand_id = $('#product_brand').val();
     const category_id = $('#product_category').val();
 
-    const short_description = short_des_editor.root.innerHTML;
-    const description = description_editor.root.innerHTML;
+    const short_description = !checkEditorEmpty(short_des_editor) ? short_des_editor.root.innerHTML : null;
+    const description = !checkEditorEmpty(description_editor) ? description_editor.root.innerHTML : null;
 
     const images = $('.product-image-box img').toArray().map((image) => {
         return {

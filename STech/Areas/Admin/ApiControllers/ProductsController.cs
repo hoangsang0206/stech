@@ -106,7 +106,7 @@ namespace STech.Areas.Admin.ApiControllers
             string dataPattern = @"data:image/(?<type>.+?);base64,(?<data>[A-Za-z0-9+/=]+)";
 
             HtmlDocument htmlDocument = new HtmlDocument();
-            htmlDocument.LoadHtml(productVM.Description);
+            htmlDocument.LoadHtml(productVM.Description ?? "");
 
             List<string> srcList = new List<string>();
 

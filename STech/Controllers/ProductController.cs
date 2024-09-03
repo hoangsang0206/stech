@@ -8,8 +8,13 @@ namespace STech.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
+        private readonly IReviewService _reviewService;
 
-        public ProductController(IProductService productService) => _productService = productService;
+        public ProductController(IProductService productService, IReviewService reviewService)
+        {
+            _productService = productService;
+            _reviewService = reviewService;
+        }
 
         [Route("product/{id}")]
         public async Task<IActionResult> Index(string id)
@@ -24,6 +29,9 @@ namespace STech.Controllers
             {
                 return NotFound();
             }
+
+            IEnumerable<Review> reviews = await _reviewService.GetReviews(product.ProductId, null);
+            product.Reviews = reviews.ToList();
 
             IEnumerable<Product> similarProducts = new List<Product>();
             List<Breadcrumb> breadcrumbs = new List<Breadcrumb>();

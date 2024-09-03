@@ -220,31 +220,6 @@ const calculateShippingFee = (form, wardCode, districtCode, cityCode) => {
     }
 }
 
-$(document).ready(() => {
-    $.ajax({
-        type: 'GET',
-        url: '/api/account/address/default',
-        success: (response) => {
-            if (response.status) {
-                const wardCode = response.data.wardCode;
-                const districtCode = response.data.districtCode;
-                const cityCode = response.data.provinceCode;
-
-                const formAddress = $('.cart-shipping-fee form');
-                formAddress.find('#city-select').val(cityCode);
-                formAddress.find('#district-select').val(districtCode);
-                formAddress.find('#ward-select').val(wardCode);
-
-                loadDistricts(formAddress, cityCode, districtCode);
-                loadWards(formAddress, districtCode, wardCode);
-
-                calculateShippingFee('.cart-shipping-fee form', wardCode, districtCode, cityCode);
-            }
-        }
-    })
-})
-
-
 $('.cart-shipping-fee form').submit(function (e) {
     e.preventDefault();
 

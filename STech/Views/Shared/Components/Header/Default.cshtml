@@ -83,7 +83,7 @@
                     {
                         <a href="/account" class="header-user-image">
                             @{
-                                string avatar = User.FindFirst("Avatar")?.Value ?? "/images/no-image.jpg";
+                                string avatar = User.FindFirst("Avatar")?.Value ?? "/images/user-no-image.svg";
                             }
                             <img src="@avatar" alt="" />
                         </a>

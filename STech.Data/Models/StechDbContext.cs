@@ -59,6 +59,12 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<ProductVariantImage> ProductVariantImages { get; set; }
 
+    public virtual DbSet<Review> Reviews { get; set; }
+
+    public virtual DbSet<ReviewImage> ReviewImages { get; set; }
+
+    public virtual DbSet<ReviewReply> ReviewReplies { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<Slider> Sliders { get; set; }
@@ -514,6 +520,65 @@ public partial class StechDbContext : DbContext
                 .HasForeignKey(d => d.VariantId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_VImg_ProductVariant");
+        });
+
+        modelBuilder.Entity<Review>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Reviews__3214EC0763D41091");
+
+            entity.Property(e => e.Content).HasMaxLength(255);
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.ProductId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ReviewerEmail).HasMaxLength(255);
+            entity.Property(e => e.ReviewerName).HasMaxLength(50);
+            entity.Property(e => e.ReviewerPhone)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.UserId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Product).WithMany(p => p.Reviews)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Review_Product");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Reviews)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_Review_User");
+        });
+
+        modelBuilder.Entity<ReviewImage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__ReviewIm__3214EC0717D64B44");
+
+            entity.HasOne(d => d.Review).WithMany(p => p.ReviewImages)
+                .HasForeignKey(d => d.ReviewId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RVImages_Review");
+        });
+
+        modelBuilder.Entity<ReviewReply>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__ReviewRe__3214EC07385DB39A");
+
+            entity.Property(e => e.Content).HasMaxLength(255);
+            entity.Property(e => e.ReplyDate).HasColumnType("datetime");
+            entity.Property(e => e.UserReplyId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Review).WithMany(p => p.ReviewReplies)
+                .HasForeignKey(d => d.ReviewId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("RVReplies_Review");
+
+            entity.HasOne(d => d.UserReply).WithMany(p => p.ReviewReplies)
+                .HasForeignKey(d => d.UserReplyId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("RVRepiles_User");
         });
 
         modelBuilder.Entity<Role>(entity =>

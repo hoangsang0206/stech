@@ -100,7 +100,7 @@ namespace STech.Services.Services
             User user = new User()
             {
                 UserId = register.UserId,
-                Username = register.Email ?? UserUtils.GenerateRandomId(30),
+                Username = register.UserId ?? UserUtils.GenerateRandomId(30),
                 PasswordHash = UserUtils.GenerateRandomString(20).HashPasswordMD5(randomKey),
                 Email = register.Email,
                 EmailConfirmed = register.EmailConfirmed,

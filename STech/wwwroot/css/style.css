@@ -37,7 +37,7 @@
 :root {
     /*--color -------------*/
     --primary-color: #0859ec;
-    --primary-color-hover: #548ffa;
+    --primary-color-hover: #7ba8fb;
     --primary-color-1: #7d5fff;
     --primary-color-2: #e30019;
     --primary-color-3: #FC427B;
@@ -53,6 +53,12 @@
     --header-btn-background-2: #be1529;
     --header-btn-background-3: #FD7272;
     --header-btn-background-4: #009432;
+
+    --border-color: #dcdcdc;
+    --box-shadow: 1px 1px 5px -1px #0000004e, -1px -1px 5px -1px #0000004e;
+
+    --rating-color: #ff8a00;
+
     /*--transition---------*/
     --trans-all-05: all .5s ease;
     --trans-all-04: all .4s ease;
@@ -306,6 +312,28 @@ button:disabled:hover {
     margin-top: 1rem;
 }
 
+.form-header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1.5rem;
+}
+
+.form-header-wrapper span {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.form-header-wrapper .close-form {
+    cursor: pointer;
+    color: #000;
+    position: static !important;
+}
+
+.form-header-wrapper .close-form i {
+    font-size: 1.2rem !important;
+}
+
 .form-header {
     font-size: 1.2rem;
     font-weight: bold;
@@ -477,6 +505,11 @@ button:disabled:hover {
         border-radius: 0.3rem;
         padding: 0.6rem 1.2rem 0.6rem 0;
         font-size: 0.97rem;
+    }
+
+    .page-input:not(:has(i)) input {
+        width: 100%;
+        padding: 0.6rem 1.2rem;
     }
 
     .page-input.focused {

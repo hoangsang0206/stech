@@ -53,4 +53,10 @@ public partial class User
 
     [JsonIgnore]
     public virtual ICollection<UserCart> UserCarts { get; set; } = new List<UserCart>();
+
+    [JsonIgnore]
+    public virtual ICollection<ReviewReply> ReviewReplies { get; set; } = new List<ReviewReply>();
+
+    [JsonIgnore]
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

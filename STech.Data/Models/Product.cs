@@ -53,6 +53,9 @@ public partial class Product
     public virtual ICollection<UserCart> UserCarts { get; set; } = new List<UserCart>();
 
     [JsonIgnore]
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+    [JsonIgnore]
     public virtual ICollection<WarehouseExportDetail> WarehouseExportDetails { get; set; } = new List<WarehouseExportDetail>();
 
     public virtual ICollection<WarehouseProduct> WarehouseProducts { get; set; } = new List<WarehouseProduct>();

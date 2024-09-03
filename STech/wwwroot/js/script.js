@@ -148,8 +148,8 @@ $('input[name="theme"]').on('change', (e) => {
     const colorValue = $(e.target).val();
 
     if (colorValue == "theme-1") {
-        changeThemeColor('#0859ec', '#548ffa', '#387dfc');
-        saveColorToLocalStorage('#0652DD', '#548ffa', '#387dfc', 'theme-1');
+        changeThemeColor('#0859ec', '#7ba8fb', '#387dfc');
+        saveColorToLocalStorage('#0859ec', '#7ba8fb', '#387dfc', 'theme-1');
     }
     else if (colorValue == "theme-2") {
         changeThemeColor('var(--primary-color-1)', 'var(--primary-color-1-hover)', 'var(--header-btn-background-1)');

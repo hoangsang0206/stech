@@ -164,6 +164,25 @@ namespace STech.Services.Services
                 .ToListAsync();
         }
 
+        public async Task<bool> CheckIsPurchased(string userId, string productId)
+        {
+            Invoice? invoice = await _context.Invoices
+                .Where(i => i.UserId == userId && i.InvoiceDetails.Any(d => d.ProductId == productId))
+                .FirstOrDefaultAsync();
+
+            return invoice != null;
+        }
+
+        public async Task<bool> CheckIsPurchased(string email, string? phone, string productId)
+        {
+            Invoice? invoice = await _context.Invoices
+                .Where(i => i.InvoiceDetails.Any(d => d.ProductId == productId) 
+                        && (i.RecipientPhone == phone || (i.User != null && i.User.Email == email)))
+                .FirstOrDefaultAsync();
+
+            return invoice != null;
+        }
+
         public async Task<bool> UpdateInvoice(Invoice invoice)
         {
             _context.Invoices.Update(invoice);
