@@ -31,5 +31,6 @@ namespace STech.Services
         Task<bool> DeActivateProducts(string[] ids);
 
         Task<bool> UpdateProduct(ProductVM product);
+        Task<bool> CreateProduct(ProductVM product);
     }
 }

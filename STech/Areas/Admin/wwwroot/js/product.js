@@ -37,7 +37,9 @@ const description_editor = new Quill('#description-editor', {
             [{ 'script': 'sub' }, { 'script': 'super' }],
         ],
     },
-});;
+});
+
+$('#short-description-editor').siblings('.ql-toolbar').css('z-index', 11);
 
 function updateIframeStyles() {
     var iframes = document.querySelectorAll('.ql-editor iframe');
@@ -52,10 +54,6 @@ updateIframeStyles();
 
 description_editor.on('text-change', () => {
     updateIframeStyles();
-})
-
-$(document).on('click', '.ql-editor img', function () {
-    $(this).closest('p').remove();
 })
 
 $(document).on('click', '.click-delete-image', function () {
@@ -82,7 +80,7 @@ $('#upload-product-images').on('change', function (_e) {
 
         reader.onload = (e) => {
             $('.product-images-container').append(`
-                <div class="product-image-box position-relative box-shadow">
+                <div class="product-image-box position-relative box-shadow overflow-hidden">
                     <img src="${e.target.result}" alt="" style="width: 100%" />
 
                     <a class="click-delete-image" href="javascript:">
@@ -119,84 +117,6 @@ $('.click-add-spec').click(() => {
         </div>
     `);
 })
-
-//Submit
-$('#update-product').submit((e) => {
-    e.preventDefault();
-
-    const product_id = $('#product_id').val();
-    const product_name = $('#product_name').val();
-    const price = parseFloat($('#product_price').val()) || null;
-    const original_price = parseFloat($('#product_original_price').val()) || null;
-    const manufactured_year = parseInt($('#product_manufactured_year').val()) || null;
-    const warranty = parseInt($('#product_warranty').val()) || null;
-    const brand_id = $('#product_brand').val();
-    const category_id = $('#product_category').val();
-
-    const short_description = !checkEditorEmpty(short_des_editor) ? short_des_editor.root.innerHTML : null;
-    const description = !checkEditorEmpty(description_editor) ? description_editor.root.innerHTML : null;
-
-    const images = $('.product-image-box img').toArray().map((image) => {
-        return {
-            Id: $(image).data('image-id') || null,
-            Status: $(image).data('status') || 'old',
-            ImageSrc: $(image).attr('src'),
-        }
-    });
-
-    if (images == null || !images.length) {
-        showDialog('warning', 'Chưa chọn ảnh', 'Vui lòng chọn ít nhất 1 ảnh cho sản phẩm');
-        return;
-    }
-
-    const specifications = $('.product-spec').toArray().map((spec) => {
-        return {
-            Name: $(spec).find('textarea[name="spec-name"]').val() || null,
-            Value: $(spec).find('textarea[name="spec-value"]').val() || null
-        }
-    });
-
-    const data = {
-        ProductId: product_id,
-        ProductName: product_name,
-        Price: price,
-        OriginalPrice: original_price,
-        ManufacturedYear: manufactured_year,
-        Warranty: warranty,
-        BrandId: brand_id,
-        CategoryId: category_id,
-        ShortDescription: short_description,
-        Description: description,
-        Images: images || null,
-        Specifications: specifications || null
-    }
-
-    //console.log(data);
-
-    showWebLoader();
-    $.ajax({
-        type: 'PUT',
-        url: '/api/admin/products/update',
-        contentType: 'application/json',
-        data: JSON.stringify(data),
-        success: (response) => {
-            if (response.status) {
-                showDialogWithCallback('info', 'Cập nhật thành công', 'Đã cập nhật thông tin sản phẩm này', () => {
-                    window.location.reload();
-                });
-            } else {
-                showDialog('error', 'Không thể cập nhật', response.message);
-            }
-
-            hideWebLoader(300);
-        },
-        error: () => {
-            showErrorDialog();
-            hideWebLoader(0);
-        }
-    })
-})
-
 $('.click-delete-product').click(function () {
     const id = $(this).data('product');
 
@@ -300,3 +220,127 @@ $('.click-deactivate-product').click(function () {
         })
     })
 }) 
+
+
+const getFormData = (form) => {
+    const _form = $(form);
+
+    const product_id = _form.find('#product_id').val();
+    const product_name = _form.find('#product_name').val();
+    const price = parseFloat(_form.find('#product_price').val()) || null;
+    const original_price = parseFloat(_form.find('#product_original_price').val()) || null;
+    const manufactured_year = parseInt(_form.find('#product_manufactured_year').val()) || null;
+    const warranty = parseInt(_form.find('#product_warranty').val()) || null;
+    const brand_id = _form.find('#product_brand').val();
+    const category_id = _form.find('#product_category').val();
+
+    const short_description = !checkEditorEmpty(short_des_editor) ? short_des_editor.root.innerHTML : null;
+    const description = !checkEditorEmpty(description_editor) ? description_editor.root.innerHTML : null;
+
+    const images = _form.find('.product-image-box img').toArray().map((image) => {
+        return {
+            Id: $(image).data('image-id') || null,
+            Status: $(image).data('status') || 'old',
+            ImageSrc: $(image).attr('src'),
+        }
+    });
+
+    if (images == null || !images.length) {
+        showDialog('warning', 'Chưa chọn ảnh', 'Vui lòng chọn ít nhất 1 ảnh cho sản phẩm');
+        return null;
+    }
+
+    const specifications = _form.find('.product-spec').toArray().map((spec) => {
+        const spec_name = $(spec).find('textarea[name="spec-name"]').val();
+        const spec_value = $(spec).find('textarea[name="spec-value"]').val();
+
+        if (spec_name && spec_value) {
+            return {
+                Name: spec_name, Value: spec_value
+            }
+        }
+    });
+
+    return {
+        ProductId: product_id,
+        ProductName: product_name,
+        Price: price,
+        OriginalPrice: original_price,
+        ManufacturedYear: manufactured_year,
+        Warranty: warranty,
+        BrandId: brand_id,
+        CategoryId: category_id,
+        ShortDescription: short_description,
+        Description: description,
+        Images: images || null,
+        Specifications: specifications || null
+    }
+}
+
+
+//Submit update product
+$('#update-product').submit(function(e) {
+    e.preventDefault();
+
+    const data = getFormData(this);
+    if (!data) {
+        return;
+    }
+
+    showWebLoader();
+    $.ajax({
+        type: 'PUT',
+        url: '/api/admin/products/update',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: (response) => {
+            if (response.status) {
+                showDialogWithCallback('info', 'Cập nhật thành công', 'Đã cập nhật thông tin sản phẩm này', () => {
+                    window.location.reload();
+                });
+            } else {
+                showDialog('error', 'Không thể cập nhật', response.message);
+            }
+
+            hideWebLoader(300);
+        },
+        error: () => {
+            showErrorDialog();
+            hideWebLoader(0);
+        }
+    })
+})
+
+
+//Submit create product
+$('#create-product').submit(function(e) {
+    e.preventDefault();
+
+    const data = getFormData(this);
+    if (!data) {
+        return;
+    }
+
+    showWebLoader();
+    $.ajax({
+        type: 'POST',
+        url: '/api/admin/products/create',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: (response) => {
+            if (response.status) {
+                showDialogWithCallback('info', 'Tạo sản phẩm thành công', 'Thêm sản phẩm thành công, để hiển thị sản phẩm vui lòng đến kích hoạt sản phẩm', () => {
+                    window.location.reload();
+                });
+            } else {
+                showDialog('error', 'Không thể tạo sản phẩm', response.message);
+            }
+
+            hideWebLoader(300);
+        },
+        error: () => {
+            hideWebLoader(0);
+        }
+    })
+})
+

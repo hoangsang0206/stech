@@ -17,5 +17,10 @@ namespace STech.Services.Services
 
             return await _context.Brands.OrderBy(b => b.BrandName).ToListAsync();
         }
+
+        public async Task<Brand?> GetById(string id)
+        {
+            return await _context.Brands.FindAsync(id);
+        }
     }
 }

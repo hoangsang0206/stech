@@ -20,13 +20,17 @@ namespace STech.Areas.Admin.ApiControllers
     {
         private readonly IProductService _productService;
         private readonly IAzureService _azureService;
+        private readonly ICategoryService _categoryService;
+        private readonly IBrandService _brandService;
 
         private readonly string BlobDiscriptionPath = "product-discription-images/";
 
-        public ProductsController(IProductService productService, IAzureService azureService)
+        public ProductsController(IProductService productService, IAzureService azureService, ICategoryService categoryService, IBrandService brandService)
         {
             _productService = productService;
             _azureService = azureService;
+            _categoryService = categoryService;
+            _brandService = brandService;
         }
 
         #region GET
@@ -84,6 +88,113 @@ namespace STech.Areas.Admin.ApiControllers
 
         #region POST
 
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateProduct(ProductVM productVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Dữ liệu không hợp lệ",
+                    Data = ModelState
+                });
+            }
+
+            Category? category = await _categoryService.GetOne(productVM.CategoryId);
+            if (category == null) {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Không tìm thấy danh mục này",
+                    Data = ModelState
+                });
+            }
+
+            Brand? brand = await _brandService.GetById(productVM.BrandId);
+            if (brand == null) {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Không tìm thấy hãng này",
+                    Data = ModelState
+                });
+            }
+
+            string dataPattern = @"data:image/(?<type>.+?);base64,(?<data>[A-Za-z0-9+/=]+)";
+
+            HtmlDocument htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(productVM.Description ?? "");
+
+            HtmlNodeCollection imgNodes = htmlDocument.DocumentNode.SelectNodes("//img");
+            if (imgNodes != null)
+            {
+                foreach (HtmlNode imgNode in imgNodes)
+                {
+                    string? src = imgNode.GetAttributeValue("src", null);
+                    Match match = Regex.Match(src, dataPattern);
+
+                    if (match.Success)
+                    {
+                        string base64data = match.Groups["data"].Value;
+                        string extension = match.Groups["type"].Value;
+
+                        if (!string.IsNullOrEmpty(base64data))
+                        {
+                            byte[] imageBytes = Convert.FromBase64String(base64data);
+                            string path = $"{BlobDiscriptionPath}{productVM.ProductId}/{RandomUtils.GenerateRandomString(20)}.{extension}";
+
+                            string? imageUrl = await _azureService.UploadImage(path, imageBytes);
+                            if (imageUrl != null)
+                            {
+                                imgNode.SetAttributeValue("src", imageUrl);
+                                imgNode.SetAttributeValue("style", "width: 100%");
+                            }
+                        }
+                    }
+                }
+            }
+
+            productVM.Description = htmlDocument.DocumentNode.OuterHtml;
+            productVM.Description = productVM.Description?.ReplaceClasses();
+
+            productVM.ShortDescription = productVM.ShortDescription?.ReplaceClasses();
+
+            if (productVM.Images != null && productVM.Images.Count > 0)
+            {
+                foreach (ProductVM.Image image in productVM.Images)
+                {
+                    Match match = Regex.Match(image.ImageSrc, dataPattern);
+                    if (match.Success)
+                    {
+                        string base64data = match.Groups["data"].Value;
+                        string extension = match.Groups["type"].Value;
+
+                        if (!string.IsNullOrEmpty(base64data))
+                        {
+                            byte[] imageBytes = Convert.FromBase64String(base64data);
+                            string path = $"products/{productVM.ProductId}/{FormatString.ToSlug(productVM.ProductName)}-{RandomUtils.GenerateRandomString(10)}.{extension}";
+
+                            string? imageUrl = await _azureService.UploadImage(path, imageBytes);
+                            if (imageUrl != null)
+                            {
+                                image.ImageSrc = imageUrl;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            bool result = await _productService.CreateProduct(productVM);
+
+            return Ok(new ApiResponse
+            {
+                Status = result,
+                Message = result ? "Tạo phẩm thành công" : "Tạo sản phẩm thất bại"
+            });
+        }
+
         #endregion POST
 
 
@@ -100,6 +211,17 @@ namespace STech.Areas.Admin.ApiControllers
                     Status = false,
                     Message = "Dữ liệu không hợp lệ",
                     Data = ModelState
+                });
+            }
+
+            Product? product = await _productService.GetProduct(productVM.ProductId);
+
+            if (product == null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Sản phẩm không tồn tại"
                 });
             }
 
@@ -152,19 +274,9 @@ namespace STech.Areas.Admin.ApiControllers
             }
 
             productVM.Description = htmlDocument.DocumentNode.OuterHtml;
-            productVM.Description = productVM.Description?
-                .Replace("ql-size-large", "heading-size-large")
-                .Replace("ql-size-huge", "heading-size-huge")
-                .Replace("ql-align-center", "text-center")
-                .Replace("ql-align-right", "text-end")
-                .Replace("ql-align-justify", "text-justify");
+            productVM.Description = productVM.Description?.ReplaceClasses();
 
-            productVM.ShortDescription = productVM.ShortDescription?
-                .Replace("ql-size-large", "heading-size-large")
-                .Replace("ql-size-huge", "heading-size-huge")
-                .Replace("ql-align-center", "text-center")
-                .Replace("ql-align-right", "text-end")
-                .Replace("ql-align-justify", "text-justify");
+            productVM.ShortDescription = productVM.ShortDescription?.ReplaceClasses();
 
             if(productVM.Images != null && productVM.Images.Count > 0)
             {

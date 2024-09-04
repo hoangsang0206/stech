@@ -2,6 +2,7 @@
 using STech.Data.Models;
 using STech.Filters;
 using STech.Services;
+using static Org.BouncyCastle.Asn1.Cmp.Challenge;
 
 namespace STech.Areas.Admin.Controllers
 {
@@ -84,6 +85,17 @@ namespace STech.Areas.Admin.Controllers
 
             ViewBag.ActiveSidebar = "products";
             return View(new Tuple<Product, IEnumerable<Category>, IEnumerable<Brand>>(product, categories, brands));
+        }
+
+        public async Task<IActionResult> Create()
+        {
+            IEnumerable<Warehouse> warehouses = await _warehouseService.GetWarehouses();
+            IEnumerable<Brand> brands = await _brandService.GetAll(false);
+            IEnumerable<Category> categories = await _categoryService.GetAll(false);
+
+            ViewBag.ActiveSidebar = "products";
+
+            return View(new Tuple<IEnumerable<Category>, IEnumerable<Brand>>(categories, brands));
         }
     }
 }

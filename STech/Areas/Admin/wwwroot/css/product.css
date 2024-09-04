@@ -2,10 +2,6 @@
     font-size: 1.2rem !important;
 }
 
-.ql-editor img {
-    cursor: url(/admin/images/icons/trash-solid-24.png), auto;
-}
-
 .ql-toolbar {
     z-index: 10;
     position: sticky;

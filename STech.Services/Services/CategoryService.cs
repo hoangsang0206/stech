@@ -44,9 +44,9 @@ namespace STech.Services.Services
                 .ToListAsync();
         }
 
-        public async Task<Category> GetOne(string id)
+        public async Task<Category?> GetOne(string id)
         {
-            return await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id) ?? new Category();
+            return await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
         }
     }
 }

@@ -10,5 +10,6 @@ namespace STech.Services
     public interface IBrandService
     {
         Task<IEnumerable<Brand>> GetAll(bool isExcept);
+        Task<Brand?> GetById(string id);
     }
 }

@@ -11,6 +11,6 @@ namespace STech.Services
     {
         Task<IEnumerable<Category>> GetAll(bool isExcept);
         Task<IEnumerable<Category>> GetRandomWithProducts(int numCategories, int numProducts);
-        Task<Category> GetOne(string id);
+        Task<Category?> GetOne(string id);
     }
 }

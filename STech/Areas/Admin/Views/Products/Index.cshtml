@@ -357,7 +357,8 @@
                 </thead>
                 <tbody class="product-list view-list" data-view="view-list">
                     @{
-                        int index = 1;
+                        int page = ViewBag.CurrentPage ?? 1;
+                        int index = (page - 1) * 40 + 1;
 
                         foreach (Product product in Model)
                         {

@@ -1,7 +1,9 @@
 ﻿<div class="sidebar px-3 h-100 d-flex flex-column">
 
     <div class="logo-wrapper w-100 pt-4 pb-5">
-        <img src="~/admin/images/logo/stech-logo-text-color.png" />
+        <a href="/admin">
+            <img src="~/admin/images/logo/stech-logo-text-color.png" />
+        </a>
     </div>
 
     <div class="sidebar-main flex-grow-1 overflow-y-auto">
@@ -86,6 +88,38 @@
                     </a>
                     <i class="sidebar-arrow fa-solid fa-chevron-right"></i>
                 </div>
+                <div class="sidebar-expandation">
+                    <ul>
+                        <li>
+                            <a href="javascript:">Danh sách danh mục</a>
+                        </li>
+                        <li>
+                            <a href="javascript:">Danh sách hãng</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "warehouses" ? "active" : "")">
+                    <a class="sidebar-link" href="javascript:void(0)">
+                        <i class="sidebar-icon fa-solid fa-warehouse"></i>
+                        <span class="sidebar-text">Kho hàng</span>
+                    </a>
+                    <i class="sidebar-arrow fa-solid fa-chevron-right"></i>
+                </div>
+                <div class="sidebar-expandation">
+                    <ul>
+                        <li>
+                            <a href="javascript:">Danh sách kho</a>
+                        </li>
+                        <li>
+                            <a href="javascript:">Nhập kho</a>
+                        </li>
+                        <li>
+                            <a href="javascript:">Xuất kho</a>
+                        </li>
+                    </ul>
+                </div>
             </li>
             <li>
                 <div class="sidebar-item @(ViewBag.ActiveSidebar == "sales" ? "active" : "")">
@@ -93,7 +127,6 @@
                         <i class="sidebar-icon fa-solid fa-tags"></i>
                         <span class="sidebar-text">Khuyến mãi</span>
                     </a>
-                    <i class="sidebar-arrow fa-solid fa-chevron-right"></i>
                 </div>
             </li>
             <li>

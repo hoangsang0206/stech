@@ -26,9 +26,9 @@ namespace STech.Data.ViewModels
 
         public int? Warranty { get; set; } = 0;
 
-        public string? CategoryId { get; set; }
+        public string CategoryId { get; set; } = null!;
 
-        public string? BrandId { get; set; }
+        public string BrandId { get; set; } = null!;
 
         public List<Image>? Images { get; set; }
 

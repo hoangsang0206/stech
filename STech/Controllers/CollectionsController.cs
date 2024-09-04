@@ -28,7 +28,7 @@ namespace STech.Controllers
 
             int totalPage = 1;
             IEnumerable<Product> products = new List<Product>();
-            Category category = new Category();
+            Category? category;
             List<Breadcrumb> breadcrumbs = new List<Breadcrumb>();
             string title = "STech";
 
@@ -41,6 +41,11 @@ namespace STech.Controllers
             else
             {
                 category = await _categoryService.GetOne(id);
+                if(category == null)
+                {
+                    return NotFound();
+                }
+
                 (products, totalPage) = await _productService.GetByCategory(id, page, sort);
                 breadcrumbs.Add(new Breadcrumb("Danh sách sản phẩm", "/collections/all"));
                 breadcrumbs.Add(new Breadcrumb(category.CategoryName, ""));

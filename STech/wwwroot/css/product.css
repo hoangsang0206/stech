@@ -309,6 +309,7 @@ button:disabled {
 .product-specs-table tr td:first-child {
     background: #f7f7f7;
     font-weight: 600;
+    max-width: 4rem;
 }
 
 .product-specs-hidden .form-box {

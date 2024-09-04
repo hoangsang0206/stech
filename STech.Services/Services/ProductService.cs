@@ -253,6 +253,52 @@ namespace STech.Services.Services
 
         #region POST
 
+        public async Task<bool> CreateProduct(ProductVM product)
+        {
+            Product _product = new Product()
+            {
+                ProductId = product.ProductId,
+                ProductName = product.ProductName.Trim(),
+                Price = product.Price,
+                OriginalPrice = product.OriginalPrice,
+                Warranty = product.Warranty,
+                ManufacturedYear = product.ManufacturedYear,
+                BrandId = product.BrandId,
+                CategoryId = product.CategoryId,
+                ShortDescription = product.ShortDescription,
+                Description = product.Description,
+                IsActive = false,
+                IsDeleted = false,
+                DateAdded = DateTime.Now,        
+            };
+
+            if (product.Specifications != null && product.Specifications.Count > 0 && !product.Specifications.Any(s => s == null))
+            {
+                foreach (ProductVM.Specification spec in product.Specifications)
+                {
+                    _product.ProductSpecifications.Add(new ProductSpecification
+                    {
+                        SpecName = spec.Name,
+                        SpecValue = spec.Value
+                    });
+                }
+            }
+
+            if (product.Images != null && product.Images.Count > 0 && !product.Images.Any(i => i == null))
+            {
+                foreach (ProductVM.Image image in product.Images)
+                {
+                    _product.ProductImages.Add(new ProductImage
+                    {
+                        ImageSrc = image.ImageSrc
+                    });
+                }
+            }
+
+            await _context.Products.AddAsync(_product);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
         #endregion POST
 
 
@@ -282,7 +328,7 @@ namespace STech.Services.Services
 
             _context.ProductSpecifications.RemoveRange(specifications);
             specifications.Clear();
-            if (product.Specifications != null && product.Specifications.Count > 0)
+            if (product.Specifications != null && product.Specifications.Count > 0 && !product.Specifications.Any(s => s == null))
             {
                 foreach (ProductVM.Specification spec in product.Specifications)
                 {
@@ -297,7 +343,7 @@ namespace STech.Services.Services
                 _context.ProductSpecifications.AddRange(specifications);
             }
 
-            if(product.Images != null && product.Images.Count > 0)
+            if(product.Images != null && product.Images.Count > 0 && !product.Images.Any(i => i == null))
             {
                 foreach(ProductVM.Image image in product.Images)
                 {

@@ -122,9 +122,10 @@ const updateActionButtons = (products) => {
     }
 }
 
-const renderProducts = (products) => {
+const renderProducts = (products, currentPage) => {
     const view_type = $('.product-list').data('view');
-    let index = 0;
+
+    let index = (currentPage - 1) * 40;
 
     $('.product-list').empty();
 
@@ -282,7 +283,7 @@ const loadProducts = (page) => {
             $('.empty-message').addClass('d-none');
 
             updateActionButtons(response.data.products);
-            renderProducts(response.data.products);
+            renderProducts(response.data.products, response.data.currentPage);
             loadPagination(response.data.totalPages, response.data.currentPage);
         },
         error: () => {
@@ -582,7 +583,7 @@ $('.search-products').submit(function (e) {
             }
 
             $('.empty-message').addClass('d-none');
-            renderProducts(response.data.products);
+            renderProducts(response.data.products, 1);
             loadPagination(1, 1);
         },
         error: () => {
