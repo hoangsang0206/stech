@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using STech.Config;
 using STech.Data.Models;
 using STech.Services;
 using STech.Services.Services;
@@ -151,6 +152,9 @@ builder.Services.AddSession(options =>
 
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("Payments:Stripe")["SecretKey"];
 
+CloudflareTurnstile.SiteKey = builder.Configuration.GetSection("Cloudflare:Turnstile")["SiteKey"];
+CloudflareTurnstile.SecretKey = builder.Configuration.GetSection("Cloudflare:Turnstile")["SecretKey"];
+CloudflareTurnstile.ApiUrl = builder.Configuration.GetSection("Cloudflare:Turnstile")["ApiUrl"];
 
 var app = builder.Build();
 

@@ -80,6 +80,10 @@
             }
         }
 
+        button:disabled {
+            cursor: not-allowed;
+        }
+
         .form-error * {
             font-size: 0.9rem;
         }
@@ -152,6 +156,8 @@
 
     </style>
 
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+
 </head>
 <body class="position-relative">
     <div class="container-fluid p-0 overflow-hidden position-fixed top-0 bottom-0 start-0 end-0 w-100 h-100">
@@ -185,7 +191,9 @@
                             <span asp-validation-for="@Model.Password"></span>
                         </div>
 
-                        <button type="submit" class="submit-btn">ĐĂNG NHẬP</button>
+                        <div class="cf-turnstile" data-sitekey="@CloudflareTurnstile.SiteKey" data-callback="captchaCompleted" data-size="flexible"></div>
+
+                        <button type="submit" class="submit-btn mt-2">ĐĂNG NHẬP</button>
                     </form>
                 </div>
             </div>
@@ -248,10 +256,18 @@
             }, 5000)
         }
 
+        function captchaCompleted(token) {
+            $('.login-form .submit-btn').prop('disabled', false);
+            console.log(1)
+        }
+
+        $('.login-form .submit-btn').prop('disabled', true);
+
         $('.login-form').submit(function (e) {
             e.preventDefault();
             const userName = $(this).find('#UserName').val();
             const password = $(this).find('#Password').val();
+            const captchaResponse = $('input[name="cf-turnstile-response"]').val();
 
             if (!userName || !password) {
                 return
@@ -267,7 +283,8 @@
                 data: JSON.stringify({
                     UserName: userName,
                     Password: password,
-                    ReturnUrl: null
+                    ReturnUrl: null,
+                    CaptchaResponse: captchaResponse
                 }),
                 success: (response) => {
                     if (response.status) {

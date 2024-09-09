@@ -1,11 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
+using STech.Services.Utils;
 
 namespace STech.Services.Services
 {
     public class CategoryService : ICategoryService
     {
         private readonly StechDbContext _context;
+
+        private readonly int CategoriesPerPage = 30;
+
         public CategoryService(StechDbContext context) => _context = context;
 
         public async Task<IEnumerable<Category>> GetAll(bool isExcept)
@@ -42,6 +46,19 @@ namespace STech.Services.Services
                 })
                 .Take(numCategories)
                 .ToListAsync();
+        }
+
+        public async Task<(IEnumerable<Category>, int)> GetAllWithProducts(string? sort_by, int page = 1)
+        {
+            IEnumerable<Category> categories = await _context.Categories
+                .OrderBy(c => c.CategoryName)
+                .Include(c => c.Products)
+                .ToListAsync();
+
+            int totalPages = (int)Math.Ceiling(categories.Count() / (double)CategoriesPerPage);
+            categories = categories.Sort(sort_by).Paginate(page, CategoriesPerPage);
+
+            return (categories, totalPages);
         }
 
         public async Task<Category?> GetOne(string id)

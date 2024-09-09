@@ -15,6 +15,20 @@
     int inStock = wh.Sum(w => w.Quantity);
 
     ViewData["Title"] = product.ProductName + " - STech";
+
+    double avgRating = 0;
+    if (reviews.Count() > 0)
+    {
+        avgRating = Math.Round(reviews.Average(r => r.Rating), 1);
+    }
+
+    int totalReviews = reviews.Count();
+
+    int total5Star = reviews.Count(r => r.Rating == 5);
+    int total4Star = reviews.Count(r => r.Rating == 4);
+    int total3Star = reviews.Count(r => r.Rating == 3);
+    int total2Star = reviews.Count(r => r.Rating == 2);
+    int total1Star = reviews.Count(r => r.Rating == 1);
 }
 
 @await Html.PartialAsync("PartialViews/Breadcrumb", breadcrumbs)
@@ -49,6 +63,9 @@
             <div class="col-12 col-md-7 product-info">
                 <div class="product-info-name">
                     <h3>@product.ProductName</h3>
+                </div>
+                <div>
+
                 </div>
                 <div class="product-info-original-price">
                     @{
@@ -252,22 +269,6 @@
                     <div class="box-header">
                         <h4>Đánh giá & nhận xét sản phẩm</h4>
                     </div>
-
-                    @{
-                        double avgRating = 0;
-                        if (reviews.Count() > 0)
-                        {
-                            avgRating = Math.Round(reviews.Average(r => r.Rating), 1);
-                        }
-
-                        int totalReviews = reviews.Count();
-
-                        int total5Star = reviews.Count(r => r.Rating == 5);
-                        int total4Star = reviews.Count(r => r.Rating == 4);
-                        int total3Star = reviews.Count(r => r.Rating == 3);
-                        int total2Star = reviews.Count(r => r.Rating == 2);
-                        int total1Star = reviews.Count(r => r.Rating == 1);
-                    }
 
                     <div>
                         <div class="row m-0 mt-3 p-0">

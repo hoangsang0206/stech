@@ -36,35 +36,24 @@
                             <p class="filter-content-header">Tình trạng</p>
 
                             <div class="display-grid columns-3">
-                                <label for="stt_in-stock" class="filter-content-item">
-                                    <span>Còn hàng</span>
-                                    <input type="radio" id="stt_in-stock" value="in-stock" name="stt_filter-status" hidden />
-                                </label>
 
-                                <label for="stt_out-of-stock-soon" class="filter-content-item">
-                                    <span>Sắp hết hàng</span>
-                                    <input type="radio" id="stt_out-of-stock-soon" value="out-of-stock-soon" name="stt_filter-status" hidden />
-                                </label>
+                                @await Html.PartialAsync("PartialViews/FilterItems/FilterRadio",
+                                         new Tuple<string, string, string, string>("stt_in-stock", "stt_filter-status", "in-stock", "Còn hàng"))
 
-                                <label for="stt_out-of-stock" class="filter-content-item">
-                                    <span>Hết hàng</span>
-                                    <input type="radio" id="stt_out-of-stock" value="out-of-stock" name="stt_filter-status" hidden />
-                                </label>
+                                @await Html.PartialAsync("PartialViews/FilterItems/FilterRadio",
+                                    new Tuple<string, string, string, string>("stt_out-of-stock-soon", "stt_filter-status", "out-of-stock-soon", "Sắp hết hàng"))
 
-                                <label for="stt_inactive" class="filter-content-item">
-                                    <span>Chưa kích hoạt</span>
-                                    <input type="radio" id="stt_inactive" value="inactive" name="stt_filter-status" hidden />
-                                </label>
+                                @await Html.PartialAsync("PartialViews/FilterItems/FilterRadio", 
+                                    new Tuple<string, string, string, string>("stt_out-of-stock", "stt_filter-status", "out-of-stock", "Hết hàng"))
 
-                                <label for="stt_activated" class="filter-content-item">
-                                    <span>Đã kích hoạt</span>
-                                    <input type="radio" id="stt_activated" value="activated" name="stt_filter-status" hidden />
-                                </label>
+                                @await Html.PartialAsync("PartialViews/FilterItems/FilterRadio",
+                                    new Tuple<string, string, string, string>("stt_inactive", "stt_filter-status", "inactive", "Chưa kích hoạt"))
 
-                                <label for="stt_deleted" class="filter-content-item">
-                                    <span>Đã xóa</span>
-                                    <input type="radio" id="stt_deleted" value="deleted" name="stt_filter-status" hidden />
-                                </label>
+                                @await Html.PartialAsync("PartialViews/FilterItems/FilterRadio",
+                                    new Tuple<string, string, string, string>("stt_activated", "stt_filter-status", "activated", "Đã kích hoạt"))
+
+                                @await Html.PartialAsync("PartialViews/FilterItems/FilterRadio",
+                                    new Tuple<string, string, string, string>("stt_deleted", "stt_filter-status", "deleted", "Đã xóa"))
 
                                 <input type="radio" value="" id="stt_filter-status-all" name="stt_filter-status" hidden />
                             </div>
@@ -78,10 +67,8 @@
                             <div class="display-grid columns-4">
                                 @foreach (Category category in categories)
                                 {
-                                    <label for="cate_@category.CategoryId" class="filter-content-item">
-                                        <span>@category.CategoryName</span>
-                                        <input type="checkbox" id="cate_@category.CategoryId" value="@category.CategoryId" name="filter-category" hidden />
-                                    </label>
+                                    @await Html.PartialAsync("PartialViews/FilterItems/FilterCheckbox",
+                                             new Tuple<string, string, string, string>($"cate_{category.CategoryId}", "filter-category", category.CategoryId, category.CategoryName))
                                 }
                             </div>
                         </div>
@@ -92,24 +79,15 @@
                             <div class="display-grid columns-4">
                                 @foreach (Brand brand in brands)
                                 {
-                                    <label for="brand_@brand.BrandId" class="filter-content-item">
-                                        <span>@brand.BrandName</span>
-                                        <input type="checkbox" id="brand_@brand.BrandId" value="@brand.BrandId" name="filter-brand" hidden />
-                                    </label>
+                                    @await Html.PartialAsync("PartialViews/FilterItems/FilterCheckbox",
+                                             new Tuple<string, string, string, string>($"brand_{brand.BrandId}", "filter-brand", brand.BrandId, brand.BrandName))
                                 }
                             </div>
                         </div>
                     </div>
 
-                    <div class="filter-action-wrapper">
-                        <button class="filter-cancel-action page-btn">
-                            <span>BỎ CHỌN</span>
-                        </button>
+                    @await Html.PartialAsync("PartialViews/FilterItems/FilterActions")
 
-                        <button class="filter-submit-action page-btn btn-blue">
-                            <span>LỌC SẢN PHẨM</span>
-                        </button>
-                    </div>
                 </div>
             </div>
 
@@ -121,15 +99,8 @@
                 <div class="filter-contents">
 
 
-                    <div class="filter-action-wrapper">
-                        <button class="filter-cancel-action page-btn">
-                            <span>BỎ CHỌN</span>
-                        </button>
+                    @await Html.PartialAsync("PartialViews/FilterItems/FilterActions")
 
-                        <button class="filter-submit-action page-btn btn-blue">
-                            <span>LỌC SẢN PHẨM</span>
-                        </button>
-                    </div>
                 </div>
             </div>
 
@@ -142,22 +113,13 @@
                     <div class="display-grid columns-3">
                         @foreach (Category category in categories)
                         {
-                            <label for="f_cate_@category.CategoryId" class="filter-content-item">
-                                <span>@category.CategoryName</span>
-                                <input type="checkbox" id="f_cate_@category.CategoryId" value="@category.CategoryId" name="filter-category" hidden />
-                            </label>
+                            @await Html.PartialAsync("PartialViews/FilterItems/FilterCheckbox",
+                                     new Tuple<string, string, string, string>($"f_cate_{category.CategoryId}", "filter-category", category.CategoryId, category.CategoryName))
                         }
                     </div>
 
-                    <div class="filter-action-wrapper">
-                        <button class="filter-cancel-action page-btn">
-                            <span>BỎ CHỌN</span>
-                        </button>
+                    @await Html.PartialAsync("PartialViews/FilterItems/FilterActions")
 
-                        <button class="filter-submit-action page-btn btn-blue">
-                            <span>LỌC SẢN PHẨM</span>
-                        </button>
-                    </div>
                 </div>
             </div>
 
@@ -170,22 +132,13 @@
                     <div class="display-grid columns-4">
                         @foreach (Brand brand in brands)
                         {
-                            <label for="f_brand_@brand.BrandId" class="filter-content-item">
-                                <span>@brand.BrandName</span>
-                                <input type="checkbox" id="f_brand_@brand.BrandId" value="@brand.BrandId" name="filter-brand" hidden />
-                            </label>
+                            @await Html.PartialAsync("PartialViews/FilterItems/FilterCheckbox",
+                                     new Tuple<string, string, string, string>($"f_brand_{brand.BrandId}", "filter-brand", brand.BrandId, brand.BrandName))
                         }
                     </div>
 
-                    <div class="filter-action-wrapper">
-                        <button class="filter-cancel-action page-btn">
-                            <span>BỎ CHỌN</span>
-                        </button>
+                    @await Html.PartialAsync("PartialViews/FilterItems/FilterActions")
 
-                        <button class="filter-submit-action page-btn btn-blue">
-                            <span>LỌC SẢN PHẨM</span>
-                        </button>
-                    </div>
                 </div>
             </div>
 
@@ -196,48 +149,29 @@
 
                 <div class="filter-contents">
                     <div class="display-grid columns-2">
-                        <label for="in-stock" class="filter-content-item">
-                            <span>Còn hàng</span>
-                            <input type="radio" id="in-stock" value="in-stock" name="filter-status" hidden />
-                        </label>
+                        @await Html.PartialAsync("PartialViews/FilterItems/FilterRadio",
+                                 new Tuple<string, string, string, string>("in-stock", "filter-status", "in-stock", "Còn hàng"))
 
-                        <label for="out-of-stock-soon" class="filter-content-item">
-                            <span>Sắp hết hàng</span>
-                            <input type="radio" id="out-of-stock-soon" value="out-of-stock-soon" name="filter-status" hidden />
-                        </label>
+                        @await Html.PartialAsync("PartialViews/FilterItems/FilterRadio",
+                                 new Tuple<string, string, string, string>("out-of-stock-soon", "filter-status", "out-of-stock-soon", "Sắp hết hàng"))
 
-                        <label for="out-of-stock" class="filter-content-item">
-                            <span>Hết hàng</span>
-                            <input type="radio" id="out-of-stock" value="out-of-stock" name="filter-status" hidden />
-                        </label>
+                        @await Html.PartialAsync("PartialViews/FilterItems/FilterRadio",
+                                 new Tuple<string, string, string, string>("out-of-stock", "filter-status", "out-of-stock", "Hết hàng"))
 
-                        <label for="inactive" class="filter-content-item">
-                            <span>Chưa kích hoạt</span>
-                            <input type="radio" id="inactive" value="inactive" name="filter-status" hidden />
-                        </label>
+                        @await Html.PartialAsync("PartialViews/FilterItems/FilterRadio",
+                                 new Tuple<string, string, string, string>("inactive", "filter-status", "inactive", "Chưa kích hoạt"))
 
-                        <label for="activated" class="filter-content-item">
-                            <span>Đã kích hoạt</span>
-                            <input type="radio" id="activated" value="activated" name="filter-status" hidden />
-                        </label>
+                        @await Html.PartialAsync("PartialViews/FilterItems/FilterRadio",
+                                 new Tuple<string, string, string, string>("activated", "filter-status", "activated", "Đã kích hoạt"))
 
-                        <label for="deleted" class="filter-content-item">
-                            <span>Đã xóa</span>
-                            <input type="radio" id="deleted" value="deleted" name="filter-status" hidden />
-                        </label>
+                        @await Html.PartialAsync("PartialViews/FilterItems/FilterRadio",
+                                 new Tuple<string, string, string, string>("deleted", "filter-status", "deleted", "Đã xóa"))
 
                         <input type="radio" value="" id="filter-status-all" name="filter-status" hidden />
                     </div>
 
-                    <div class="filter-action-wrapper">
-                        <button class="filter-cancel-action page-btn">
-                            <span>BỎ CHỌN</span>
-                        </button>
+                    @await Html.PartialAsync("PartialViews/FilterItems/FilterActions")
 
-                        <button class="filter-submit-action page-btn btn-blue">
-                            <span>LỌC SẢN PHẨM</span>
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -378,10 +312,6 @@
     @await Html.PartialAsync("PartialViews/_Pagination", new Tuple<int, int>(ViewBag.CurrentPage, ViewBag.TotalPages))
 
 </section>
-
-@section Styles {
-    @* <link href="~/admin/css/products.css" rel="stylesheet" /> *@
-}
 
 @section Scripts {
     <script src="~/admin/js/products.js"></script>

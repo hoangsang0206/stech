@@ -140,7 +140,7 @@ $(document).on('change', 'input[name="search-order-product"]', function () {
 
         $.ajax({
             type: 'GET',
-            url: `/api/admin/products/1/${product_id}?warehouseId=${warehouse_id}`,
+            url: `/api/admin/products/1/${product_id}/${warehouse_id}`,
             success: (response) => {
                 if (response.status) {
                     const product = response.data;

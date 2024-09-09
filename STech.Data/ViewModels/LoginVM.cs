@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace STech.Data.ViewModels
 {
@@ -19,5 +14,7 @@ namespace STech.Data.ViewModels
         public string Password { get; set; } = null!;
 
         public string? ReturnUrl { get; set; }
+
+        public string? CaptchaResponse { get; set; }
     }
 }

@@ -707,6 +707,7 @@ $('.register form').submit(function (e) {
     const password = $(this).find('#RegPassword').val();
     const confirmPassword = $(this).find('#ConfirmPassword').val();
     const email = $(this).find('#Email').val();
+    const captchaResponse = $(this).find('input[name="cf-turnstile-response"]').val();
 
     if (!userName || !password || !confirmPassword || !email) {
         return;
@@ -723,7 +724,8 @@ $('.register form').submit(function (e) {
             RegPassword: password,
             ConfirmPassword: confirmPassword,
             Email: email,
-            ReturnUrl: window.location.href
+            ReturnUrl: window.location.href,
+            CaptchaResponse: captchaResponse
         }),
         success: (response) => {
             if (!response.status) {
@@ -747,6 +749,7 @@ $('.login form').submit(function (e) {
     e.preventDefault();
     const userName = $(this).find('#UserName').val();
     const password = $(this).find('#Password').val();
+    const captchaResponse = $(this).find('input[name="cf-turnstile-response"]').val();
 
     if (!userName || !password) {
         return
@@ -762,7 +765,8 @@ $('.login form').submit(function (e) {
         data: JSON.stringify({
             UserName: userName,
             Password: password,
-            ReturnUrl: window.location.href
+            ReturnUrl: window.location.href,
+            CaptchaResponse: captchaResponse
         }),
         success: (response) => {
             if (response.status) {
@@ -807,3 +811,13 @@ $('.login-info-logout, .account-sidebar-logout').click(() => {
         }
     });
 })
+
+
+//turnstile callback
+function loginCaptchaCompleted(token) {
+    $('.login .form-submit-btn').prop('disabled', false);
+}
+
+function registerCaptchaCompleted(token) {
+    $('.register .form-submit-btn').prop('disabled', false);
+}

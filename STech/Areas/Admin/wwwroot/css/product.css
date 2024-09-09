@@ -9,6 +9,10 @@
     background: #fff;
 }
 
+.ql-tooltip {
+    z-index: 22;
+}
+
 .click-delete-image {
     overflow: hidden;
     text-decoration: none;

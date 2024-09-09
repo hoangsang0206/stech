@@ -6,11 +6,11 @@ using STech.Data.ViewModels;
 using System.Security.Claims;
 using STech.Services;
 using Microsoft.AspNetCore.Authorization;
-using Azure.Storage.Blobs;
 using STech.Utils;
 using STech.Services.Services;
 using STech.Services.Utils;
-using System.Runtime.ConstrainedExecution;
+using STech.Config;
+using System.Text.Json;
 
 namespace STech.ApiControllers
 {
@@ -50,11 +50,49 @@ namespace STech.ApiControllers
             await HttpContext.SignInAsync(principal);
         }
 
+        private async Task<bool> VerifyCaptcha(string response)
+        {
+            string? ApiUrl = CloudflareTurnstile.ApiUrl;
+            string? SecretKey = CloudflareTurnstile.SecretKey;
+
+            using (HttpClient client = new HttpClient()) 
+            {
+                Dictionary<string, string?> formData = new Dictionary<string, string?>
+                {
+                    { "secret", SecretKey },
+                    { "response", response }
+                };
+
+                var apiResponse = await client.PostAsync(ApiUrl, new FormUrlEncodedContent(formData));
+                string responseString = await apiResponse.Content.ReadAsStringAsync();
+
+                if (apiResponse.IsSuccessStatusCode)
+                {
+                    CaptchaVerificationResponse? result = JsonSerializer.Deserialize<CaptchaVerificationResponse>(responseString);
+                    
+                    return result != null && result.success;
+                }
+
+            }
+
+            return false;
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginVM login)
         {
+            if (string.IsNullOrEmpty(login.CaptchaResponse))
+            {
+                return BadRequest();
+            }
+
             if (ModelState.IsValid)
             {
+                if (!await VerifyCaptcha(login.CaptchaResponse))
+                {
+                    return BadRequest();
+                }
+
                 User? user = await _userService.GetUser(login);
 
                 if (user == null || user.UserId == null)

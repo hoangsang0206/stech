@@ -16,6 +16,7 @@
                     </a>
                 </div>
             </li>
+
             <li>
                 <div class="sidebar-item @(ViewBag.ActiveSidebar == "orders" ? "active" : "")">
                     <a class="sidebar-link" href="/admin/orders">
@@ -47,6 +48,7 @@
                     </ul>
                 </div>
             </li>
+
             <li>
                 <div class="sidebar-item @(ViewBag.ActiveSidebar == "customers" ? "active" : "")">
                     <a class="sidebar-link" href="javascript:void(0)">
@@ -55,6 +57,7 @@
                     </a>
                 </div>
             </li>
+
             <li>
                 <div class="sidebar-item @(ViewBag.ActiveSidebar == "products" ? "active" : "")">
                     <a class="sidebar-link" href="/admin/products">
@@ -69,6 +72,9 @@
                             <a href="/admin/products/create">Thêm sản phẩm</a>
                         </li>
                         <li>
+                            <a href="/admin/products?status=out-of-stock-soon">Sản phẩm sắp hết hàng</a>
+                        </li>
+                        <li>
                             <a href="/admin/products?status=out-of-stock">Sản phẩm hết hàng</a>
                         </li>
                         <li>
@@ -80,25 +86,27 @@
                     </ul>
                 </div>
             </li>
+
             <li>
-                <div class="sidebar-item @(ViewBag.ActiveSidebar == "categories" ? "active" : "")">
-                    <a class="sidebar-link" href="javascript:void(0)">
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "categories-brands" ? "active" : "")">
+                    <div class="sidebar-link">
                         <i class="sidebar-icon fa-solid fa-table-list"></i>
                         <span class="sidebar-text">Danh mục/Hãng</span>
-                    </a>
+                    </div>
                     <i class="sidebar-arrow fa-solid fa-chevron-right"></i>
                 </div>
                 <div class="sidebar-expandation">
                     <ul>
                         <li>
-                            <a href="javascript:">Danh sách danh mục</a>
+                            <a href="/admin/categories">Danh sách danh mục</a>
                         </li>
                         <li>
-                            <a href="javascript:">Danh sách hãng</a>
+                            <a href="/admin/brands">Danh sách hãng</a>
                         </li>
                     </ul>
                 </div>
             </li>
+
             <li>
                 <div class="sidebar-item @(ViewBag.ActiveSidebar == "warehouses" ? "active" : "")">
                     <a class="sidebar-link" href="javascript:void(0)">
@@ -121,6 +129,7 @@
                     </ul>
                 </div>
             </li>
+
             <li>
                 <div class="sidebar-item @(ViewBag.ActiveSidebar == "sales" ? "active" : "")">
                     <a class="sidebar-link" href="javascript:void(0)">
@@ -129,6 +138,7 @@
                     </a>
                 </div>
             </li>
+
             <li>
                 <div class="sidebar-item @(ViewBag.ActiveSidebar == "employees" ? "active" : "")">
                     <a class="sidebar-link" href="javascript:void(0)">
@@ -137,6 +147,7 @@
                     </a>
                 </div>
             </li>
+
             <li>
                 <div class="sidebar-item @(ViewBag.ActiveSidebar == "reports" ? "active" : "")">
                     <a class="sidebar-link" href="javascript:void(0)">
@@ -145,6 +156,39 @@
                     </a>
                 </div>
             </li>
+
+            <li>
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "reports" ? "active" : "")">
+                    <a class="sidebar-link" href="javascript:void(0)">
+                        <i class="sidebar-icon fa-regular fa-comments"></i>
+                        <span class="sidebar-text">Chat</span>
+                    </a>
+                </div>
+            </li>
+
+            <li>
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "reports" ? "active" : "")">
+                    <a class="sidebar-link" href="javascript:void(0)">
+                        <i class="sidebar-icon fa-solid fa-globe"></i>
+                        <span class="sidebar-text">Website</span>
+                    </a>
+                    <i class="sidebar-arrow fa-solid fa-chevron-right"></i>
+                </div>
+                <div class="sidebar-expandation">
+                    <ul>
+                        <li>
+                            <a href="javascript:">Logo</a>
+                        </li>
+                        <li>
+                            <a href="javascript:">Menu</a>
+                        </li>
+                        <li>
+                            <a href="javascript:">Banner</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
             <li>
                 <div class="sidebar-item @(ViewBag.ActiveSidebar == "others" ? "active" : "")">
                     <a class="sidebar-link" href="javascript:void(0)">
@@ -152,6 +196,16 @@
                         <span class="sidebar-text">Khác</span>
                     </a>
                     <i class="sidebar-arrow fa-solid fa-chevron-right"></i>
+                </div>
+                <div class="sidebar-expandation">
+                    <ul>
+                        <li>
+                            <a href="javascript:">Thông tin cửa hàng</a>
+                        </li>
+                        <li>
+                            <a href="javascript:">Danh sách chi nhánh</a>
+                        </li>
+                    </ul>
                 </div>
             </li>
         </ul>

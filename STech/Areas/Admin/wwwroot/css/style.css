@@ -849,6 +849,7 @@ button:disabled {
     padding: 0.3rem 0.5rem;
     border-radius: var(--radius);
     white-space: nowrap;
+    text-decoration: none;
 }
 
     .page-table-btn:hover, .page-btn:hover {

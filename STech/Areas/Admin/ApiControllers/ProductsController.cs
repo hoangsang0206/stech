@@ -1,7 +1,6 @@
 ﻿using Azure.Storage.Blobs.Models;
 using Azure;
 using HtmlAgilityPack;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
 using STech.Data.ViewModels;
@@ -68,7 +67,7 @@ namespace STech.Areas.Admin.ApiControllers
             });
         }
 
-        [HttpGet("1/{id}")]
+        [HttpGet("1/{id}/{warehouseId?}")]
         public async Task<IActionResult> GetProduct(string id, string? warehouseId)
         {
             Product? product = !string.IsNullOrEmpty(warehouseId)

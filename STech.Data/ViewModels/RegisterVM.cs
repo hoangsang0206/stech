@@ -31,5 +31,7 @@ namespace STech.Data.ViewModels
         public string ConfirmPassword { get; set; } = null!;
 
         public string? ReturnUrl { get; set; }
+
+        public string? CaptchaResponse { get; set; }
     }
 }
