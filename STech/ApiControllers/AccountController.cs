@@ -18,7 +18,6 @@ namespace STech.ApiControllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly string[] ALLOWED_IMAGE_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
         private readonly long MAX_FILE_LENGTH = 5 * 1024 * 1024;
         private readonly IUserService _userService;
         private readonly AddressService _addressService;
@@ -83,7 +82,11 @@ namespace STech.ApiControllers
         {
             if (string.IsNullOrEmpty(login.CaptchaResponse))
             {
-                return BadRequest();
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Vui lòng xác nhận bạn không phải là robot"
+                });
             }
 
             if (ModelState.IsValid)
@@ -276,7 +279,7 @@ namespace STech.ApiControllers
                 return BadRequest();
             }
 
-            if (!ALLOWED_IMAGE_EXTENSIONS.Contains(Path.GetExtension(file.FileName).ToLower()))
+            if (!ImageUtils.CheckImageExtension(Path.GetExtension(file.FileName).ToLower()))
             {
                 return Ok(new ApiResponse
                 {

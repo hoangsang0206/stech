@@ -51,6 +51,12 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<ProductAttribute> ProductAttributes { get; set; }
 
+    public virtual DbSet<ProductGroup> ProductGroups { get; set; }
+
+    public virtual DbSet<ProductGroupItem> ProductGroupItems { get; set; }
+
+    public virtual DbSet<ProductGroupType> ProductGroupTypes { get; set; }
+
     public virtual DbSet<ProductImage> ProductImages { get; set; }
 
     public virtual DbSet<ProductSpecification> ProductSpecifications { get; set; }
@@ -66,6 +72,10 @@ public partial class StechDbContext : DbContext
     public virtual DbSet<ReviewReply> ReviewReplies { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<Sale> Sales { get; set; }
+
+    public virtual DbSet<SaleProduct> SaleProducts { get; set; }
 
     public virtual DbSet<Slider> Sliders { get; set; }
 
@@ -302,6 +312,9 @@ public partial class StechDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.Cost).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.SaleId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.Invoice).WithMany(p => p.InvoiceDetails)
                 .HasForeignKey(d => d.InvoiceId)
@@ -312,6 +325,10 @@ public partial class StechDbContext : DbContext
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Invoice_Product");
+
+            entity.HasOne(d => d.Sale).WithMany(p => p.InvoiceDetails)
+                .HasForeignKey(d => d.SaleId)
+                .HasConstraintName("FK_InvoiceProduct_Sale");
         });
 
         modelBuilder.Entity<InvoiceStatus>(entity =>
@@ -463,6 +480,60 @@ public partial class StechDbContext : DbContext
                 .HasConstraintName("FK_Attr_Product");
         });
 
+        modelBuilder.Entity<ProductGroup>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__ProductG__3214EC0706C83E36");
+
+            entity.Property(e => e.BackgroundColor)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValue("#ffffff");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.GroupName).HasMaxLength(100);
+            entity.Property(e => e.GroupTypeId)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.HeaderTextColor)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValue("#000000");
+
+            entity.HasOne(d => d.GroupType).WithMany(p => p.ProductGroups)
+                .HasForeignKey(d => d.GroupTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PGroup_PGroupType");
+        });
+
+        modelBuilder.Entity<ProductGroupItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__ProductG__3214EC07EBE2DBB4");
+
+            entity.Property(e => e.ProductId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Group).WithMany(p => p.ProductGroupItems)
+                .HasForeignKey(d => d.GroupId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PGroupItem_Group");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductGroupItems)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PGroupItem_Product");
+        });
+
+        modelBuilder.Entity<ProductGroupType>(entity =>
+        {
+            entity.HasKey(e => e.TypeId).HasName("PK__ProductG__516F03B59FC4CF41");
+
+            entity.Property(e => e.TypeId)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.TypeName).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<ProductImage>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__ProductI__3214EC07AFDDDCF3");
@@ -589,6 +660,50 @@ public partial class StechDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.RoleName).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<Sale>(entity =>
+        {
+            entity.HasKey(e => e.SaleId).HasName("PK__Sales__1EE3C3FF724B7144");
+
+            entity.Property(e => e.SaleId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.BackgroundColor)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValue("#ffffff");
+            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
+            entity.Property(e => e.HeaderTextColor)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValue("#000000");
+            entity.Property(e => e.SaleName).HasMaxLength(100);
+            entity.Property(e => e.StartDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<SaleProduct>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SaleProd__3214EC0738C48EC2");
+
+            entity.Property(e => e.ProductId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.SaleId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.SalePrice).HasColumnType("decimal(18, 0)");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.SaleProducts)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SaleProduct_Product");
+
+            entity.HasOne(d => d.Sale).WithMany(p => p.SaleProducts)
+                .HasForeignKey(d => d.SaleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_SaleProduct_Sale");
         });
 
         modelBuilder.Entity<Slider>(entity =>

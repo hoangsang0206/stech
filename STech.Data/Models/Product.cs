@@ -50,6 +50,12 @@ public partial class Product
     public virtual ICollection<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();
 
     [JsonIgnore]
+    public virtual ICollection<SaleProduct> SaleProducts { get; set; } = new List<SaleProduct>();
+
+    [JsonIgnore]
+    public virtual ICollection<ProductGroupItem> ProductGroupItems { get; set; } = new List<ProductGroupItem>();
+
+    [JsonIgnore]
     public virtual ICollection<UserCart> UserCarts { get; set; } = new List<UserCart>();
 
     [JsonIgnore]

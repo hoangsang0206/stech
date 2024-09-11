@@ -1,9 +1,4 @@
 ﻿using STech.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace STech.Services
 {
@@ -13,5 +8,9 @@ namespace STech.Services
         Task<IEnumerable<Category>> GetRandomWithProducts(int numCategories, int numProducts);
         Task<(IEnumerable<Category>, int)> GetAllWithProducts(string? sort_by, int page = 1);
         Task<Category?> GetOne(string id);
+
+        Task<bool> Create(Category category);
+        Task<bool> Update(Category category);
+        Task<bool> Delete(string id);
     }
 }

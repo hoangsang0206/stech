@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
 using STech.Data.ViewModels;
+using STech.Filters;
 using STech.Services;
 using STech.Services.Services;
 
 namespace STech.Areas.Admin.ApiControllers
 {
+    [AdminAuthorize]
     [Route("api/admin/[controller]")]
     [ApiController]
     public class CustomersController : ControllerBase

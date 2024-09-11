@@ -7,7 +7,7 @@
 
 <section class="page-wrapper">
     <div>
-        <div>
+        <div class="mb-3">
             <a href="javascript:" class="page-btn btn-border-only click-add-brand">
                 <i class="fa-solid fa-plus"></i>
                 <span>Thêm</span>
@@ -64,10 +64,10 @@
                                     </td>
                                     <td>
                                         <div class="d-flex gap-1 align-items-center justify-content-end">
-                                            <button class="page-table-btn btn-lightblue edit-brand" data-category="@brand.BrandId">
+                                            <button class="page-table-btn btn-lightblue edit-brand" data-brand="@brand.BrandId">
                                                 <i class="fa-regular fa-pen-to-square"></i>
                                             </button>
-                                            <button class="page-table-btn btn-red delete-brand" data-product="@brand.BrandId">
+                                            <button class="page-table-btn btn-red delete-brand" data-brand="@brand.BrandId">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </div>
@@ -84,3 +84,9 @@
         </div>
     </div>
 </section>
+
+@await Html.PartialAsync("PartialViews/Form_Brand")
+
+@section Scripts {
+    <script src="~/admin/js/brands.js"></script>
+}

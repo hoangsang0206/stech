@@ -14,8 +14,13 @@ public partial class InvoiceDetail
 
     public int Quantity { get; set; }
 
+    public string? SaleId { get; set; }
+
     [JsonIgnore]
     public virtual Invoice Invoice { get; set; } = null!;
 
     public virtual Product Product { get; set; } = null!;
+
+    [JsonIgnore]
+    public virtual Sale? Sale { get; set; }
 }

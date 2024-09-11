@@ -167,7 +167,7 @@ namespace STech.Services.Services
         public async Task<bool> CheckIsPurchased(string userId, string productId)
         {
             Invoice? invoice = await _context.Invoices
-                .Where(i => i.UserId == userId && i.InvoiceDetails.Any(d => d.ProductId == productId))
+                .Where(i => i.UserId == userId && i.IsCompleted && i.InvoiceDetails.Any(d => d.ProductId == productId))
                 .FirstOrDefaultAsync();
 
             return invoice != null;

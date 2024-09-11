@@ -36,5 +36,29 @@ namespace STech.Services.Services
         {
             return await _context.Brands.FindAsync(id);
         }
+
+        public async Task<bool> Create(Brand brand)
+        {
+            await _context.Brands.AddAsync(brand);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> Update(Brand brand)
+        {
+            _context.Brands.Update(brand);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> Delete(string id)
+        {
+            Brand? brand = await GetById(id);
+            if(brand == null)
+            {
+                return false;
+            }
+
+            _context.Brands.Remove(brand);
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

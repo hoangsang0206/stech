@@ -65,5 +65,29 @@ namespace STech.Services.Services
         {
             return await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == id);
         }
+
+        public async Task<bool> Create(Category category)
+        {
+            await _context.Categories.AddAsync(category);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> Update(Category category)
+        {
+            _context.Categories.Update(category);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> Delete(string id)
+        {
+            Category? category = await _context.Categories.FindAsync(id);
+            if(category == null)
+            {
+                return false;
+            }
+
+            _context.Categories.Remove(category);
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

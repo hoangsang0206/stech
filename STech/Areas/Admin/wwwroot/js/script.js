@@ -170,6 +170,7 @@ const showForm = (form_container) => {
 
 const closeForm = (form_container) => {
     $(form_container).removeClass('show');
+    clearFormInput($(form_container).find('form'));
 }
 
 

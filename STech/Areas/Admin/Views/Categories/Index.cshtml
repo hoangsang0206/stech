@@ -7,7 +7,7 @@
 
 <section class="page-wrapper">
     <div>
-        <div>
+        <div class="mb-3">
             <a href="javascript:" class="page-btn btn-border-only click-add-category">
                 <i class="fa-solid fa-plus"></i>
                 <span>Thêm</span>
@@ -63,7 +63,7 @@
                                             <button class="page-table-btn btn-lightblue edit-category" data-category="@category.CategoryId">
                                                 <i class="fa-regular fa-pen-to-square"></i>
                                             </button>
-                                            <button class="page-table-btn btn-red delete-category" data-product="@category.CategoryId">
+                                            <button class="page-table-btn btn-red delete-category" data-category="@category.CategoryId">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </div>
@@ -81,10 +81,12 @@
     </div>
 </section>
 
+@await Html.PartialAsync("PartialViews/Form_Category")
+
 @section Styles {
     
 }
 
 @section Scripts {
-    
+    <script type="text/javascript" src="~/admin/js/categories.js"></script>
 }
