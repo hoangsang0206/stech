@@ -1,1 +1,1 @@
-### E-commerce using ASP.NET Core MVC
+### E-commerce website using ASP.NET Core MVC
