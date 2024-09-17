@@ -146,7 +146,7 @@ namespace STech.Areas.Admin.ApiControllers
                         InvoiceId = invoiceId,
                         ProductId = product.ProductId,
                         Quantity = p.Quantity,
-                        Cost = product.Price
+                        Cost = p.SalePrice ?? product.Price
                     });
                 }
             }
@@ -393,6 +393,13 @@ namespace STech.Areas.Admin.ApiControllers
                 if (customer == null || employee == null || paymentMethod == null)
                 {
                     return BadRequest();
+                }
+
+                if(order.WardCode == null || order.DistrictCode == null || order.CityCode == null)
+                {
+                    order.WardCode = customer.WardCode;
+                    order.DistrictCode = customer.DistrictCode;
+                    order.CityCode = customer.ProvinceCode;
                 }
 
                 AddressVM address = GetAddress(order.WardCode, order.DistrictCode, order.CityCode);

@@ -1290,7 +1290,7 @@ button:disabled {
     color: #0859ec;
 }
 
-.input-quantity {
+.order-item-input {
     width: 6rem;
     outline: none;
     border: 1px solid var(--border-color);

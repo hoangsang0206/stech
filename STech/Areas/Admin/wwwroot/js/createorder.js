@@ -106,14 +106,21 @@ const calculateTotalPrice = () => {
 
 const updateItemQuantity = (product, qty) => {
     const item_element = $(`.order-product-item[data-product="${product.productId}"]`);
+    const sale_price = item_element.find('.order-item-sale-price').val();
 
-    const price = parseFloat(product.price) * qty;
+    const price = () => {
+        if (sale_price) {
+            return parseFloat(sale_price) * qty;
+        }
+
+        return parseFloat(product.price) * qty
+    }
 
     item_element.data('qty', qty);
     item_element.find('.order-item-qty').val(qty);
     item_element.find('.order-item-total-price')
-        .data('item-total-price', price)
-        .text(`${price.toLocaleString('vi-VN')}đ`);
+        .data('item-total-price', price())
+        .text(`${price().toLocaleString('vi-VN')}đ`);
 
     calculateTotalPrice();
 }
@@ -154,27 +161,34 @@ $(document).on('change', 'input[name="search-order-product"]', function () {
 
                     if (!existed_product.length) {
                         $('.order-product-items').append(`
-                            <div class="row p-0 m-0 mt-2 order-product-item" data-product="${product.productId}" data-qty="1">
-                                <div class="col-1 p-0">${total_products + 1}</div>
-                                <div class="col-6 p-0 d-flex gap-2">
-                                    <div>
-                                        <img src="${product.productImages[0].imageSrc || '/admin/images/no-image.jpg'}" alt="" style="width: 3rem" />
+                            <tr class="order-product-item" data-product="${product.productId}" data-qty="1">
+                                <td class="py-2">${total_products + 1}</td>
+                                <td class="py-2 ps-2">
+                                    <div class="d-flex gap-1">
+                                        <div>
+                                            <img src="${product.productImages[0].imageSrc || '/admin/images/no-image.jpg'}" alt="" style="width: 3rem" />
+                                        </div>
+                                        <div class="pe-2 overflow-hidden">
+                                            <div class="text-overflow-1 fweight-500 w-100" style="font-size: .95rem; font-weight: 500">${product.productName}</div>
+                                            <div class="text-price" style="font-size: .95rem;">${product.price.toLocaleString('vi-VN')}đ</div>
+                                        </div>
                                     </div>
-                                    <div class="pe-2">
-                                        <div class="text-overflow-2 fweight-500 text-product-name">${product.productName}</div>
-                                        <div class="text-price">${product.price.toLocaleString('vi-VN')}đ</div>
+                                </td>
+                                <td class="py-2">
+                                    <input type="number" min="1" value="1" class="order-item-input input-quantity order-item-qty" data-product="${product.productId}" />
+                                </td>
+                                <td class="py-2">
+                                    <input style="width: 10rem" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${product.price}" class="order-item-input order-item-sale-price" data-product="${product.productId}" />
+                                </td>
+                                <td class="py-2">
+                                    <div class="d-flex justify-content-end align-items-center gap-3">
+                                        <div class="text-price order-item-total-price" style="font-size: .95rem;" data-item-total-price="${product.price}">${product.price.toLocaleString('vi-VN')}đ</div>
+                                        <a href="javascript:void(0)" class="text-decoration-none text-danger remove-order-item" data-product="${product.productId}">
+                                            <i class="fa-regular fa-trash-can"></i>
+                                        </a>
                                     </div>
-                                </div>
-                                <div class="col-2 p-0">
-                                    <input type="number" min="1" value="1" class="input-quantity order-item-qty" data-product="${product.productId}" />
-                                </div>
-                                <div class="col-3 p-0 d-flex justify-content-end gap-3">
-                                    <div class="text-price order-item-total-price" data-item-total-price="${product.price}">${product.price.toLocaleString('vi-VN')}đ</div>
-                                    <a href="javascript:void(0)" class="text-decoration-none text-danger remove-order-item" data-product="${product.productId}">
-                                        <i class="fa-regular fa-trash-can"></i>
-                                    </a>
-                                </div>
-                            </div>
+                                </td>
+                            </tr>
                         `);
                     } else {
                         let qty = parseInt(existed_product.data('qty') || 1) + 1;
@@ -229,6 +243,39 @@ $(document).on('blur', '.order-item-qty', function () {
             } else {
                 hideWebLoader(0);
                 showDialog('error', 'Không thể cập nhật số lượng', 'Không tìm thấy sản phẩm hoặc sản phẩm này trong kho');
+                removeItem(product_id);
+            }
+        },
+        error: () => {
+            hideWebLoader(0);
+            showErrorDialog();
+        }
+    })
+})
+
+$(document).on('blur', '.order-item-sale-price', function () {
+    const product_id = $(this).data('product');
+    const warehouse_id = $('.select-warehouse').find('.page-dropdown-btn').data('selected');
+
+    const qty_element = $(`.order-item-qty[data-product="${product_id}"]`);
+    let qty = parseInt($(qty_element).val() || 1);
+    if (qty < 1) {
+        qty = 1;
+        $(qty_element).val(qty);
+    }
+
+    showWebLoader();
+
+    $.ajax({
+        type: 'GET',
+        url: `/api/admin/products/1/${product_id}/${warehouse_id}`,
+        success: (response) => {
+            if (response.status) {
+                updateItemQuantity(response.data, qty);
+                hideWebLoader(300);
+            } else {
+                hideWebLoader(0);
+                showDialog('error', 'Không thể cập nhật giá', 'Không tìm thấy sản phẩm hoặc sản phẩm này trong kho');
                 removeItem(product_id);
             }
         },
@@ -427,12 +474,13 @@ $('.btn-create-order').click(function () {
 
     const note = $('#order-note').val() || null;
 
-    const product_elemets = $('.order-product-item').toArray();
-    const products = product_elemets.map(item => {
+    const product_elements = $('.order-product-item').toArray();
+    const products = product_elements.map(item => {
         const product_id = $(item).data('product');
-        const qty = $(item).data('qty');
+        const qty = $(item).find('.order-item-qty').val();
+        const sale_price = $(item).find('.order-item-sale-price').val() || null;
 
-        return { ProductId: product_id, Quantity: qty };
+        return { ProductId: product_id, Quantity: qty, SalePrice: sale_price };
     })
 
     if (!products.length) {
