@@ -2,7 +2,6 @@
 
 @{
     Product product = Model.Item1;
-    IEnumerable<Review> reviews = product.Reviews;
 
     List<Breadcrumb> breadcrumbs = Model.Item3;
 
@@ -16,24 +15,12 @@
 
     ViewData["Title"] = product.ProductName + " - STech";
 
-    double avgRating = 0;
-    if (reviews.Count() > 0)
-    {
-        avgRating = Math.Round(reviews.Average(r => r.Rating), 1);
-    }
-
-    int totalReviews = reviews.Count();
-
-    int total5Star = reviews.Count(r => r.Rating == 5);
-    int total4Star = reviews.Count(r => r.Rating == 4);
-    int total3Star = reviews.Count(r => r.Rating == 3);
-    int total2Star = reviews.Count(r => r.Rating == 2);
-    int total1Star = reviews.Count(r => r.Rating == 1);
+    bool isAuthenticated = User.Identity != null && User.Identity.IsAuthenticated;
 }
 
 @await Html.PartialAsync("PartialViews/Breadcrumb", breadcrumbs)
 
-<section class="product-detail">
+<section class="product-detail" data-product="@product.ProductId" data-authenticated="@(isAuthenticated ? 1 : 0)">
     <div class="container-fluid">
         <div class="row product-detail-box p-0">
             <div class="col-12 col-md-5 product-gallery">
@@ -262,8 +249,10 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="row p-0 mt-3">
+    <div class="container-fluid mt-3 p-0">
+        <div class="row p-0">
             <div class="col-12 m-0">
                 <div class="product-detail-box">
                     <div class="box-header">
@@ -276,37 +265,13 @@
                                 <div class="d-flex flex-column rating-summary">
                                     <div class="rating-star-summary d-flex gap-2 align-items-center">
                                         <i class="fa-solid fa-star"></i>
-                                        <span class="ms-2">@avgRating/5</span>
+                                        <span class="ms-2" id="avg-rating"></span>
                                     </div>
-                                    <span class="mt-3">@(totalReviews > 0 ? $"{totalReviews} đánh giá" : "Chưa có đánh giá")</span>
+                                    <span class="mt-3" id="total-reviews"></span>
                                 </div>
 
-                                <div class="overflow-x-auto">
-                                    <div class="rating-summary-item">
-                                        @await Html.PartialAsync("PartialViews/Review_StarGroup", 5)
-                                        <progress value="@(totalReviews > 0 ? ((double)total5Star / totalReviews) * 100 : 0)" max="100"></progress>
-                                        <span>@total5Star</span>
-                                    </div>
-                                    <div class="rating-summary-item">
-                                        @await Html.PartialAsync("PartialViews/Review_StarGroup", 4)
-                                        <progress value="@(totalReviews > 0 ? ((double)total4Star / totalReviews) * 100 : 0)" max="100"></progress>
-                                        <span>@total4Star</span>
-                                    </div>
-                                    <div class="rating-summary-item">
-                                        @await Html.PartialAsync("PartialViews/Review_StarGroup", 3)
-                                        <progress value="@(totalReviews > 0 ? ((double)total3Star / totalReviews) * 100 : 0)" max="100"></progress>
-                                        <span>@total3Star</span>
-                                    </div>
-                                    <div class="rating-summary-item">
-                                        @await Html.PartialAsync("PartialViews/Review_StarGroup", 2)
-                                        <progress value="@(totalReviews > 0 ? ((double)total2Star / totalReviews) * 100 : 0)" max="100"></progress>
-                                        <span>@total2Star</span>
-                                    </div>
-                                    <div class="rating-summary-item">
-                                        @await Html.PartialAsync("PartialViews/Review_StarGroup", 1)
-                                        <progress value="@(totalReviews > 0 ? ((double)total1Star / totalReviews) * 100 : 0)" max="100"></progress>
-                                        <span>@total1Star</span>
-                                    </div>
+                                <div class="overflow-x-auto" id="rating-summary">
+                                    
                                 </div>
                             </div>
 
@@ -320,17 +285,16 @@
                                         @await Html.PartialAsync("PartialViews/Review_StarGroup_Large")
                                     </div>
 
-                                    @if (totalReviews < 1)
-                                    {
+                                    <div class="let-review-firstly d-none">
                                         <small>Hãy là người đầu tiên đánh giá sản phẩm này.</small>
-                                    }
+                                    </div>                               
                                 </div>
                             </div>
 
                         </div>
 
                         <div class="mt-3">
-                            <div class="d-flex flex-wrap align-items-center gap-3">
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
                                 <div class="sort-reviews">
                                     <button class="filter-button">
                                         <i class="fa-solid fa-arrow-down-wide-short"></i>
@@ -338,37 +302,40 @@
                                     </button>
                                 </div>
 
-                                <div class="filter-reviews d-flex gap-3 align-items-center justify-content-end flex-grow-1">
-                                    <button class="filter-button" data-filter="5-star">
-                                        <i class="fa-solid fa-star"></i>
-                                        <span class="ms-2">5 sao</span>
-                                    </button>
-                                    <button class="filter-button" data-filter="4-star">
-                                        <i class="fa-solid fa-star"></i>
-                                        <span class="ms-2">4 sao</span>
-                                    </button>
-                                    <button class="filter-button" data-filter="3-star">
-                                        <i class="fa-solid fa-star"></i>
-                                        <span class="ms-2">3 sao</span>
-                                    </button>
-                                    <button class="filter-button" data-filter="2-star">
-                                        <i class="fa-solid fa-star"></i>
-                                        <span class="ms-2">2 sao</span>
-                                    </button>
-                                    <button class="filter-button" data-filter="1-star">
-                                        <i class="fa-solid fa-star"></i>
-                                        <span class="ms-2">1 sao</span>
-                                    </button>
+                                <div class="filter-reviews overflow-x-auto">
+                                    <div class="d-flex gap-3 align-items-center">
+                                        <button class="filter-button" data-filter="all">
+                                            <span>Tất cả</span>
+                                        </button>
+                                        <button class="filter-button" data-filter="5-stars">
+                                            <i class="fa-solid fa-star"></i>
+                                            <span class="ms-2">5 sao</span>
+                                        </button>
+                                        <button class="filter-button" data-filter="4-stars">
+                                            <i class="fa-solid fa-star"></i>
+                                            <span class="ms-2">4 sao</span>
+                                        </button>
+                                        <button class="filter-button" data-filter="3-stars">
+                                            <i class="fa-solid fa-star"></i>
+                                            <span class="ms-2">3 sao</span>
+                                        </button>
+                                        <button class="filter-button" data-filter="2-stars">
+                                            <i class="fa-solid fa-star"></i>
+                                            <span class="ms-2">2 sao</span>
+                                        </button>
+                                        <button class="filter-button" data-filter="1-star">
+                                            <i class="fa-solid fa-star"></i>
+                                            <span class="ms-2">1 sao</span>
+                                        </button>
+                                   </div>
                                 </div>
                             </div>
 
                             <div class="reviews-list mt-4">
-                                @foreach(Review review in reviews)
-                                {
-                                    @await Html.PartialAsync("PartialViews/Review", review)
-                                    <hr />
-                                }
+                            </div>
 
+                            <div class="mt-2">
+                                <a href="javascript:" class="text-load-more load-more-reviews" data-current-page="1"></a>
                             </div>
                         </div>
 

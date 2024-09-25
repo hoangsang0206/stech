@@ -626,6 +626,17 @@ ol > li[data-list="ordered"] {
     }
 
 
+.text-load-more {
+    font-weight: 600;
+    color: #787878;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.text-load-more:hover {
+    color: var(--primary-color);
+}
+
 /*For mobile -------------------------------------------*/
 @media screen and (max-width: 576px) {
     .add-to-cart-action {

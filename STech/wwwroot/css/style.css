@@ -1997,9 +1997,10 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
     background: none;
     padding: .5rem .7rem;
     font-weight: 500;
+    white-space: nowrap;
 }
 
-    .filter-button:hover {
+    .filter-button:hover, .filter-button.active {
         border-color: var(--primary-color);
         color: var(--primary-color);
     }

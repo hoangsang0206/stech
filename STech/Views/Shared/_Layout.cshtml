@@ -58,8 +58,11 @@
     @await Html.PartialAsync("PartialViews/BottomNavigation")
     @await Html.PartialAsync("PartialViews/HiddenContents")
 
-    @await Html.PartialAsync("PartialViews/Form_Login", new LoginVM())
-    @await Html.PartialAsync("PartialViews/Form_Register", new RegisterVM())
+    @if(User.Identity == null || !User.Identity.IsAuthenticated)
+    {
+        @await Html.PartialAsync("PartialViews/Form_Login", new LoginVM())
+        @await Html.PartialAsync("PartialViews/Form_Register", new RegisterVM())
+    }
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>

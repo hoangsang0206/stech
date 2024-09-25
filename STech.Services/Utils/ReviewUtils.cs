@@ -24,7 +24,7 @@ namespace STech.Services.Utils
             return replies.Skip((page - 1) * repliesPerPage).Take(repliesPerPage);
         }
 
-        public static IEnumerable<Review> Sort(this IEnumerable<Review> reviews, string sort_by)
+        public static IEnumerable<Review> Sort(this IEnumerable<Review> reviews, string? sort_by)
         {
             switch (sort_by)
             {
@@ -36,6 +36,31 @@ namespace STech.Services.Utils
                     return reviews.OrderByDescending(r => r.TotalLike);
                 case "most-disliked":
                     return reviews.OrderByDescending(r => r.TotalDislike);
+                default:
+                    return reviews;
+            }
+        }
+
+        public static IEnumerable<Review> Filter(this IEnumerable<Review> reviews, string? filter_by)
+        {
+            switch (filter_by)
+            {
+                case "purchased":
+                    return reviews.Where(r => r.IsPurchased == true);
+                case "not-purchased":
+                    return reviews.Where(r => r.IsPurchased != true);
+                case "with-images":
+                    return reviews.Where(r => r.ReviewImages.Count > 0);
+                case "5-stars":
+                    return reviews.Where(r => r.Rating == 5);
+                case "4-stars":
+                    return reviews.Where(r => r.Rating == 4);
+                case "3-stars":
+                    return reviews.Where(r => r.Rating == 3);
+                case "2-stars":
+                    return reviews.Where(r => r.Rating == 2);
+                case "1-star":
+                    return reviews.Where(r => r.Rating == 1);
                 default:
                     return reviews;
             }

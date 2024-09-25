@@ -181,17 +181,17 @@ const hideReplyForm = (form) => {
     $(form).removeClass('show');
 }
 
-$('.reply-review').not('.not-logged-in').click(function () {
+$(document).on('click', '.reply-review:not(.not-logged-in)', function () {
     showReplyForm(this);
 })
 
-$('.cancel-review-reply').click(function () {
+$(document).on('click', '.cancel-review-reply', function () {
     const form = $(this).closest('.review-reply-form');
     hideReplyForm(form);
     form.find('form')[0].reset();
 })
 
-$('.review-reply-form form').submit(function (e) {
+$(document).on('submit', '.review-reply-form form', function (e) {
     e.preventDefault();
 
     const review_id = $(this).data('review');
@@ -232,14 +232,344 @@ $('.review-reply-form form').submit(function (e) {
     })
 })
 
-const renderReviews = (reviews) => { 
 
+
+const formatDateTime = (date_str) => {
+    const date = new Date(date_str);
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
-const loadReviews = (sort_by, page) => { 
+const starGroupHTML = (star) => {
+    let stars = '';
+    for (let i = 1; i <= star; i++) {
+        stars += `<i class="fa-solid fa-star"></i>`;
+    }
 
+    for (let i = 1; i <= 5 - star; i++) {
+        stars += `<i class="fa-regular fa-star"></i>`;
+    }
+
+    return `
+         <div class="rating-star-group">
+            ${stars}
+         </div>
+    `;
+}
+
+const ratingSummaryItemHTML = (star, totalReviews, totalRatingStars) => {
+    return `
+         <div class="rating-summary-item">
+            ${starGroupHTML(star)}
+            <progress value="${totalReviews > 0 ? (parseFloat(totalRatingStars) / totalReviews) * 100 : 0}" max="100"></progress>
+            <span>${totalRatingStars}</span>
+        </div>
+    `;
+}
+
+const reviewReplyHTML = (reply) => {
+    const replyUser = reply.userReply;
+    const replierAvatar = replyUser?.avatar ?? "/images/user-no-image.svg";
+    const replierName = replyUser?.fullName ?? "Người dùng";
+
+    const isAuthenticated = parseInt($('.product-detail').data('authenticated') || 0);
+
+    return `
+        <div class="review-reply-item">
+            <div class="d-flex align-items-center gap-2">
+                <div class="review-avatar lazy-loading">
+                    <img lazy-src="${replierAvatar}" alt="" />
+                </div>
+                <strong>${replierName}</strong>
+                ${replyUser?.roleId === 'admin' ?
+                    `<span class="admin-badge">QTV</span>`
+                    : ''
+                }
+            </div>
+            <div class="mt-3">
+                <span>${reply.content}</span>
+            </div>
+            <div class="d-flex align-items-center gap-4 mt-3">
+                <a href="javascript:" class="d-flex align-items-center gap-1 reply-review ${!isAuthenticated ? 'not-logged-in' : ''}" data-review="${reply.id}">
+                    <i class="fa-regular fa-comment-dots"></i>
+                    <span>Phản hồi</span>
+                </a>
+
+                <span class="text-secondary review-time mt-1">${formatDateTime(reply.replyDate)}</span>
+            </div>
+        </div>
+    `;
+}
+
+const reviewReplyFormHTML = (reviewId) => {
+    return `
+        <div class="review-reply-form mt-3">
+            <form data-review="${reviewId}">
+                <div>
+                    <textarea style="border-radius: var(--radius); border: 1px solid var(--border-color); height: 4rem"
+                        class="w-100 p-3 review-reply-input"
+                        id="review-reply-@Model.ReviewId"
+                        placeholder="Viết phản hồi..." required></textarea>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="button" class="cancel-review-reply">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                    <button type="submit" class="submit-review-reply">
+                        <i class="fa-regular fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    `;
+}
+
+const reviewHTML = (review) => {
+    const reviewerUser = review.user;
+    const reviewerAvatar = reviewerUser?.avatar ?? "/images/user-no-image.svg";
+    const reviewerName = reviewerUser?.fullName ?? review.reviewerName ?? "Người dùng";
+
+    const rating = review.rating;
+
+    const reviewImages = review.reviewImages;
+    const reviewReplies = review.reviewReplies;
+
+    const isAuthenticated = parseInt($('.product-detail').data('authenticated') || 0);
+
+    return `
+        <div class="review-item">
+            <div class="review-item-main">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="review-avatar lazy-loading">
+                        <img lazy-src="${reviewerAvatar}" alt="" />
+                    </div>
+                    <strong>${reviewerName}</strong>
+                </div>
+
+                <div class="mt-2 d-flex align-items-center gap-3">
+
+                    ${starGroupHTML(rating)}
+
+                    <div>
+                        ${review.isPurchased === true ?
+                            `
+                                <div class="review-badge success">
+                                    <i class="fa-regular fa-circle-check"></i>
+                                    <span>Đã mua hàng</span>
+                                </div>
+                            `
+                            :
+                            `
+                                <div class="review-badge">
+                                    <span>Chưa mua hàng</span>
+                                </div>
+                            `
+                        }
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <span>${review.content}</span>
+                </div>
+
+                ${reviewImages.length ?
+                    `<div class="mt-3 d-flex gap-2">
+                        ${
+                            reviewImages.map((image) => {
+                                return `
+                                    <div class="review-image lazy-loading">
+                                        <img lazy-src="${image.imageUrl}" alt="" />
+                                    </div>
+                                `;
+                            }).join('')
+                        }
+                    </div>`
+                    : ''
+                }
+
+                <div class="d-flex align-items-center gap-4 mt-3 overflow-x-auto">
+                    <a href="javascript:" class="d-flex align-items-center gap-1 like-review ${!isAuthenticated ? 'not-logged-in' : ''}" data-review="${review.id}" data-like="${review.totalLike}">
+                        <i class="fa-regular fa-thumbs-up"></i>
+                        <span>${review.totalLike}</span>
+                    </a>
+                    <a href="javascript:" class="d-flex align-items-center gap-1 dislike-review ${!isAuthenticated ? 'not-logged-in' : ''}" data-review="${review.id}" data-dislike="${review.totaDislike}">
+                        <i class="fa-regular fa-thumbs-down"></i>
+                        <span>${review.totalDislike}</span>
+                    </a>
+
+                    <a href="javascript:" class="d-flex align-items-center gap-1 reply-review ${!isAuthenticated ? 'not-logged-in' : ''}" data-review="${review.id}">
+                        <i class="fa-regular fa-comment-dots"></i>
+                        <span>Phản hồi</span>
+                    </a>
+
+                    <span class="text-secondary review-time mt-1">${formatDateTime(review.createAt)}</span>
+                </div>
+
+            </div>
+
+            ${reviewReplies.length ?
+
+                `<div>
+                    <div class="review-replies" data-review="${review.id}">
+                        ${
+                            reviewReplies.map((reply) => {
+                                return reviewReplyHTML(reply);
+                            }).join('')
+                        }
+                    </div>
+                    <div class="mt-2">
+                        <a style="padding-left: 3rem" href="javascript:" class="text-load-more load-more-replies" data-current-page="1" data-review="${review.id}">Xem thêm phản hồi</a>
+                    </div>
+                </div>`
+
+                : ''
+
+            }
+
+            <div class="review-reply-form-container">
+                ${reviewReplyFormHTML(review.id)}
+            </div>
+
+        </div>
+    `;
+}
+
+let isUpdated = false;
+
+const updateRatingSummary = (totalReviews, overview) => {
+    isUpdated = true;
+
+    $('#avg-rating').html(`${overview.averageRating}/5`);
+    $('#total-reviews').html(totalReviews > 0 ? `${totalReviews} đánh giá` : 'Chưa có đánh giá')
+
+    if (totalReviews <= 0) {
+        $('.let-review-firstly').removeClass('d-none');
+    }
+
+    $('#rating-summary').empty();
+    $('#rating-summary').append(ratingSummaryItemHTML(5, totalReviews, overview.total5StarReviews));
+    $('#rating-summary').append(ratingSummaryItemHTML(4, totalReviews, overview.total4StarReviews));
+    $('#rating-summary').append(ratingSummaryItemHTML(3, totalReviews, overview.total3StarReviews));
+    $('#rating-summary').append(ratingSummaryItemHTML(2, totalReviews, overview.total2StarReviews));
+    $('#rating-summary').append(ratingSummaryItemHTML(1, totalReviews, overview.total1StarReviews));
+}
+
+const renderReviews = (data) => { 
+    const currentPage = data.currentPage;
+    const totalPages = data.totalPages;
+    const remainingReviews = data.remainingReviews;
+    const totalReviews = data.totalReviews;
+
+    const overview = data.reviewOverview;
+    const reviews = data.reviews;
+
+    if (!isUpdated) {
+        updateRatingSummary(totalReviews, overview);
+    }
+
+    reviews.map((review) => {
+        $('.reviews-list').append(reviewHTML(review) + '<hr />');
+    })
+
+    if (currentPage < totalPages) {
+        $('.load-more-reviews').removeClass('d-none').html(`Xem thêm đánh giá (${remainingReviews})`).data('current-page', currentPage);
+    } else {
+        $('.load-more-reviews').addClass('d-none').empty();
+    }
+
+    lazyLoading();
+}
+
+const loadReviews = (sort_by, filter_by, page) => { 
+    $.ajax({
+        type: 'GET',
+        url: '/api/reviews/get-reviews',
+        data: {
+            pId: $('.product-detail').data('product'),
+            sort_by: sort_by,
+            filter_by: filter_by,
+            page: page
+        },
+        success: (response) => { 
+            renderReviews(response.data);
+        },
+        error: () => { 
+            console.log("Cannot get reviews");
+        }
+    })
+}
+
+const renderReviewReplies = (data, reviewId) => {
+    const reviewReplies = data.reviewReplies;
+    const currentPage = data.currentPage;
+    const totalPages = data.totalPages;
+    const remainingReplies = data.remainingReplies;
+
+    if (currentPage < totalPages) {
+        $(`.load-more-replies[data-review="${reviewId}"]`).html(`Xem thêm phản hồi (${remainingReplies})`).data('current-page', currentPage);
+    } else {
+        $(`.load-more-replies[data-review="${reviewId}"]`).addClass('d-none').empty();
+    }
+
+    reviewReplies.map((reply) => {
+        $(`.review-replies[data-review="${reply.reviewId}"]`).append(reviewReplyHTML(reply));
+    })
+
+    lazyLoading();
+}
+
+const loadReviewReplies = (review_id, page) => {
+    $.ajax({
+        type: 'GET',
+        url: '/api/reviews/get-review-replies',
+        data: {
+            rId: review_id,
+            page: page
+        },
+        success: (response) => {
+            renderReviewReplies(response.data, review_id);
+        },
+        error: () => {
+            console.log("Cannot get review replies");
+        }
+    })
 }
 
 $(document).ready(() => { 
+    loadReviews(null, null, 1);
+})
 
+$(document).on('click', '.load-more-reviews', function () {
+    const nextPage = parseInt($(this).data('current-page') || 0) + 1;
+    const sort_by = $('.sort-reviews').data('selected-value');
+    const filter_by = $('.filter-reviews .filter-button.active').data('filter');
+
+    loadReviews(sort_by, filter_by, nextPage);
+})
+
+$('.filter-reviews .filter-button').not('.active').click(function () {
+    $('.filter-reviews .filter-button').removeClass('active');
+    $(this).addClass('active');
+
+    const filter_by = $(this).data('filter');
+    const sort_by = $('.sort-reviews').data('selected-value');
+    const page = parseInt($('.load-more-reviews').data('current-page') || 0);
+
+    $('.reviews-list').empty();
+    loadReviews(sort_by, filter_by, page);
+})
+
+$(document).on('click', '.load-more-replies', function () {
+    const review_id = $(this).data('review');
+    const page = parseInt($(this).data('current-page') || 0) + 1;
+
+    loadReviewReplies(review_id, page);
 })

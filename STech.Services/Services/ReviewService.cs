@@ -57,7 +57,8 @@ namespace STech.Services.Services
                 .ToListAsync();
         }
 
-        public async Task<(IEnumerable<Review>, ReviewOverview, int, int)> GetReviews(string productId, int reviewsPerPage, int numOfReplies, string? sort_by, int page = 1)
+        public async Task<(IEnumerable<Review>, ReviewOverview, int, int, int)> GetReviews(string productId, int reviewsPerPage, int numOfReplies, 
+            string? sort_by, string? filter_by, int page = 1)
         {
             IEnumerable<Review> reviews = await _context.Reviews
                 .Where(r => r.ProductId == productId)
@@ -99,16 +100,21 @@ namespace STech.Services.Services
                 .ToListAsync();
 
             int totalReviews = reviews.Count();
-            int totalPages = (int)Math.Ceiling((double)totalReviews / reviewsPerPage);
-            double averageRating = reviews.Average(r => r.Rating);
+            double averageRating = totalReviews > 0 ? Math.Round(reviews.Average(r => r.Rating), 1) : 0;
             int total5Star = reviews.Count(r => r.Rating == 5);
             int total4Star = reviews.Count(r => r.Rating == 4);
             int total3Star = reviews.Count(r => r.Rating == 3);
             int total2Star = reviews.Count(r => r.Rating == 2);
             int total1Star = reviews.Count(r => r.Rating == 1);
+
+            reviews = reviews.Filter(filter_by).Sort(sort_by);
+            int filteredCount = reviews.Count();
+            int totalPages = (int)Math.Ceiling((double)filteredCount / reviewsPerPage);
+
+            int remainingReviews = filteredCount - reviewsPerPage * (page > totalPages ? totalPages : page);
                 
             return (
-                reviews.Paginate(page, reviewsPerPage), 
+                reviews.Paginate(page, reviewsPerPage).Filter(filter_by).Sort(sort_by), 
                 new ReviewOverview
                 {
                     AverageRating = averageRating,
@@ -119,7 +125,8 @@ namespace STech.Services.Services
                     Total1StarReviews = total1Star,
                 },
                 totalPages,
-                totalReviews
+                totalReviews,
+                remainingReviews > 0 ? remainingReviews : 0
             );
         }
 
@@ -164,7 +171,7 @@ namespace STech.Services.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<(IEnumerable<ReviewReply>, int, int)> GetReviewReplies(int reviewId, int page, int repliesPerPage)
+        public async Task<(IEnumerable<ReviewReply>, int, int, int)> GetReviewReplies(int reviewId, int page, int repliesPerPage)
         {
             IEnumerable<ReviewReply> replies = await _context.ReviewReplies
                 .Where(rp => rp.ReviewId == reviewId)
@@ -187,8 +194,9 @@ namespace STech.Services.Services
 
             int totalReplies = replies.Count();
             int totalPages = (int)Math.Ceiling((double)totalReplies / repliesPerPage);
+            int remainingReplies = totalReplies - (page > totalPages ? totalPages : page) * repliesPerPage;
 
-            return (replies.Paginate(page, repliesPerPage), totalPages, totalReplies);
+            return (replies.Paginate(page, repliesPerPage), totalPages, totalReplies, remainingReplies > 0 ? remainingReplies : 0);
         }
 
 
