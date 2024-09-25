@@ -34,6 +34,7 @@ public partial class Employee
 
     public string ProvinceCode { get; set; } = null!;
 
+    [JsonIgnore]
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
     [JsonIgnore]

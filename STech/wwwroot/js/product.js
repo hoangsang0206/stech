@@ -231,3 +231,15 @@ $('.review-reply-form form').submit(function (e) {
         }
     })
 })
+
+const renderReviews = (reviews) => { 
+
+}
+
+const loadReviews = (sort_by, page) => { 
+
+}
+
+$(document).ready(() => { 
+
+})

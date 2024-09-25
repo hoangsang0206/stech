@@ -250,4 +250,6 @@ $('.search-orders').submit(function (e) {
 
 $(document).on('click', '.view-order', function () {
     showForm('.order-detail-wrapper');
+
+
 })

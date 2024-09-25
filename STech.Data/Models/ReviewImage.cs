@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -11,5 +12,6 @@ public partial class ReviewImage
 
     public string ImageUrl { get; set; } = null!;
 
+    [JsonIgnore]
     public virtual Review Review { get; set; } = null!;
 }

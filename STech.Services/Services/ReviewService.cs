@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
+using STech.Data.ViewModels;
 using STech.Services;
 using STech.Services.Utils;
 
@@ -50,13 +51,13 @@ namespace STech.Services.Services
                             Avatar = rp.UserReply.Avatar,
                             RoleId = rp.UserReply.RoleId,
                         },
-                    }).OrderByDescending(rp => rp.ReplyDate).ToList(),
+                    }).OrderBy(rp => rp.ReplyDate).ToList(),
                 })
                 .OrderByDescending(r => r.CreateAt)
                 .ToListAsync();
         }
 
-        public async Task<(IEnumerable<Review>, int, int)> GetReviews(string productId, string? sort_by, int page = 1, int reviewsPerPage = 5)
+        public async Task<(IEnumerable<Review>, ReviewOverview, int, int)> GetReviews(string productId, int reviewsPerPage, int numOfReplies, string? sort_by, int page = 1)
         {
             IEnumerable<Review> reviews = await _context.Reviews
                 .Where(r => r.ProductId == productId)
@@ -79,7 +80,7 @@ namespace STech.Services.Services
                         RoleId = r.User.RoleId,
                     },
                     ReviewImages = r.ReviewImages,
-                    ReviewReplies = r.ReviewReplies.Select(rp => new ReviewReply
+                    ReviewReplies = r.ReviewReplies.Take(numOfReplies).Select(rp => new ReviewReply
                     {
                         Id = rp.Id,
                         ReviewId = rp.ReviewId,
@@ -92,15 +93,34 @@ namespace STech.Services.Services
                             Avatar = rp.UserReply.Avatar,
                             RoleId = rp.UserReply.RoleId,
                         },
-                    }).OrderByDescending(rp => rp.ReplyDate).ToList(),
+                    }).OrderBy(rp => rp.ReplyDate).ToList(),
                 })
                 .OrderByDescending(r => r.CreateAt)
                 .ToListAsync();
 
             int totalReviews = reviews.Count();
             int totalPages = (int)Math.Ceiling((double)totalReviews / reviewsPerPage);
-
-            return (reviews.Paginate(page, reviewsPerPage), totalPages, totalReviews);
+            double averageRating = reviews.Average(r => r.Rating);
+            int total5Star = reviews.Count(r => r.Rating == 5);
+            int total4Star = reviews.Count(r => r.Rating == 4);
+            int total3Star = reviews.Count(r => r.Rating == 3);
+            int total2Star = reviews.Count(r => r.Rating == 2);
+            int total1Star = reviews.Count(r => r.Rating == 1);
+                
+            return (
+                reviews.Paginate(page, reviewsPerPage), 
+                new ReviewOverview
+                {
+                    AverageRating = averageRating,
+                    Total5StarReviews = total5Star,
+                    Total4StarReviews = total4Star,
+                    Total3StarReviews = total3Star,
+                    Total2StarReviews = total2Star,
+                    Total1StarReviews = total1Star,
+                },
+                totalPages,
+                totalReviews
+            );
         }
 
         public async Task<Review?> GetReview(int reviewId)
@@ -139,9 +159,36 @@ namespace STech.Services.Services
                             Avatar = rp.UserReply.Avatar,
                             RoleId = rp.UserReply.RoleId,
                         },
-                    }).OrderByDescending(rp => rp.ReplyDate).ToList(),
+                    }).OrderBy(rp => rp.ReplyDate).ToList(),
                 })
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<(IEnumerable<ReviewReply>, int, int)> GetReviewReplies(int reviewId, int page, int repliesPerPage)
+        {
+            IEnumerable<ReviewReply> replies = await _context.ReviewReplies
+                .Where(rp => rp.ReviewId == reviewId)
+                .Select(rp => new ReviewReply
+                {
+                    Id = rp.Id,
+                    ReviewId = rp.ReviewId,
+                    Content = rp.Content,
+                    ReplyDate = rp.ReplyDate,
+                    UserReply = new User
+                    {
+                        UserId = rp.UserReply.UserId,
+                        FullName = rp.UserReply.FullName,
+                        Avatar = rp.UserReply.Avatar,
+                        RoleId = rp.UserReply.RoleId,
+                    },
+                })
+                .OrderBy(rp => rp.ReplyDate)
+                .ToListAsync();
+
+            int totalReplies = replies.Count();
+            int totalPages = (int)Math.Ceiling((double)totalReplies / repliesPerPage);
+
+            return (replies.Paginate(page, repliesPerPage), totalPages, totalReplies);
         }
 
 

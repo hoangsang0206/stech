@@ -31,6 +31,12 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<Employee> Employees { get; set; }
 
+    public virtual DbSet<Function> Functions { get; set; }
+
+    public virtual DbSet<FunctionAuthorization> FunctionAuthorizations { get; set; }
+
+    public virtual DbSet<FunctionCategory> FunctionCategories { get; set; }
+
     public virtual DbSet<Invoice> Invoices { get; set; }
 
     public virtual DbSet<InvoiceDetail> InvoiceDetails { get; set; }
@@ -49,8 +55,6 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<Product> Products { get; set; }
 
-    public virtual DbSet<ProductAttribute> ProductAttributes { get; set; }
-
     public virtual DbSet<ProductGroup> ProductGroups { get; set; }
 
     public virtual DbSet<ProductGroupItem> ProductGroupItems { get; set; }
@@ -61,13 +65,13 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<ProductSpecification> ProductSpecifications { get; set; }
 
-    public virtual DbSet<ProductVariant> ProductVariants { get; set; }
-
-    public virtual DbSet<ProductVariantImage> ProductVariantImages { get; set; }
-
     public virtual DbSet<Review> Reviews { get; set; }
 
+    public virtual DbSet<ReviewDislike> ReviewDislikes { get; set; }
+
     public virtual DbSet<ReviewImage> ReviewImages { get; set; }
+
+    public virtual DbSet<ReviewLike> ReviewLikes { get; set; }
 
     public virtual DbSet<ReviewReply> ReviewReplies { get; set; }
 
@@ -238,6 +242,58 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.WardCode)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<Function>(entity =>
+        {
+            entity.HasKey(e => e.FuncId).HasName("PK__Function__834DE213D6905D6E");
+
+            entity.Property(e => e.FuncId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.FuncCateId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.FuncName).HasMaxLength(100);
+
+            entity.HasOne(d => d.FuncCate).WithMany(p => p.Functions)
+                .HasForeignKey(d => d.FuncCateId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Function_FuncCategory");
+        });
+
+        modelBuilder.Entity<FunctionAuthorization>(entity =>
+        {
+            entity.HasKey(e => new { e.RoleId, e.FuncId }).HasName("PK__Function__A2CE103BDD323FDC");
+
+            entity.ToTable("FunctionAuthorization");
+
+            entity.Property(e => e.RoleId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.FuncId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Func).WithMany(p => p.FunctionAuthorizations)
+                .HasForeignKey(d => d.FuncId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FuncAuth_Func");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.FunctionAuthorizations)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FuncAuth_Role");
+        });
+
+        modelBuilder.Entity<FunctionCategory>(entity =>
+        {
+            entity.HasKey(e => e.FuncCateId).HasName("PK__Function__91338DED631CF284");
+
+            entity.Property(e => e.FuncCateId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.FuncCateName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Invoice>(entity =>
@@ -465,21 +521,6 @@ public partial class StechDbContext : DbContext
                 .HasConstraintName("FK_SP_DM");
         });
 
-        modelBuilder.Entity<ProductAttribute>(entity =>
-        {
-            entity.HasKey(e => e.AttrId).HasName("PK__ProductA__0108334FB35EA8B3");
-
-            entity.Property(e => e.AttrName).HasMaxLength(30);
-            entity.Property(e => e.ProductId)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-
-            entity.HasOne(d => d.Product).WithMany(p => p.ProductAttributes)
-                .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Attr_Product");
-        });
-
         modelBuilder.Entity<ProductGroup>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__ProductG__3214EC0706C83E36");
@@ -567,32 +608,6 @@ public partial class StechDbContext : DbContext
                 .HasConstraintName("FK_Spec_SpecFilter");
         });
 
-        modelBuilder.Entity<ProductVariant>(entity =>
-        {
-            entity.HasKey(e => e.VariantId).HasName("PK__ProductV__0EA23384A025F861");
-
-            entity.Property(e => e.AttrValue).HasMaxLength(100);
-            entity.Property(e => e.ExtraPrice).HasColumnType("decimal(18, 0)");
-            entity.Property(e => e.ProductId)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-
-            entity.HasOne(d => d.Product).WithMany(p => p.ProductVariants)
-                .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Variant_Product");
-        });
-
-        modelBuilder.Entity<ProductVariantImage>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__ProductV__3214EC07F8C67B87");
-
-            entity.HasOne(d => d.Variant).WithMany(p => p.ProductVariantImages)
-                .HasForeignKey(d => d.VariantId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_VImg_ProductVariant");
-        });
-
         modelBuilder.Entity<Review>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Reviews__3214EC0763D41091");
@@ -621,6 +636,26 @@ public partial class StechDbContext : DbContext
                 .HasConstraintName("FK_Review_User");
         });
 
+        modelBuilder.Entity<ReviewDislike>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__ReviewDi__3214EC07E0731CED");
+
+            entity.Property(e => e.LikeDate).HasColumnType("datetime");
+            entity.Property(e => e.UserId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Review).WithMany(p => p.ReviewDislikes)
+                .HasForeignKey(d => d.ReviewId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ReviewDislike_Review");
+
+            entity.HasOne(d => d.User).WithMany(p => p.ReviewDislikes)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ReviewDislike_User");
+        });
+
         modelBuilder.Entity<ReviewImage>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__ReviewIm__3214EC0717D64B44");
@@ -629,6 +664,26 @@ public partial class StechDbContext : DbContext
                 .HasForeignKey(d => d.ReviewId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_RVImages_Review");
+        });
+
+        modelBuilder.Entity<ReviewLike>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__ReviewLi__3214EC0799937885");
+
+            entity.Property(e => e.LikeDate).HasColumnType("datetime");
+            entity.Property(e => e.UserId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Review).WithMany(p => p.ReviewLikes)
+                .HasForeignKey(d => d.ReviewId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ReviewLike_Review");
+
+            entity.HasOne(d => d.User).WithMany(p => p.ReviewLikes)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ReviewLike_User");
         });
 
         modelBuilder.Entity<ReviewReply>(entity =>

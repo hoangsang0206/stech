@@ -14,6 +14,16 @@ namespace STech.Services.Utils
             return reviews.Skip((page - 1) * reviewsPerpage).Take(reviewsPerpage);
         }
 
+        public static IEnumerable<ReviewReply> Paginate(this IEnumerable<ReviewReply> replies, int page, int repliesPerPage)
+        {
+            if(page <= 0)
+            {
+                page = 1;
+            }
+
+            return replies.Skip((page - 1) * repliesPerPage).Take(repliesPerPage);
+        }
+
         public static IEnumerable<Review> Sort(this IEnumerable<Review> reviews, string sort_by)
         {
             switch (sort_by)

@@ -58,5 +58,11 @@ public partial class User
     public virtual ICollection<ReviewReply> ReviewReplies { get; set; } = new List<ReviewReply>();
 
     [JsonIgnore]
+    public virtual ICollection<ReviewDislike> ReviewDislikes { get; set; } = new List<ReviewDislike>();
+
+    [JsonIgnore]
+    public virtual ICollection<ReviewLike> ReviewLikes { get; set; } = new List<ReviewLike>();
+
+    [JsonIgnore]
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

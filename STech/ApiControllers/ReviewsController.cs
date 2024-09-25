@@ -14,6 +14,8 @@ namespace STech.ApiControllers
     public class ReviewsController : ControllerBase
     {
         private readonly string[] ALLOWED_IMAGE_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+        private readonly int REVIEWS_PER_PAGE = 7;
+        private readonly int REVIEW_REPLIES_PER_PAGE = 5;
 
         private readonly IUserService _userService;
         private readonly IProductService _productService;
@@ -31,6 +33,59 @@ namespace STech.ApiControllers
             _azureService = azureService;
         }
 
+        #region GET
+
+        [HttpGet("get-reviews")]
+        public async Task<IActionResult> GetProductReviews(string pId, string? sort_by, int page = 1)
+        {
+            if(page <= 0)
+            {
+                page = 1;
+            }
+
+            var (reviews, reviewOverview, totalPages, totalReviews) = await _reviewService.GetReviews(pId, REVIEWS_PER_PAGE, REVIEW_REPLIES_PER_PAGE, sort_by, page);
+            int remainingReviews = totalReviews - (page - 1) * REVIEWS_PER_PAGE;
+
+            return Ok(new ApiResponse
+            {
+                Status = true,
+                Data = new
+                {
+                    reviews = reviews,
+                    currentPage = page,
+                    totalPages = totalPages,
+                    totalReviews = totalReviews,
+                    remainingReviews = remainingReviews
+                }
+            });
+        }
+
+        [HttpGet("get-review-replies")]
+        public async Task<IActionResult> GetReviewReplies(int rId, int page = 1)
+        {
+            if (page <= 0)
+            {
+                page = 1;
+            }
+
+            var (reviewReplies, totalPages, totalReplies) = await _reviewService.GetReviewReplies(rId, page, REVIEW_REPLIES_PER_PAGE);
+            int remainingReplies = totalReplies - (page - 1) * REVIEW_REPLIES_PER_PAGE;
+
+            return Ok(new ApiResponse
+            {
+                Status = true,
+                Data = new
+                {
+                    reviewReplies = reviewReplies,
+                    currentPage = page,
+                    totalPages = totalPages,
+                    totalReplies = totalReplies,
+                    remainingReplies = remainingReplies
+                }
+            });
+        }
+
+        #endregion GET
 
 
         #region POST

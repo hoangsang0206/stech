@@ -592,3 +592,58 @@ $('.search-products').submit(function (e) {
         }
     })
 })
+
+
+let typingTimeout;
+$('.search-products #search').keyup(function () {
+    clearTimeout(typingTimeout);
+
+    typingTimeout = setTimeout(() => {
+        const search_result_element = $('.search-result-wrapper');
+        const query = $(this).val();
+        if (query) {
+            const warehouse = getSelectedWarehouses() || null;
+            $.ajax({
+                type: 'GET',
+                url: `/api/admin/products/search/${query}`,
+                data: {
+                    warehouse_id: warehouse
+                },
+                success: (response) => {
+                    search_result_element.addClass('show');
+                    search_result_element.find('.search-result-list').empty();
+                    if (response.data.products.length) {
+                        response.data.products.forEach((product) => {
+                            const imageUrl = product.productImages[0]?.imageSrc || '/admin/images/no-image.jpg';
+                            search_result_element.find('.search-result-list').append(`
+                                <div class="search-result-item">
+                                    <a href="/admin/products/1/${product.productId}" class="d-flex align-items-center gap-2 text-decoration-none">
+                                        <div>
+                                            <img src="${imageUrl}" alt="" style="width: 2.5rem" />
+                                        </div>
+                                        <div>
+                                            <span class="text-product-name text-overflow-2" style="font-size: .8rem">${product.productName}</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            `)
+                        })
+                    } else {
+                        search_result_element.find('.search-result-list').append(`
+                            <div class="w-100 d-flex align-items-center justify-content-center" style="height: 10rem">
+                                <span>Không tìm thấy sản phẩm</span>
+                            </div>
+                        `)
+                    }
+                },
+                error: () => {
+                   
+                }
+            })
+        }
+        else {
+            search_result_element.removeClass('show');
+            search_result_element.find('.search-result-list').empty();
+        }
+    }, 500)
+})

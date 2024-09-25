@@ -531,23 +531,6 @@ ol > li[data-list="ordered"] {
     margin-top: 1rem;
 }
 
-.filter-reviews {
-
-}
-
-    .filter-reviews button {
-        border-radius: var(--radius);
-        border: 1px solid var(--border-color);
-        background: none;
-        padding: .5rem .7rem;
-        font-weight: 500;
-    }
-
-        .filter-reviews button:hover {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-
 .rating-star-group-large .fa-star {
     font-size: 2.5rem;
     color: #cfcfcf;

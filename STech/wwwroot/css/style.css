@@ -1991,6 +1991,19 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
     left: calc(100% - 1.3rem + 3px);
 }
 
+.filter-button {
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    background: none;
+    padding: .5rem .7rem;
+    font-weight: 500;
+}
+
+    .filter-button:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
 /*---Responsive --------------------------------------------------------------*/
 /* For mobile (width < 768px) ---------------------------------------------*/
 @media screen and (max-width: 767px) {
