@@ -2005,6 +2005,18 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
         color: var(--primary-color);
     }
 
+
+.page-content-loader {
+    width: 100%;
+    height: 10rem;
+    border-radius: var(--radius);
+    background: #fff;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+}
+
+
 /*---Responsive --------------------------------------------------------------*/
 /* For mobile (width < 768px) ---------------------------------------------*/
 @media screen and (max-width: 767px) {

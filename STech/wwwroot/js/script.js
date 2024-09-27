@@ -181,6 +181,28 @@ function hideWebLoader() {
     }, 1000);
 }
 
+const showPageContentLoader = (container, loader_height) => {
+    const element = `
+        <div class="page-content-loader" style="height: ${loader_height}rem">
+            <div class="loader-box">
+                <svg class="loader-container" style="width: 30px; height: 30px; --uib-color: #000" viewBox="0 0 40 40" height="40" width="40">
+                    <circle class="track" cx="20" cy="20" r="17.5" pathlength="100" stroke-width="4px" fill="none" />
+                    <circle class="car" cx="20" cy="20" r="17.5" pathlength="100" stroke-width="4px" fill="none" />
+                </svg>
+            </div>
+        </div>  
+    `;
+
+    $(container).html(element);
+}
+
+const hidePageContentLoader = (container, timeout_ms) => {
+    const timeout = setTimeout(() => {
+        $(container).empty();
+        clearTimeout(timeout);
+    }, timeout_ms)
+}
+
 //Show scroll to top button ----------------------------------------------------------
 const scrollTopBtn = document.querySelector(".to-top-btn");
 

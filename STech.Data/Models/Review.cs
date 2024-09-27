@@ -29,6 +29,12 @@ public partial class Review
 
     public bool? IsPurchased { get; set; }
 
+    public bool? IsProceeded { get; set; }
+
+    public bool? IsLiked { get; set; }
+
+    public bool? IsDisliked { get; set; }
+
     public virtual Product Product { get; set; } = null!;
 
     public virtual ICollection<ReviewImage> ReviewImages { get; set; } = new List<ReviewImage>();

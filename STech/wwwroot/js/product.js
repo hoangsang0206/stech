@@ -396,12 +396,12 @@ const reviewHTML = (review) => {
                 }
 
                 <div class="d-flex align-items-center gap-4 mt-3 overflow-x-auto">
-                    <a href="javascript:" class="d-flex align-items-center gap-1 like-review ${!isAuthenticated ? 'not-logged-in' : ''}" data-review="${review.id}" data-like="${review.totalLike}">
-                        <i class="fa-regular fa-thumbs-up"></i>
+                    <a href="javascript:" class="d-flex align-items-center gap-1 ${!review.isLiked ? 'like-review' : ''} ${!isAuthenticated ? 'not-logged-in' : ''} text-decoration-none" data-review="${review.id}" data-like="${review.totalLike}">
+                        ${review.isLiked ? '<i class="fa-solid fa-thumbs-up"></i>' : '<i class="fa-regular fa-thumbs-up"></i>'}
                         <span>${review.totalLike}</span>
                     </a>
-                    <a href="javascript:" class="d-flex align-items-center gap-1 dislike-review ${!isAuthenticated ? 'not-logged-in' : ''}" data-review="${review.id}" data-dislike="${review.totaDislike}">
-                        <i class="fa-regular fa-thumbs-down"></i>
+                    <a href="javascript:" class="d-flex align-items-center gap-1 ${!review.isDisliked ? 'dislike-review' : ''} ${!isAuthenticated ? 'not-logged-in' : ''} text-decoration-none" data-review="${review.id}" data-dislike="${review.totalDislike}">
+                        ${review.isDisliked ? '<i class="fa-solid fa-thumbs-down"></i>' : ' <i class="fa-regular fa-thumbs-down"></i>'}
                         <span>${review.totalDislike}</span>
                     </a>
 
@@ -488,7 +488,13 @@ const renderReviews = (data) => {
     lazyLoading();
 }
 
+
+let first_load = true;
 const loadReviews = (sort_by, filter_by, page) => { 
+    if (first_load) {
+        showPageContentLoader('.reviews-list', 15); //15rem
+    }
+
     $.ajax({
         type: 'GET',
         url: '/api/reviews/get-reviews',
@@ -499,12 +505,22 @@ const loadReviews = (sort_by, filter_by, page) => {
             page: page
         },
         success: (response) => { 
-            renderReviews(response.data);
+            if (first_load) {
+                const timeout_ms = 500; //ms
+                hidePageContentLoader('.reviews-list', timeout_ms);
+                const content_timeout = setTimeout(() => {
+                    renderReviews(response.data);
+                    clearTimeout(content_timeout);
+                }, timeout_ms);
+            } else {
+                renderReviews(response.data);
+            }
         },
         error: () => { 
             console.log("Cannot get reviews");
         }
     })
+
 }
 
 const renderReviewReplies = (data, reviewId) => {
@@ -544,6 +560,7 @@ const loadReviewReplies = (review_id, page) => {
 }
 
 $(document).ready(() => { 
+    first_load = true;
     loadReviews(null, null, 1);
 })
 
@@ -552,6 +569,7 @@ $(document).on('click', '.load-more-reviews', function () {
     const sort_by = $('.sort-reviews').data('selected-value');
     const filter_by = $('.filter-reviews .filter-button.active').data('filter');
 
+    first_load = false;
     loadReviews(sort_by, filter_by, nextPage);
 })
 
@@ -563,6 +581,7 @@ $('.filter-reviews .filter-button').not('.active').click(function () {
     const sort_by = $('.sort-reviews').data('selected-value');
     const page = parseInt($('.load-more-reviews').data('current-page') || 0);
 
+    first_load = true;
     $('.reviews-list').empty();
     loadReviews(sort_by, filter_by, page);
 })
@@ -572,4 +591,48 @@ $(document).on('click', '.load-more-replies', function () {
     const page = parseInt($(this).data('current-page') || 0) + 1;
 
     loadReviewReplies(review_id, page);
+})
+
+
+
+$(document).on('click', '.like-review:not(.not-logged-in)', function () {
+    const review_id = $(this).data('review');
+    const total_like = $(this).data('like');
+
+    $.ajax({
+        type: 'POST',
+        url: `/api/reviews/post-like?rId=${review_id}`,
+        success: (response) => {
+            if (response.status) {
+                $(this).data('like', total_like + 1);
+                $(this).html(`
+                    <i class="fa-solid fa-thumbs-up"></i>
+                    <span>${total_like + 1}</span>
+                `);
+                $(this).removeClass('like-review');
+
+                
+            }
+        }
+    })
+})
+
+$(document).on('click', '.dislike-review:not(.not-logged-in)', function () {
+    const review_id = $(this).data('review');
+    const total_dislike = $(this).data('dislike');
+
+    $.ajax({
+        type: 'POST',
+        url: `/api/reviews/post-dislike?rId=${review_id}`,
+        success: (response) => {
+            if (response.status) {
+                $(this).data('dislike', total_dislike + 1);
+                $(this).html(`
+                    <i class="fa-solid fa-thumbs-down"></i>
+                    <span>${total_dislike + 1}</span>
+                `);
+                $(this).removeClass('dislike-review');
+            }
+        }
+    })
 })

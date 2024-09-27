@@ -44,8 +44,10 @@ namespace STech.ApiControllers
                 page = 1;
             }
 
+            string? userId = User.Identity?.IsAuthenticated == true ? User.FindFirstValue("Id") : null;
+
             var (reviews, reviewOverview, totalPages, totalReviews, remainingReviews) = await _reviewService.GetReviews(pId, REVIEWS_PER_PAGE, REVIEW_REPLIES_PER_PAGE,
-                sort_by, filter_by, page);
+                sort_by, filter_by, userId, page);
 
             return Ok(new ApiResponse
             {
@@ -116,6 +118,7 @@ namespace STech.ApiControllers
                 Rating = review.Rating,
                 Content = review.Content,
                 CreateAt = DateTime.Now,
+                IsProceeded = false,
                 TotalLike = 0,
                 TotalDislike = 0
             };
@@ -230,6 +233,56 @@ namespace STech.ApiControllers
             {
                 Status = result,
                 Message = result ? "Phản hồi của bạn đã được gửi thành công" : "Không thể gửi phản hồi"
+            });
+        }
+
+        [Authorize]
+        [HttpPost("post-like")]
+        public async Task<IActionResult> PostLike(int rId)
+        {
+            string? userId = User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            User? user = await _userService.GetUserById(userId);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            bool result = await _reviewService.LikeReview(rId, userId);
+
+            return Ok(new ApiResponse
+            {
+                Status = result,
+                Message = result ? "Đã thích đánh giá" : "Không thể thích đánh giá"
+            });
+        }
+
+        [Authorize]
+        [HttpPost("post-dislike")]
+        public async Task<IActionResult> PostDisike(int rId)
+        {
+            string? userId = User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            User? user = await _userService.GetUserById(userId);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            bool result = await _reviewService.DislikeReview(rId, userId);
+
+            return Ok(new ApiResponse
+            {
+                Status = result,
+                Message = result ? "Đã không thích đánh giá" : "Không thể không thích đánh giá"
             });
         }
 
