@@ -1,27 +1,25 @@
 ### E-commerce website using ASP.NET Core MVC
-## :page_with_curl: Tổng quan các chức năng
+## :page_with_curl: Functions overview
 ### :globe_with_meridians: Client
-| STT | Chức năng |
+| No | Function |
 | -- | -- |
-| 1 | Đăng nhập, đăng ký tài khoản |
-| 2 | Quản lý thông tin tài khoản |
-| 3 | Tìm kiếm, lọc sản phẩm, xem chi tiết sản phẩm |
-| 4 | Quản lý giỏ hàng |
-| 5 | Đặt hàng (1 sản phẩm hoặc cả giỏ hàng) |
-| 6 | Tra cứu đơn hàng |
-| 7 | Xem lịch sử mua hàng, tải hóa đơn |
-| 8 | Đánh giá, nhận xét sản phẩm |
+| 1 | Login, register |
+| 2 | Manage user's account |
+| 3 | Search, filter products, view product detail|
+| 4 | Manage user shopping cart |
+| 5 | Place order (1 product or entire shopping cart) |
+| 6 | Track order |
+| 7 | View order history, print invoice |
+| 8 | Comment, review product |
 
 ### :computer: Management
-| STT | Chức năng |
+| No | Function |
 | -- | -- |
-| 1 | Quản lý danh mục sản phẩm |
-| 2 | Quản lý hãng sản xuất |
-| 3 | Quản lý sản phẩm |
-| 4 | Quản lý đơn hàng |
-| 5 | Quản lý khách hàng |
-| 6 | Quản lý tài khoản trên website |
-| 7 | Quản lý kho hàng |
-| 8 | Quản lý nhập kho |
-| 9 | Quản lý xuất kho |
-| 10 | Báo cáo, thống kê |
+| 1 | Manage categories |
+| 2 | Manage manufacturers |
+| 3 | Manage products|
+| 4 | Manage orders |
+| 5 | Manage customers |
+| 6 | Manage user account |
+| 7 | Manage warehouses |
+| 8 | Reports, statistics |
