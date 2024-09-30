@@ -52,13 +52,55 @@ namespace STech.Services.Services
 
         public async Task<(IEnumerable<Review>, int)> GetReviewsWithProduct(int reviewsPerPage, string? sort_by, string? status, string? filter_by, int page = 1)
         {
-            bool isApproved = status == "approved";
+            IEnumerable<Review> reviews = await _context.Reviews
+                .Include(r => r.Product)
+                .SelectReviewWithProduct()
+                .ToListAsync();
+
+            if(!string.IsNullOrEmpty(status))
+            {
+                if(status == "approved")
+                {
+                    reviews = reviews.Where(r => r.IsProceeded == true);
+                } 
+                else if(status == "not-approved")
+                {
+                    reviews = reviews.Where(r => r.IsProceeded != true);
+                }
+            }
+
+            reviews = reviews.Paginate(page, reviewsPerPage).Filter(filter_by).Sort(sort_by);
+
+            int totalReviews = reviews.Count();
+            int totalPages = (int)Math.Ceiling((double)totalReviews / reviewsPerPage);
+
+            return (
+                reviews,
+                totalPages
+            );
+        }
+
+        public async Task<(IEnumerable<Review>, int)> SearchReviewsWithProduct(string query, int reviewsPerPage, string? sort_by, string? status, string? filter_by, int page = 1)
+        {
+            string[] keywords = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             IEnumerable<Review> reviews = await _context.Reviews
-                .Where(r => r.IsProceeded == isApproved)
+                .Where(r => r.Product.ProductId == query || keywords.All(key => r.Product.ProductName.Contains(key)))
                 .Include(r => r.Product)
-                .SelectReview()
+                .SelectReviewWithProduct()
                 .ToListAsync();
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                if (status == "approved")
+                {
+                    reviews = reviews.Where(r => r.IsProceeded == true);
+                }
+                else if (status == "not-approved")
+                {
+                    reviews = reviews.Where(r => r.IsProceeded != true);
+                }
+            }
 
             reviews = reviews.Paginate(page, reviewsPerPage).Filter(filter_by).Sort(sort_by);
 
@@ -102,7 +144,6 @@ namespace STech.Services.Services
         {
             return await _context.Reviews
                 .Where(r => r.Id == reviewId)
-                .SelectReview()
                 .FirstOrDefaultAsync();
         }
 
@@ -144,15 +185,7 @@ namespace STech.Services.Services
 
         public async Task<bool> UpdateReview(Review review)
         {
-            Review? oldReview = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == review.Id);
-            if (oldReview == null)
-            {
-                return false;
-            }
-
-            oldReview.TotalLike = review.TotalLike;
-            oldReview.TotalDislike = review.TotalDislike;
-
+            _context.Reviews.Update(review);
             return await _context.SaveChangesAsync() > 0;
         }
 

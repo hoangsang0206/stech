@@ -1,1 +1,39 @@
-﻿
+﻿.fa-star {
+    color: #ff8a00;
+}
+
+.review-item {
+    border-radius: var(--radius);
+    box-shadow: var(--box-shadow);
+    padding: .7rem;
+}
+
+.review-item:not(:first-child) {
+    margin-top: .8rem;
+}
+
+.rating-star-group {
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+}
+
+.reviewer-avatar {
+    border-radius: 50%;
+    overflow: hidden;
+    aspect-ratio: 1;
+}
+
+.reviewer-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.review-product-name {
+    color: #000;
+}
+
+.review-product-name:hover {
+    color: var(--primary-color);
+}

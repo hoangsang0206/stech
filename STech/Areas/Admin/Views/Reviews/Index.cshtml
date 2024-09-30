@@ -81,9 +81,86 @@
         @await Html.PartialAsync("PartialViews/_PageSearchForm", new Tuple<string, string, string>("search-reviews", "Tìm đánh giá theo mã/tên sản phẩm", ViewBag.SearchValue))
     </div>
 
-    <div class="review-list">
+    <div class="review-list mt-3">
+        @foreach(Review review in Model)
+        {
+            <div class="review-item">
+                <div class="mb-1 d-flex gap-3 align-items-center justify-content-between">
+                    <div class="d-flex gap-3 align-items-center">
+                        @{
+                            string reviewerName = review.User?.FullName ?? review.ReviewerName ?? "Không có tên";
+                            string reviewerAvatar = review.User?.Avatar ?? "/admin/images/user-no-image.svg";
 
+                            <div class="reviewer-avatar">
+                                <img src="@reviewerAvatar" style="width: 2rem" alt="" />
+                            </div>
+
+                            <span class="fweight-500">
+                                @reviewerName
+                            </span>
+
+                            @if(review.IsPurchased == true)
+                            {
+                                <span style="padding: .05rem .6rem" class="page-badge badge-success">Đã mua sản phẩm này</span>
+                            }
+                            else
+                            {
+                                <span style ="padding: .05rem .6rem" class="page-badge badge-warning">Chưa mua sản phẩm này</span>
+                            }
+                        }
+                    </div>
+                    <div>
+                        <span style="font-size: .85rem" class="text-secondary">@review.CreateAt.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+                </div>
+
+                <div class="ps-3" style="margin-left: 2rem">
+                    <div class="d-flex gap-3 align-items-center">
+                        @await Html.PartialAsync("PartialViews/Review_StarGroup", review.Rating)
+
+                        <span class="fweight-600">"@review.Content"</span>
+                    </div>
+
+
+                    <div class="d-flex gap-3 align-items-center justify-content-between mt-2">
+                        <div>
+                            <span style="font-size: .87rem">
+                                <span class="text-secondary">Đã đánh giá</span>
+                                <a class="text-decoration-none review-product-name" href="javascript:">@review.Product.ProductName</a>
+                            </span>
+                        </div>
+
+                        <div class="d-flex gap-1 align-items-stretch">
+                            <div class="d-flex align-items-center">
+                                <span class="me-3">(@review.ReviewImages.Count() hình ảnh)</span>
+                            </div>
+
+                            <div class="d-flex align-items-center">
+                                <span class="me-3">(@review.ReviewReplies.Count() phản hồi)</span>
+                            </div>
+
+                            <button class="page-btn btn-red delete-review" data-review="@review.Id">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+
+                            <a class="page-btn btn-lightblue view-review" href="/admin/reviews/1/@review.Id">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </a>
+
+                            @if(review.IsProceeded != true)
+                            {
+                                <button class="page-btn btn-green approve-review" data-review="@review.Id">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
+
+    @await Html.PartialAsync("PartialViews/_Pagination", new Tuple<int, int>(ViewBag.CurrentPage, ViewBag.TotalPages))
 
 </section>
 
