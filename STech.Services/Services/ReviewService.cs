@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
 using STech.Data.ViewModels;
-using STech.Services;
 using STech.Services.Utils;
 
 namespace STech.Services.Services
@@ -14,48 +13,15 @@ namespace STech.Services.Services
         {
             _context = context;
         }
+ 
 
         public async Task<IEnumerable<Review>> GetReviews(string productId, string? sort_by)
         {
             return await _context.Reviews
                 .Where(r => r.ProductId == productId)
-                .Select(r => new Review
-                {
-                    Id = r.Id,
-                    ProductId = r.ProductId,
-                    Rating = r.Rating,
-                    Content = r.Content,
-                    CreateAt = r.CreateAt,
-                    ReviewerName = r.ReviewerName,
-                    TotalLike = r.TotalLike,
-                    TotalDislike = r.TotalDislike,
-                    IsPurchased = r.IsPurchased,
-                    IsProceeded = r.IsProceeded,
-                    User = r.User == null ? null : new User
-                    {
-                        UserId = r.User.UserId,
-                        FullName = r.User.FullName,
-                        Avatar = r.User.Avatar,
-                        RoleId = r.User.RoleId,
-                    },
-                    ReviewImages = r.ReviewImages,
-                    ReviewReplies = r.ReviewReplies.Select(rp => new ReviewReply
-                    {
-                        Id = rp.Id,
-                        ReviewId = rp.ReviewId,
-                        Content = rp.Content,
-                        ReplyDate = rp.ReplyDate,
-                        UserReply = new User
-                        {
-                            UserId = rp.UserReply.UserId,
-                            FullName = rp.UserReply.FullName,
-                            Avatar = rp.UserReply.Avatar,
-                            RoleId = rp.UserReply.RoleId,
-                        },
-                    }).OrderBy(rp => rp.ReplyDate).ToList(),
-                })
-                .OrderByDescending(r => r.CreateAt)
+                .SelectReview()
                 .ToListAsync();
+                
         }
 
         public async Task<(IEnumerable<Review>, ReviewOverview, int, int, int)> GetReviews(string productId, int reviewsPerPage, int numOfReplies, 
@@ -63,53 +29,11 @@ namespace STech.Services.Services
         {
             IEnumerable<Review> reviews = await _context.Reviews
                 .Where(r => r.ProductId == productId)
-                .Select(r => new Review
-                {
-                    Id = r.Id,
-                    ProductId = r.ProductId,
-                    Rating = r.Rating,
-                    Content = r.Content,
-                    CreateAt = r.CreateAt,
-                    ReviewerName = r.ReviewerName,
-                    TotalLike = r.TotalLike,
-                    TotalDislike = r.TotalDislike,
-                    IsPurchased = r.IsPurchased,
-                    IsProceeded = r.IsProceeded,
-                    IsLiked = r.ReviewLikes.Any(rl => rl.UserId == current_user),
-                    IsDisliked = r.ReviewDislikes.Any(rd => rd.UserId == current_user),
-                    User = r.User == null ? null : new User
-                    {
-                        UserId = r.User.UserId,
-                        FullName = r.User.FullName,
-                        Avatar = r.User.Avatar,
-                        RoleId = r.User.RoleId,
-                    },
-                    ReviewImages = r.ReviewImages,
-                    ReviewReplies = r.ReviewReplies.Take(numOfReplies).Select(rp => new ReviewReply
-                    {
-                        Id = rp.Id,
-                        ReviewId = rp.ReviewId,
-                        Content = rp.Content,
-                        ReplyDate = rp.ReplyDate,
-                        UserReply = new User
-                        {
-                            UserId = rp.UserReply.UserId,
-                            FullName = rp.UserReply.FullName,
-                            Avatar = rp.UserReply.Avatar,
-                            RoleId = rp.UserReply.RoleId,
-                        },
-                    }).OrderBy(rp => rp.ReplyDate).ToList(),
-                })
-                .OrderByDescending(r => r.CreateAt)
+                .SelectReview(numOfReplies)
                 .ToListAsync();
 
             int totalReviews = reviews.Count();
-            double averageRating = totalReviews > 0 ? Math.Round(reviews.Average(r => r.Rating), 1) : 0;
-            int total5Star = reviews.Count(r => r.Rating == 5);
-            int total4Star = reviews.Count(r => r.Rating == 4);
-            int total3Star = reviews.Count(r => r.Rating == 3);
-            int total2Star = reviews.Count(r => r.Rating == 2);
-            int total1Star = reviews.Count(r => r.Rating == 1);
+            ReviewOverview overview = reviews.GetReviewOverview();
 
             reviews = reviews.Filter(filter_by).Sort(sort_by);
             int filteredCount = reviews.Count();
@@ -119,60 +43,66 @@ namespace STech.Services.Services
                 
             return (
                 reviews.Paginate(page, reviewsPerPage).Filter(filter_by).Sort(sort_by), 
-                new ReviewOverview
-                {
-                    AverageRating = averageRating,
-                    Total5StarReviews = total5Star,
-                    Total4StarReviews = total4Star,
-                    Total3StarReviews = total3Star,
-                    Total2StarReviews = total2Star,
-                    Total1StarReviews = total1Star,
-                },
+                overview,
                 totalPages,
                 totalReviews,
                 remainingReviews > 0 ? remainingReviews : 0
             );
         }
 
+        public async Task<(IEnumerable<Review>, int)> GetReviewsWithProduct(int reviewsPerPage, string? sort_by, string? status, string? filter_by, int page = 1)
+        {
+            bool isApproved = status == "approved";
+
+            IEnumerable<Review> reviews = await _context.Reviews
+                .Where(r => r.IsProceeded == isApproved)
+                .Include(r => r.Product)
+                .SelectReview()
+                .ToListAsync();
+
+            reviews = reviews.Paginate(page, reviewsPerPage).Filter(filter_by).Sort(sort_by);
+
+            int totalReviews = reviews.Count();
+            int totalPages = (int)Math.Ceiling((double)totalReviews / reviewsPerPage);
+
+            return (
+                reviews,
+                totalPages
+            );
+        }
+
+        public async Task<(IEnumerable<Review>, ReviewOverview, int, int, int)> GetApprovedReviews(string productId, int reviewsPerPage, int numOfReplies, string? sort_by, string? filter_by, string? current_user, int page = 1)
+        {
+            IEnumerable<Review> reviews = await _context.Reviews
+                 .Where(r => r.ProductId == productId && r.IsProceeded == true)
+                 .SelectReview(numOfReplies)
+                 .ToListAsync();
+
+            int totalReviews = reviews.Count();
+            ReviewOverview overview = reviews.GetReviewOverview();
+
+            reviews = reviews.Filter(filter_by).Sort(sort_by);
+            int filteredCount = reviews.Count();
+            int totalPages = (int)Math.Ceiling((double)filteredCount / reviewsPerPage);
+
+            int remainingReviews = filteredCount - reviewsPerPage * (page > totalPages ? totalPages : page);
+
+            return (
+                reviews.Paginate(page, reviewsPerPage).Filter(filter_by).Sort(sort_by),
+                overview,
+                totalPages,
+                totalReviews,
+                remainingReviews > 0 ? remainingReviews : 0
+            );
+        }
+
+        
+
         public async Task<Review?> GetReview(int reviewId)
         {
             return await _context.Reviews
                 .Where(r => r.Id == reviewId)
-                .Select(r => new Review
-                {
-                    Id = r.Id,
-                    ProductId = r.ProductId,
-                    Rating = r.Rating,
-                    Content = r.Content,
-                    CreateAt = r.CreateAt,
-                    ReviewerName = r.ReviewerName,
-                    TotalLike = r.TotalLike,
-                    TotalDislike = r.TotalDislike,
-                    IsPurchased = r.IsPurchased,
-                    IsProceeded = r.IsProceeded,
-                    User = r.User == null ? null : new User
-                    {
-                        UserId = r.User.UserId,
-                        FullName = r.User.FullName,
-                        Avatar = r.User.Avatar,
-                        RoleId = r.User.RoleId,
-                    },
-                    ReviewImages = r.ReviewImages,
-                    ReviewReplies = r.ReviewReplies.Select(rp => new ReviewReply
-                    {
-                        Id = rp.Id,
-                        ReviewId = rp.ReviewId,
-                        Content = rp.Content,
-                        ReplyDate = rp.ReplyDate,
-                        UserReply = new User
-                        {
-                            UserId = rp.UserReply.UserId,
-                            FullName = rp.UserReply.FullName,
-                            Avatar = rp.UserReply.Avatar,
-                            RoleId = rp.UserReply.RoleId,
-                        },
-                    }).OrderBy(rp => rp.ReplyDate).ToList(),
-                })
+                .SelectReview()
                 .FirstOrDefaultAsync();
         }
 

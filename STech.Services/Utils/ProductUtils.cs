@@ -4,6 +4,42 @@ namespace STech.Services.Utils
 {
     public static class ProductUtils
     {
+        public static IQueryable<Product> SelectProduct(this IQueryable<Product> products)
+        {
+            return products.Select(p => new Product()
+            {
+                ProductId = p.ProductId,
+                ProductName = p.ProductName,
+                OriginalPrice = p.OriginalPrice,
+                Price = p.Price,
+                ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
+                WarehouseProducts = p.WarehouseProducts,
+                BrandId = p.BrandId,
+                CategoryId = p.CategoryId,
+                IsActive = p.IsActive,
+                IsDeleted = p.IsDeleted,
+                DateDeleted = p.DateDeleted,
+            });
+        }
+
+        public static IQueryable<Product> SelectProduct(this IQueryable<Product> products, string? warehouseId)
+        {
+            return products.Select(p => new Product()
+            {
+                ProductId = p.ProductId,
+                ProductName = p.ProductName,
+                OriginalPrice = p.OriginalPrice,
+                Price = p.Price,
+                ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
+                WarehouseProducts = warehouseId == null ? p.WarehouseProducts : p.WarehouseProducts.Where(wp => wp.WarehouseId == warehouseId).ToList(),
+                BrandId = p.BrandId,
+                CategoryId = p.CategoryId,
+                IsActive = p.IsActive,
+                IsDeleted = p.IsDeleted,
+                DateDeleted = p.DateDeleted,
+            });
+        }
+
         public static IEnumerable<Product> Sort(this IEnumerable<Product> products, string? value)
         {
             if(value == null)

@@ -19,20 +19,7 @@ namespace STech.Services.Services
         {
             IEnumerable<Product> products = await _context.Products
                 .Where(p => warehouse_id == null || p.WarehouseProducts.Any(w => w.WarehouseId == warehouse_id))
-                .Select(p => new Product()
-                {
-                    ProductId = p.ProductId,
-                    ProductName = p.ProductName,
-                    OriginalPrice = p.OriginalPrice,
-                    Price = p.Price,
-                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
-                    WarehouseProducts = warehouse_id == null ? p.WarehouseProducts: p.WarehouseProducts.Where(wp => wp.WarehouseId == warehouse_id).ToList(),
-                    BrandId = p.BrandId,
-                    CategoryId = p.CategoryId,
-                    IsActive = p.IsActive,
-                    IsDeleted = p.IsDeleted,
-                    DateDeleted = p.DateDeleted,
-                })
+                .SelectProduct(warehouse_id)
                 .ToListAsync();
 
             products = products.Filter(brands, categories, status, price_range);
@@ -56,20 +43,7 @@ namespace STech.Services.Services
 
             IEnumerable<Product> products = await _context.Products
                 .Where(p => keywords.All(key =>  p.ProductName.Contains(key)) && p.IsActive == true)
-                .Select(p => new Product()
-                {
-                    ProductId = p.ProductId,
-                    ProductName = p.ProductName,
-                    OriginalPrice = p.OriginalPrice,
-                    Price = p.Price,
-                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
-                    WarehouseProducts = p.WarehouseProducts,
-                    BrandId = p.BrandId,
-                    CategoryId = p.CategoryId,
-                    IsActive = p.IsActive,
-                    IsDeleted = p.IsDeleted,
-                    DateDeleted = p.DateDeleted,
-                })
+                .SelectProduct()
                 .ToListAsync();
 
             int totalPage = Convert.ToInt32(Math.Ceiling(
@@ -90,20 +64,7 @@ namespace STech.Services.Services
             IEnumerable<Product> products = await _context.Products
                 .Where(p => (p.ProductId == q || keywords.All(key => p.ProductName.Contains(key)))
                     && (warehouseId != null ? p.WarehouseProducts.Any(w => w.WarehouseId == warehouseId) : true))
-                .Select(p => new Product()
-                {
-                    ProductId = p.ProductId,
-                    ProductName = p.ProductName,
-                    OriginalPrice = p.OriginalPrice,
-                    Price = p.Price,
-                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
-                    WarehouseProducts = p.WarehouseProducts,
-                    BrandId = p.BrandId,
-                    CategoryId = p.CategoryId,
-                    IsActive = p.IsActive,
-                    IsDeleted = p.IsDeleted,
-                    DateDeleted = p.DateDeleted,
-                })
+                .SelectProduct(warehouseId)
                 .ToListAsync();
 
             int totalPage = Convert.ToInt32(Math.Ceiling(
@@ -116,16 +77,7 @@ namespace STech.Services.Services
         {
             IEnumerable<Product> products = await _context.Products
                 .Where(p => p.CategoryId == categoryId && p.IsActive == true)
-                .Select(p => new Product()
-                {
-                    ProductId = p.ProductId,
-                    ProductName = p.ProductName,
-                    OriginalPrice = p.OriginalPrice,
-                    Price = p.Price,
-                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
-                    WarehouseProducts = p.WarehouseProducts,
-                    Brand = p.Brand,
-                })
+                .SelectProduct()
                 .ToListAsync();
 
             int totalPage = Convert.ToInt32(Math.Ceiling(
@@ -139,16 +91,7 @@ namespace STech.Services.Services
             return await _context.Products
                 .Where(p => p.CategoryId == categoryId && p.IsActive == true && p.WarehouseProducts.Sum(wp => wp.Quantity) > 0)
                 .OrderBy(p => Guid.NewGuid())
-                .Select(p => new Product()
-                {
-                    ProductId = p.ProductId,
-                    ProductName = p.ProductName,
-                    OriginalPrice = p.OriginalPrice,
-                    Price = p.Price,
-                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
-                    WarehouseProducts = p.WarehouseProducts,
-                    Brand = p.Brand,
-                })
+                .SelectProduct()
                 .Take(numToTake)
                 .ToListAsync();
         }

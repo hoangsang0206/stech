@@ -61,21 +61,9 @@ namespace STech.Services.Services
 
             if (invoice != null)
             {
-                invoice.InvoiceDetails = invoice.InvoiceDetails.Select(d => new InvoiceDetail
-                {
-                    InvoiceId = d.InvoiceId,
-                    ProductId = d.ProductId,
-                    Quantity = d.Quantity,
-                    Cost = d.Cost,
-                    Product = new Product
-                    {
-                        ProductId = d.Product.ProductId,
-                        ProductName = d.Product.ProductName,
-                        Warranty = d.Product.Warranty,
-                        Price = d.Product.Price,
-                        ProductImages = d.Product.ProductImages.OrderBy(t => t.Id).Take(1).ToList(),
-                    }
-                }).ToList();
+                invoice.InvoiceDetails = invoice.InvoiceDetails
+                    .SelectDetail()
+                    .ToList();
             }
 
             return invoice;
@@ -95,21 +83,9 @@ namespace STech.Services.Services
 
             if(invoice != null)
             {
-                invoice.InvoiceDetails = invoice.InvoiceDetails.Select(d => new InvoiceDetail
-                {
-                    InvoiceId = d.InvoiceId,
-                    ProductId = d.ProductId,
-                    Quantity = d.Quantity,
-                    Cost = d.Cost,
-                    Product = new Product
-                    {
-                        ProductId = d.Product.ProductId,
-                        ProductName = d.Product.ProductName,
-                        Warranty = d.Product.Warranty,
-                        Price = d.Product.Price,
-                        ProductImages = d.Product.ProductImages.OrderBy(t => t.Id).Take(1).ToList(),
-                    }
-                }).ToList();
+                invoice.InvoiceDetails = invoice.InvoiceDetails
+                    .SelectDetail()
+                    .ToList();
             }
 
             return invoice;
@@ -129,21 +105,9 @@ namespace STech.Services.Services
 
             if (invoice != null)
             {
-                invoice.InvoiceDetails = invoice.InvoiceDetails.Select(d => new InvoiceDetail
-                {
-                    InvoiceId = d.InvoiceId,
-                    ProductId = d.ProductId,
-                    Quantity = d.Quantity,
-                    Cost = d.Cost,
-                    Product = new Product
-                    {
-                        ProductId = d.Product.ProductId,
-                        ProductName = d.Product.ProductName,
-                        Warranty = d.Product.Warranty,
-                        Price = d.Product.Price,
-                        ProductImages = d.Product.ProductImages.OrderBy(t => t.Id).Take(1).ToList(),
-                    }
-                }).ToList();
+                invoice.InvoiceDetails = invoice.InvoiceDetails
+                    .SelectDetail()
+                    .ToList();
             }
 
             return invoice;

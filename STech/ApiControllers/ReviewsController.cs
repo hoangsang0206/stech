@@ -46,7 +46,7 @@ namespace STech.ApiControllers
 
             string? userId = User.Identity?.IsAuthenticated == true ? User.FindFirstValue("Id") : null;
 
-            var (reviews, reviewOverview, totalPages, totalReviews, remainingReviews) = await _reviewService.GetReviews(pId, REVIEWS_PER_PAGE, REVIEW_REPLIES_PER_PAGE,
+            var (reviews, reviewOverview, totalPages, totalReviews, remainingReviews) = await _reviewService.GetApprovedReviews(pId, REVIEWS_PER_PAGE, REVIEW_REPLIES_PER_PAGE,
                 sort_by, filter_by, userId, page);
 
             return Ok(new ApiResponse

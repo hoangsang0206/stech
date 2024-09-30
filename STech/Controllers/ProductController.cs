@@ -30,9 +30,6 @@ namespace STech.Controllers
                 return NotFound();
             }
 
-            IEnumerable<Review> reviews = await _reviewService.GetReviews(product.ProductId, null);
-            product.Reviews = reviews.ToList();
-
             IEnumerable<Product> similarProducts = new List<Product>();
             List<Breadcrumb> breadcrumbs = new List<Breadcrumb>();
 

@@ -5,6 +5,25 @@ namespace STech.Services.Utils
 {
     public static class InvoiceUtils
     {
+        public static IEnumerable<InvoiceDetail> SelectDetail(this IEnumerable<InvoiceDetail> details)
+        {
+            return details.Select(d => new InvoiceDetail
+            {
+                InvoiceId = d.InvoiceId,
+                ProductId = d.ProductId,
+                Quantity = d.Quantity,
+                Cost = d.Cost,
+                Product = new Product
+                {
+                    ProductId = d.Product.ProductId,
+                    ProductName = d.Product.ProductName,
+                    Warranty = d.Product.Warranty,
+                    Price = d.Product.Price,
+                    ProductImages = d.Product.ProductImages.OrderBy(t => t.Id).Take(1).ToList(),
+                }
+            });
+        }
+
         public static IEnumerable<Invoice> Paginate(this IEnumerable<Invoice> invoices, int page, int numToTake)
         {
             if(page <= 0)

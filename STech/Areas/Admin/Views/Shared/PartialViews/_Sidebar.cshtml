@@ -83,8 +83,28 @@
                         <li>
                             <a href="/admin/products?status=deleted">Sản phẩm đã xóa</a>
                         </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li>
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "reviews" ? "active" : "")">
+                    <a class="sidebar-link" href="/admin/reviews">
+                        <i class="sidebar-icon fa-solid fa-star-half-stroke"></i>
+                        <span class="sidebar-text">Đánh giá sản phẩm</span>
+                    </a>
+                    <i class="sidebar-arrow fa-solid fa-chevron-right"></i>
+                </div>
+                <div class="sidebar-expandation">
+                    <ul>
                         <li>
-                            <a href="/admin/reviews">Đánh giá sản phẩm</a>
+                            <a href="/admin/reviews?filter_by=all">Tất cả đánh giá</a>
+                        </li>
+                        <li>
+                            <a href="/admin/reviews?filter_by=not-approved">Đánh giá chưa duyệt</a>
+                        </li>
+                        <li>
+                            <a href="/admin/reviews?filter_by=approved">Đánh giá đã duyệt</a>
                         </li>
                     </ul>
                 </div>
