@@ -120,7 +120,6 @@ namespace STech.ApiControllers
                 CreateAt = DateTime.Now,
                 IsProceeded = false,
                 TotalLike = 0,
-                TotalDislike = 0
             };
 
             if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -258,31 +257,6 @@ namespace STech.ApiControllers
             {
                 Status = result,
                 Message = result ? "Đã thích đánh giá" : "Không thể thích đánh giá"
-            });
-        }
-
-        [Authorize]
-        [HttpPost("post-dislike")]
-        public async Task<IActionResult> PostDisike(int rId)
-        {
-            string? userId = User.FindFirstValue("Id");
-            if (userId == null)
-            {
-                return Unauthorized();
-            }
-
-            User? user = await _userService.GetUserById(userId);
-            if (user == null)
-            {
-                return Unauthorized();
-            }
-
-            bool result = await _reviewService.DislikeReview(rId, userId);
-
-            return Ok(new ApiResponse
-            {
-                Status = result,
-                Message = result ? "Đã không thích đánh giá" : "Không thể không thích đánh giá"
             });
         }
 

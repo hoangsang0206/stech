@@ -15,8 +15,6 @@ public partial class Review
 
     public int TotalLike { get; set; }
 
-    public int TotalDislike { get; set; }
-
     public string? ReviewerName { get; set; }
 
     public string? ReviewerEmail { get; set; }
@@ -42,8 +40,6 @@ public partial class Review
     public virtual ICollection<ReviewReply> ReviewReplies { get; set; } = new List<ReviewReply>();
 
     public virtual ICollection<ReviewLike> ReviewLikes { get; set; } = new List<ReviewLike>();
-
-    public virtual ICollection<ReviewDislike> ReviewDislikes { get; set; } = new List<ReviewDislike>();
 
     public virtual User? User { get; set; }
 }

@@ -63,11 +63,7 @@
         <div class="d-flex align-items-center gap-4 mt-3">
             <a href="javascript:" class="d-flex align-items-center gap-1 like-review @(!isAuthenticated ? "not-logged-in" : "")" data-review="@Model.Id" data-like="@Model.TotalLike">
                 <i class="fa-regular fa-thumbs-up"></i>
-                <span>(@Model.TotalLike)</span>
-            </a>
-            <a href="javascript:" class="d-flex align-items-center gap-1 dislike-review @(!isAuthenticated ? "not-logged-in" : "")" data-review="@Model.Id" data-dislike="@Model.TotalDislike">
-                <i class="fa-regular fa-thumbs-down"></i>
-                <span>(@Model.TotalDislike)</span>
+                <span>Hứu ích (@Model.TotalLike)</span>
             </a>
 
             <a href="javascript:" class="d-flex align-items-center gap-1 reply-review @(!isAuthenticated ? "not-logged-in" : "")" data-review="@Model.Id">

@@ -117,7 +117,7 @@ namespace STech.Services.Services
         {
             IEnumerable<Review> reviews = await _context.Reviews
                  .Where(r => r.ProductId == productId && r.IsProceeded == true)
-                 .SelectReview(numOfReplies)
+                 .SelectReview(numOfReplies, current_user)
                  .ToListAsync();
 
             int totalReviews = reviews.Count();
@@ -194,7 +194,6 @@ namespace STech.Services.Services
         {
             Review? review = await _context.Reviews
                 .Include(r => r.ReviewLikes)
-                .Include(r => r.ReviewDislikes)
                 .Include(r => r.ReviewReplies)
                 .Include(r => r.ReviewImages)
                 .FirstOrDefaultAsync(r => r.Id == reviewId);
@@ -205,7 +204,6 @@ namespace STech.Services.Services
             }
 
             _context.ReviewLikes.RemoveRange(review.ReviewLikes);
-            _context.ReviewDislikes.RemoveRange(review.ReviewDislikes);
             _context.ReviewReplies.RemoveRange(review.ReviewReplies);
             _context.ReviewImages.RemoveRange(review.ReviewImages);
             _context.Reviews.Remove(review);
@@ -232,13 +230,6 @@ namespace STech.Services.Services
                 return false;
             } 
 
-            ReviewDislike? reviewDislike = await _context.ReviewDislikes.FirstOrDefaultAsync(rdl => rdl.ReviewId == reviewId && rdl.UserId == userId);
-            if (reviewDislike != null)
-            {
-                _context.ReviewDislikes.Remove(reviewDislike);
-                review.TotalDislike--;
-            } 
-
             ReviewLike newReviewLike = new ReviewLike
             {
                 ReviewId = reviewId,
@@ -256,47 +247,6 @@ namespace STech.Services.Services
         }
 
         public async Task<bool> UnLikeReview(int reviewId, string userId)
-        {
-            return false;
-        }
-
-        public async Task<bool> DislikeReview(int reviewId, string userId)
-        {
-            Review? review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewId);
-            if (review == null)
-            {
-                return false;
-            }
-
-            ReviewDislike? reviewDislike = await _context.ReviewDislikes.FirstOrDefaultAsync(rdl => rdl.ReviewId == reviewId && rdl.UserId == userId);
-            if (reviewDislike != null)
-            {
-                return false;
-            }
-
-            ReviewLike? reviewLike = await _context.ReviewLikes.FirstOrDefaultAsync(rl => rl.ReviewId == reviewId && rl.UserId == userId);
-            if (reviewLike != null)
-            {
-                _context.ReviewLikes.Remove(reviewLike);
-                review.TotalLike--;
-            }
-
-            ReviewDislike newReviewDislike = new ReviewDislike
-            {
-                ReviewId = reviewId,
-                UserId = userId,
-                LikeDate = DateTime.Now,
-            };
-
-            review.TotalDislike++;
-
-            await _context.ReviewDislikes.AddAsync(newReviewDislike);
-            bool result = await _context.SaveChangesAsync() > 0;
-
-            return result;
-        }
-
-        public async Task<bool> UnDislikeReview(int reviewId, string userId)
         {
             return false;
         }

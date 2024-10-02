@@ -16,7 +16,6 @@ namespace STech.Services.Utils
                 CreateAt = r.CreateAt,
                 ReviewerName = r.ReviewerName,
                 TotalLike = r.TotalLike,
-                TotalDislike = r.TotalDislike,
                 IsPurchased = r.IsPurchased,
                 IsProceeded = r.IsProceeded,
                 User = r.User == null ? null : new User
@@ -56,9 +55,48 @@ namespace STech.Services.Utils
                 CreateAt = r.CreateAt,
                 ReviewerName = r.ReviewerName,
                 TotalLike = r.TotalLike,
-                TotalDislike = r.TotalDislike,
                 IsPurchased = r.IsPurchased,
                 IsProceeded = r.IsProceeded,
+                User = r.User == null ? null : new User
+                {
+                    UserId = r.User.UserId,
+                    FullName = r.User.FullName,
+                    Avatar = r.User.Avatar,
+                    RoleId = r.User.RoleId,
+                },
+                ReviewImages = r.ReviewImages,
+                ReviewReplies = r.ReviewReplies.Select(rp => new ReviewReply
+                {
+                    Id = rp.Id,
+                    ReviewId = rp.ReviewId,
+                    Content = rp.Content,
+                    ReplyDate = rp.ReplyDate,
+                    UserReply = new User
+                    {
+                        UserId = rp.UserReply.UserId,
+                        FullName = rp.UserReply.FullName,
+                        Avatar = rp.UserReply.Avatar,
+                        RoleId = rp.UserReply.RoleId,
+                    },
+                }).Take(numOfReplies).OrderBy(rp => rp.ReplyDate).ToList(),
+            })
+            .OrderByDescending(r => r.CreateAt);
+        }
+
+        public static IQueryable<Review> SelectReview(this IQueryable<Review> reviews, int numOfReplies, string? userId)
+        {
+            return reviews.Select(r => new Review
+            {
+                Id = r.Id,
+                ProductId = r.ProductId,
+                Rating = r.Rating,
+                Content = r.Content,
+                CreateAt = r.CreateAt,
+                ReviewerName = r.ReviewerName,
+                TotalLike = r.TotalLike,
+                IsPurchased = r.IsPurchased,
+                IsProceeded = r.IsProceeded,
+                IsLiked = r.ReviewLikes.Any(rl => rl.UserId == userId),
                 User = r.User == null ? null : new User
                 {
                     UserId = r.User.UserId,
@@ -96,7 +134,6 @@ namespace STech.Services.Utils
                 CreateAt = r.CreateAt,
                 ReviewerName = r.ReviewerName,
                 TotalLike = r.TotalLike,
-                TotalDislike = r.TotalDislike,
                 IsPurchased = r.IsPurchased,
                 IsProceeded = r.IsProceeded,
                 User = r.User == null ? null : new User
@@ -126,7 +163,7 @@ namespace STech.Services.Utils
                     ProductId = r.Product.ProductId,
                     ProductName = r.Product.ProductName,
                     ProductImages = r.Product.ProductImages.OrderBy(p => p.Id).Take(1).ToList(),
-                },
+                }
             })
             .OrderByDescending(r => r.CreateAt);
         }
@@ -187,8 +224,6 @@ namespace STech.Services.Utils
                     return reviews.OrderByDescending(r => r.Rating);
                 case "most-liked":
                     return reviews.OrderByDescending(r => r.TotalLike);
-                case "most-disliked":
-                    return reviews.OrderByDescending(r => r.TotalDislike);
                 default:
                     return reviews;
             }

@@ -398,11 +398,7 @@ const reviewHTML = (review) => {
                 <div class="d-flex align-items-center gap-4 mt-3 overflow-x-auto">
                     <a href="javascript:" class="d-flex align-items-center gap-1 ${!review.isLiked ? 'like-review' : ''} ${!isAuthenticated ? 'not-logged-in' : ''} text-decoration-none" data-review="${review.id}" data-like="${review.totalLike}">
                         ${review.isLiked ? '<i class="fa-solid fa-thumbs-up"></i>' : '<i class="fa-regular fa-thumbs-up"></i>'}
-                        <span>${review.totalLike}</span>
-                    </a>
-                    <a href="javascript:" class="d-flex align-items-center gap-1 ${!review.isDisliked ? 'dislike-review' : ''} ${!isAuthenticated ? 'not-logged-in' : ''} text-decoration-none" data-review="${review.id}" data-dislike="${review.totalDislike}">
-                        ${review.isDisliked ? '<i class="fa-solid fa-thumbs-down"></i>' : ' <i class="fa-regular fa-thumbs-down"></i>'}
-                        <span>${review.totalDislike}</span>
+                        <span>Hứu ích (${review.totalLike})</span>
                     </a>
 
                     <a href="javascript:" class="d-flex align-items-center gap-1 reply-review ${!isAuthenticated ? 'not-logged-in' : ''}" data-review="${review.id}">
@@ -607,31 +603,9 @@ $(document).on('click', '.like-review:not(.not-logged-in)', function () {
                 $(this).data('like', total_like + 1);
                 $(this).html(`
                     <i class="fa-solid fa-thumbs-up"></i>
-                    <span>${total_like + 1}</span>
+                    <span>Hữu ích(${total_like + 1})</span>
                 `);
                 $(this).removeClass('like-review');
-
-                
-            }
-        }
-    })
-})
-
-$(document).on('click', '.dislike-review:not(.not-logged-in)', function () {
-    const review_id = $(this).data('review');
-    const total_dislike = $(this).data('dislike');
-
-    $.ajax({
-        type: 'POST',
-        url: `/api/reviews/post-dislike?rId=${review_id}`,
-        success: (response) => {
-            if (response.status) {
-                $(this).data('dislike', total_dislike + 1);
-                $(this).html(`
-                    <i class="fa-solid fa-thumbs-down"></i>
-                    <span>${total_dislike + 1}</span>
-                `);
-                $(this).removeClass('dislike-review');
             }
         }
     })

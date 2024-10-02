@@ -21,8 +21,5 @@ namespace STech.Services
 
         Task<bool> LikeReview(int reviewId, string userId);
         Task<bool> UnLikeReview(int reviewId, string userId);
-
-        Task<bool> DislikeReview(int reviewId, string userId);
-        Task<bool> UnDislikeReview(int reviewId, string userId);
     }
 }

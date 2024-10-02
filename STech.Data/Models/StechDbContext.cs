@@ -67,8 +67,6 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<Review> Reviews { get; set; }
 
-    public virtual DbSet<ReviewDislike> ReviewDislikes { get; set; }
-
     public virtual DbSet<ReviewImage> ReviewImages { get; set; }
 
     public virtual DbSet<ReviewLike> ReviewLikes { get; set; }
@@ -634,26 +632,6 @@ public partial class StechDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Reviews)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_Review_User");
-        });
-
-        modelBuilder.Entity<ReviewDislike>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__ReviewDi__3214EC07E0731CED");
-
-            entity.Property(e => e.LikeDate).HasColumnType("datetime");
-            entity.Property(e => e.UserId)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-
-            entity.HasOne(d => d.Review).WithMany(p => p.ReviewDislikes)
-                .HasForeignKey(d => d.ReviewId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ReviewDislike_Review");
-
-            entity.HasOne(d => d.User).WithMany(p => p.ReviewDislikes)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ReviewDislike_User");
         });
 
         modelBuilder.Entity<ReviewImage>(entity =>
