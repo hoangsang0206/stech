@@ -39,13 +39,6 @@ const updateOrderList = (invoices) => {
         let payment_status = ``;
         let order_status = ``;
 
-        const order_date = new Date(invoice.orderDate);
-        const day = String(order_date.getDate()).padStart(2, '0');
-        const month = String(order_date.getMonth() + 1).padStart(2, '0');
-        const year = order_date.getFullYear();
-        const hours = String(order_date.getHours()).padStart(2, '0');
-        const minutes = String(order_date.getMinutes()).padStart(2, '0');
-
         const total_items = invoice.invoiceDetails.reduce((accumulator, item) => {
             return accumulator + item.quantity;
         }, 0);
@@ -82,7 +75,7 @@ const updateOrderList = (invoices) => {
             <tr>
                 <td class="fweight-600">${index}</td>
                 <td>${invoice.invoiceId}</td>
-                <td>${day}/${month}/${year} ${hours}:${minutes}</td>
+                <td>${formatDateTime(invoice.orderDate)}</td>
                 <td>${total_items}</td>
                 <td class="fweight-600">${formatCurrency(invoice.total)}</td>
                 <td>${invoice.paymentMed.paymentName}</td>

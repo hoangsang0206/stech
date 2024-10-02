@@ -144,6 +144,7 @@ namespace STech.Services.Services
         {
             return await _context.Reviews
                 .Where(r => r.Id == reviewId)
+                .SelectReview()
                 .FirstOrDefaultAsync();
         }
 
@@ -191,12 +192,22 @@ namespace STech.Services.Services
 
         public async Task<bool> DeleteReview(int reviewId)
         {
-            Review? review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewId);
+            Review? review = await _context.Reviews
+                .Include(r => r.ReviewLikes)
+                .Include(r => r.ReviewDislikes)
+                .Include(r => r.ReviewReplies)
+                .Include(r => r.ReviewImages)
+                .FirstOrDefaultAsync(r => r.Id == reviewId);
+
             if (review == null)
             {
                 return false;
             }
 
+            _context.ReviewLikes.RemoveRange(review.ReviewLikes);
+            _context.ReviewDislikes.RemoveRange(review.ReviewDislikes);
+            _context.ReviewReplies.RemoveRange(review.ReviewReplies);
+            _context.ReviewImages.RemoveRange(review.ReviewImages);
             _context.Reviews.Remove(review);
             return await _context.SaveChangesAsync() > 0;
         }

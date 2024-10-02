@@ -60,7 +60,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBrand([FromForm] BrandVM brand, [FromForm] IFormFile? image)
+        public async Task<IActionResult> CreateBrand([FromForm] BrandVM brand, IFormFile? image)
         {
             if (ModelState.IsValid)
             {
@@ -102,7 +102,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateBrand([FromForm] BrandVM brand, [FromForm] IFormFile? image)
+        public async Task<IActionResult> UpdateBrand([FromForm] BrandVM brand, IFormFile? image)
         {
             if (ModelState.IsValid)
             {

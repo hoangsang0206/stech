@@ -835,6 +835,12 @@ $('.login-info-logout, .account-sidebar-logout').click(() => {
 })
 
 
+$(document).on('click', '.not-logged-in', () => {
+    $('.login').addClass('show');
+})
+
+
+
 //turnstile callback
 function loginCaptchaCompleted(token) {
     $('.login .form-submit-btn').prop('disabled', false);

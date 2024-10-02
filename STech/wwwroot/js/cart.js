@@ -97,11 +97,6 @@ $('.add-to-cart-action, .btn-add-to-cart, .click-add-to-card').click(function() 
     }   
 })
 
-//-------------------------------
-$('.not-logged-in').click(() => {
-    $('.login').addClass('show');
-})
-
 //---------------------------------
 $(document).ready(() => {
     const cartFormInput = $('.cart-form input').toArray();

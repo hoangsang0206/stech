@@ -62,7 +62,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCategory([FromForm]CategoryVM category, [FromForm] IFormFile? image)
+        public async Task<IActionResult> CreateCategory([FromForm]CategoryVM category, IFormFile? image)
         {
             if(ModelState.IsValid)
             {
@@ -100,7 +100,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateCategory([FromForm] CategoryVM category, [FromForm] IFormFile? image)
+        public async Task<IActionResult> UpdateCategory([FromForm] CategoryVM category, IFormFile? image)
         {
             if (ModelState.IsValid)
             {

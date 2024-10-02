@@ -17,36 +17,22 @@ namespace STech.Areas.Admin.Controllers
             _reviewService = reviewService;
         }
 
-        public async Task<IActionResult> Index(string? sort_by, string? status, string? filter_by, int page = 1)
+        public async Task<IActionResult> Index(string? search, string? sort_by, string? status, string? filter_by, int page = 1)
         {
             if(page <= 1)
             {
                 page = 1;          
             }
 
-            var (reviews, totalPages) = await _reviewService.GetReviewsWithProduct(40, sort_by, status, filter_by, page);
+            var (reviews, totalPages) = search != null 
+                ? await _reviewService.SearchReviewsWithProduct(search, 40, sort_by, status, filter_by, page)
+                : await _reviewService.GetReviewsWithProduct( 40, sort_by, status, filter_by, page);
 
             ViewBag.TotalPages = totalPages;
             ViewBag.CurrentPage = page;
 
             ViewBag.ActiveSidebar = "reviews";
             return View(reviews);
-        }
-
-        public async Task<IActionResult> Search(string q, string? sort_by, string? status, string? filter_by, int page = 1)
-        {
-            if (page <= 1)
-            {
-                page = 1;
-            }
-
-            var (reviews, totalPages) = await _reviewService.SearchReviewsWithProduct(q, 40, sort_by, status, filter_by, page);
-
-            ViewBag.TotalPages = totalPages;
-            ViewBag.CurrentPage = page;
-
-            ViewBag.ActiveSidebar = "reviews";
-            return View("Index", reviews);
         }
     }
 }

@@ -35,15 +35,21 @@ const updateParams = (params) => {
     const url = new URL(window.location.href);
     const _params = new URLSearchParams(url.search);
 
-    Object.entries(params).forEach(([key, value]) => { 
-        if (!value) {
-            _params.delete(key);
-        } else {
-            _params.set(key, value);
-        }
-    })
+    if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+            if (!value) {
+                _params.delete(key);
+            } else {
+                _params.set(key, value);
+            }
+        })
 
-    url.search = _params.toString();
+        url.search = _params.toString();
+    } else {
+        url.search = '';
+    }
+
+
     history.pushState({}, '', url);
 }
 
@@ -341,3 +347,20 @@ $(document).on('change', 'input[name="page-table-checkbox"]', () => {
         $('.hidden-action').removeClass('show');
     }
 })
+
+$('.page-btn-reload').click(() => {
+    updateParams(null);
+    location.reload();
+}) 
+
+
+const formatDateTime = (date) => {
+    const _date = new Date(date);
+    const day = String(_date.getDate()).padStart(2, '0');
+    const month = String(_date.getMonth() + 1).padStart(2, '0');
+    const year = _date.getFullYear();
+    const hours = String(_date.getHours()).padStart(2, '0');
+    const minutes = String(_date.getMinutes()).padStart(2, '0');
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+}

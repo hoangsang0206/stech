@@ -1108,7 +1108,7 @@ button:disabled {
     position: relative;
 }
 
-.filter-btn {
+.filter-btn, .page-btn-reload {
     border-radius: var(--radius);
     border: 1px solid var(--border-color);
     padding: 0.4rem 0.6rem;
@@ -1118,11 +1118,16 @@ button:disabled {
     gap: 0.5rem;
     cursor: pointer;
     color: var(--primary-text-color);
+    background: none;
     white-space: nowrap;
 }
 
-    .filter-btn:hover {
-        background: var(--primary-color-hover); 
+.page-btn-reload {
+    padding: .4rem .7rem;
+}
+
+    .filter-btn:hover, .page-btn-reload:hover {
+        background: var(--primary-color-hover);
         border-color: var(--primary-color-hover);
         color: #fff;
     }
