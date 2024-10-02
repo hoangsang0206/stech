@@ -6,9 +6,9 @@ namespace STech.Services.Services
     public class AddressService
     {
         private readonly string ROOT_PATH;
-        private readonly string CITIES_FILE_PATH = Path.Combine("Json", "Address", "cities.json");
-        private readonly string DISTRICTS_FILE_PATH = Path.Combine("Json", "Address", "districts.json");
-        private readonly string WARDS_FILE_PATH = Path.Combine("Json", "Address", "wards.json");
+        private readonly string CITIES_FILE_PATH = "cities.json";
+        private readonly string DISTRICTS_FILE_PATH = "districts.json";
+        private readonly string WARDS_FILE_PATH = "wards.json";
 
         public AddressVM Address = new AddressVM();
 

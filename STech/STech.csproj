@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="DataFiles\Address\cities.json" />
+    <Content Remove="DataFiles\Address\districts.json" />
+    <Content Remove="DataFiles\Address\wards.json" />
     <Content Remove="wwwroot\js\address.js" />
     <Content Remove="wwwroot\js\order.js" />
     <Content Remove="wwwroot\js\product.js" />
@@ -112,6 +115,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="DataFiles\Address\cities.json" />
+    <None Include="DataFiles\Address\districts.json" />
+    <None Include="DataFiles\Address\wards.json" />
     <None Include="wwwroot\js\address.js" />
     <None Include="wwwroot\js\order.js" />
     <None Include="wwwroot\js\product.js" />
