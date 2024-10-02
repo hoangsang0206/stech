@@ -22,4 +22,5 @@
 | 5 | Manage customers |
 | 6 | Manage user account |
 | 7 | Manage warehouses |
-| 8 | Reports, statistics |
+| 8 | Manage reviews |
+| 9 | Reports, statistics |
