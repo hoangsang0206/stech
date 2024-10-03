@@ -32,6 +32,7 @@ namespace STech.Services.Utils
                     ReviewId = rp.ReviewId,
                     Content = rp.Content,
                     ReplyDate = rp.ReplyDate,
+                    IsRead = rp.IsRead,
                     UserReply = new User
                     {
                         UserId = rp.UserReply.UserId,
@@ -71,6 +72,7 @@ namespace STech.Services.Utils
                     ReviewId = rp.ReviewId,
                     Content = rp.Content,
                     ReplyDate = rp.ReplyDate,
+                    IsRead = rp.IsRead,
                     UserReply = new User
                     {
                         UserId = rp.UserReply.UserId,
@@ -111,6 +113,7 @@ namespace STech.Services.Utils
                     ReviewId = rp.ReviewId,
                     Content = rp.Content,
                     ReplyDate = rp.ReplyDate,
+                    IsRead = rp.IsRead,
                     UserReply = new User
                     {
                         UserId = rp.UserReply.UserId,
@@ -150,6 +153,7 @@ namespace STech.Services.Utils
                     ReviewId = rp.ReviewId,
                     Content = rp.Content,
                     ReplyDate = rp.ReplyDate,
+                    IsRead = rp.IsRead,
                     UserReply = new User
                     {
                         UserId = rp.UserReply.UserId,

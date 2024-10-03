@@ -173,9 +173,35 @@ namespace STech.Services.Services
             int totalPages = (int)Math.Ceiling((double)totalReplies / repliesPerPage);
             int remainingReplies = totalReplies - (page > totalPages ? totalPages : page) * repliesPerPage;
 
-            return (replies.Paginate(page, repliesPerPage), totalPages, totalReplies, remainingReplies > 0 ? remainingReplies : 0);
+            return (
+                    replies.Paginate(page, repliesPerPage), 
+                    totalPages, 
+                    totalReplies, 
+                    remainingReplies > 0 ? remainingReplies : 0
+                );
         }
 
+        public async Task<IEnumerable<ReviewReply>> GetReviewReplies(int reviewId)
+        {
+            return await _context.ReviewReplies
+                .Where(rp => rp.ReviewId == reviewId)
+                .Select(rp => new ReviewReply
+                {
+                    Id = rp.Id,
+                    ReviewId = rp.ReviewId,
+                    Content = rp.Content,
+                    ReplyDate = rp.ReplyDate,
+                    UserReply = new User
+                    {
+                        UserId = rp.UserReply.UserId,
+                        FullName = rp.UserReply.FullName,
+                        Avatar = rp.UserReply.Avatar,
+                        RoleId = rp.UserReply.RoleId,
+                    },
+                })
+                .OrderByDescending(rp => rp.ReplyDate)
+                .ToListAsync();
+        }
 
         public async Task<bool> CreateReview(Review review)
         {
@@ -249,6 +275,34 @@ namespace STech.Services.Services
         public async Task<bool> UnLikeReview(int reviewId, string userId)
         {
             return false;
+        }
+
+        public async Task<bool> ApproveReview(int reviewId)
+        {
+            Review? review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewId);
+            if (review == null)
+            {
+                return false;
+            }
+
+            review.IsProceeded = true;
+            _context.Reviews.Update(review);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> MarkAllRepliesAsRead(int reviewId)
+        {
+            IEnumerable<ReviewReply> replies = await _context.ReviewReplies
+                .Where(rp => rp.ReviewId == reviewId && rp.IsRead != true)
+                .ToListAsync();
+
+            foreach (ReviewReply reply in replies)
+            {
+                reply.IsRead = true;
+            }
+
+            _context.ReviewReplies.UpdateRange(replies);
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

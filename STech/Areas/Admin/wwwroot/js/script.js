@@ -364,3 +364,14 @@ const formatDateTime = (date) => {
 
     return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
+
+const activeDropdown = (dropdown_container, value) => {
+    const dropdown_item = $(dropdown_container).find(`.page-dropdown-item[data-value="${value}"]`);
+    if (dropdown_item.length) {
+        const _value = dropdown_item.data('value');
+        const _text = dropdown_item.data('text');
+
+        $(dropdown_container).find('.page-dropdown-btn').data('selected', _value).find('span').text(_text);
+        dropdown_item.addClass('selected');
+    }
+}

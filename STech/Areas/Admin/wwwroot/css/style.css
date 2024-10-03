@@ -648,6 +648,11 @@ button:disabled {
     }
 
 
+.flex-btn {
+    display: flex;
+    gap: .5rem;
+}
+
 .close-form {
     cursor: pointer;
     padding: .3rem .5rem;

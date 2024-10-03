@@ -610,7 +610,6 @@ public partial class StechDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__Reviews__3214EC0763D41091");
 
-            entity.Property(e => e.Content).HasMaxLength(255);
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.ProductId)
                 .HasMaxLength(50)
@@ -668,7 +667,6 @@ public partial class StechDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__ReviewRe__3214EC07385DB39A");
 
-            entity.Property(e => e.Content).HasMaxLength(255);
             entity.Property(e => e.ReplyDate).HasColumnType("datetime");
             entity.Property(e => e.UserReplyId)
                 .HasMaxLength(50)

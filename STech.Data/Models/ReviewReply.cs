@@ -14,6 +14,8 @@ public partial class ReviewReply
 
     public DateTime ReplyDate { get; set; }
 
+    public bool? IsRead { get; set; }
+
     public string UserReplyId { get; set; } = null!;
 
     [JsonIgnore]

@@ -11,7 +11,8 @@ namespace STech.Services
         Task<(IEnumerable<Review>, int)> GetReviewsWithProduct(int reviewsPerPage, string? sort_by, string? status, string? filter_by, int page = 1);
         Task<(IEnumerable<Review>, int)> SearchReviewsWithProduct(string query, int reviewsPerPage, string? sort_by, string? status, string? filter_by, int page = 1);
         Task<Review?> GetReview(int reviewId);
-        Task<(IEnumerable<ReviewReply>, int, int, int)> GetReviewReplies(int reviewId, int page, int repliesPerPage);   
+        Task<(IEnumerable<ReviewReply>, int, int, int)> GetReviewReplies(int reviewId, int page, int repliesPerPage);
+        Task<IEnumerable<ReviewReply>> GetReviewReplies(int reviewId);
 
         Task<bool> CreateReview(Review review);
         Task<bool> UpdateReview(Review review);
@@ -21,5 +22,9 @@ namespace STech.Services
 
         Task<bool> LikeReview(int reviewId, string userId);
         Task<bool> UnLikeReview(int reviewId, string userId);
+
+        Task<bool> ApproveReview(int reviewId);
+
+        Task<bool> MarkAllRepliesAsRead(int reviewId);
     }
 }

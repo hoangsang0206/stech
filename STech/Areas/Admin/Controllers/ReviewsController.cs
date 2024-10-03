@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using STech.Data.Models;
 using STech.Filters;
 using STech.Services;
 
@@ -8,13 +9,15 @@ namespace STech.Areas.Admin.Controllers
     [AdminAuthorize]
     public class ReviewsController : Controller
     {
-        public IUserService _userService;
-        public IReviewService _reviewService;
+        private readonly IUserService _userService;
+        private readonly IReviewService _reviewService;
+        private readonly IProductService _productService;
 
-        public ReviewsController(IUserService userService, IReviewService reviewService)
+        public ReviewsController(IUserService userService, IReviewService reviewService, IProductService productService)
         {
             _userService = userService;
             _reviewService = reviewService;
+            _productService = productService;
         }
 
         public async Task<IActionResult> Index(string? search, string? sort_by, string? status, string? filter_by, int page = 1)
@@ -33,6 +36,21 @@ namespace STech.Areas.Admin.Controllers
 
             ViewBag.ActiveSidebar = "reviews";
             return View(reviews);
+        }
+
+        [Route("/admin/reviews/product/{pId}")]
+        public async Task<IActionResult> ProductReviews(string pId)
+        {
+            Product? product = await _productService.GetProductWithBasicInfo(pId);
+            if(product == null)
+            {
+                return LocalRedirect($"/admin/reviews?search={pId}");
+            }
+
+            var (reviews, overview, totalPages, totalReviews, remainingReviews) = 
+                await _reviewService.GetReviews(pId, 40, 0, null, null, null);
+
+            return View(new Tuple<Product, IEnumerable<Review>>(product, reviews));
         }
     }
 }

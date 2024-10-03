@@ -5,7 +5,7 @@
 
 @model IEnumerable<Review>
 
-<section class="page-wrapper">
+<section class="page-wrapper" data-current-user="@(User.FindFirst("Id")?.Value)">
     <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
         <div class="d-flex gap-2 flex-wrap">
             <button class="page-btn-reload">
@@ -94,6 +94,7 @@
                         @{
                             string reviewerName = review.User?.FullName ?? review.ReviewerName ?? "Không có tên";
                             string reviewerAvatar = review.User?.Avatar ?? "/admin/images/user-no-image.svg";
+                            int notReadCount = review.ReviewReplies.Count(r => r.IsRead != true);
 
                             <div class="reviewer-avatar">
                                 <img src="@reviewerAvatar" style="width: 2rem" alt="" />
@@ -125,12 +126,11 @@
                         <span class="fweight-600">"@review.Content"</span>
                     </div>
 
-
                     <div class="d-flex gap-3 align-items-center justify-content-between mt-2">
                         <div>
                             <span style="font-size: .87rem">
                                 <span class="text-secondary">Đã đánh giá</span>
-                                <a class="text-decoration-none review-product-name" href="javascript:">@review.Product.ProductName</a>
+                                <a class="text-decoration-none review-product-name" href="/admin/reviews/product/@review.ProductId">@review.Product.ProductName</a>
                             </span>
                         </div>
 
@@ -147,9 +147,16 @@
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
 
-                            <a class="page-btn btn-lightblue view-review" href="/admin/reviews/1/@review.Id">
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </a>
+                            <button class="page-btn btn-lightblue view-review-replies position-relative" data-review="@review.Id">
+                                <i class="fa-regular fa-comment-dots"></i>
+
+                                @if(notReadCount > 0)
+                                {
+                                    <span class="review-replies-count position-absolute">
+                                        @notReadCount
+                                    </span>
+                                }
+                            </button>
 
                             @if(review.IsProceeded != true)
                             {
@@ -167,6 +174,21 @@
     @await Html.PartialAsync("PartialViews/_Pagination", new Tuple<int, int>(ViewBag.CurrentPage, ViewBag.TotalPages))
 
 </section>
+
+<div class="form-container reply-review">
+    <div class="form-box d-flex flex-column" style="width: 50rem; height: 50rem;">
+        <div class="review">
+        </div>
+
+        <hr />
+
+        <div class="review-replies flex-grow-1">
+
+        </div>
+
+        @await Html.PartialAsync("PartialViews/Form_ReviewReply", new ReviewReplyVM())
+    </div>
+</div>
 
 @section Styles {
     <link rel="stylesheet" href="~/admin/css/reviews.css" />

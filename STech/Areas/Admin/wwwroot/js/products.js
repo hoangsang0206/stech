@@ -307,32 +307,9 @@ $(document).ready(() => {
     const view_type = urlParams.get('view_type') || null;
 
 
-    const warehouse_select_item = $('.select-warehouse').find(`.page-dropdown-item[data-value="${warehouse}"]`);
-    if (warehouse_select_item.length) {
-        const wh_id = warehouse_select_item.data('value');
-        const wh_name = warehouse_select_item.data('text');
-
-        $('.select-warehouse').find('.page-dropdown-btn').data('selected', wh_id).find('span').text(wh_name);
-        warehouse_select_item.addClass('selected');
-    }
-
-    const sort_select_item = $('.sort-selection').find(`.page-dropdown-item[data-value="${sort}"]`);
-    if (sort_select_item.length) {
-        const sort_id = sort_select_item.data('value');
-        const sort_name = sort_select_item.data('text');
-
-        $('.sort-selection').find('.page-dropdown-btn').data('selected', sort_id).find('span').text(sort_name);
-        sort_select_item.addClass('selected');
-    }
-
-    const view_select_item = $('.view-selection').find(`.page-dropdown-item[data-value="${view_type}"]`);
-    if (view_select_item.length) {
-        const view_id = view_select_item.data('value');
-        const view_name = view_select_item.data('text');
-
-        $('.view-selection').find('.page-dropdown-btn').data('selected', view_id).find('span').text(view_name);
-        view_select_item.addClass('selected');
-    }
+    activeDropdown('.select-warehouse', warehouse);
+    activeDropdown('.sort-selection', sort);
+    activeDropdown('.view-selection', view_type);
 
     updateFilterItems(brands, categories, status, { min_price: price_range?.[0], max_price: price_range?.[1] });
 })

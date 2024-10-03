@@ -4,6 +4,7 @@ using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Filters;
 using STech.Services;
+using System.Security.Claims;
 
 namespace STech.Areas.Admin.ApiControllers
 {
@@ -14,11 +15,13 @@ namespace STech.Areas.Admin.ApiControllers
     {
         private readonly IReviewService _reviewService;
         private readonly IAzureService _azureService;
+        private readonly IUserService _userService;
 
-        public ReviewsController(IReviewService reviewService, IAzureService azureService)
+        public ReviewsController(IReviewService reviewService, IAzureService azureService, IUserService userService)
         {
             _reviewService = reviewService;
             _azureService = azureService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -45,30 +48,88 @@ namespace STech.Areas.Admin.ApiControllers
             });
         }
 
-        [HttpPatch("approve/{id}")]
-        public async Task<IActionResult> ApproveReview(int id)
+        [HttpGet("1/{id}")]
+        public async Task<IActionResult> GetReview(int id)
         {
             Review? review = await _reviewService.GetReview(id);
 
-            if (review == null)
+            return Ok(new ApiResponse
             {
-                return NotFound(new ApiResponse
-                {
-                    Status = false,
-                    StatusCode = 404,
-                    Message = "Không tìm thấy đánh giá"
-                });
-            }
+                Status = true,
+                Data = review
+            });
+        }
 
-            review.IsProceeded = true;
-
-            bool result = await _reviewService.UpdateReview(review);
+        [HttpPatch("approve/{id}")]
+        public async Task<IActionResult> ApproveReview(int id)
+        {
+            bool result = await _reviewService.ApproveReview(id);
 
             return Ok(new ApiResponse
             {
                 Status = result,
                 Message = result ? "Phê duyệt đánh giá thành công" : "Không thể phê duyệt đánh giá này"
             });
+        }
+
+        [HttpPatch("mark-all-read/{id}")]
+        public async Task<IActionResult> MarkAllRepliesAsRead(int id)
+        {
+            return Ok(new ApiResponse
+            {
+                Status = await _reviewService.MarkAllRepliesAsRead(id)
+            });
+        }
+
+        [HttpPost("post-reply")]
+        public async Task<IActionResult> PostReply(ReviewReplyVM reply)
+        {
+            if(ModelState.IsValid)
+            {
+                if (reply.Content.Trim().Length <= 0)
+                {
+                    return BadRequest();
+                }
+
+                string? userId = User.FindFirstValue("Id");
+                if (userId == null)
+                {
+                    return Unauthorized();
+                }
+
+                User? user = await _userService.GetUserById(userId);
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+
+                ReviewReply newReviewReply = new ReviewReply
+                {
+                    ReviewId = reply.ReviewId,
+                    Content = reply.Content,
+                    ReplyDate = DateTime.Now,
+                    IsRead = true,
+                    UserReplyId = user.UserId
+                };
+
+                bool result = await _reviewService.CreateReviewReply(newReviewReply);
+
+                return Ok(new ApiResponse
+                {
+                    Status = result,
+                    Data = result ? new ReviewReply
+                    {
+                        Content = newReviewReply.Content,
+                        UserReply = new User
+                        {
+                            FullName = user.FullName,
+                            Avatar = user.Avatar
+                        }
+                    } : null
+                });
+            }
+
+            return BadRequest();
         }
 
         [HttpDelete("{id}")]

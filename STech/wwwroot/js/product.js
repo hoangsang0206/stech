@@ -398,7 +398,7 @@ const reviewHTML = (review) => {
                 <div class="d-flex align-items-center gap-4 mt-3 overflow-x-auto">
                     <a href="javascript:" class="d-flex align-items-center gap-1 ${!review.isLiked ? 'like-review' : ''} ${!isAuthenticated ? 'not-logged-in' : ''} text-decoration-none" data-review="${review.id}" data-like="${review.totalLike}">
                         ${review.isLiked ? '<i class="fa-solid fa-thumbs-up"></i>' : '<i class="fa-regular fa-thumbs-up"></i>'}
-                        <span>Hứu ích (${review.totalLike})</span>
+                        <span>Hữu ích (${review.totalLike})</span>
                     </a>
 
                     <a href="javascript:" class="d-flex align-items-center gap-1 reply-review ${!isAuthenticated ? 'not-logged-in' : ''}" data-review="${review.id}">
