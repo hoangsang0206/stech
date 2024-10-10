@@ -13,6 +13,11 @@
         content: 'Duyệt',
         placement: 'top'
     })
+
+    tippy('.view-review', {
+        content: 'Xem chi tiết',
+        placement: 'top'
+    })
 }
 
 tippyButtons();
@@ -28,6 +33,8 @@ $(document).on('click', '.approve-review', function () {
                 if (response.status) {
                     showDialogWithCallback('success', 'Đã phê duyệt đánh giá này', '', () => {
                         loadReviews(1);
+
+                        $(document).remove(this);
                     })
                 } else {
                     showDialog('error', 'Không thể duyệt đánh giá', response.message);
@@ -51,6 +58,7 @@ $(document).on('click', '.delete-review', function () {
                 if (response.status) {
                     showDialogWithCallback('success', 'Xóa đánh giá thành công', '', () => {
                         loadReviews(1);
+                        $(document).remove(this);
                     })
                 } else {
                     showDialog('error', 'Không thể xóa đánh giá', response.message);
@@ -83,7 +91,7 @@ const starGroupHTML = (star) => {
 const reviewHTML = (review) => {
     const reviewerName = review.user?.fullName ?? review.reviewerName ?? "Không có tên";
     const reviewerAvatar = review.user?.avatar ?? "/admin/images/user-no-image.svg";
-    const notReadCount = review.reviewReplies.filter(r => !r.IsRead).length;
+    const notReadCount = review.reviewReplies.filter(r => !r.isRead).length;
 
     return `
         <div class="review-item">
@@ -97,7 +105,7 @@ const reviewHTML = (review) => {
                         ${reviewerName}
                     </span>
 
-                    ${review.IsPurchased === true ?
+                    ${review.isPurchased === true ?
             `<span style="padding: .05rem .6rem" class="page-badge badge-success">Đã mua sản phẩm này</span>`
             :
             `<span style ="padding: .05rem .6rem" class="page-badge badge-warning">Chưa mua sản phẩm này</span>`
@@ -120,7 +128,7 @@ const reviewHTML = (review) => {
                     <div>
                         <span style="font-size: .87rem">
                             <span class="text-secondary">Đã đánh giá</span>
-                            <a class="text-decoration-none review-product-name" href="javascript:">${review.product.productName}</a>
+                            <a class="text-decoration-none review-product-name" href="/admin/reviews/product/${review.product.productId}">${review.product.productName}</a>
                         </span>
                     </div>
 
@@ -136,6 +144,10 @@ const reviewHTML = (review) => {
                         <button class="page-btn btn-red delete-review" data-review="${review.id}">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
+
+                        <a href="/admin/reviews/1/${review.id}" class="page-btn btn-blue view-review">
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </a>
 
                        <button class="page-btn btn-lightblue view-review-replies position-relative" data-review="${review.id}">
                             <i class="fa-regular fa-comment-dots"></i>
@@ -288,6 +300,8 @@ const showReviewReplies = (review_id) => {
                 `);
             });
 
+            $('.review-replies').scrollTop($('.review-replies').prop("scrollHeight"));
+
             markAllRepliesAsRead(review_id);
         },
         error: () => {
@@ -351,4 +365,8 @@ $('.post-reply').submit(function (e) {
 
 $('#txt-reply').focus(() => {
     markAllRepliesAsRead($('.post-reply').data('review'));
+})
+
+$('.reload-replies').click(() => {
+    showReviewReplies($('.post-reply').data('review'));
 })

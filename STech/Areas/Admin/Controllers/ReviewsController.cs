@@ -38,6 +38,22 @@ namespace STech.Areas.Admin.Controllers
             return View(reviews);
         }
 
+        [Route("/admin/reviews/1/{rId}")]
+        public async Task<IActionResult> Detail(int rId)
+        {
+            Review? review = await _reviewService.GetReview(rId);
+           
+            if(review == null)
+            {
+                return LocalRedirect("/admin/reviews");
+            }
+
+            Product? product = await _productService.GetProduct(review.ProductId);
+
+            ViewBag.ActiveSidebar = "reviews";
+            return View(new Tuple<Review, Product?>(review, product));
+        }
+
         [Route("/admin/reviews/product/{pId}")]
         public async Task<IActionResult> ProductReviews(string pId)
         {

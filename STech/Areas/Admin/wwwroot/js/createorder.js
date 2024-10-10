@@ -264,6 +264,10 @@ $(document).on('blur', '.order-item-sale-price', function () {
         $(qty_element).val(qty);
     }
 
+    if (parseInt($(this).val()) < 0) {
+        $(this).val(0);
+    }
+
     showWebLoader();
 
     $.ajax({

@@ -8,7 +8,7 @@
 <section class="page-wrapper" data-current-user="@(User.FindFirst("Id")?.Value)">
     <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
         <div class="d-flex gap-2 flex-wrap">
-            <button class="page-btn-reload">
+            <button class="page-btn-reload reload-page-data">
                 <i class="fa-solid fa-rotate-right"></i>
             </button>
 
@@ -147,6 +147,10 @@
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
 
+                            <a href="/admin/reviews/1/@review.Id" class="page-btn btn-blue view-review">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </a>
+
                             <button class="page-btn btn-lightblue view-review-replies position-relative" data-review="@review.Id">
                                 <i class="fa-regular fa-comment-dots"></i>
 
@@ -177,7 +181,15 @@
 
 <div class="form-container reply-review">
     <div class="form-box d-flex flex-column" style="width: 50rem; height: 50rem;">
-        <div class="review">
+        <div class="d-flex">
+            <div class="review flex-grow-1">
+            </div>
+
+            <div>
+                <button class="page-btn-reload reload-replies">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </div>
         </div>
 
         <hr />

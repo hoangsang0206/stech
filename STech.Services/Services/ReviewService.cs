@@ -144,7 +144,7 @@ namespace STech.Services.Services
         {
             return await _context.Reviews
                 .Where(r => r.Id == reviewId)
-                .SelectReview()
+                .SelectReviewDetail()
                 .FirstOrDefaultAsync();
         }
 

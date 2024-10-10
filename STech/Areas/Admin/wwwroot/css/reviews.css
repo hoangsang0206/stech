@@ -46,6 +46,10 @@
     right: -.4rem;
 }
 
+.review-replies {
+    overflow-y: auto;
+}
+
 #txt-reply {
     resize: none;
     width: 100%;

@@ -80,7 +80,7 @@ namespace STech.Areas.Admin.ApiControllers
             return Convert.ToDecimal(fee);
         }
 
-        private Invoice CreateInvoice(AdminOrderVM order, PaymentMethod paymentMethod, AddressVM address, Customer customer, string employeeId)
+        private Invoice CreateInvoice(AdminOrderVM order, PaymentMethod paymentMethod, AddressVM address, Customer customer, string? employeeId)
         {
             string address_str = $"{order.Address}, {address._Ward?.name_with_type}, {address._District?.name_with_type}, {address._City?.name_with_type}";
             if(string.IsNullOrEmpty(order.Address) || string.IsNullOrEmpty(order.WardCode) 
@@ -390,7 +390,7 @@ namespace STech.Areas.Admin.ApiControllers
                 Customer? customer = await _customerService.GetCustomerById(order.CustomerId);
                 PaymentMethod? paymentMethod = await _paymentService.GetPaymentMethod(PaymentContants.CashPayment);
 
-                if (customer == null || employee == null || paymentMethod == null)
+                if (customer == null || paymentMethod == null)
                 {
                     return BadRequest();
                 }
@@ -404,7 +404,7 @@ namespace STech.Areas.Admin.ApiControllers
 
                 AddressVM address = GetAddress(order.WardCode, order.DistrictCode, order.CityCode);
 
-                Invoice invoice = CreateInvoice(order, paymentMethod, address, customer, employee.EmployeeId); 
+                Invoice invoice = CreateInvoice(order, paymentMethod, address, customer, employee?.EmployeeId); 
                 invoice.InvoiceDetails = await CreateInvoiceDetails(order.Products, invoice.InvoiceId);
                 invoice.InvoiceStatuses = CreateInvoiceStatus(invoice);
                 invoice.PackingSlip = await CreatePackingSlip(invoice, address, order.WarehouseId);

@@ -45,6 +45,50 @@ namespace STech.Services.Utils
             .OrderByDescending(r => r.CreateAt);
         }
 
+        public static IQueryable<Review> SelectReviewDetail(this IQueryable<Review> reviews)
+        {
+            return reviews.Select(r => new Review
+            {
+                Id = r.Id,
+                ProductId = r.ProductId,
+                Rating = r.Rating,
+                Content = r.Content,
+                CreateAt = r.CreateAt,
+                ReviewerName = r.ReviewerName,
+                ReviewerEmail = r.ReviewerEmail,
+                ReviewerPhone = r.ReviewerPhone,
+                TotalLike = r.TotalLike,
+                IsPurchased = r.IsPurchased,
+                IsProceeded = r.IsProceeded,
+                User = r.User == null ? null : new User
+                {
+                    UserId = r.User.UserId,
+                    FullName = r.User.FullName,
+                    Avatar = r.User.Avatar,
+                    RoleId = r.User.RoleId,
+                    Email = r.User.Email,
+                    Phone = r.User.Phone
+                },
+                ReviewImages = r.ReviewImages,
+                ReviewReplies = r.ReviewReplies.Select(rp => new ReviewReply
+                {
+                    Id = rp.Id,
+                    ReviewId = rp.ReviewId,
+                    Content = rp.Content,
+                    ReplyDate = rp.ReplyDate,
+                    IsRead = rp.IsRead,
+                    UserReply = new User
+                    {
+                        UserId = rp.UserReply.UserId,
+                        FullName = rp.UserReply.FullName,
+                        Avatar = rp.UserReply.Avatar,
+                        RoleId = rp.UserReply.RoleId,
+                    },
+                }).OrderBy(rp => rp.ReplyDate).ToList(),
+            })
+            .OrderByDescending(r => r.CreateAt);
+        }
+
         public static IQueryable<Review> SelectReview(this IQueryable<Review> reviews, int numOfReplies)
         {
             return reviews.Select(r => new Review

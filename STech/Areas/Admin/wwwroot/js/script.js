@@ -348,7 +348,7 @@ $(document).on('change', 'input[name="page-table-checkbox"]', () => {
     }
 })
 
-$('.page-btn-reload').click(() => {
+$('.reload-page-data').click(() => {
     updateParams(null);
     location.reload();
 }) 

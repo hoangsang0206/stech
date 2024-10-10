@@ -943,6 +943,7 @@ button:disabled {
     font-size: 0.8rem;
     font-weight: 500;
     white-space: nowrap;
+    background: #f0f0f0;
 }
 
 .badge-success {
@@ -1128,7 +1129,7 @@ button:disabled {
 }
 
 .page-btn-reload {
-    padding: .4rem .7rem;
+    padding: .7rem;
 }
 
     .filter-btn:hover, .page-btn-reload:hover {
