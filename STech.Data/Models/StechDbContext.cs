@@ -65,6 +65,8 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<ProductSpecification> ProductSpecifications { get; set; }
 
+    public virtual DbSet<ReturnExchangeSlip> ReturnExchangeSlips { get; set; }
+
     public virtual DbSet<Review> Reviews { get; set; }
 
     public virtual DbSet<ReviewImage> ReviewImages { get; set; }
@@ -104,6 +106,8 @@ public partial class StechDbContext : DbContext
     public virtual DbSet<WarehouseExportDetail> WarehouseExportDetails { get; set; }
 
     public virtual DbSet<WarehouseProduct> WarehouseProducts { get; set; }
+
+    public virtual DbSet<WarrantySlip> WarrantySlips { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -602,6 +606,49 @@ public partial class StechDbContext : DbContext
                 .HasConstraintName("FK_Spec_SpecFilter");
         });
 
+        modelBuilder.Entity<ReturnExchangeSlip>(entity =>
+        {
+            entity.HasKey(e => e.Resid).HasName("PK__ReturnEx__4D969312DB1332FF");
+
+            entity.Property(e => e.Resid)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("RESId");
+            entity.Property(e => e.CreateAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.EmployeeId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.InvoiceId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Note).HasMaxLength(255);
+            entity.Property(e => e.ProductId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Reason).HasMaxLength(255);
+            entity.Property(e => e.Resdate)
+                .HasColumnType("datetime")
+                .HasColumnName("RESDate");
+            entity.Property(e => e.Status).HasMaxLength(50);
+
+            entity.HasOne(d => d.Employee).WithMany(p => p.ReturnExchangeSlips)
+                .HasForeignKey(d => d.EmployeeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ReturnExc__Emplo__2630A1B7");
+
+            entity.HasOne(d => d.Invoice).WithMany(p => p.ReturnExchangeSlips)
+                .HasForeignKey(d => d.InvoiceId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ReturnExc__Invoi__253C7D7E");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ReturnExchangeSlips)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ReturnExc__Produ__24485945");
+        });
+
         modelBuilder.Entity<Review>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Reviews__3214EC0763D41091");
@@ -663,6 +710,7 @@ public partial class StechDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__ReviewRe__3214EC07385DB39A");
 
+            entity.Property(e => e.IsRead).HasDefaultValue(false);
             entity.Property(e => e.ReplyDate).HasColumnType("datetime");
             entity.Property(e => e.UserReplyId)
                 .HasMaxLength(50)
@@ -1019,6 +1067,47 @@ public partial class StechDbContext : DbContext
                 .HasForeignKey(d => d.WarehouseId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_WP_kho");
+        });
+
+        modelBuilder.Entity<WarrantySlip>(entity =>
+        {
+            entity.HasKey(e => e.Wsid).HasName("PK__Warranty__8265E45AB3E4644D");
+
+            entity.Property(e => e.Wsid)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("WSId");
+            entity.Property(e => e.EmployeeId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.InvoiceId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Note).HasMaxLength(255);
+            entity.Property(e => e.ProductId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ProductStatus).HasMaxLength(255);
+            entity.Property(e => e.Reason).HasMaxLength(255);
+            entity.Property(e => e.ReturnedDate).HasColumnType("datetime");
+            entity.Property(e => e.SentDate).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.WarrantyFee).HasColumnType("decimal(18, 0)");
+
+            entity.HasOne(d => d.Employee).WithMany(p => p.WarrantySlips)
+                .HasForeignKey(d => d.EmployeeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__WarrantyS__Emplo__2077C861");
+
+            entity.HasOne(d => d.Invoice).WithMany(p => p.WarrantySlips)
+                .HasForeignKey(d => d.InvoiceId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__WarrantyS__Invoi__1F83A428");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.WarrantySlips)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__WarrantyS__Produ__1E8F7FEF");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -45,6 +45,16 @@ builder.Services.AddAuthentication(options =>
     options.LoginPath = new PathString("/");
     options.AccessDeniedPath = new PathString("/access-denied");
     options.ExpireTimeSpan = TimeSpan.FromDays(90);
+
+    //options.Events = new CookieAuthenticationEvents
+    //{
+    //    OnRedirectToLogin = context =>
+    //    {
+    //        context.HttpContext.Session.SetInt32("MustShowLoginForm", 1);
+    //        context.Response.Redirect(context.RedirectUri);
+    //        return Task.CompletedTask;
+    //    }
+    //};
 })
 .AddFacebook(facebookOptions =>
 {
@@ -81,10 +91,10 @@ builder.Services.AddAuthentication(options =>
 })
 .AddGoogle(googleOptions =>
 {
-    IConfigurationSection facebookAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+    IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
 
-    googleOptions.ClientId = facebookAuthNSection["ClientId"] ?? "";
-    googleOptions.ClientSecret = facebookAuthNSection["ClientSecret"] ?? "";
+    googleOptions.ClientId = googleAuthNSection["ClientId"] ?? "";
+    googleOptions.ClientSecret = googleAuthNSection["ClientSecret"] ?? "";
     googleOptions.SaveTokens = true;
     googleOptions.ClaimActions.MapJsonKey("picture", "picture");
 
@@ -155,6 +165,8 @@ StripeConfiguration.ApiKey = builder.Configuration.GetSection("Payments:Stripe")
 CloudflareTurnstile.SiteKey = builder.Configuration.GetSection("Cloudflare:Turnstile")["SiteKey"];
 CloudflareTurnstile.SecretKey = builder.Configuration.GetSection("Cloudflare:Turnstile")["SecretKey"];
 CloudflareTurnstile.ApiUrl = builder.Configuration.GetSection("Cloudflare:Turnstile")["ApiUrl"];
+
+//builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

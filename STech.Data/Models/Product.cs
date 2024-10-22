@@ -61,4 +61,10 @@ public partial class Product
     public virtual ICollection<WarehouseExportDetail> WarehouseExportDetails { get; set; } = new List<WarehouseExportDetail>();
 
     public virtual ICollection<WarehouseProduct> WarehouseProducts { get; set; } = new List<WarehouseProduct>();
+
+    [JsonIgnore]
+    public virtual ICollection<ReturnExchangeSlip> ReturnExchangeSlips { get; set; } = new List<ReturnExchangeSlip>();
+
+    [JsonIgnore]
+    public virtual ICollection<WarrantySlip> WarrantySlips { get; set; } = new List<WarrantySlip>();
 }

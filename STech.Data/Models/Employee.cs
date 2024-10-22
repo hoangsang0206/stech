@@ -45,4 +45,10 @@ public partial class Employee
 
     [JsonIgnore]
     public virtual ICollection<WarehouseExport> WarehouseExports { get; set; } = new List<WarehouseExport>();
+
+    [JsonIgnore]
+    public virtual ICollection<ReturnExchangeSlip> ReturnExchangeSlips { get; set; } = new List<ReturnExchangeSlip>();
+
+    [JsonIgnore]
+    public virtual ICollection<WarrantySlip> WarrantySlips { get; set; } = new List<WarrantySlip>();
 }

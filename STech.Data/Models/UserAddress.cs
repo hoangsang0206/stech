@@ -7,7 +7,7 @@ namespace STech.Data.Models;
 public partial class UserAddress
 {
     public int Id { get; set; }
-
+    [JsonIgnore]
     public string UserId { get; set; } = null!;
 
     public string RecipientName { get; set; } = null!;
