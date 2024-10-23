@@ -13,6 +13,8 @@ namespace STech.Areas.Admin.Controllers
         private readonly IReviewService _reviewService;
         private readonly IProductService _productService;
 
+        private readonly int ReviewsPerPage = 40;
+
         public ReviewsController(IUserService userService, IReviewService reviewService, IProductService productService)
         {
             _userService = userService;
@@ -28,8 +30,8 @@ namespace STech.Areas.Admin.Controllers
             }
 
             var (reviews, totalPages) = search != null 
-                ? await _reviewService.SearchReviewsWithProduct(search, 40, sort_by, status, filter_by, page)
-                : await _reviewService.GetReviewsWithProduct( 40, sort_by, status, filter_by, page);
+                ? await _reviewService.SearchReviewsWithProduct(search, ReviewsPerPage, sort_by, status, filter_by, page)
+                : await _reviewService.GetReviewsWithProduct(ReviewsPerPage, sort_by, status, filter_by, page);
 
             ViewBag.TotalPages = totalPages;
             ViewBag.CurrentPage = page;
@@ -55,17 +57,25 @@ namespace STech.Areas.Admin.Controllers
         }
 
         [Route("/admin/reviews/product/{pId}")]
-        public async Task<IActionResult> ProductReviews(string pId)
+        public async Task<IActionResult> ProductReviews(string pId, string? sort_by, string? status, string? filter_by, int page = 1)
         {
             Product? product = await _productService.GetProductWithBasicInfo(pId);
-            if(product == null)
+
+            if (product == null)
             {
                 return LocalRedirect($"/admin/reviews?search={pId}");
             }
 
-            var (reviews, overview, totalPages, totalReviews, remainingReviews) = 
-                await _reviewService.GetReviews(pId, 40, 0, null, null, null);
+            if (page < 1)
+            {
+                page = 1;
+            }
 
+            var (reviews, totalPages) = await _reviewService.GetProductReviews(pId, ReviewsPerPage, sort_by, status, filter_by, page);
+
+            ViewBag.TotalPages = totalPages;
+            ViewBag.CurrentPage = page;
+            ViewBag.ActiveSidebar = "reviews";
             return View(new Tuple<Product, IEnumerable<Review>>(product, reviews));
         }
     }

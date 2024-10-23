@@ -67,13 +67,16 @@
                                 </div>
                                 <div class="d-flex flex-column justify-content-between">
                                     <span class="text-overflow-2" style="font-size: 0.93rem">@product.ProductName</span>
-                                    <span style="font-weight: 600; color: var(--primary-color); font-size: 0.93rem">@CurrencyFormatter.Format(product.Price)</span>
                                 </div>
 
                             </div>
-                            <span class="d-flex align-items-center">
-                                <span style="font-size: 0.6rem; font-weight: 600">&#10005</span> &nbsp;1
-                            </span>
+                            <div class="d-flex flex-column align-items-end justify-content-between gap-1">
+                                <span class="d-flex align-items-center">
+                                    <span style="font-size: 0.6rem; font-weight: 600">&#10005</span> &nbsp;1
+                                </span>
+                                <span style="font-weight: 600; color: var(--primary-color); font-size: 0.93rem">@CurrencyFormatter.Format(product.Price)</span>
+                            </div>
+                            
                         </div>
                     }
                     else
@@ -88,14 +91,16 @@
                                         <img style="width: 4rem" src="@src" alt="" />
                                     </div>
                                     <div class="d-flex flex-column justify-content-between">
-                                        <span class="text-overflow-2" style="font-size: 0.93rem">@cart.Product.ProductName</span>
-                                        <span style="font-weight: 600; color: var(--primary-color); font-size: 0.93rem">@CurrencyFormatter.Format(cart.Product.Price)</span>
+                                        <span class="text-overflow-2" style="font-size: 0.93rem">@cart.Product.ProductName</span>                               
                                     </div>
 
                                 </div>
-                                <span class="d-flex align-items-center">
-                                    <span style="font-size: 0.6rem; font-weight: 600">&#10005</span> &nbsp;@cart.Quantity
-                                </span>
+                                <div class="d-flex flex-column align-items-end justify-content-between gap-1">
+                                    <span class="d-flex align-items-center">
+                                        <span style="font-size: 0.6rem; font-weight: 600">&#10005</span> &nbsp;@cart.Quantity
+                                    </span>
+                                    <span style="font-weight: 600; color: var(--primary-color); font-size: 0.93rem">@CurrencyFormatter.Format(cart.Product.Price)</span>
+                                </div>
                             </div>
                         }
                     }

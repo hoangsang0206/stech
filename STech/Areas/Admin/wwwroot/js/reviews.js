@@ -176,6 +176,8 @@ const loadReviews = (page) => {
     const status = $('.status-selection .page-dropdown-btn').data('selected') || null;
     const filter_by = $('.filter-selection .page-dropdown-btn').data('selected') || null;
     const search = $('.search-reviews #search').val() || null;
+    const product_id = $('#ProductId').val() || null;
+
     showWebLoader();
 
     $.ajax({
@@ -183,6 +185,7 @@ const loadReviews = (page) => {
         url: `/api/admin/reviews`,
         data: {
             search: search,
+            productId: product_id,
             page: page,
             sort_by: sort_by,
             status: status,

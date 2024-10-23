@@ -80,6 +80,36 @@ namespace STech.Services.Services
             );
         }
 
+        public async Task<(IEnumerable<Review>, int)> GetProductReviews(string productId, int reviewsPerPage, string? sort_by, string? status, string? filter_by, int page = 1)
+        {
+            IEnumerable<Review> reviews = await _context.Reviews
+                .Where(r => r.ProductId == productId)
+                .SelectReviewWithProduct()
+                .ToListAsync();
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                if (status == "approved")
+                {
+                    reviews = reviews.Where(r => r.IsProceeded == true).ToList();
+                }
+                else if (status == "not-approved")
+                {
+                    reviews = reviews.Where(r => r.IsProceeded != true).ToList();
+                }
+            }
+
+            reviews = reviews.Filter(filter_by).Sort(sort_by).ToList();
+
+            int totalReviews = reviews.Count();
+            int totalPages = (int)Math.Ceiling((double)totalReviews / reviewsPerPage);
+
+            return (
+                reviews.Paginate(page, reviewsPerPage),
+                totalPages
+            );
+        }
+
         public async Task<(IEnumerable<Review>, int)> SearchReviewsWithProduct(string query, int reviewsPerPage, string? sort_by, string? status, string? filter_by, int page = 1)
         {
             string[] keywords = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
