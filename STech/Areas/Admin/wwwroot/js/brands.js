@@ -139,3 +139,16 @@ $('.form-brand form').submit(function (e) {
         }
     })
 })
+
+$(document).on('click', '.pagination-item:not(.current)', function () {
+    const page = $(this).data('page') || '1';
+    const current_page = parseInt($('.pagination-item.current').data('page') || '1');
+
+    if (page === 'next') {
+        window.location.href = `/admin/brands?page=${current_page + 1}`;
+    } else if (page === 'previous') {
+        window.location.href = `/admin/brands?page=${current_page - 1}`;
+    } else {
+        window.location.href = `/admin/brands?page=${page}`;
+    }
+})

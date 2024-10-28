@@ -4,7 +4,7 @@
     ViewData["Title"] = "Giỏ hàng - STech";
 }
 
-@await Html.PartialAsync("Partialviews/Breadcrumb", Model.Item2)
+@await Html.PartialAsync("Partialviews/Breadcrumb", Model.Item2.ToList())
 
 <section class="cart-page">
         @if (Model.Item1.Count() > 0)

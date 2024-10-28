@@ -4,7 +4,7 @@
 
  @model Tuple<Invoice?, IEnumerable<Breadcrumb>>
 
-@await Html.PartialAsync("PartialViews/Breadcrumb", Model.Item2)
+@await Html.PartialAsync("PartialViews/Breadcrumb", Model.Item2.ToList())
 
 <section class="page-container-padding">
     @await Html.PartialAsync("PartialViews/Order_OrderDetail", Model.Item1)
