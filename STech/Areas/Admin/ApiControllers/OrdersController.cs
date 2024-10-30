@@ -26,6 +26,7 @@ namespace STech.Areas.Admin.ApiControllers
         private readonly IEmployeeService _employeeService;
 
         private readonly IWebHostEnvironment _env;
+        private readonly int _itemsPerPage = 30;
 
         public OrdersController(IWebHostEnvironment env, IOrderService orderService, 
             IProductService productService, AddressService addressService,
@@ -221,16 +222,16 @@ namespace STech.Areas.Admin.ApiControllers
         [HttpGet]
         public async Task<IActionResult> GetOrders(int page = 1, string? filter_by = "unaccepted", string? sort_by = null)
         {
-            var (invoices, totalPages) = await _orderService.GetInvoices(page, filter_by, sort_by);
+            PagedList<Invoice> data = await _orderService.GetInvoices(page, _itemsPerPage, filter_by, sort_by);
 
             return Ok(new ApiResponse
             {
                 Status = true,
                 Data = new
                 {
-                    invoices,
-                    currentPage = page,
-                    totalPages
+                    invoices = data.Items,
+                    currentPage = data.CurrentPage,
+                    totalPages = data.TotalPages
                 }
             });
         }
@@ -238,12 +239,12 @@ namespace STech.Areas.Admin.ApiControllers
         [HttpGet("search/{query}")]
         public async Task<IActionResult> SearchOrders(string query)
         {
-            IEnumerable<Invoice> invoices = await _orderService.SearchInvoices(query);
+            PagedList<Invoice> invoices = await _orderService.SearchInvoices(query, 1, _itemsPerPage);
 
             return Ok(new ApiResponse
             {
                 Status = true,
-                Data = invoices
+                Data = invoices.Items
             });
         }
 

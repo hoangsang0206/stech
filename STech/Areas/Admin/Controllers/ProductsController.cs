@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
+using STech.Data.ViewModels;
 using STech.Filters;
 using STech.Services;
 using static Org.BouncyCastle.Asn1.Cmp.Challenge;
@@ -13,8 +14,11 @@ namespace STech.Areas.Admin.Controllers
         private readonly IProductService _productService;
         private readonly IWarehouseService _warehouseService;
         private readonly IBrandService _brandService;
+        
+        private readonly int _itemsPerPage = 40;
 
-        public ProductsController(ICategoryService categoryService, IProductService productService, IWarehouseService warehouseService, IBrandService brandService)
+        public ProductsController(ICategoryService categoryService, IProductService productService, 
+            IWarehouseService warehouseService, IBrandService brandService)
         {
             _categoryService = categoryService;
             _productService = productService;
@@ -25,7 +29,8 @@ namespace STech.Areas.Admin.Controllers
         public async Task<IActionResult> Index(string? brands, string? categories, string? status, string? price_range, 
             string? warehouse_id, string? sort, int page = 1, string view_type = "view-list")
         {
-            var (products, totalPages) = await _productService.GetProducts(brands, categories, status, price_range, warehouse_id, sort, page);
+            PagedList<Product> products = await _productService
+                .GetProducts(brands, categories, status, price_range, warehouse_id, sort, page, _itemsPerPage);
 
             IEnumerable<Warehouse> warehouses = await _warehouseService.GetWarehouses();
             IEnumerable<Brand> _brands = await _brandService.GetAll(false);
@@ -36,9 +41,6 @@ namespace STech.Areas.Admin.Controllers
             ViewBag.Categories = _categories;
 
             ViewBag.ViewType = view_type;
-            ViewBag.TotalPages = totalPages;
-            ViewBag.CurrentPage = page;
-
 
             ViewBag.ActiveSidebar = "products";
 
@@ -48,7 +50,7 @@ namespace STech.Areas.Admin.Controllers
         [Route("/admin/products/search/{query}")]
         public async Task<IActionResult> Search(string query, string? warehouse_id, string? sort, int page = 1, string view_type = "view-list")
         {
-            var (products, totalPages) = await _productService.SearchProducts(query, page, sort, warehouse_id);
+            PagedList<Product> products = await _productService.SearchProducts(query, page, _itemsPerPage, sort, warehouse_id);
 
 
             IEnumerable<Warehouse> warehouses = await _warehouseService.GetWarehouses();
@@ -61,9 +63,6 @@ namespace STech.Areas.Admin.Controllers
 
             ViewBag.SearchValue = query;
             ViewBag.ViewType = view_type;
-            ViewBag.TotalPages = totalPages;
-            ViewBag.CurrentPage = page;
-
 
             ViewBag.ActiveSidebar = "products";
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
+using STech.Data.ViewModels;
 using STech.Services.Utils;
 
 namespace STech.Services.Services
@@ -7,9 +8,7 @@ namespace STech.Services.Services
     public class OrderService : IOrderService
     {
         private readonly StechDbContext _context;
-
-        private readonly int NumOfInvoicePerPage = 20;
-
+        
         public OrderService(StechDbContext context)
         {
             _context = context;
@@ -165,32 +164,26 @@ namespace STech.Services.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<(IEnumerable<Invoice>, int)> GetInvoices(int page, string? filterBy, string? sortBy)
+        public async Task<PagedList<Invoice>> GetInvoices(int page, int itemsPerPage, string? filterBy, string? sortBy)
         {
-            IEnumerable<Invoice> invoices = await _context.Invoices
+            IQueryable<Invoice> invoices = _context.Invoices
                 .Include(i => i.InvoiceStatuses)
                 .Include(i => i.InvoiceDetails)
-                .Include(i => i.PaymentMed)
-                .ToListAsync();
+                .Include(i => i.PaymentMed);
 
-            invoices = invoices.FilterBy(filterBy);
-
-            int totalPage = Convert.ToInt32(Math.Ceiling(
-                Convert.ToDouble(invoices.Count()) / Convert.ToDouble(NumOfInvoicePerPage)));
-
-            return (invoices.Paginate(page, NumOfInvoicePerPage).SortBy(sortBy), totalPage);
+            invoices = invoices.SortBy(sortBy).FilterBy(filterBy);
+            return await invoices.ToPagedListAsync(page, itemsPerPage);
         }
 
-        public async Task<IEnumerable<Invoice>> SearchInvoices(string query)
+        public async Task<PagedList<Invoice>> SearchInvoices(string query, int page, int itemsPerPage)
         {
-            IEnumerable<Invoice> invoices = await _context.Invoices
+            IQueryable<Invoice> invoices = _context.Invoices
                 .Include(i => i.InvoiceStatuses)
                 .Include(i => i.InvoiceDetails)
                 .Include(i => i.PaymentMed)
-                .Where(i => i.InvoiceId.Contains(query) || i.RecipientPhone.Contains(query))
-                .ToListAsync();
+                .Where(i => i.InvoiceId.Contains(query) || i.RecipientPhone.Contains(query));
 
-            return invoices;
+            return await invoices.ToPagedListAsync(page, itemsPerPage);
         }
     }
 }

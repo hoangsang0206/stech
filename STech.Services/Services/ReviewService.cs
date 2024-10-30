@@ -15,7 +15,7 @@ namespace STech.Services.Services
         }
  
 
-        public async Task<IEnumerable<Review>> GetReviews(string productId, string? sort_by)
+        public async Task<IEnumerable<Review>> GetReviews(string productId, string? sortBy)
         {
             return await _context.Reviews
                 .Where(r => r.ProductId == productId)
@@ -24,38 +24,30 @@ namespace STech.Services.Services
                 
         }
 
-        public async Task<(IEnumerable<Review>, ReviewOverview, int, int, int)> GetReviews(string productId, int reviewsPerPage, int numOfReplies, 
-            string? sort_by, string? filter_by, string? current_user, int page = 1)
+        public async Task<(PagedList<Review>, ReviewOverview)> GetReviews(string productId, int reviewsPerPage, int numOfReplies, 
+            string? sortBy, string? filterBy, string? currentUser, int page = 1)
         {
-            IEnumerable<Review> reviews = await _context.Reviews
+            IQueryable<Review> reviews = _context.Reviews
                 .Where(r => r.ProductId == productId)
-                .SelectReview(numOfReplies)
-                .ToListAsync();
-
-            int totalReviews = reviews.Count();
+                .SelectReview(numOfReplies, currentUser);
+            
             ReviewOverview overview = reviews.GetReviewOverview();
 
-            reviews = reviews.Filter(filter_by).Sort(sort_by);
-            int filteredCount = reviews.Count();
-            int totalPages = (int)Math.Ceiling((double)filteredCount / reviewsPerPage);
-
-            int remainingReviews = filteredCount - reviewsPerPage * (page > totalPages ? totalPages : page);
-                
+            reviews = reviews.Filter(filterBy).Sort(sortBy);
+           
             return (
-                reviews.Paginate(page, reviewsPerPage).Filter(filter_by).Sort(sort_by), 
-                overview,
-                totalPages,
-                totalReviews,
-                remainingReviews > 0 ? remainingReviews : 0
+                await reviews.ToPagedListAsync(page, reviewsPerPage), 
+                overview
             );
         }
 
-        public async Task<(IEnumerable<Review>, int)> GetReviewsWithProduct(int reviewsPerPage, string? sort_by, string? status, string? filter_by, int page = 1)
+        public async Task<PagedList<Review>> GetReviewsWithProduct(int reviewsPerPage, string? sortBy, string? status, string? filterBy, int page = 1)
         {
-            IEnumerable<Review> reviews = await _context.Reviews
+            IQueryable<Review> reviews = _context.Reviews
                 .Include(r => r.Product)
-                .SelectReviewWithProduct()
-                .ToListAsync();
+                .Filter(filterBy)
+                .Sort(sortBy)
+                .SelectReviewWithProduct();
 
             if(!string.IsNullOrEmpty(status))
             {
@@ -68,57 +60,18 @@ namespace STech.Services.Services
                     reviews = reviews.Where(r => r.IsProceeded != true);
                 }
             }
-
-            reviews = reviews.Paginate(page, reviewsPerPage).Filter(filter_by).Sort(sort_by);
-
-            int totalReviews = reviews.Count();
-            int totalPages = (int)Math.Ceiling((double)totalReviews / reviewsPerPage);
-
-            return (
-                reviews,
-                totalPages
-            );
+            
+            return await reviews.ToPagedListAsync(page, reviewsPerPage);
         }
 
-        public async Task<(IEnumerable<Review>, int)> GetProductReviews(string productId, int reviewsPerPage, string? sort_by, string? status, string? filter_by, int page = 1)
+        public async Task<(PagedList<Review>, ReviewOverview)> GetProductReviews(string productId, int reviewsPerPage, string? sortBy, 
+            string? status, string? filterBy, int page = 1)
         {
-            IEnumerable<Review> reviews = await _context.Reviews
+            IQueryable<Review> reviews = _context.Reviews
                 .Where(r => r.ProductId == productId)
-                .SelectReviewWithProduct()
-                .ToListAsync();
-
-            if (!string.IsNullOrEmpty(status))
-            {
-                if (status == "approved")
-                {
-                    reviews = reviews.Where(r => r.IsProceeded == true).ToList();
-                }
-                else if (status == "not-approved")
-                {
-                    reviews = reviews.Where(r => r.IsProceeded != true).ToList();
-                }
-            }
-
-            reviews = reviews.Filter(filter_by).Sort(sort_by).ToList();
-
-            int totalReviews = reviews.Count();
-            int totalPages = (int)Math.Ceiling((double)totalReviews / reviewsPerPage);
-
-            return (
-                reviews.Paginate(page, reviewsPerPage),
-                totalPages
-            );
-        }
-
-        public async Task<(IEnumerable<Review>, int)> SearchReviewsWithProduct(string query, int reviewsPerPage, string? sort_by, string? status, string? filter_by, int page = 1)
-        {
-            string[] keywords = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-            IEnumerable<Review> reviews = await _context.Reviews
-                .Where(r => r.Product.ProductId == query || keywords.All(key => r.Product.ProductName.Contains(key)))
-                .Include(r => r.Product)
-                .SelectReviewWithProduct()
-                .ToListAsync();
+                .Filter(filterBy)
+                .Sort(sortBy)
+                .SelectReviewWithProduct();
 
             if (!string.IsNullOrEmpty(status))
             {
@@ -131,40 +84,54 @@ namespace STech.Services.Services
                     reviews = reviews.Where(r => r.IsProceeded != true);
                 }
             }
-
-            reviews = reviews.Paginate(page, reviewsPerPage).Filter(filter_by).Sort(sort_by);
-
-            int totalReviews = reviews.Count();
-            int totalPages = (int)Math.Ceiling((double)totalReviews / reviewsPerPage);
-
+            
             return (
-                reviews,
-                totalPages
+                await reviews.ToPagedListAsync(page, reviewsPerPage),
+                reviews.GetReviewOverview()
             );
         }
 
-        public async Task<(IEnumerable<Review>, ReviewOverview, int, int, int)> GetApprovedReviews(string productId, int reviewsPerPage, int numOfReplies, string? sort_by, string? filter_by, string? current_user, int page = 1)
+        public async Task<PagedList<Review>> SearchReviewsWithProduct(string query, int reviewsPerPage, 
+            string? sortBy, string? status, string? filterBy, int page = 1)
         {
-            IEnumerable<Review> reviews = await _context.Reviews
-                 .Where(r => r.ProductId == productId && r.IsProceeded == true)
-                 .SelectReview(numOfReplies, current_user)
-                 .ToListAsync();
+            string[] keywords = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            int totalReviews = reviews.Count();
+            IQueryable<Review> reviews = _context.Reviews
+                .Where(r => r.Product.ProductId == query || keywords.All(key => r.Product.ProductName.Contains(key)))
+                .Include(r => r.Product)
+                .Filter(filterBy)
+                .Sort(sortBy)
+                .SelectReviewWithProduct();
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                if (status == "approved")
+                {
+                    reviews = reviews.Where(r => r.IsProceeded == true);
+                }
+                else if (status == "not-approved")
+                {
+                    reviews = reviews.Where(r => r.IsProceeded != true);
+                }
+            }
+            
+            return await reviews.ToPagedListAsync(page, reviewsPerPage);
+        }
+
+        public async Task<(PagedList<Review>, ReviewOverview)> GetApprovedReviews(string productId, int reviewsPerPage, 
+            int numOfReplies, string? sortBy, string? filterBy, string? currentUser, int page = 1)
+        {
+            IQueryable<Review> reviews = _context.Reviews
+                 .Where(r => r.ProductId == productId && r.IsProceeded == true)
+                 .SelectReview(numOfReplies, currentUser);
+            
             ReviewOverview overview = reviews.GetReviewOverview();
 
-            reviews = reviews.Filter(filter_by).Sort(sort_by);
-            int filteredCount = reviews.Count();
-            int totalPages = (int)Math.Ceiling((double)filteredCount / reviewsPerPage);
-
-            int remainingReviews = filteredCount - reviewsPerPage * (page > totalPages ? totalPages : page);
-
+            reviews = reviews.Filter(filterBy).Sort(sortBy);
+            
             return (
-                reviews.Paginate(page, reviewsPerPage).Filter(filter_by).Sort(sort_by),
-                overview,
-                totalPages,
-                totalReviews,
-                remainingReviews > 0 ? remainingReviews : 0
+                await reviews.ToPagedListAsync(page, reviewsPerPage),
+                overview
             );
         }
 
@@ -178,9 +145,9 @@ namespace STech.Services.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<(IEnumerable<ReviewReply>, int, int, int)> GetReviewReplies(int reviewId, int page, int repliesPerPage)
+        public async Task<PagedList<ReviewReply>> GetReviewReplies(int reviewId, int page, int repliesPerPage)
         {
-            IEnumerable<ReviewReply> replies = await _context.ReviewReplies
+            IQueryable<ReviewReply> replies = _context.ReviewReplies
                 .Where(rp => rp.ReviewId == reviewId)
                 .Select(rp => new ReviewReply
                 {
@@ -196,19 +163,9 @@ namespace STech.Services.Services
                         RoleId = rp.UserReply.RoleId,
                     },
                 })
-                .OrderBy(rp => rp.ReplyDate)
-                .ToListAsync();
-
-            int totalReplies = replies.Count();
-            int totalPages = (int)Math.Ceiling((double)totalReplies / repliesPerPage);
-            int remainingReplies = totalReplies - (page > totalPages ? totalPages : page) * repliesPerPage;
-
-            return (
-                    replies.Paginate(page, repliesPerPage), 
-                    totalPages, 
-                    totalReplies, 
-                    remainingReplies > 0 ? remainingReplies : 0
-                );
+                .OrderBy(rp => rp.ReplyDate);
+            
+            return await replies.ToPagedListAsync(page, repliesPerPage);
         }
 
         public async Task<IEnumerable<ReviewReply>> GetReviewReplies(int reviewId)

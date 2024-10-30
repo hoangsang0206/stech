@@ -10,6 +10,7 @@ namespace STech.Areas.Admin.Controllers
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;
+        private readonly int _itemsPerPage = 30;
         
         public OrdersController(IOrderService orderService)
         {
@@ -18,13 +19,10 @@ namespace STech.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index(int page = 1, string? filter_by = "unaccepted", string? sort_by = null)
         {
-            var (invoices, totalPage ) = await _orderService.GetInvoices(page, filter_by, sort_by);
+            PagedList<Invoice> invoices = await _orderService.GetInvoices(page, _itemsPerPage, filter_by, sort_by);
 
             ViewBag.ActivePageNav = filter_by;
             ViewBag.ActiveSidebar = "orders";
-
-            ViewBag.TotalPages = totalPage;
-            ViewBag.CurrentPage = page;
 
             return View(invoices);
         }
@@ -32,7 +30,7 @@ namespace STech.Areas.Admin.Controllers
         [Route("admin/orders/search/{query}")]
         public async Task<IActionResult> SearchOrders(string query)
         {
-            IEnumerable<Invoice> invoices = await _orderService.SearchInvoices(query);
+            PagedList<Invoice> invoices = await _orderService.SearchInvoices(query, 1, _itemsPerPage);
 
             ViewBag.ActiveSidebar = "orders";
             ViewBag.SearchValue = query;

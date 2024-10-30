@@ -1,17 +1,18 @@
-﻿@model PagedList<Brand>
+@model PagedList<Customer>
 
 @{
-    ViewData["Title"] = "Danh sách hãng hãng - STech";
-    ViewData["PageTitle"] = "Danh sách hãng";
+    ViewData["Title"] = "Quản lý khách hàng - STech";
+    ViewData["PageTitle"] = "Quản lý khách hàng";
 }
 
-<section class="page-wrapper">
+<section class="page-wrapper" data-page="customer">
     <div>
-        <div class="mb-3">
-            <a href="javascript:" class="page-btn btn-border-only click-add-brand">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <a href="javascript:" class="page-btn btn-border-only show-form-add-customer">
                 <i class="fa-solid fa-plus"></i>
                 <span>Thêm</span>
             </a>
+            @await Html.PartialAsync("PartialViews/_PageSearchForm", new Tuple<string, string, string>("search-customers", "Tìm kiếm (mã, sđt, họ tên)", ViewBag.SearchValue))
         </div>
 
         <div>
@@ -23,50 +24,44 @@
                                 <input type="checkbox" id="page-table-checkbox-all" />
                             </th>
                             <th>STT</th>
-                            <th>Mã hãng</th>
-                            <th>Logo</th>
-                            <th>Tên hãng</th>
-                            <th>Số điện thoại</th>
+                            <th>Mã KH</th>
+                            <th>Họ tên</th>
+                            <th>Số ĐT</th>
                             <th>Địa chỉ</th>
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody class="category-list">
+                    <tbody class="customer-list">
                         @{
-                            int index = (Model.CurrentPage - 1) * Model.PageSize + 1;
+                            int index = (Model.CurrentPage - 1) * 30 + 1;
 
-                            foreach (Brand brand in Model.Items)
+                            foreach (Customer customer in Model.Items)
                             {
-                                <tr data-item="@brand.BrandId">
+                                <tr data-item="@customer.CustomerId">
                                     <td>
-                                        <input type="checkbox" name="page-table-checkbox" value="@brand.BrandId" />
+                                        <input type="checkbox" name="page-table-checkbox" value="@customer.CustomerId" />
                                     </td>
                                     <td>
                                         @index
                                     </td>
                                     <td>
-                                        @brand.BrandId
+                                        @customer.CustomerId
                                     </td>
                                     <td>
-                                        <div class="lazy-loading">
-                                            <img lazy-src="@brand.LogoSrc" alt="" style="width: 5rem">
-                                        </div>
+                                        @customer.CustomerName
                                     </td>
                                     <td>
-                                        <span class="text-overflow-1">@brand.BrandName</span>
+                                        @customer.Phone
                                     </td>
                                     <td>
-                                        @(brand.Phone ?? "--")
-                                    </td>
-                                    <td>
-                                        @(brand.Address ?? "--")
+                                       @($"{customer.Address}, {customer.Ward}, {customer.District}, {customer.Province}")
                                     </td>
                                     <td>
                                         <div class="d-flex gap-1 align-items-center justify-content-end">
-                                            <button class="page-table-btn btn-lightblue edit-brand" data-brand="@brand.BrandId">
+                                            <button class="page-table-btn btn-lightblue edit-customer" data-customer="@customer.CustomerId">
                                                 <i class="fa-regular fa-pen-to-square"></i>
                                             </button>
-                                            <button class="page-table-btn btn-red delete-brand" data-brand="@brand.BrandId">
+                                            <button class="page-table-btn btn-red delete-customer" data-customer="@customer.CustomerId">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </div>
@@ -84,8 +79,13 @@
     </div>
 </section>
 
-@await Html.PartialAsync("PartialViews/Form_Brand")
+@await Html.PartialAsync("PartialViews/Form_AddCustomer", new CustomerVM())
+
+@section Styles {
+    
+}
 
 @section Scripts {
-    <script src="~/admin/js/brands.js"></script>
+    <script src="~/admin/js/customers.js"></script>
+    <script src="~/js/address.js"></script>
 }

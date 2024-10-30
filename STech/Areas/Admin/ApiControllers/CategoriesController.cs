@@ -18,6 +18,8 @@ namespace STech.Areas.Admin.ApiControllers
 
         private readonly ICategoryService _categoryService;
         private readonly IAzureService _azureService;
+        
+        private readonly int _itemsPerPage = 30;
 
         public CategoriesController(ICategoryService categoryService, IAzureService azureService)
         {
@@ -33,16 +35,16 @@ namespace STech.Areas.Admin.ApiControllers
                 page = 1;
             }
 
-            (IEnumerable<Category>, int) data = await _categoryService.GetAllWithProducts(sort_by, page);
+            PagedList<Category> data = await _categoryService.GetAllWithProducts(sort_by, page, _itemsPerPage);
 
             return Ok(new ApiResponse
             {
                 Status = true,
                 Data = new
                 {
-                    categories = data.Item1,
-                    currentPage = page,
-                    totalPages = data.Item2
+                    categories = data.Items,
+                    currentPage = data.CurrentPage,
+                    totalPages = data.TotalPages
                 }
             });
         }

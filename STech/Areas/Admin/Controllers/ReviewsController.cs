@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
+using STech.Data.ViewModels;
 using STech.Filters;
 using STech.Services;
 
@@ -13,7 +14,7 @@ namespace STech.Areas.Admin.Controllers
         private readonly IReviewService _reviewService;
         private readonly IProductService _productService;
 
-        private readonly int ReviewsPerPage = 40;
+        private readonly int _reviewsPerPage = 40;
 
         public ReviewsController(IUserService userService, IReviewService reviewService, IProductService productService)
         {
@@ -29,13 +30,10 @@ namespace STech.Areas.Admin.Controllers
                 page = 1;          
             }
 
-            var (reviews, totalPages) = search != null 
-                ? await _reviewService.SearchReviewsWithProduct(search, ReviewsPerPage, sort_by, status, filter_by, page)
-                : await _reviewService.GetReviewsWithProduct(ReviewsPerPage, sort_by, status, filter_by, page);
-
-            ViewBag.TotalPages = totalPages;
-            ViewBag.CurrentPage = page;
-
+            PagedList<Review> reviews = search != null 
+                ? await _reviewService.SearchReviewsWithProduct(search, _reviewsPerPage, sort_by, status, filter_by, page)
+                : await _reviewService.GetReviewsWithProduct(_reviewsPerPage, sort_by, status, filter_by, page);
+            
             ViewBag.ActiveSidebar = "reviews";
             return View(reviews);
         }
@@ -71,12 +69,10 @@ namespace STech.Areas.Admin.Controllers
                 page = 1;
             }
 
-            var (reviews, totalPages) = await _reviewService.GetProductReviews(pId, ReviewsPerPage, sort_by, status, filter_by, page);
-
-            ViewBag.TotalPages = totalPages;
-            ViewBag.CurrentPage = page;
+            var (reviews, overview) = await _reviewService.GetProductReviews(pId, _reviewsPerPage, sort_by, status, filter_by, page);
+            
             ViewBag.ActiveSidebar = "reviews";
-            return View(new Tuple<Product, IEnumerable<Review>>(product, reviews));
+            return View(new Tuple<Product, PagedList<Review>, ReviewOverview>(product, reviews, overview));
         }
     }
 }

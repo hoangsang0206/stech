@@ -8,82 +8,67 @@ namespace STech.Services.Services
     public class ProductService : IProductService
     {
         private readonly StechDbContext _context;
-
-        private readonly int NumOfProductPerPage = 40;
-
+        
         public ProductService(StechDbContext context) => _context = context;
-
-
+        
         #region GET
-        public async Task<(IEnumerable<Product>, int)> GetProducts(string? brands, string? categories, string? status, string? price_range, string? warehouse_id, string? sort, int page = 1)
+        public async Task<PagedList<Product>> GetProducts(string? brands, string? categories, string? status, 
+            string? priceRange, string? warehouseId, string? sort, int page, int itemsPerPage)
         {
-            IEnumerable<Product> products = await _context.Products
-                .Where(p => warehouse_id == null || p.WarehouseProducts.Any(w => w.WarehouseId == warehouse_id))
-                .SelectProduct(warehouse_id)
-                .ToListAsync();
-
-            products = products.Filter(brands, categories, status, price_range);
-
-            int totalPage = Convert.ToInt32(Math.Ceiling(
-                Convert.ToDouble(products.Count()) / Convert.ToDouble(NumOfProductPerPage)));
-
-            return (products.Sort(sort).Pagnigate(page, NumOfProductPerPage), totalPage);
+            IQueryable<Product> products = _context.Products
+                .Where(p => warehouseId == null || p.WarehouseProducts.Any(w => w.WarehouseId == warehouseId))
+                .Filter(brands, categories, status, priceRange)
+                .Sort(sort)
+                .SelectProduct(warehouseId);
+            
+            
+            return await products.ToPagedListAsync(page, itemsPerPage);
         }
 
 
 
-        public async Task<(IEnumerable<Product>, int)> SearchByName(string q, int page, string? sort)
+        public async Task<PagedList<Product>> SearchByName(string q, int page, int itemsPerPage, string? sort)
         {
             if(string.IsNullOrEmpty(q))
             {
-                return (new List<Product>(), 1);
+                return new PagedList<Product>();
             }
 
             string[] keywords = q.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            IEnumerable<Product> products = await _context.Products
+            IQueryable<Product> products = _context.Products
                 .Where(p => keywords.All(key =>  p.ProductName.Contains(key)) && p.IsActive == true)
-                .SelectProduct()
-                .ToListAsync();
-
-            int totalPage = Convert.ToInt32(Math.Ceiling(
-                Convert.ToDouble(products.Count()) / Convert.ToDouble(NumOfProductPerPage)));
-
-            return (products.Sort(sort).Pagnigate(page, NumOfProductPerPage), totalPage);
+                .Sort(sort)
+                .SelectProduct();
+            
+            return await products.ToPagedListAsync(page, itemsPerPage);
         }
 
-        public async Task<(IEnumerable<Product>, int)> SearchProducts(string q, int page, string? sort, string? warehouseId)
+        public async Task<PagedList<Product>> SearchProducts(string q, int page, int itemsPerPage, string? sort, string? warehouseId)
         {
             if (string.IsNullOrEmpty(q))
             {
-                return (new List<Product>(), 1);
+                return new PagedList<Product>();
             }
 
             string[] keywords = q.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            IEnumerable<Product> products = await _context.Products
+            IQueryable<Product> products = _context.Products
                 .Where(p => (p.ProductId == q || keywords.All(key => p.ProductName.Contains(key)))
-                    && (warehouseId != null ? p.WarehouseProducts.Any(w => w.WarehouseId == warehouseId) : true))
-                .SelectProduct(warehouseId)
-                .ToListAsync();
+                            && (warehouseId == null || p.WarehouseProducts.Any(w => w.WarehouseId == warehouseId)))
+                .Sort(sort)
+                .SelectProduct(warehouseId);
 
-            int totalPage = Convert.ToInt32(Math.Ceiling(
-                Convert.ToDouble(products.Count()) / Convert.ToDouble(NumOfProductPerPage)));
-
-            return (products.Sort(sort).Pagnigate(page, NumOfProductPerPage), totalPage);
+            return await products.ToPagedListAsync(page, itemsPerPage);
         }
 
-        public async Task<(IEnumerable<Product>, int)> GetByCategory(string categoryId, int page, string? sort)
+        public async Task<PagedList<Product>> GetByCategory(string categoryId, int page, int itemsPerPage, string? sort)
         {
-            IEnumerable<Product> products = await _context.Products
+            IQueryable<Product> products = _context.Products
                 .Where(p => p.CategoryId == categoryId && p.IsActive == true)
-                .SelectProduct()
-                .ToListAsync();
+                .SelectProduct();
 
-            int totalPage = Convert.ToInt32(Math.Ceiling(
-                Convert.ToDouble(products.Count()) / Convert.ToDouble(NumOfProductPerPage)));
-
-            return (products.Sort(sort).Pagnigate(page, NumOfProductPerPage), totalPage);
+            return await products.ToPagedListAsync(page, itemsPerPage);
         }
 
         public async Task<IEnumerable<Product>> GetSimilarProducts(string categoryId, int numToTake)
@@ -163,12 +148,13 @@ namespace STech.Services.Services
         public async Task<bool> CheckOutOfStock(string id)
         {
             Product product = await _context.Products
-                .Where(p => p.ProductId == id && p.IsActive == true)
-                .Select(p => new Product {
-                    ProductId = p.ProductId,
-                    WarehouseProducts = p.WarehouseProducts 
-                })
-                .FirstOrDefaultAsync() 
+                                  .Where(p => p.ProductId == id && p.IsActive == true)
+                                  .Select(p => new Product
+                                  {
+                                      ProductId = p.ProductId,
+                                      WarehouseProducts = p.WarehouseProducts
+                                  }).Include(product => product.WarehouseProducts)
+                                  .FirstOrDefaultAsync() 
                 ?? new Product();
 
             int totalQty = product.WarehouseProducts.Sum(p => p.Quantity);
@@ -179,12 +165,13 @@ namespace STech.Services.Services
         public async Task<int> GetTotalQty(string id)
         {
             Product product = await _context.Products
-                .Where(p => p.ProductId == id && p.IsActive == true)
-                .Select(p => new Product {
-                    ProductId = p.ProductId,
-                    WarehouseProducts = p.WarehouseProducts
-                })
-                .FirstOrDefaultAsync()
+                                  .Where(p => p.ProductId == id && p.IsActive == true)
+                                  .Select(p => new Product
+                                  {
+                                      ProductId = p.ProductId,
+                                      WarehouseProducts = p.WarehouseProducts
+                                  }).Include(product => product.WarehouseProducts)
+                                  .FirstOrDefaultAsync()
                 ?? new Product();
 
             return product.WarehouseProducts

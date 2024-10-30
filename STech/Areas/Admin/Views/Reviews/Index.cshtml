@@ -3,7 +3,7 @@
     ViewData["PageTitle"] = "Quản lý đánh giá sản phẩm";
 }
 
-@model IEnumerable<Review>
+@model PagedList<Review>
 
 <section class="page-wrapper" data-current-user="@(User.FindFirst("Id")?.Value)">
     <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
@@ -12,13 +12,13 @@
     </div>
 
     <div class="review-list mt-3">
-        @foreach(Review review in Model)
+        @foreach(Review review in Model.Items)
         {
             @await Html.PartialAsync("PartialViews/Review", review)
         }
     </div>
 
-    @await Html.PartialAsync("PartialViews/_Pagination", new Tuple<int, int>(ViewBag.CurrentPage, ViewBag.TotalPages))
+    @await Html.PartialAsync("PartialViews/_Pagination", new Tuple<int, int>(Model.CurrentPage, Model.TotalPages))
 
 </section>
 

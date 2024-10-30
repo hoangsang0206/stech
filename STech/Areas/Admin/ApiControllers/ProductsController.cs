@@ -22,9 +22,11 @@ namespace STech.Areas.Admin.ApiControllers
         private readonly ICategoryService _categoryService;
         private readonly IBrandService _brandService;
 
+        private readonly int _itemsPerPage = 40;
         private readonly string BlobDiscriptionPath = "product-discription-images/";
 
-        public ProductsController(IProductService productService, IAzureService azureService, ICategoryService categoryService, IBrandService brandService)
+        public ProductsController(IProductService productService, IAzureService azureService, 
+            ICategoryService categoryService, IBrandService brandService)
         {
             _productService = productService;
             _azureService = azureService;
@@ -37,32 +39,34 @@ namespace STech.Areas.Admin.ApiControllers
         [HttpGet("search/{query}")]
         public async Task<IActionResult> SearchProducts(string query, string? warehouse_id, string? sort, int page = 1)
         {
-            var (products, totalPages) = await _productService.SearchProducts(query, page, sort, warehouse_id);
+            PagedList<Product> products = await _productService.SearchProducts(query, page, _itemsPerPage, sort, warehouse_id);
 
             return Ok(new ApiResponse
             {
                 Status = true,
                 Data = new
                 {
-                    products,
-                    totalPages,
-                    currentPage = page
+                    products = products.Items,
+                    totalPages = products.TotalPages,
+                    currentPage = products.CurrentPage
                 }
             });
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProducts([FromQuery] string? brands, string? categories, string? status, string? price_range, string? warehouse_id, string? sort, int page = 1)
+        public async Task<IActionResult> GetProducts([FromQuery] string? brands, string? categories, string? status, 
+            string? price_range, string? warehouse_id, string? sort, int page = 1)
         {
-            var (products, totalPages) = await _productService.GetProducts(brands, categories, status, price_range, warehouse_id, sort, page);
+            PagedList<Product> products = await _productService
+                .GetProducts(brands, categories, status, price_range, warehouse_id, sort, page, _itemsPerPage);
 
             return Ok(new ApiResponse
             {
                 Status = true,
                 Data = new {
-                    products,
-                    totalPages,
-                    currentPage = page
+                    products = products.Items,
+                    totalPages = products.TotalPages,
+                    currentPage = products.CurrentPage
                 }
             });
         }

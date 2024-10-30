@@ -295,14 +295,6 @@ $(document).on('click', '.remove-order-item', function () {
     removeItem(product_id);
 })
 
-
-
-
-
-$('.show-form-add-customer').click(() => {
-    showForm('.add-customer');
-})
-
 $('#search-customers').keyup(function () {
     clearTimeout(typingTimeOut);
 

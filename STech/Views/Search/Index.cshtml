@@ -2,7 +2,7 @@
     ViewData["Title"] = "Tìm kiếm - STech";
 }
 
-@model Tuple<IEnumerable<Product>, List<Breadcrumb>>
+@model Tuple<PagedList<Product>, List<Breadcrumb>>
 
 @await Html.PartialAsync("PartialViews/Breadcrumb", Model.Item2)
 
@@ -13,7 +13,7 @@
             <span>@ViewBag.Search</span>
         </h3>
     </div>
-    @if (Model.Item1.Count() <= 0)
+    @if (!Model.Item1.Items.Any())
     {
         <div class="search-error d-flex flex-column align-items-center">
             <div class="error-search-image d-flex justify-content-center">
@@ -40,13 +40,13 @@
         </div>
 
         <div class="product-list">
-            @foreach (Product product in Model.Item1)
+            @foreach (Product product in Model.Item1.Items)
             {
                 @await Html.PartialAsync("PartialViews/ProductBox", product)
             }
         </div>
 
-        @await Html.PartialAsync("PartialViews/Pagination")
+        @await Html.PartialAsync("PartialViews/Pagination", new Tuple<int, int>(Model.Item1.CurrentPage, Model.Item1.TotalPages))
     }
 
 </section>

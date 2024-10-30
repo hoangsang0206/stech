@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
+using STech.Data.ViewModels;
 using STech.Filters;
 using STech.Services;
 
@@ -10,7 +11,8 @@ namespace STech.Areas.Admin.Controllers
     public class BrandsController : Controller
     {
         private readonly IBrandService _brandService;
-
+        private readonly int _itemsPerPage = 20;
+        
         public BrandsController(IBrandService brandService)
         {
             _brandService = brandService;
@@ -23,13 +25,11 @@ namespace STech.Areas.Admin.Controllers
                 page = 1;
             }
 
-            (IEnumerable<Brand>, int) data = await _brandService.GetAll(sort_by, page);
+            PagedList<Brand> brands = await _brandService.GetAll(sort_by, page, _itemsPerPage);
 
             ViewBag.ActiveSidebar = "categories-brands";
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = data.Item2;
-
-            return View(data.Item1);
+            
+            return View(brands);
         }
     }
 }

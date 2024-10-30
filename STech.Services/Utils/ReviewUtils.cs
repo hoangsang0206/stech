@@ -216,7 +216,7 @@ namespace STech.Services.Utils
             .OrderByDescending(r => r.CreateAt);
         }
 
-        public static ReviewOverview GetReviewOverview(this IEnumerable<Review> reviews)
+        public static ReviewOverview GetReviewOverview(this IQueryable<Review> reviews)
         {
             int totalReviews = reviews.Count();
             double averageRating = totalReviews > 0 ? Math.Round(reviews.Average(r => r.Rating), 1) : 0;
@@ -236,31 +236,10 @@ namespace STech.Services.Utils
                 Total1StarReviews = total1Star,
             };
         }
-
-
-        public static IEnumerable<Review> Paginate(this IEnumerable<Review> reviews, int page, int reviewsPerpage)
+        
+        public static IQueryable<Review> Sort(this IQueryable<Review> reviews, string? sortBy)
         {
-            if(page <= 0)
-            {
-                page = 1;
-            }
-
-            return reviews.Skip((page - 1) * reviewsPerpage).Take(reviewsPerpage);
-        }
-
-        public static IEnumerable<ReviewReply> Paginate(this IEnumerable<ReviewReply> replies, int page, int repliesPerPage)
-        {
-            if(page <= 0)
-            {
-                page = 1;
-            }
-
-            return replies.Skip((page - 1) * repliesPerPage).Take(repliesPerPage);
-        }
-
-        public static IEnumerable<Review> Sort(this IEnumerable<Review> reviews, string? sort_by)
-        {
-            switch (sort_by)
+            switch (sortBy)
             {
                 case "newest":
                     return reviews.OrderByDescending(r => r.CreateAt);
@@ -277,9 +256,9 @@ namespace STech.Services.Utils
             }
         }
 
-        public static IEnumerable<Review> Filter(this IEnumerable<Review> reviews, string? filter_by)
+        public static IQueryable<Review> Filter(this IQueryable<Review> reviews, string? filterBy)
         {
-            switch (filter_by)
+            switch (filterBy)
             {
                 case "purchased":
                     return reviews.Where(r => r.IsPurchased == true);

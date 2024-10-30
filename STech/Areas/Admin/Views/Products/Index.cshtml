@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Product>
+﻿@model PagedList<Product>
 
 @{
     ViewData["Title"] = "Quản lý sản phẩm - STech";
@@ -8,9 +8,9 @@
     IEnumerable<Category> categories = ViewBag.Categories;
     IEnumerable<Brand> brands = ViewBag.Brands;
 
-    int deleted = Model.Where(p => p.IsDeleted == true).Count();
-    int inActive = Model.Where(p => p.IsActive != true && p.IsDeleted != true).Count();
-    int activated = Model.Where(p => p.IsActive == true).Count();
+    int deleted = Model.Items.Count(p => p.IsDeleted == true);
+    int inActive = Model.Items.Count(p => p.IsActive != true && p.IsDeleted != true);
+    int activated = Model.Items.Count(p => p.IsActive == true);
 }
 
 <section class="page-wrapper">
@@ -239,22 +239,22 @@
     </div>
 
     <div class="hidden-action mt-2">
-        <button class="page-btn btn-red delete-selected-products @(deleted == Model.Count() ? "d-none" : "")">
+        <button class="page-btn btn-red delete-selected-products @(deleted == Model.Items.Count() ? "d-none" : "")">
             <i class="fa-solid fa-trash-can"></i>
             <span>Xóa sản phẩm đã chọn</span>
         </button>
 
-        <button class="page-btn btn-lightblue restore-selected-products @(deleted == Model.Count() ? "" : "d-none")">
+        <button class="page-btn btn-lightblue restore-selected-products @(deleted == Model.Items.Count() ? "" : "d-none")">
             <i class="fa-solid fa-trash-can-arrow-up"></i>
             <span>Khôi phục sản phẩm đã chọn</span>
         </button>
 
-        <button class="page-btn btn-green activate-selected-products @(activated == Model.Count() || deleted == Model.Count() ? "d-none" : "")">
+        <button class="page-btn btn-green activate-selected-products @(activated == Model.Items.Count() || deleted == Model.Items.Count() ? "d-none" : "")">
             <i class="fa-regular fa-circle-check"></i>
             <span>Kích hoạt sản phẩm đã chọn</span>
         </button>
 
-        <button class="page-btn btn-blue deactivate-selected-products @(inActive == Model.Count() || deleted == Model.Count() ? "d-none" : "")">
+        <button class="page-btn btn-blue deactivate-selected-products @(inActive == Model.Items.Count() || deleted == Model.Items.Count() ? "d-none" : "")">
             <i class="fa-regular fa-circle-xmark"></i>
             <span>Hủy kích hoạt sản phẩm đã chọn</span>
         </button>
@@ -264,7 +264,7 @@
     @if(ViewBag.ViewType == "view-grid")
     {
         <div class="product-list view-grid mt-4" data-view="view-grid">
-            @foreach (Product product in Model)
+            @foreach (Product product in Model.Items)
             {
                 @await Html.PartialAsync("PartialViews/_ProductCard", product)
             }
@@ -294,7 +294,7 @@
                         int page = ViewBag.CurrentPage ?? 1;
                         int index = (page - 1) * 40 + 1;
 
-                        foreach (Product product in Model)
+                        foreach (Product product in Model.Items)
                         {
                             @await Html.PartialAsync("PartialViews/_ProductListItem", new Tuple<Product, int>(product, index))
                             index++;
@@ -305,11 +305,11 @@
         </div>
     }
 
-    <div class="empty-message mt-5 mb-5 d-flex align-items-center justify-content-center @(Model.Count() <= 0 ? "" : "d-none")">
+    <div class="empty-message mt-5 mb-5 d-flex align-items-center justify-content-center @(!Model.Items.Any() ? "" : "d-none")">
         <p>Không tìm thấy sản phẩm nào</p>
     </div>
 
-    @await Html.PartialAsync("PartialViews/_Pagination", new Tuple<int, int>(ViewBag.CurrentPage, ViewBag.TotalPages))
+    @await Html.PartialAsync("PartialViews/_Pagination", new Tuple<int, int>(Model.CurrentPage, Model.TotalPages))
 
 </section>
 

@@ -18,7 +18,7 @@ namespace STech.ApiControllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly long MAX_FILE_LENGTH = 5 * 1024 * 1024;
+        private readonly long _maxFileLength = 5 * 1024 * 1024;
         private readonly IUserService _userService;
         private readonly AddressService _addressService;
         private readonly IAzureService _azureService;
@@ -51,18 +51,18 @@ namespace STech.ApiControllers
 
         private async Task<bool> VerifyCaptcha(string response)
         {
-            string? ApiUrl = CloudflareTurnstile.ApiUrl;
-            string? SecretKey = CloudflareTurnstile.SecretKey;
+            string? apiUrl = CloudflareTurnstile.ApiUrl;
+            string? secretKey = CloudflareTurnstile.SecretKey;
 
             using (HttpClient client = new HttpClient()) 
             {
                 Dictionary<string, string?> formData = new Dictionary<string, string?>
                 {
-                    { "secret", SecretKey },
+                    { "secret", secretKey },
                     { "response", response }
                 };
 
-                var apiResponse = await client.PostAsync(ApiUrl, new FormUrlEncodedContent(formData));
+                var apiResponse = await client.PostAsync(apiUrl, new FormUrlEncodedContent(formData));
                 string responseString = await apiResponse.Content.ReadAsStringAsync();
 
                 if (apiResponse.IsSuccessStatusCode)
@@ -98,7 +98,7 @@ namespace STech.ApiControllers
 
                 User? user = await _userService.GetUser(login);
 
-                if (user == null || user.UserId == null)
+                if (user == null)
                 {
                     return Ok(new ApiResponse
                     {
@@ -288,12 +288,12 @@ namespace STech.ApiControllers
                 });
             }
 
-            if (file.Length > MAX_FILE_LENGTH)
+            if (file.Length > _maxFileLength)
             {
                 return Ok(new ApiResponse
                 {
                     Status = false,
-                    Message = $"Hình ảnh không quá {Convert.ToInt32(MAX_FILE_LENGTH / 1000000)}MB"
+                    Message = $"Hình ảnh không quá {Convert.ToInt32(_maxFileLength / 1000000)}MB"
                 });
             }
 

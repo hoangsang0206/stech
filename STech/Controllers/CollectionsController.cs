@@ -12,6 +12,8 @@ namespace STech.Controllers
     {
         private readonly ICategoryService _categoryService;
         private readonly IProductService _productService;
+        
+        private readonly int _itemsPerPage = 40;
 
         public CollectionsController(ICategoryService categoryService, IProductService productService)
         {
@@ -26,15 +28,15 @@ namespace STech.Controllers
                 return NotFound();
             }
 
-            int totalPage = 1;
-            IEnumerable<Product> products = new List<Product>();
+            PagedList<Product> products = new PagedList<Product>();
             Category? category;
             List<Breadcrumb> breadcrumbs = new List<Breadcrumb>();
             string title = "STech";
 
             if (id == "all")
             {
-                (products, totalPage) = await _productService.GetProducts(brands, null, null, price_range, null, sort, page);
+                products = await _productService
+                    .GetProducts(brands, null, null, price_range, null, sort, page, _itemsPerPage);
                 breadcrumbs.Add(new Breadcrumb("Tất cả sản phẩm", ""));
                 title = "Tất cả sản phẩm - STech";
             }
@@ -46,18 +48,16 @@ namespace STech.Controllers
                     return NotFound();
                 }
 
-                (products, totalPage) = await _productService.GetByCategory(id, page, sort);
+                products = await _productService.GetByCategory(id, page, _itemsPerPage, sort);
                 breadcrumbs.Add(new Breadcrumb("Danh sách sản phẩm", "/collections/all"));
                 breadcrumbs.Add(new Breadcrumb(category.CategoryName, ""));
                 title = "Danh sách " + category.CategoryName;
             }
 
             ViewBag.Sort = sort;
-            ViewBag.Page = page;
-            ViewBag.TotalPage = totalPage;
 
             ViewData["Title"] = title;
-            return View(new Tuple<IEnumerable<Product>, List<Breadcrumb>>(products, breadcrumbs));
+            return View(new Tuple<PagedList<Product>, List<Breadcrumb>>(products, breadcrumbs));
         }
     }
 }

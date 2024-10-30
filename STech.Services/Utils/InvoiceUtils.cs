@@ -24,19 +24,7 @@ namespace STech.Services.Utils
             });
         }
 
-        public static IEnumerable<Invoice> Paginate(this IEnumerable<Invoice> invoices, int page, int numToTake)
-        {
-            if(page <= 0)
-            {
-                page = 1;
-            }
-
-            int numToSkip = (page - 1) * numToTake;
-
-            return invoices.Skip(numToSkip).Take(numToTake).ToList(); ;
-        }
-
-        public static IEnumerable<Invoice> FilterBy(this IEnumerable<Invoice> invoices, string? filterBy)
+        public static IQueryable<Invoice> FilterBy(this IQueryable<Invoice> invoices, string? filterBy)
         {
             if (filterBy == null)
             {
@@ -47,35 +35,35 @@ namespace STech.Services.Utils
             {
                 case "paid":
                     return invoices.Where(i => i.PaymentStatus == PaymentContants.Paid)
-                        .OrderByDescending(i => i.OrderDate).ToList();
+                        .OrderByDescending(i => i.OrderDate);
 
                 case "unpaid":
                     return invoices.Where(i => i.PaymentStatus == PaymentContants.UnPaid)
-                        .OrderByDescending(i => i.OrderDate).ToList();
+                        .OrderByDescending(i => i.OrderDate);
 
                 case "accepted":
                     return invoices.Where(i => i.IsAccepted && !i.IsCancelled && !i.IsCompleted)
-                        .OrderByDescending(i => i.OrderDate).ToList();
+                        .OrderByDescending(i => i.OrderDate);
 
                 case "unaccepted":
                     return invoices
                         .Where(i => !i.IsAccepted && !i.IsCancelled && !i.IsCompleted)
-                        .OrderByDescending(i => i.OrderDate).ToList();
+                        .OrderByDescending(i => i.OrderDate);
 
                 case "completed":
                     return invoices.Where(i => i.IsCompleted)
-                        .OrderByDescending(i => i.OrderDate).ToList();
+                        .OrderByDescending(i => i.OrderDate);
 
                 case "cancelled":
                     return invoices.Where(i => i.IsCancelled)
-                        .OrderByDescending(i => i.OrderDate).ToList();
+                        .OrderByDescending(i => i.OrderDate);
 
                 default:
                     return invoices;
             }
         }
 
-        public static IEnumerable<Invoice> SortBy(this IEnumerable<Invoice> invoices, string? sortBy)
+        public static IQueryable<Invoice> SortBy(this IQueryable<Invoice> invoices, string? sortBy)
         {
             if (sortBy == null)
             {
@@ -85,13 +73,13 @@ namespace STech.Services.Utils
             switch (sortBy)
             {
                 case "date-asc":
-                    return invoices.OrderBy(i => i.OrderDate).ToList();
+                    return invoices.OrderBy(i => i.OrderDate);
                 case "date-desc":
-                    return invoices.OrderByDescending(i => i.OrderDate).ToList();
+                    return invoices.OrderByDescending(i => i.OrderDate);
                 case "price-asc":
-                    return invoices.OrderBy(i => i.Total).ToList();
+                    return invoices.OrderBy(i => i.Total);
                 case "price-desc":
-                    return invoices.OrderByDescending(i => i.Total).ToList();
+                    return invoices.OrderByDescending(i => i.Total);
                 default:
                     return invoices;
             }

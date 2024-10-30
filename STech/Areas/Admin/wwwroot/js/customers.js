@@ -1,4 +1,6 @@
-﻿$('.add-customer form').submit(function (e) {
+﻿const isCustomerPage = $('.page-wrapper').data('page') === 'customer';
+
+$('.add-customer form').submit(function (e) {
     e.preventDefault();
 
     const customer_name = $(this).find('#CustomerName').val();
@@ -30,7 +32,11 @@
         }),
         success: (response) => {
             if (response.status) {
-                showDialog('success', 'Thêm thành công', response.message);
+                showDialogWithCallback('success', 'Thêm thành công', response.message, () => {
+                    if (isCustomerPage) {
+                        location.reload();
+                    }
+                });
                 clearFormInput($(this));
                 closeForm($(this).closest('.form-container'));
             } else {
@@ -43,4 +49,8 @@
             hideButtonLoader(submit_btn, element_html);
         }
     })
+})
+
+$('.show-form-add-customer').click(() => {
+    showForm('.add-customer');
 })

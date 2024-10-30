@@ -3,7 +3,7 @@
     ViewData["PageTitle"] = "Đơn hàng";
 }
 
-@model IEnumerable<Invoice>
+@model PagedList<Invoice>
 
 <section class="page-wrapper">
 
@@ -44,7 +44,7 @@
                     int index = 0;
                 }
 
-                @foreach (Invoice invoice in Model)
+                @foreach (Invoice invoice in Model.Items)
                 {
                     index++;
                     string payment_status = "";
@@ -116,7 +116,7 @@
         </table>
     </div>
 
-    @await Html.PartialAsync("PartialViews/_Pagination", new Tuple<int, int>(ViewBag.CurrentPage, ViewBag.TotalPages))
+    @await Html.PartialAsync("PartialViews/_Pagination", new Tuple<int, int>(Model.CurrentPage, Model.TotalPages))
 
 </section>
 

@@ -1,4 +1,5 @@
 ﻿using STech.Data.Models;
+using STech.Data.ViewModels;
 
 namespace STech.Services
 {
@@ -15,7 +16,7 @@ namespace STech.Services
         Task<bool> UpdateInvoice(Invoice invoice);
         Task<bool> AddInvoiceStatus(InvoiceStatus invoiceStatus);
         Task<bool> UpdateInvoiceStatus(InvoiceStatus invoiceStatus);
-        Task<(IEnumerable<Invoice>, int)> GetInvoices(int page, string? filterBy, string? sortBy);
-        Task<IEnumerable<Invoice>> SearchInvoices(string query);
+        Task<PagedList<Invoice>> GetInvoices(int page, int itemsPerPage, string? filterBy, string? sortBy);
+        Task<PagedList<Invoice>> SearchInvoices(string query, int page, int itemsPerPage);
     }
 }

@@ -17,7 +17,7 @@ namespace STech.Areas.Admin.ApiControllers
         private readonly IAzureService _azureService;
         private readonly IUserService _userService;
 
-        private readonly int reviewsPerPage = 40;
+        private readonly int _reviewsPerPage = 40;
 
         public ReviewsController(IReviewService reviewService, IAzureService azureService, IUserService userService)
         {
@@ -34,20 +34,20 @@ namespace STech.Areas.Admin.ApiControllers
                 page = 1;
             }
 
-            var (reviews, totalPages) = search != null
-                ? await _reviewService.SearchReviewsWithProduct(search, reviewsPerPage, sort_by, status, filter_by, page)
+            PagedList<Review> reviews = search != null
+                ? await _reviewService.SearchReviewsWithProduct(search, _reviewsPerPage, sort_by, status, filter_by, page)
                 : productId != null
-                ? await _reviewService.GetProductReviews(productId, reviewsPerPage, sort_by, status, filter_by, page)
-                : await _reviewService.GetReviewsWithProduct(reviewsPerPage, sort_by, status, filter_by, page);
+                ? _reviewService.GetProductReviews(productId, _reviewsPerPage, sort_by, status, filter_by, page).Result.Item1
+                : await _reviewService.GetReviewsWithProduct(_reviewsPerPage, sort_by, status, filter_by, page);
 
             return Ok(new ApiResponse
             {
                 Status = true,
                 Data = new
                 {
-                    reviews,
-                    totalPages,
-                    currentPage = page
+                    reviews = reviews.Items,
+                    totalPages = reviews.TotalPages,
+                    currentPage = reviews.CurrentPage
                 }
             });
         }

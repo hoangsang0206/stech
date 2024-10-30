@@ -31,7 +31,8 @@ namespace STech.Services.Utils
                 OriginalPrice = p.OriginalPrice,
                 Price = p.Price,
                 ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
-                WarehouseProducts = warehouseId == null ? p.WarehouseProducts : p.WarehouseProducts.Where(wp => wp.WarehouseId == warehouseId).ToList(),
+                WarehouseProducts = warehouseId == null ? p.WarehouseProducts : p.WarehouseProducts
+                    .Where(wp => wp.WarehouseId == warehouseId).ToList(),
                 BrandId = p.BrandId,
                 CategoryId = p.CategoryId,
                 IsActive = p.IsActive,
@@ -40,54 +41,30 @@ namespace STech.Services.Utils
             });
         }
 
-        public static IEnumerable<Product> Sort(this IEnumerable<Product> products, string? value)
+        public static IQueryable<Product> Sort(this IQueryable<Product> products, string? value)
         {
             if(value == null)
             {
                 return products;
             }
-
-            IEnumerable<Product> sortedProduct = new List<Product>();
-
-            if (value == "price-ascending")
+            
+            switch (value)
             {
-                sortedProduct = products.OrderBy(t => t.Price).ToList();
+                case "price-ascending":
+                    return products.OrderBy(p => p.Price);
+                case "price-descending":
+                    return products.OrderByDescending(p => p.Price);
+                case "name-az":
+                    return products.OrderBy(p => p.ProductName);
+                case "name-za":
+                    return products.OrderByDescending(p => p.ProductName);
+                default:
+                    return products;
             }
-            else if (value == "price-descending")
-            {
-                sortedProduct = products.OrderByDescending(t => t.Price).ToList();
-            }
-            else if (value == "name-az")
-            {
-                sortedProduct = products.OrderBy(t => t.ProductName).ToList();
-            }
-            else if (value == "name-za")
-            {
-                sortedProduct = products.OrderByDescending(t => t.ProductName).ToList();
-            }
-            else
-            {
-                sortedProduct = products.OrderBy(sp => Guid.NewGuid()).ToList();
-            }
-
-            return sortedProduct;
         }
 
-        public static IEnumerable<Product> Pagnigate(this IEnumerable<Product> products, int page, int numToTake)
-        {
-            if(page <= 0)
-            {
-                page = 1;
-            }
-
-            int noOfProductToSkip = (page - 1) * numToTake;
-
-            products = products.Skip(noOfProductToSkip).Take(numToTake).ToList();
-
-            return products;
-        }
-
-        public static IEnumerable<Product> Filter(this IEnumerable<Product> products, string? brands, string? categories, string? status, string? price_range)
+        public static IQueryable<Product> Filter(this IQueryable<Product> products, string? brands, string? categories, 
+            string? status, string? price_range)
         {
             string[] filter_brands = brands?.Split(',') ?? [];
             string[] filter_categories = categories?.Split(',') ?? [];
@@ -95,55 +72,52 @@ namespace STech.Services.Utils
 
             if (filter_brands.Length > 0)
             {
-                products = products.Where(p => filter_brands.Contains(p.BrandId)).ToList();
+                products = products.Where(p => filter_brands.Contains(p.BrandId));
             }
 
             if (filter_categories.Length > 0)
             {
-                products = products.Where(p => filter_categories.Contains(p.CategoryId)).ToList();
+                products = products.Where(p => filter_categories.Contains(p.CategoryId));
             }
 
             if(filter_price_range.Length >= 2)
             {
-                products = products.Where(p => p.Price >= Convert.ToDecimal(filter_price_range[0]) && p.Price <= Convert.ToDecimal(filter_price_range[1])).ToList();
+                products = products.Where(p => p.Price >= Convert.ToDecimal(filter_price_range[0]) 
+                                               && p.Price <= Convert.ToDecimal(filter_price_range[1]));
             }
 
             switch (status)
             {
                 case "in-stock":
-                    products = products.Where(p => p.IsActive == true && p.WarehouseProducts.Sum(wp => wp.Quantity) > 0).ToList();
+                    products = products.Where(p => p.IsActive == true 
+                                                   && p.WarehouseProducts.Sum(wp => wp.Quantity) > 0);
                     break;
 
                 case "out-of-stock-soon":
                     products = products
                         .Where(p => p.IsActive == true)
-                        .Where(p =>
-                        {
-                            int totalQuantity = p.WarehouseProducts.Sum(wp => wp.Quantity);
-
-                            return totalQuantity > 0 && totalQuantity <= 5;
-                        
-                        })
-                        .ToList();
+                        .Where(p => p.WarehouseProducts.Sum(wp => wp.Quantity) > 0 
+                                    && p.WarehouseProducts.Sum(wp => wp.Quantity) <= 5);
                     break;
 
                 case "out-of-stock":
-                    products = products.Where(p => p.IsActive == true && p.WarehouseProducts.Sum(wp => wp.Quantity) <= 0).ToList();
+                    products = products.Where(p => p.IsActive == true 
+                                                   && p.WarehouseProducts.Sum(wp => wp.Quantity) <= 0);
                     break;
 
                 case "inactive":
-                    products = products.Where(p => p.IsActive == false && p.IsDeleted == false).ToList();
+                    products = products.Where(p => p.IsActive == false && p.IsDeleted == false);
                     break;
 
                 case "activated":
-                    products = products.Where(p => p.IsActive == true).ToList();
+                    products = products.Where(p => p.IsActive == true);
                     break;
 
                 case "deleted":
-                    products = products.Where(p => p.IsDeleted == true).ToList();
+                    products = products.Where(p => p.IsDeleted == true);
                     break;
                 default:
-                    products = products.Where(p => p.IsActive == true).ToList();
+                    products = products.Where(p => p.IsActive == true);
                     break;
             }
 

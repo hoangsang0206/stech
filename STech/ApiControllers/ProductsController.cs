@@ -11,6 +11,7 @@ namespace STech.ApiControllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly int _itemsPerPage = 40;
 
         public ProductsController(IProductService productService)
         {
@@ -20,11 +21,11 @@ namespace STech.ApiControllers
         [HttpGet]
         public async Task<IActionResult> Search(string q)
         {
-            var (products, totalPage) = await _productService.SearchByName(q, 1, null);
+            PagedList<Product> products = await _productService.SearchByName(q, 1, _itemsPerPage, null);
             return Ok(new ApiResponse
             {
                 Status = true,
-                Data = products
+                Data = products.Items
             });
 
         }

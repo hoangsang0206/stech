@@ -10,6 +10,7 @@ namespace STech.Controllers
     public class SearchController : Controller
     {
         private readonly IProductService _productService;
+        private readonly int _itemsPerPage = 40;
 
         public SearchController(IProductService productService)
         {
@@ -18,7 +19,7 @@ namespace STech.Controllers
 
         public async Task<IActionResult> Index(string q, string? sort, int page = 1)
         {
-            var (products, totalPage) = await _productService.SearchByName(q, page, sort);
+            PagedList<Product> products = await _productService.SearchByName(q, page, _itemsPerPage, sort);
 
             List<Breadcrumb> breadcrumbs = new List<Breadcrumb>
             {
@@ -28,10 +29,8 @@ namespace STech.Controllers
 
             ViewBag.Search = q;
             ViewBag.Sort = sort;
-            ViewBag.Page = page;
-            ViewBag.TotalPage = totalPage;
 
-            return View(new Tuple<IEnumerable<Product>, List<Breadcrumb>>(products, breadcrumbs));
+            return View(new Tuple<PagedList<Product>, List<Breadcrumb>>(products, breadcrumbs));
         }
     }
 }

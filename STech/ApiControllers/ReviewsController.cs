@@ -14,9 +14,9 @@ namespace STech.ApiControllers
     [ApiController]
     public class ReviewsController : ControllerBase
     {
-        private readonly string[] ALLOWED_IMAGE_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
-        private readonly int REVIEWS_PER_PAGE = 7;
-        private readonly int REVIEW_REPLIES_PER_PAGE = 3;
+        private readonly string[] _allowedImageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+        private readonly int _reviewsPerPage = 7;
+        private readonly int _reviewRepliesPerPage = 3;
 
         private readonly IUserService _userService;
         private readonly IProductService _productService;
@@ -46,7 +46,7 @@ namespace STech.ApiControllers
 
             string? userId = User.Identity?.IsAuthenticated == true ? User.FindFirstValue("Id") : null;
 
-            var (reviews, reviewOverview, totalPages, totalReviews, remainingReviews) = await _reviewService.GetApprovedReviews(pId, REVIEWS_PER_PAGE, REVIEW_REPLIES_PER_PAGE,
+            var (reviews, reviewOverview) = await _reviewService.GetApprovedReviews(pId, _reviewsPerPage, _reviewRepliesPerPage,
                 sort_by, filter_by, userId, page);
 
             return Ok(new ApiResponse
@@ -54,12 +54,12 @@ namespace STech.ApiControllers
                 Status = true,
                 Data = new
                 {
-                    reviews,
+                    reviews = reviews.Items,
                     reviewOverview,
                     currentPage = page,
-                    totalPages,
-                    totalReviews,
-                    remainingReviews
+                    totalPages = reviews.TotalPages,
+                    totalReviews = reviews.TotalItems,
+                    remainingReviews = reviews.RemaingItems
                 }
             });
         }
@@ -72,18 +72,18 @@ namespace STech.ApiControllers
                 page = 1;
             }
 
-            var (reviewReplies, totalPages, totalReplies, remainingReplies) = await _reviewService.GetReviewReplies(rId, page, REVIEW_REPLIES_PER_PAGE);
+            PagedList<ReviewReply> replies = await _reviewService.GetReviewReplies(rId, page, _reviewRepliesPerPage);
 
             return Ok(new ApiResponse
             {
                 Status = true,
                 Data = new
                 {
-                    reviewReplies,
+                    reviewReplies = replies.Items,
                     currentPage = page,
-                    totalPages,
-                    totalReplies,
-                    remainingReplies
+                    totalPages = replies.TotalPages,
+                    totalReplies = replies.TotalItems,
+                    remainingReplies = replies.RemaingItems
                 }
             });
         }
@@ -154,7 +154,7 @@ namespace STech.ApiControllers
 
             if(files != null && files.Count > 0)
             {
-                if(files.Any(file => !ALLOWED_IMAGE_EXTENSIONS.Contains(Path.GetExtension(file.FileName).ToLower()))) {
+                if(files.Any(file => !_allowedImageExtensions.Contains(Path.GetExtension(file.FileName).ToLower()))) {
                     return Ok(new ApiResponse
                     {
                         Status = false,

@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
 using STech.Services.Utils;
+using STech.Data.ViewModels;
 
 namespace STech.Services.Services
 {
     public class BrandService : IBrandService
     {
         private readonly StechDbContext _context;
-
-        private readonly int BrandsPerPage = 20;
-
+        
         public BrandService(StechDbContext context) => _context = context;
 
         public async Task<IEnumerable<Brand>> GetAll(bool isExcept)
@@ -22,14 +21,13 @@ namespace STech.Services.Services
             return await _context.Brands.OrderBy(b => b.BrandName).ToListAsync();
         }
 
-        public async Task<(IEnumerable<Brand>, int)> GetAll(string? sort_by, int page = 1)
+        public async Task<PagedList<Brand>> GetAll(string? sort_by, int page, int itemsPerPage)
+        
         {
-            IEnumerable<Brand> brands = await _context.Brands.OrderBy(b => b.BrandName).ToListAsync();
-            int totalPages = (int)Math.Ceiling(brands.Count() / (double)BrandsPerPage);
+            IQueryable<Brand> brands = _context.Brands.OrderBy(b => b.BrandName);
+            brands = brands.Sort(sort_by);
 
-            brands = brands.Sort(sort_by).Paginate(page, BrandsPerPage);
-
-            return (brands, totalPages);
+            return await brands.ToPagedListAsync(page, itemsPerPage);
         }
 
         public async Task<Brand?> GetById(string id)

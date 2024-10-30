@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
+using STech.Data.ViewModels;
 using STech.Services.Utils;
 
 namespace STech.Services.Services
@@ -7,8 +8,6 @@ namespace STech.Services.Services
     public class CategoryService : ICategoryService
     {
         private readonly StechDbContext _context;
-
-        private readonly int CategoriesPerPage = 30;
 
         public CategoryService(StechDbContext context) => _context = context;
 
@@ -48,17 +47,13 @@ namespace STech.Services.Services
                 .ToListAsync();
         }
 
-        public async Task<(IEnumerable<Category>, int)> GetAllWithProducts(string? sort_by, int page = 1)
+        public async Task<PagedList<Category>> GetAllWithProducts(string? sort_by, int page, int itemsPerPage)
         {
-            IEnumerable<Category> categories = await _context.Categories
+            IQueryable<Category> categories = _context.Categories
                 .OrderBy(c => c.CategoryName)
-                .Include(c => c.Products)
-                .ToListAsync();
-
-            int totalPages = (int)Math.Ceiling(categories.Count() / (double)CategoriesPerPage);
-            categories = categories.Sort(sort_by).Paginate(page, CategoriesPerPage);
-
-            return (categories, totalPages);
+                .Include(c => c.Products);
+            
+            return await categories.ToPagedListAsync(page, itemsPerPage);
         }
 
         public async Task<Category?> GetOne(string id)

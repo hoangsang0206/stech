@@ -16,6 +16,8 @@ namespace STech.Areas.Admin.ApiControllers
 
         private readonly IBrandService _brandService;
         private readonly IAzureService _azureService;
+        
+        private readonly int _itemsPerPage = 20;
 
         public BrandsController(IBrandService brandService, IAzureService azureService)
         {
@@ -31,16 +33,16 @@ namespace STech.Areas.Admin.ApiControllers
                 page = 1;
             }
 
-            (IEnumerable<Brand>, int) data = await _brandService.GetAll(sort_by, page);
+            PagedList<Brand> data = await _brandService.GetAll(sort_by, page, _itemsPerPage);
 
             return Ok(new ApiResponse
             {
                 Status = true,
                 Data = new
                 {
-                    brands = data.Item1,
-                    currentPage = page,
-                    totalPages = data.Item2
+                    brands = data.Items,
+                    currentPage = data.CurrentPage,
+                    totalPages = data.TotalPages
                 }
             });
         }

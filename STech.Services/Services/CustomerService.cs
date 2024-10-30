@@ -19,7 +19,14 @@ namespace STech.Services.Services
                 .Where(c => c.Phone.Contains(phone))
                 .ToListAsync();
         }
+        
+        public async Task<PagedList<Customer>> GetCustomers(int page, int itemsPerPage, string? filterBy, string? sortBy)
+        {
+            IQueryable<Customer> customers = _context.Customers;
 
+            return await customers.ToPagedListAsync(page, itemsPerPage);
+        }
+        
         public async Task<Customer?> GetCustomerById(string id)
         {
             return await _context.Customers

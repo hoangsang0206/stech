@@ -1,4 +1,5 @@
 ﻿using STech.Data.Models;
+using STech.Data.ViewModels;
 
 namespace STech.Services
 {
@@ -6,7 +7,7 @@ namespace STech.Services
     {
         Task<IEnumerable<Category>> GetAll(bool isExcept);
         Task<IEnumerable<Category>> GetRandomWithProducts(int numCategories, int numProducts);
-        Task<(IEnumerable<Category>, int)> GetAllWithProducts(string? sort_by, int page = 1);
+        Task<PagedList<Category>> GetAllWithProducts(string? sort_by, int page, int itemsPerPage);
         Task<Category?> GetOne(string id);
 
         Task<bool> Create(Category category);
