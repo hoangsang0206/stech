@@ -55,10 +55,10 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(CustomerVM customer)
+        public async Task<IActionResult> CreateCustomer(CustomerVM customer)
         {
             if (ModelState.IsValid)
-            {       
+            {
                 AddressVM address = new AddressVM();
                 address._City = _addressService.Address.Cities.FirstOrDefault(c => c.code == customer.CityCode);
                 address._District = address._City?.districts.FirstOrDefault(c => c.code == customer.DistrictCode);
@@ -93,6 +93,67 @@ namespace STech.Areas.Admin.ApiControllers
             {
                 return BadRequest();
             }
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateCustomer(CustomerVM customer)
+        {
+            if(string.IsNullOrEmpty(customer.CustomerId))
+            {
+                return BadRequest();
+            }
+
+            if (ModelState.IsValid)
+            {
+                AddressVM address = new AddressVM();
+                address._City = _addressService.Address.Cities.FirstOrDefault(c => c.code == customer.CityCode);
+                address._District = address._City?.districts.FirstOrDefault(c => c.code == customer.DistrictCode);
+                address._Ward = address._District?.wards.FirstOrDefault(c => c.code == customer.WardCode);
+
+                Customer? _customer = await _customerService.GetCustomerById(customer.CustomerId);
+                if(_customer != null)
+                {
+                    _customer.CustomerName = customer.CustomerName;
+                    _customer.Phone = customer.Phone;
+                    _customer.Email = customer.Email;
+                    _customer.Gender = customer.Gender;
+                    _customer.Dob = customer.Dob;
+
+                    _customer.Address = customer.Address;
+                    _customer.Ward = address._Ward?.name_with_type ?? "";
+                    _customer.WardCode = customer.WardCode;
+                    _customer.District = address._District?.name_with_type ?? "";
+                    _customer.DistrictCode = customer.DistrictCode;    
+                    _customer.Province = address._City?.name_with_type ?? "";
+                    _customer.ProvinceCode = customer.CityCode;
+
+                    bool result = await _customerService.UpdateCustomer(_customer);
+
+                    return Ok(new ApiResponse
+                    {
+                        Status = result,
+                        Message = result ? "Cập nhật khách hàng thành công" : "Không thể cập nhật khách hàng"
+                    });
+                }
+            }
+
+            return Ok(new ApiResponse
+            {
+                Status = false,
+                Message = "Không tìm thấy khách hàng này"
+            });
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCustomer(string id)
+        {
+            bool result = await _customerService.DeleteCustomer(id);
+
+            return Ok(new ApiResponse
+            {
+                Status = result,
+                Message = result ? "Xóa khách hàng thành công" : "Không thể xóa khách hàng"
+            });
         }
     }
 }

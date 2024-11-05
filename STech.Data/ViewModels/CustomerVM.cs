@@ -6,6 +6,8 @@ namespace STech.Data.ViewModels
 {
     public class CustomerVM
     {
+        public string? CustomerId { get; set; } //for update
+
         [Required(ErrorMessage = "* Tên khách hàng không để trống")]
         public string CustomerName { get; set; } = null!;
 

@@ -54,3 +54,33 @@ $('.add-customer form').submit(function (e) {
 $('.show-form-add-customer').click(() => {
     showForm('.add-customer');
 })
+
+$(document).on('click', '.edit-customer', function () {
+    showForm('.update-customer');
+})
+
+$(document).on('click', '.delete-customer', function () {
+    const customer_id = $(this).data('customer');
+
+    showConfirmDialog('Xóa khách hàng này?', 'Hành động này không thể hoàn tác', () => {
+        showWebLoader();
+        $.ajax({
+            type: 'DELETE',
+            url: `/api/admin/customers/${customer_id}`,
+            success: (response) => {
+                hideWebLoader(0);
+                if (response.status) {
+                    showDialogWithCallback('info', 'Xóa thành công', 'Đã xóa khách hàng này', () => {
+                        window.location.reload();
+                    });
+                } else {
+                    showDialog('error', 'Không thể xóa khách hàng', null);
+                }
+            },
+            error: () => {
+                hideWebLoader(0);
+                showDialog('error', 'Không thể xóa khách hàng', null);
+            }
+        })
+    })
+})

@@ -40,5 +40,24 @@ namespace STech.Services.Services
             _context.Customers.Add(customer);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<bool> UpdateCustomer(Customer customer)
+        {
+            _context.Customers.Update(customer);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> DeleteCustomer(string id)
+        {
+            Customer? customer = await GetCustomerById(id);
+
+            if (customer == null)
+            {
+                return false;
+            }
+
+            _context.Customers.Remove(customer);
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

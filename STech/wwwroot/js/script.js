@@ -757,12 +757,15 @@ $('.register form').submit(function (e) {
                 showFormError(this, str);
                 closeFormErrorWithTimeout(this);
                 hideButtonLoader(submitBtn, btnHtml);
+                renderTurnstile('.register');
             } else {
                 closeFormError(this);
                 window.location.href = response.data;
             }
         },
-        error: (jqXHR) => { }
+        error: (jqXHR) => {
+            renderTurnstile('.register');
+        }
     })
 })
 
@@ -801,9 +804,12 @@ $('.login form').submit(function (e) {
                 showFormError(this, str);
                 closeFormErrorWithTimeout(this);
                 hideButtonLoader(submitBtn, btnHtml);
+                renderTurnstile('.login');
             }
         },
-        error: (jqXHR) => { }
+        error: (jqXHR) => {
+            renderTurnstile('.register');
+        }
     })
 })
 
@@ -840,6 +846,17 @@ $(document).on('click', '.not-logged-in', () => {
 })
 
 
+
+function renderTurnstile(container) {
+    const element = `${container} .cf-turnstile`;
+    $(element).empty();
+
+    if (typeof turnstile !== 'undefined') {
+        turnstile.render(element, {
+            siteKey: $(element).data('sitekey')
+        })
+    }
+}
 
 //turnstile callback
 function loginCaptchaCompleted(token) {

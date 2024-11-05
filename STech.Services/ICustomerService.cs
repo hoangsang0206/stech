@@ -9,5 +9,7 @@ namespace STech.Services
         Task<PagedList<Customer>> GetCustomers(int page, int itemsPerPage, string? filterBy, string? sortBy);
         Task<Customer?> GetCustomerById(string id);
         Task<bool> CreateCustomer(Customer customer);
+        Task<bool> UpdateCustomer(Customer customer);
+        Task<bool> DeleteCustomer(string id);
     }
 }

@@ -261,6 +261,17 @@
             console.log(1)
         }
 
+        function renderTurnstile(container) {
+            const element = `${container} .cf-turnstile`;
+            $(element).empty();
+
+            if (typeof turnstile !== 'undefined') {
+                turnstile.render(element, {
+                    siteKey: $(element).data('sitekey')
+                })
+            }
+        }
+
         $('.login-form .submit-btn').prop('disabled', true);
 
         $('.login-form').submit(function (e) {
@@ -297,9 +308,12 @@
                         showFormError(this, str);
                         closeFormErrorWithTimeout(this);
                         hideButtonLoader(submitBtn, btnHtml);
+                        renderTurnstile('.login-form');
                     }
                 },
-                error: () => { }
+                error: () => { 
+                    renderTurnstile('.login-form');
+                }
             })
         })
     </script>
