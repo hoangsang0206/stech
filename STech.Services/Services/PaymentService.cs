@@ -26,5 +26,49 @@ namespace STech.Services.Services
         {
             return await _context.PaymentMethods.Where(p => p.PaymentMedId == id).FirstOrDefaultAsync();
         }
+
+        public async Task<bool> CreatePaymentMethod(PaymentMethod payment)
+        {
+            await _context.PaymentMethods.AddAsync(payment);
+            return _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> ActivePaymentMethod(string paymentId)
+        {
+            PaymentMethod? payment = await _context.PaymentMethods.Where(p => p.PaymentMedId == id).FirstOrDefaultAsync();
+            if(payment != null) {
+                payment.IsActive = true;
+
+                _context.PaymentMethods.Update(payment);
+                return _context.SaveChangesAsync() > 0;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> DeActivePaymentMethod(string paymentId)
+        {
+            PaymentMethod? payment = await _context.PaymentMethods.Where(p => p.PaymentMedId == id).FirstOrDefaultAsync();
+            if(payment != null) {
+                payment.IsActive = false;
+
+                _context.PaymentMethods.Update(payment);
+                return _context.SaveChangesAsync() > 0;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> DeletePaymentMethod(string paymentId)
+        {
+             PaymentMethod? payment = await _context.PaymentMethods.Where(p => p.PaymentMedId == id).FirstOrDefaultAsync();
+            if(payment != null) {
+                _context.PaymentMethods.Remove(payment);
+                return _context.SaveChangesAsync() > 0;
+            }
+
+            return false;
+        }
+
     }
 }
