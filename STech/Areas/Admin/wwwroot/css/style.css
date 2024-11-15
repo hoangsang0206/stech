@@ -858,6 +858,14 @@ button:disabled {
     text-decoration: none;
 }
 
+.page-table-btn {
+    padding: 0 !important;
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+}
+
     .page-table-btn:hover, .page-btn:hover {
         outline: 2px solid var(--primary-color-hover);
     }

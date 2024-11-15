@@ -15,11 +15,11 @@ namespace STech.Areas.Admin.ApiControllers
         private readonly string IMAGE_PATH = "categories/";
 
         private readonly IBrandService _brandService;
-        private readonly IAzureService _azureService;
+        private readonly IAzureStorageService _azureService;
         
         private readonly int _itemsPerPage = 20;
 
-        public BrandsController(IBrandService brandService, IAzureService azureService)
+        public BrandsController(IBrandService brandService, IAzureStorageService azureService)
         {
             _brandService = brandService;
             _azureService = azureService;

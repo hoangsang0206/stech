@@ -258,7 +258,6 @@
 
         function captchaCompleted(token) {
             $('.login-form .submit-btn').prop('disabled', false);
-            console.log(1)
         }
 
         function renderTurnstile(container) {
@@ -269,6 +268,8 @@
                 turnstile.render(element, {
                     siteKey: $(element).data('sitekey')
                 })
+
+                $(`${container} .submit-btn`).prop('disabled', true);
             }
         }
 
@@ -306,7 +307,6 @@
                         <i class="fa-solid fa-circle-exclamation"></i>`
                             + response.message + `</span>`;
                         showFormError(this, str);
-                        closeFormErrorWithTimeout(this);
                         hideButtonLoader(submitBtn, btnHtml);
                         renderTurnstile('.login-form');
                     }

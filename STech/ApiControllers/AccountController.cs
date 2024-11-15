@@ -21,10 +21,10 @@ namespace STech.ApiControllers
         private readonly long _maxFileLength = 5 * 1024 * 1024;
         private readonly IUserService _userService;
         private readonly AddressService _addressService;
-        private readonly IAzureService _azureService;
+        private readonly IAzureStorageService _azureService;
 
         public AccountController(IUserService userService, 
-            AddressService addressService, IAzureService azureService)
+            AddressService addressService, IAzureStorageService azureService)
         {
             _userService = userService;
             _addressService = addressService;

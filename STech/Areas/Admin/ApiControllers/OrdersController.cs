@@ -19,7 +19,7 @@ namespace STech.Areas.Admin.ApiControllers
         private readonly IOrderService _orderService;
         private readonly IProductService _productService;
         private readonly AddressService _addressService;
-        private readonly IGeocodioService _geocodioService;
+        private readonly IAzureMapsService _mapsService;
         private readonly IWarehouseService _warehouseService;
         private readonly IPaymentService _paymentService;
         private readonly ICustomerService _customerService;
@@ -30,7 +30,7 @@ namespace STech.Areas.Admin.ApiControllers
 
         public OrdersController(IWebHostEnvironment env, IOrderService orderService, 
             IProductService productService, AddressService addressService,
-            IGeocodioService geocodioService, IWarehouseService warehouseService,
+            IAzureMapsService mapsService, IWarehouseService warehouseService,
             IPaymentService paymentService, ICustomerService customerService,
             IEmployeeService employeeService)
         {
@@ -38,7 +38,7 @@ namespace STech.Areas.Admin.ApiControllers
             _orderService = orderService;
             _productService = productService;
             _addressService = addressService;
-            _geocodioService = geocodioService;
+            _mapsService = mapsService;
             _warehouseService = warehouseService;
             _paymentService = paymentService;
             _customerService = customerService;
@@ -65,7 +65,7 @@ namespace STech.Areas.Admin.ApiControllers
             }
 
 
-            var (latitude, longtitude) = await _geocodioService
+            var (latitude, longtitude) = await _mapsService
                 .GetLocation(address._City.name_with_type, address._District.name_with_type, address._Ward.name_with_type);
 
             if (!latitude.HasValue || !longtitude.HasValue)

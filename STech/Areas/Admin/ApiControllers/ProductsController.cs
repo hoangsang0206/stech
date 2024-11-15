@@ -18,14 +18,14 @@ namespace STech.Areas.Admin.ApiControllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly IAzureService _azureService;
+        private readonly IAzureStorageService _azureService;
         private readonly ICategoryService _categoryService;
         private readonly IBrandService _brandService;
 
         private readonly int _itemsPerPage = 40;
         private readonly string BlobDiscriptionPath = "product-discription-images/";
 
-        public ProductsController(IProductService productService, IAzureService azureService, 
+        public ProductsController(IProductService productService, IAzureStorageService azureService, 
             ICategoryService categoryService, IBrandService brandService)
         {
             _productService = productService;

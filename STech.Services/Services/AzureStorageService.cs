@@ -4,7 +4,7 @@ using Azure.Storage.Blobs.Models;
 
 namespace STech.Services.Services
 {
-    public class AzureService : IAzureService
+    public class AzureStorageService : IAzureStorageService
     {
         private readonly string ConnectionString;
         private readonly string BlobContainerName ;
@@ -13,7 +13,7 @@ namespace STech.Services.Services
         private readonly BlobServiceClient BlobServiceClient;
         private readonly BlobContainerClient ContainerClient;
 
-        public AzureService(string connectionString, string blobContainerName, string blobUrl)
+        public AzureStorageService(string connectionString, string blobContainerName, string blobUrl)
         {
             ConnectionString = connectionString;
             BlobContainerName = blobContainerName;

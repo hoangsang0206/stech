@@ -673,7 +673,8 @@ $('.bottom-nav-account').click(() => {
 
 $('.close-form').mousedown(function () {
     $(this).closest('.form-container').removeClass('show');
-    clearFormInput($(this).closest('.form-container').find('form'))
+    clearFormInput($(this).closest('.form-container').find('form'));
+    closeFormError($(this).closest('.form-container').find('form'));
 })
 
 $('.form-container').mousedown(function (e) {
@@ -855,6 +856,8 @@ function renderTurnstile(container) {
         turnstile.render(element, {
             siteKey: $(element).data('sitekey')
         })
+
+        $(`${container} .form-submit-btn`).prop('disabled', true);
     }
 }
 

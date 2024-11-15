@@ -16,7 +16,7 @@ namespace STech.Controllers
     public class OrderController : Controller
     {
         private readonly AddressService _addressService;
-        private readonly IGeocodioService _geocodioService;
+        private readonly IAzureMapsService _mapsService;
         private readonly IUserService _userService;
         private readonly IProductService _productService;
         private readonly IOrderService _orderService;
@@ -26,13 +26,13 @@ namespace STech.Controllers
 
         private readonly HttpClient _httpClient;
 
-        public OrderController(AddressService addressService, IGeocodioService geocodioService,
+        public OrderController(AddressService addressService, IAzureMapsService mapsService,
             IUserService userService, IProductService productService, IOrderService orderService,
             ICartService cartService, IPaymentService paymentService, IWarehouseService warehouseService,
             HttpClient httpClient)
         {
             _addressService = addressService;
-            _geocodioService = geocodioService;
+            _mapsService = mapsService;
             _userService = userService;
             _productService = productService;
             _orderService = orderService;
@@ -69,7 +69,7 @@ namespace STech.Controllers
             }
 
 
-            var (latitude, longtitude) = await _geocodioService
+            var (latitude, longtitude) = await _mapsService
                 .GetLocation(address._City.name_with_type, address._District.name_with_type, address._Ward.name_with_type);
 
             if (!latitude.HasValue || !longtitude.HasValue)
@@ -177,7 +177,7 @@ namespace STech.Controllers
                 return new List<WarehouseExport>();
             }
 
-            var (latitude, longtitude) = await _geocodioService
+            var (latitude, longtitude) = await _mapsService
             .GetLocation(address._City.name_with_type, address._District.name_with_type, address._Ward.name_with_type);
 
             List<WarehouseExport> whEs = new List<WarehouseExport>();

@@ -137,20 +137,17 @@ builder.Services.AddScoped<IReviewService, STech.Services.Services.ReviewService
 
 builder.Services.AddSingleton(new AddressService(Path.Combine(builder.Environment.ContentRootPath, "DataFiles", "Address")));
 
-builder.Services.AddHttpClient<IGeocodioService, GeocodioService>(client =>
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IAzureMapsService, AzureMapsService>(sp =>
 {
-    client.BaseAddress = new Uri("https://api.opencagedata.com/geocode/v1/");
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
+    IConfiguration configuration = builder.Configuration.GetSection("Azure:Maps");
+    return new AzureMapsService(sp.GetRequiredService<HttpClient>(), configuration["BaseUri"] ?? "", configuration["SubscriptionKey"] ?? "");
 });
 
-builder.Services.AddSingleton<IGeocodioService, GeocodioService>(sp =>
-    new GeocodioService(sp.GetRequiredService<HttpClient>(), builder.Configuration.GetSection("OpenCageGeocodio")["ApiKey"] ?? "")
-);
-
-builder.Services.AddScoped<IAzureService, AzureService>(sp =>
+builder.Services.AddScoped<IAzureStorageService, AzureStorageService>(sp =>
 {
-    IConfiguration configuration = builder.Configuration.GetSection("Azure");
-    return new AzureService(configuration["ConnectionString"] ?? "", configuration["BlobContainerName"] ?? "", configuration["BlobUrl"] ?? "");
+    IConfiguration configuration = builder.Configuration.GetSection("Azure:CloudStorage");
+    return new AzureStorageService(configuration["ConnectionString"] ?? "", configuration["BlobContainerName"] ?? "", configuration["BlobUrl"] ?? "");
 });
 
 builder.Services.AddSession(options =>

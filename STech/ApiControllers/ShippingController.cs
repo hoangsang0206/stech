@@ -13,15 +13,15 @@ namespace STech.ApiControllers
     [ApiController]
     public class ShippingController : ControllerBase
     {
-        private readonly IGeocodioService _geocodioService;
+        private readonly IAzureMapsService _mapsService;
         private readonly IWarehouseService _warehouseService;
         private readonly AddressService _addressService;
         private readonly IDeliveryService _deliveryService;
 
-        public ShippingController(IGeocodioService geocodioService, IWarehouseService warehouseService, 
+        public ShippingController(IAzureMapsService mapsService, IWarehouseService warehouseService, 
             AddressService addressService, IDeliveryService deliveryService)
         {
-            _geocodioService = geocodioService;
+            _mapsService = mapsService;
             _warehouseService = warehouseService;
             _addressService = addressService;
             _deliveryService = deliveryService;
@@ -48,7 +48,7 @@ namespace STech.ApiControllers
             AddressVM.District _district = _city.districts.FirstOrDefault(c => c.code == district) ?? new AddressVM.District();
             AddressVM.Ward _ward = _district.wards.FirstOrDefault(c => c.code == ward) ?? new AddressVM.Ward();
 
-            var (latitude, longtitude) = await _geocodioService.GetLocation(_city.name_with_type, _district.name_with_type, _ward.name_with_type);
+            var (latitude, longtitude) = await _mapsService.GetLocation(_city.name_with_type, _district.name_with_type, _ward.name_with_type);
 
             if (!latitude.HasValue || !longtitude.HasValue)
             {

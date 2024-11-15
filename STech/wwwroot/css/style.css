@@ -894,7 +894,7 @@ header {
 
 .login-btn {
     overflow: hidden;
-    padding: 0.3rem 1rem;
+    padding: 0.3rem 0 .3rem 1rem;
 }
 
     .login-btn > a {
@@ -2302,7 +2302,7 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
     }
 
     .login-btn {
-        padding: 0.2rem 1rem;
+        padding: 0.2rem 0 0.2rem 1rem;
     }
 
     .login-link i {
@@ -2401,7 +2401,7 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
     }
 
     .login-btn {
-        padding: 0.2rem 1rem;
+        padding: 0.2rem 0 0.2rem 1rem;
     }
 
     .login-link i {

@@ -22,10 +22,10 @@ namespace STech.ApiControllers
         private readonly IProductService _productService;
         private readonly IReviewService _reviewService;
         private readonly IOrderService _orderService;
-        private readonly IAzureService _azureService;
+        private readonly IAzureStorageService _azureService;
 
         public ReviewsController(IProductService productService, IReviewService reviewService, 
-            IUserService userService, IOrderService orderService, IAzureService azureService)
+            IUserService userService, IOrderService orderService, IAzureStorageService azureService)
         {
             _productService = productService;
             _reviewService = reviewService;

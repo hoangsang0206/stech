@@ -14,12 +14,12 @@ namespace STech.Areas.Admin.ApiControllers
     public class ReviewsController : ControllerBase
     {
         private readonly IReviewService _reviewService;
-        private readonly IAzureService _azureService;
+        private readonly IAzureStorageService _azureService;
         private readonly IUserService _userService;
 
         private readonly int _reviewsPerPage = 40;
 
-        public ReviewsController(IReviewService reviewService, IAzureService azureService, IUserService userService)
+        public ReviewsController(IReviewService reviewService, IAzureStorageService azureService, IUserService userService)
         {
             _reviewService = reviewService;
             _azureService = azureService;

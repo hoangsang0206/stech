@@ -170,7 +170,7 @@ namespace STech.Services.Services
                                   {
                                       ProductId = p.ProductId,
                                       WarehouseProducts = p.WarehouseProducts
-                                  }).Include(product => product.WarehouseProducts)
+                                  })
                                   .FirstOrDefaultAsync()
                 ?? new Product();
 

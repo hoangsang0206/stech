@@ -17,11 +17,11 @@ namespace STech.Areas.Admin.ApiControllers
         private readonly string IMAGE_PATH = "categories/";
 
         private readonly ICategoryService _categoryService;
-        private readonly IAzureService _azureService;
+        private readonly IAzureStorageService _azureService;
         
         private readonly int _itemsPerPage = 30;
 
-        public CategoriesController(ICategoryService categoryService, IAzureService azureService)
+        public CategoriesController(ICategoryService categoryService, IAzureStorageService azureService)
         {
             _categoryService = categoryService;
             _azureService = azureService;

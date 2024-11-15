@@ -3,7 +3,7 @@ using Azure;
 
 namespace STech.Services
 {
-    public interface IAzureService
+    public interface IAzureStorageService
     {
         string GetContainerName();
         string GetBlobUrl();
