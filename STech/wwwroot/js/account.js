@@ -43,7 +43,6 @@ $('.form-update-user').submit(function (e) {
                 hideButtonLoader(submitBtn, btnHtml);
             },
             error: () => {
-                showErrorDialog();
                 hideButtonLoader(submitBtn, btnHtml);
             }
         })

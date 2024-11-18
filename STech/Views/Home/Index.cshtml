@@ -124,7 +124,7 @@
                 </h2>
                 <div class="section-sub-header-box">
                     <i class="fa-solid fa-truck"></i>
-                    <span>Miễn phí giao hàng</span>
+                    <span>Giao hàng tận nhà</span>
                 </div>
             </div>
             <div class="section-header-link">
@@ -155,7 +155,7 @@
         @foreach (Brand brand in brands)
         {
             <div class="brand-item">
-                <a href="#">
+                <a href="/collections/all?brands=@brand.BrandId">
                     <img loading="lazy" src="@brand.LogoSrc" alt="@brand.BrandName Logo">
                 </a>
             </div>

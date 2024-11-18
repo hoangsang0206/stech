@@ -48,7 +48,7 @@ namespace STech.Controllers
                     return NotFound();
                 }
 
-                products = await _productService.GetByCategory(id, page, _itemsPerPage, sort);
+                products = await _productService.GetByCategory(id, brands, price_range, page, _itemsPerPage, sort);
                 breadcrumbs.Add(new Breadcrumb("Danh sách sản phẩm", "/collections/all"));
                 breadcrumbs.Add(new Breadcrumb(category.CategoryName, ""));
                 title = "Danh sách " + category.CategoryName;

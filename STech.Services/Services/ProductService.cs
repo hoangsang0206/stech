@@ -62,10 +62,13 @@ namespace STech.Services.Services
             return await products.ToPagedListAsync(page, itemsPerPage);
         }
 
-        public async Task<PagedList<Product>> GetByCategory(string categoryId, int page, int itemsPerPage, string? sort)
+        public async Task<PagedList<Product>> GetByCategory(string categoryId, string? brands,  
+            string? priceRange, int page, int itemsPerPage, string? sort)
         {
             IQueryable<Product> products = _context.Products
                 .Where(p => p.CategoryId == categoryId && p.IsActive == true)
+                .Sort(sort)
+                .Filter(brands, null, null, priceRange)
                 .SelectProduct();
 
             return await products.ToPagedListAsync(page, itemsPerPage);

@@ -9,7 +9,8 @@ namespace STech.Services
             string? warehouseId, string? sort, int page, int itemsPerPage);
         Task<PagedList<Product>> SearchByName(string q, int page, int itemsPerPage, string? sort);
         Task<PagedList<Product>> SearchProducts(string q, int page, int itemsPerPage, string? sort, string? warehouseId);
-        Task<PagedList<Product>> GetByCategory(string categoryId, int page, int itemsPerPage, string? sort);
+        Task<PagedList<Product>> GetByCategory(string categoryId, string? brands, string? priceRange,
+            int page, int itemsPerPage, string? sort);
         Task<IEnumerable<Product>> GetSimilarProducts(string categoryId, int numToTake);
         Task<Product?> GetProduct(string id);
         Task<Product?> GetProductWithBasicInfo(string id);

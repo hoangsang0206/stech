@@ -200,7 +200,7 @@ const renderProducts = (products, currentPage) => {
                         <span class="text-overflow-1">${product.productName}</span>
                     </td>
                     <td>
-                        ${product.originalPrice.toLocaleString('vi-VN')}đ
+                        ${product.originalPrice ? (product.originalPrice.toLocaleString('vi-VN') + 'đ') : '--'}
                     </td>
                     <td>
                         ${product.price.toLocaleString('vi-VN')}đ

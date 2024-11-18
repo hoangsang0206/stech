@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using STech.Data.Validations;
+﻿using STech.Data.Validations;
+using System.ComponentModel.DataAnnotations;
 
 namespace STech.Data.ViewModels
 {
@@ -18,6 +18,7 @@ namespace STech.Data.ViewModels
 
         public int? ManufacturedYear { get; set; }
 
+        [GreaterThan("Price", ErrorMessage = "Giá so sánh nên lớn hơn giá bán")]
         public decimal? OriginalPrice { get; set; }
 
         [Required(ErrorMessage = "Nhập giá sản phẩm")]

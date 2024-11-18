@@ -42,7 +42,7 @@
         <span class="text-overflow-1">@product.ProductName</span>
     </td>
     <td>
-        @CurrencyFormatter.Format(product.OriginalPrice)
+        @(product.OriginalPrice.HasValue ? CurrencyFormatter.Format(product.OriginalPrice) : "--")
     </td>
     <td>
         @CurrencyFormatter.Format(product.Price)
