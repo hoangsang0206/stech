@@ -1,5 +1,22 @@
 ﻿@model Invoice
 
+@{
+    string firstThreePhone = Model.RecipientPhone.Substring(0, 3);
+    string lastThreePhone = Model.RecipientPhone.Substring(Model.RecipientPhone.Length - 3);
+    string maskedPhone = new string('*', Model.RecipientPhone.Length - 6);
+    string maskedPhoneStr = firstThreePhone + maskedPhone + lastThreePhone;
+
+    string[] addressParts = Model.DeliveryAddress?.Split(',') ?? [];
+    string maskedAddress = "";
+
+    if (addressParts.Length >= 2)
+    {
+        string district = addressParts[addressParts.Length - 2].Trim();
+        string city = addressParts[addressParts.Length - 1].Trim();
+        maskedAddress = $"***, {district}, {city}";
+    }
+}
+
 <div>
     <div>
         <div class="d-flex flex-wrap align-items-center gap-3">
@@ -128,12 +145,12 @@
 
                         <div class="d-flex gap-2 mt-1">
                             <span class="fw-bold text-nowrap">Số ĐT:</span>
-                            <span>@Model.RecipientPhone</span>
+                            <span>@maskedPhoneStr</span>
                         </div>
 
                         <div class="d-flex gap-2 mt-1">
                             <span class="fw-bold text-nowrap">Địa chỉ:</span>
-                            <span>@Model.DeliveryAddress</span>
+                            <span>@maskedAddress</span>
                         </div>
                     </div>
                 </div>

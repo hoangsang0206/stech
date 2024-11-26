@@ -139,12 +139,14 @@ namespace STech.Controllers
                 Data.Models.Product? product = await _productService.GetProduct(pId);
                 if (product != null)
                 {
+                    decimal price = product.SaleProducts.FirstOrDefault()?.SalePrice ?? product.Price;
+
                     invoiceDetails.Add(new InvoiceDetail
                     {
                         InvoiceId = invoice.InvoiceId,
                         ProductId = product.ProductId,
                         Quantity = 1,
-                        Cost = product.Price
+                        Cost = price
                     });
                 }
             }
@@ -155,12 +157,13 @@ namespace STech.Controllers
                     IEnumerable<UserCart> userCart = await _cartService.GetUserCart(invoice.UserId);
                     foreach (UserCart cart in userCart)
                     {
+                        decimal price = cart.Product.SaleProducts.FirstOrDefault()?.SalePrice ?? cart.Product.Price;
                         invoiceDetails.Add(new InvoiceDetail
                         {
                             InvoiceId = invoice.InvoiceId,
                             ProductId = cart.Product.ProductId,
                             Quantity = cart.Quantity,
-                            Cost = cart.Product.Price
+                            Cost = price
                         });
                     }
                 }

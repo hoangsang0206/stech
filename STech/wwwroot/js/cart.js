@@ -26,6 +26,8 @@ const getCartPreview = () => {
                         imgSrc = item.product.productImages[0].imageSrc;
                     }
 
+                    const price = item.product.saleProducts[0]?.salePrice || item.product.price;
+
                     $('.cart-preview').append(
                         `<div class="cart-preview-item d-flex align-items-center gap-2">
                             <img src="${imgSrc}" />
@@ -36,7 +38,7 @@ const getCartPreview = () => {
                                         <a class="cart-preview-rm" data-product="${item.productId}"" href="javascript:void(0)">Xóa</a>
                                         <span class="m-0">SL: ${item.quantity}</span>
                                     </div>
-                                    <span class="cart-preview-price">${item.product.price.toLocaleString("vi-VN")}đ</span>
+                                    <span class="cart-preview-price">${price.toLocaleString("vi-VN")}đ</span>
                                 </div>
                             </div>
                         </div>`

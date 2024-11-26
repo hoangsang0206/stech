@@ -590,6 +590,7 @@ $("#search").keyup(function () {
                         const products = response.data.slice(0, maxItems);
                         products.map(item => {
                             const src = item.productImages[0]?.imageSrc || '/images/no-image.jpg';
+                            const itemPrice = item.saleProducts[0]?.salePrice || item.price;
 
                             $('.ajax-search-items').append(`<a href="/product/${item.productId}"> 
                                 <div class="ajax-search-item d-flex justify-content-between align-items-center">
@@ -598,8 +599,8 @@ $("#search").keyup(function () {
                                             <h3>${item.productName}</h3>
                                         </div>
                                         <div class="ajax-search-item-price d-flex align-items-center">
-                                            <h3>${item.price.toLocaleString('vi-VN') + 'đ'}</h3>
-                                            <h4>${item.originalPrice > item.price ? item.originalPrice.toLocaleString('vi-VN') + 'đ' : ''}</h4>
+                                            <h3>${itemPrice.toLocaleString('vi-VN') + 'đ'}</h3>
+                                            <h4>${item.originalPrice > itemPrice ? item.originalPrice.toLocaleString('vi-VN') + 'đ' : ''}</h4>
                                         </div>
                                     </div>
                                     <div class="ajax-search-item-image">

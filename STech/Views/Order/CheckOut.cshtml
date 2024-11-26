@@ -10,7 +10,12 @@
     AddressVM address = Model.Item2;
     Product? product = Model.Item3;
 
-    decimal totalPrice = product != null ? product.Price : userCart.Sum(c => c.Quantity * c.Product.Price);
+    decimal totalPrice = product != null ? (product.SaleProducts.FirstOrDefault()?.SalePrice ?? product.Price)
+    :   userCart.Sum(c =>
+        {
+            decimal itemPrice = c.Product.SaleProducts.FirstOrDefault()?.SalePrice ?? c.Product.Price;
+            return itemPrice * c.Quantity;
+        });
 }
 
 
@@ -59,6 +64,7 @@
                     @if (product != null)
                     {
                         string src = product.ProductImages.FirstOrDefault()?.ImageSrc ?? "/images/no-image.jpg";
+                        decimal price = product.SaleProducts.FirstOrDefault()?.SalePrice ?? product.Price;
 
                         <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
                             <div class="d-flex align-items-center gap-2">
@@ -74,7 +80,7 @@
                                 <span class="d-flex align-items-center">
                                     <span style="font-size: 0.6rem; font-weight: 600">&#10005</span> &nbsp;1
                                 </span>
-                                <span style="font-weight: 600; color: var(--primary-color); font-size: 0.93rem">@CurrencyFormatter.Format(product.Price)</span>
+                                <span style="font-weight: 600; color: var(--primary-color); font-size: 0.93rem">@CurrencyFormatter.Format(price)</span>
                             </div>
                             
                         </div>
@@ -84,6 +90,7 @@
                         foreach (UserCart cart in userCart)
                         {
                             string src = cart.Product.ProductImages.FirstOrDefault()?.ImageSrc ?? "/images/no-image.jpg";
+                            decimal price = cart.Product.SaleProducts.FirstOrDefault()?.SalePrice ?? product.Price;
 
                             <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
                                 <div class="d-flex align-items-center gap-2">
@@ -99,7 +106,7 @@
                                     <span class="d-flex align-items-center">
                                         <span style="font-size: 0.6rem; font-weight: 600">&#10005</span> &nbsp;@cart.Quantity
                                     </span>
-                                    <span style="font-weight: 600; color: var(--primary-color); font-size: 0.93rem">@CurrencyFormatter.Format(cart.Product.Price)</span>
+                                    <span style="font-weight: 600; color: var(--primary-color); font-size: 0.93rem">@CurrencyFormatter.Format(price)</span>
                                 </div>
                             </div>
                         }

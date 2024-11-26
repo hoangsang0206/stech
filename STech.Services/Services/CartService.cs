@@ -53,6 +53,7 @@ namespace STech.Services.Services
                         OriginalPrice = c.Product.OriginalPrice,
                         Price = c.Product.Price,
                         ProductImages = c.Product.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
+                        SaleProducts = c.Product.SaleProducts.Where(sp => sp.Sale.IsActive == true).Take(1).ToList()
                     },
                     Quantity = c.Quantity,
                 })

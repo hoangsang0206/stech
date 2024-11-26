@@ -6,6 +6,7 @@
     int qty = Model.WarehouseProducts.Sum(wh => wh.Quantity);
 
     double discountPercent = 0;
+    Model.Price = Model.SaleProducts.FirstOrDefault()?.SalePrice ?? Model.Price;
 }
 
 <div class="product-box">

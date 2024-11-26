@@ -12,6 +12,7 @@
     IEnumerable<Product> similarProducts = Model.Item2;
 
     int inStock = wh.Sum(w => w.Quantity);
+    decimal price = product.SaleProducts.FirstOrDefault()?.SalePrice ?? product.Price;
 
     ViewData["Title"] = product.ProductName + " - STech";
 
@@ -58,16 +59,16 @@
                     @{
                         double discountPercent = 0;
                     }
-                    @if (product.OriginalPrice > product.Price)
+                    @if (product.OriginalPrice > price)
                     {
                         <span>@CurrencyFormatter.Format(product.OriginalPrice)</span>
 
-                        discountPercent = ((Convert.ToDouble(product.OriginalPrice) - Convert.ToDouble(product.Price))
+                        discountPercent = ((Convert.ToDouble(product.OriginalPrice) - Convert.ToDouble(price))
                         / Convert.ToDouble(product.OriginalPrice)) * 100;
                     }
                 </div>
                 <div class="product-info-price d-flex align-items-center">
-                    <h2>@CurrencyFormatter.Format(product.Price)</h2>
+                    <h2>@CurrencyFormatter.Format(price)</h2>
                     @if (discountPercent > 0)
                     {
                         <div class="product-info-discount-percent">
@@ -208,6 +209,7 @@
                         @foreach(Product p in similarProducts)
                         {
                             double p_discountPercent = 0;
+                            decimal p_price = p.SaleProducts.FirstOrDefault()?.SalePrice ?? product.Price;
 
                             <div class="d-flex justify-content-between gap-3 mb-3">
                                 <div style="border-radius: var(--radius); border: 1px solid #ccc; padding: .3rem; display: grid; place-items: center">
@@ -220,15 +222,15 @@
                                         </div>
                                         <div>
                                             <div class="product-original-price">
-                                                @if (p.OriginalPrice > p.Price)
+                                                @if (p.OriginalPrice > p_price)
                                                 {
-                                                    p_discountPercent = Convert.ToDouble((p.OriginalPrice - p.Price)
+                                                    p_discountPercent = Convert.ToDouble((p.OriginalPrice - p_price)
                                                     / p.OriginalPrice) * 100;
                                                     <span>@CurrencyFormatter.Format(p.OriginalPrice)</span>
                                                 }
                                             </div>
                                             <div class="product-price d-flex align-items-center">
-                                                <span>@CurrencyFormatter.Format(p.Price)</span>
+                                                <span>@CurrencyFormatter.Format(p_price)</span>
                                                 @if (p_discountPercent > 0)
                                                 {
                                                     <div class="product-discount-percent">

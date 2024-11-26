@@ -26,7 +26,10 @@
                                 continue;
                             }
 
-                            totalPrice += cart.Product.Price * cart.Quantity;
+                            SaleProduct? saleProduct = cart.Product.SaleProducts.FirstOrDefault();
+                            decimal itemPrice = saleProduct?.SalePrice ?? cart.Product.Price;
+
+                            totalPrice += itemPrice * cart.Quantity;
 
                             ProductImage pImage = cart.Product.ProductImages.FirstOrDefault() ?? new ProductImage();
                             string src = pImage.ImageSrc ?? "~/images/no-image.jpg";
@@ -44,7 +47,7 @@
                                                 </a>
                                             </div>
                                             <div class="mt-2 d-flex align-items-center justify-content-between">
-                                                <span class="cart-product-price">@(CurrencyFormatter.Format(cart.Product.Price))</span>
+                                                <span class="cart-product-price">@(CurrencyFormatter.Format(itemPrice))</span>
                                                 <div class="ps-3 d-flex d-md-none gap-3 align-items-center">
                                                     <div class="cart-product-quantity d-flex">
                                                         <button type="button" class="update-quantity decrease-qty"
@@ -82,7 +85,7 @@
                                     </a>
                                 </div>
                                 <div class="col-2 col-md-2 d-none d-md-block text-end">
-                                    <p class="cart-product-total-price fw-bold" style="font-size: 1.05rem" data-product="@cart.ProductId">@(CurrencyFormatter.Format(cart.Product.Price * cart.Quantity))</p>
+                                    <p class="cart-product-total-price fw-bold" style="font-size: 1.05rem" data-product="@cart.ProductId">@(CurrencyFormatter.Format(itemPrice * cart.Quantity))</p>
                                 </div>
                             </div>
                             <hr class="mx-2" />

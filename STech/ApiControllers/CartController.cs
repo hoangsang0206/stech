@@ -192,6 +192,8 @@ namespace STech.ApiControllers
 
             Product product = await _productService.GetProductWithBasicInfo(id) ?? new Product();
             int warehouseQty = await _productService.GetTotalQty(id);
+            decimal price = product.SaleProducts.FirstOrDefault()?.SalePrice ?? product.Price;
+
             string message = "";
             int updatedQty = qty;
             decimal totalPrice = 0;
@@ -233,9 +235,13 @@ namespace STech.ApiControllers
                 await _cartService.UpdateQuantity(cart, cart.Quantity);
 
                 IEnumerable<UserCart> userCart = await _cartService.GetUserCart(userId);
-                totalPrice = userCart.Sum(c => c.Quantity * c.Product.Price);
+                totalPrice = userCart.Sum(c =>
+                {
+                    decimal itemPrice = c.Product.SaleProducts.FirstOrDefault()?.SalePrice ?? c.Product.Price;
+                    return itemPrice * c.Quantity;
+                });
                 updatedQty = cart.Quantity;
-                productTotalPrice = updatedQty * product.Price;
+                productTotalPrice = updatedQty * price;
             }
             else
             {
@@ -278,7 +284,7 @@ namespace STech.ApiControllers
                 }
 
                 updatedQty = cart.Quantity;
-                productTotalPrice = updatedQty * product.Price;
+                productTotalPrice = updatedQty * price;
                 CartUtils.SaveCartToCookie(Response, cartFromCookie);
             }
 
