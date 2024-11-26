@@ -63,13 +63,13 @@ public partial class Invoice
     public virtual PaymentMethod PaymentMed { get; set; } = null!;
 
     [JsonIgnore]
+    public virtual ICollection<ReturnExchangeSlip> ReturnExchangeSlips { get; set; } = new List<ReturnExchangeSlip>();
+
+    [JsonIgnore]
     public virtual User? User { get; set; }
 
     [JsonIgnore]
     public virtual ICollection<WarehouseExport> WarehouseExports { get; set; } = new List<WarehouseExport>();
-
-    [JsonIgnore]
-    public virtual ICollection<ReturnExchangeSlip> ReturnExchangeSlips { get; set; } = new List<ReturnExchangeSlip>();
 
     [JsonIgnore]
     public virtual ICollection<WarrantySlip> WarrantySlips { get; set; } = new List<WarrantySlip>();

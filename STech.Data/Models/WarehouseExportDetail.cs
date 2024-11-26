@@ -17,7 +17,7 @@ public partial class WarehouseExportDetail
     public int ActualQuantity { get; set; }
 
     public decimal UnitPrice { get; set; }
-    
+
     public virtual Product Product { get; set; } = null!;
 
     [JsonIgnore]

@@ -40,12 +40,27 @@ public partial class User
 
     public string? EmployeeId { get; set; }
 
+    public int? GroupId { get; set; }
+
     [JsonIgnore]
     public virtual Employee? Employee { get; set; }
 
     [JsonIgnore]
+    public virtual UserGroup? Group { get; set; }
+
+    [JsonIgnore]
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
+    [JsonIgnore]
+    public virtual ICollection<ReviewLike> ReviewLikes { get; set; } = new List<ReviewLike>();
+
+    [JsonIgnore]
+    public virtual ICollection<ReviewReply> ReviewReplies { get; set; } = new List<ReviewReply>();
+
+    [JsonIgnore]
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+    [JsonIgnore]
     public virtual Role Role { get; set; } = null!;
 
     [JsonIgnore]
@@ -53,13 +68,4 @@ public partial class User
 
     [JsonIgnore]
     public virtual ICollection<UserCart> UserCarts { get; set; } = new List<UserCart>();
-
-    [JsonIgnore]
-    public virtual ICollection<ReviewReply> ReviewReplies { get; set; } = new List<ReviewReply>();
-
-    [JsonIgnore]
-    public virtual ICollection<ReviewLike> ReviewLikes { get; set; } = new List<ReviewLike>();
-
-    [JsonIgnore]
-    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

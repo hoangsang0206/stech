@@ -41,29 +41,33 @@ public partial class Product
     [JsonIgnore]
     public virtual ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new List<InvoiceDetail>();
 
+    [JsonIgnore]
+    public virtual ICollection<ProductGroupItem> ProductGroupItems { get; set; } = new List<ProductGroupItem>();
+
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
 
     public virtual ICollection<ProductSpecification> ProductSpecifications { get; set; } = new List<ProductSpecification>();
 
     [JsonIgnore]
-    public virtual ICollection<SaleProduct> SaleProducts { get; set; } = new List<SaleProduct>();
+    public virtual ICollection<ReturnExchangeSlip> ReturnExchangeSlips { get; set; } = new List<ReturnExchangeSlip>();
 
-    [JsonIgnore]
-    public virtual ICollection<ProductGroupItem> ProductGroupItems { get; set; } = new List<ProductGroupItem>();
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+    public virtual ICollection<SaleProduct> SaleProducts { get; set; } = new List<SaleProduct>();
 
     [JsonIgnore]
     public virtual ICollection<UserCart> UserCarts { get; set; } = new List<UserCart>();
 
     [JsonIgnore]
-    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
-
-    [JsonIgnore]
     public virtual ICollection<WarehouseExportDetail> WarehouseExportDetails { get; set; } = new List<WarehouseExportDetail>();
 
-    public virtual ICollection<WarehouseProduct> WarehouseProducts { get; set; } = new List<WarehouseProduct>();
+    [JsonIgnore]
+    public virtual ICollection<WarehouseImportDetail> WarehouseImportDetails { get; set; } = new List<WarehouseImportDetail>();
 
     [JsonIgnore]
-    public virtual ICollection<ReturnExchangeSlip> ReturnExchangeSlips { get; set; } = new List<ReturnExchangeSlip>();
+    public virtual ICollection<WarehouseImportHistory> WarehouseImportHistories { get; set; } = new List<WarehouseImportHistory>();
+
+    public virtual ICollection<WarehouseProduct> WarehouseProducts { get; set; } = new List<WarehouseProduct>();
 
     [JsonIgnore]
     public virtual ICollection<WarrantySlip> WarrantySlips { get; set; } = new List<WarrantySlip>();

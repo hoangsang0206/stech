@@ -34,5 +34,7 @@ public partial class Warehouse
     public virtual ICollection<WarehouseExport> WarehouseExports { get; set; } = new List<WarehouseExport>();
 
     [JsonIgnore]
+    public virtual ICollection<WarehouseImport> WarehouseImports { get; set; } = new List<WarehouseImport>();
+
     public virtual ICollection<WarehouseProduct> WarehouseProducts { get; set; } = new List<WarehouseProduct>();
 }

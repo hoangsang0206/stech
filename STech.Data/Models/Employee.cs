@@ -40,14 +40,14 @@ public partial class Employee
     [JsonIgnore]
     public virtual ICollection<PackingSlip> PackingSlips { get; set; } = new List<PackingSlip>();
 
-    [JsonIgnore]
+    public virtual ICollection<ReturnExchangeSlip> ReturnExchangeSlips { get; set; } = new List<ReturnExchangeSlip>();
+
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 
     [JsonIgnore]
     public virtual ICollection<WarehouseExport> WarehouseExports { get; set; } = new List<WarehouseExport>();
 
-    [JsonIgnore]
-    public virtual ICollection<ReturnExchangeSlip> ReturnExchangeSlips { get; set; } = new List<ReturnExchangeSlip>();
+    public virtual ICollection<WarehouseImport> WarehouseImports { get; set; } = new List<WarehouseImport>();
 
     [JsonIgnore]
     public virtual ICollection<WarrantySlip> WarrantySlips { get; set; } = new List<WarrantySlip>();

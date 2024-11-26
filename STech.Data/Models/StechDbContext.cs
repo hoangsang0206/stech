@@ -99,11 +99,19 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<UserCode> UserCodes { get; set; }
 
+    public virtual DbSet<UserGroup> UserGroups { get; set; }
+
     public virtual DbSet<Warehouse> Warehouses { get; set; }
 
     public virtual DbSet<WarehouseExport> WarehouseExports { get; set; }
 
     public virtual DbSet<WarehouseExportDetail> WarehouseExportDetails { get; set; }
+
+    public virtual DbSet<WarehouseImport> WarehouseImports { get; set; }
+
+    public virtual DbSet<WarehouseImportDetail> WarehouseImportDetails { get; set; }
+
+    public virtual DbSet<WarehouseImportHistory> WarehouseImportHistories { get; set; }
 
     public virtual DbSet<WarehouseProduct> WarehouseProducts { get; set; }
 
@@ -262,13 +270,10 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<FunctionAuthorization>(entity =>
         {
-            entity.HasKey(e => new { e.RoleId, e.FuncId }).HasName("PK__Function__A2CE103BDD323FDC");
+            entity.HasKey(e => new { e.GroupId, e.FuncId }).HasName("PK__Function__3CAE2D4B6CAF6640");
 
             entity.ToTable("FunctionAuthorization");
 
-            entity.Property(e => e.RoleId)
-                .HasMaxLength(50)
-                .IsUnicode(false);
             entity.Property(e => e.FuncId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -276,12 +281,12 @@ public partial class StechDbContext : DbContext
             entity.HasOne(d => d.Func).WithMany(p => p.FunctionAuthorizations)
                 .HasForeignKey(d => d.FuncId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_FuncAuth_Func");
+                .HasConstraintName("FK__FunctionA__FuncI__4B622666");
 
-            entity.HasOne(d => d.Role).WithMany(p => p.FunctionAuthorizations)
-                .HasForeignKey(d => d.RoleId)
+            entity.HasOne(d => d.Group).WithMany(p => p.FunctionAuthorizations)
+                .HasForeignKey(d => d.GroupId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_FuncAuth_Role");
+                .HasConstraintName("FK__FunctionA__Group__4A6E022D");
         });
 
         modelBuilder.Entity<FunctionCategory>(entity =>
@@ -874,6 +879,10 @@ public partial class StechDbContext : DbContext
                 .HasForeignKey(d => d.EmployeeId)
                 .HasConstraintName("FK_USER_EMPLOYEE");
 
+            entity.HasOne(d => d.Group).WithMany(p => p.Users)
+                .HasForeignKey(d => d.GroupId)
+                .HasConstraintName("FK__Users__GroupId__47919582");
+
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -957,6 +966,13 @@ public partial class StechDbContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Code_User");
+        });
+
+        modelBuilder.Entity<UserGroup>(entity =>
+        {
+            entity.HasKey(e => e.GroupId).HasName("PK__UserGrou__149AF36A4761C8B5");
+
+            entity.Property(e => e.GroupName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Warehouse>(entity =>
@@ -1045,6 +1061,99 @@ public partial class StechDbContext : DbContext
                 .HasForeignKey(d => d.Weid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_WHDetail_WHE");
+        });
+
+        modelBuilder.Entity<WarehouseImport>(entity =>
+        {
+            entity.HasKey(e => e.Wiid).HasName("PK__Warehous__83D4711A46C369B6");
+
+            entity.Property(e => e.Wiid)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("WIId");
+            entity.Property(e => e.DateCreate).HasColumnType("datetime");
+            entity.Property(e => e.DateImport).HasColumnType("datetime");
+            entity.Property(e => e.EmployeeId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Note).HasMaxLength(200);
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.SupplierId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.WarehouseId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Employee).WithMany(p => p.WarehouseImports)
+                .HasForeignKey(d => d.EmployeeId)
+                .HasConstraintName("FK__Warehouse__Emplo__31A25463");
+
+            entity.HasOne(d => d.Supplier).WithMany(p => p.WarehouseImports)
+                .HasForeignKey(d => d.SupplierId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Warehouse__Suppl__338A9CD5");
+
+            entity.HasOne(d => d.Warehouse).WithMany(p => p.WarehouseImports)
+                .HasForeignKey(d => d.WarehouseId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Warehouse__Wareh__3296789C");
+        });
+
+        modelBuilder.Entity<WarehouseImportDetail>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Warehous__3214EC07853541EF");
+
+            entity.Property(e => e.ProductId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.Wiid)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("WIId");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.WarehouseImportDetails)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Warehouse__Produ__6ADAD1BF");
+
+            entity.HasOne(d => d.Wi).WithMany(p => p.WarehouseImportDetails)
+                .HasForeignKey(d => d.Wiid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__WarehouseI__WIId__6BCEF5F8");
+        });
+
+        modelBuilder.Entity<WarehouseImportHistory>(entity =>
+        {
+            entity.HasKey(e => e.HistoryId).HasName("PK__Warehous__4D7B4ABDC5723141");
+
+            entity.Property(e => e.HistoryId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.BatchNumber)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ImportDate).HasColumnType("datetime");
+            entity.Property(e => e.ProductId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Wiid)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("WIId");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.WarehouseImportHistories)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Warehouse__Produ__58BC2184");
+
+            entity.HasOne(d => d.Wi).WithMany(p => p.WarehouseImportHistories)
+                .HasForeignKey(d => d.Wiid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__WarehouseI__WIId__57C7FD4B");
         });
 
         modelBuilder.Entity<WarehouseProduct>(entity =>

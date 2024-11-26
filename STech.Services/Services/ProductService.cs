@@ -151,13 +151,13 @@ namespace STech.Services.Services
         public async Task<bool> CheckOutOfStock(string id)
         {
             Product product = await _context.Products
-                                  .Where(p => p.ProductId == id && p.IsActive == true)
-                                  .Select(p => new Product
-                                  {
-                                      ProductId = p.ProductId,
-                                      WarehouseProducts = p.WarehouseProducts
-                                  }).Include(product => product.WarehouseProducts)
-                                  .FirstOrDefaultAsync() 
+                .Where(p => p.ProductId == id && p.IsActive == true)
+                .Select(p => new Product
+                {
+                    ProductId = p.ProductId,
+                    WarehouseProducts = p.WarehouseProducts
+                })
+                .FirstOrDefaultAsync() 
                 ?? new Product();
 
             int totalQty = product.WarehouseProducts.Sum(p => p.Quantity);
@@ -168,13 +168,13 @@ namespace STech.Services.Services
         public async Task<int> GetTotalQty(string id)
         {
             Product product = await _context.Products
-                                  .Where(p => p.ProductId == id && p.IsActive == true)
-                                  .Select(p => new Product
-                                  {
-                                      ProductId = p.ProductId,
-                                      WarehouseProducts = p.WarehouseProducts
-                                  })
-                                  .FirstOrDefaultAsync()
+                .Where(p => p.ProductId == id && p.IsActive == true)
+                .Select(p => new Product
+                {
+                    ProductId = p.ProductId,
+                    WarehouseProducts = p.WarehouseProducts
+                })
+                .FirstOrDefaultAsync()
                 ?? new Product();
 
             return product.WarehouseProducts

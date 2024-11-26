@@ -20,8 +20,10 @@ public partial class Sale
 
     public string? HeaderTextColor { get; set; }
 
+    public bool? IsActive { get; set; }
+
     [JsonIgnore]
     public virtual ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new List<InvoiceDetail>();
-
+    
     public virtual ICollection<SaleProduct> SaleProducts { get; set; } = new List<SaleProduct>();
 }

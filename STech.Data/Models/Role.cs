@@ -12,7 +12,4 @@ public partial class Role
 
     [JsonIgnore]
     public virtual ICollection<User> Users { get; set; } = new List<User>();
-
-    [JsonIgnore]
-    public virtual ICollection<FunctionAuthorization> FunctionAuthorizations { get; set; } = new List<FunctionAuthorization>();
 }

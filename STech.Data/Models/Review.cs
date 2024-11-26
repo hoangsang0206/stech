@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -7,7 +8,7 @@ public partial class Review
 {
     public int Id { get; set; }
 
-    public string Content { get; set; } = null!;
+    public string? Content { get; set; }
 
     public int Rating { get; set; }
 
@@ -31,13 +32,16 @@ public partial class Review
 
     public bool? IsLiked { get; set; }
 
+    public bool? IsDisliked { get; set; }
+
     public virtual Product Product { get; set; } = null!;
 
     public virtual ICollection<ReviewImage> ReviewImages { get; set; } = new List<ReviewImage>();
 
-    public virtual ICollection<ReviewReply> ReviewReplies { get; set; } = new List<ReviewReply>();
-
     public virtual ICollection<ReviewLike> ReviewLikes { get; set; } = new List<ReviewLike>();
 
+    public virtual ICollection<ReviewReply> ReviewReplies { get; set; } = new List<ReviewReply>();
+
+    [JsonIgnore]
     public virtual User? User { get; set; }
 }

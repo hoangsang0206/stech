@@ -6,7 +6,7 @@ namespace STech.Data.Models;
 
 public partial class FunctionAuthorization
 {
-    public string RoleId { get; set; } = null!;
+    public int GroupId { get; set; }
 
     public string FuncId { get; set; } = null!;
 
@@ -15,6 +15,5 @@ public partial class FunctionAuthorization
     [JsonIgnore]
     public virtual Function Func { get; set; } = null!;
 
-    [JsonIgnore]
-    public virtual Role Role { get; set; } = null!;
+    public virtual UserGroup Group { get; set; } = null!;
 }

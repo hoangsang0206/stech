@@ -10,13 +10,13 @@ public partial class ReviewReply
 
     public int ReviewId { get; set; }
 
-    public string Content { get; set; } = null!;
+    public string? Content { get; set; }
 
     public DateTime ReplyDate { get; set; }
 
-    public bool? IsRead { get; set; }
-
     public string UserReplyId { get; set; } = null!;
+
+    public bool? IsRead { get; set; }
 
     [JsonIgnore]
     public virtual Review Review { get; set; } = null!;
