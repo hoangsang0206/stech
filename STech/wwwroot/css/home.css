@@ -264,11 +264,30 @@
     border-radius: 0.25rem;
 }
 
+.section-best-selling {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #b41e2f;
+    border-radius: 0.25rem;
+}
+
+    .section-best-selling .section-title a {
+        color: #fff;
+    }
+
+    .section-best-selling .section-title a:horizontal:hover {
+        color: #fff;
+    }
+
 .section-header {
     border-bottom: 3px solid #ededed;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.section-header.no-bottom-line {
+    border-bottom: none !important;
 }
 
 .section-header-box {
@@ -285,6 +304,10 @@
     width: 100%;
     position: absolute;
     bottom: -0.2rem;
+}
+
+.section-header.no-bottom-line .section-header-box::after {
+    display: none !important;
 }
 
 .section-title a {

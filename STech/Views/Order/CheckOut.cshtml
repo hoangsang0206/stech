@@ -90,7 +90,7 @@
                         foreach (UserCart cart in userCart)
                         {
                             string src = cart.Product.ProductImages.FirstOrDefault()?.ImageSrc ?? "/images/no-image.jpg";
-                            decimal price = cart.Product.SaleProducts.FirstOrDefault()?.SalePrice ?? product.Price;
+                            decimal price = cart.Product.SaleProducts.FirstOrDefault()?.SalePrice ?? cart.Product.Price;
 
                             <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
                                 <div class="d-flex align-items-center gap-2">

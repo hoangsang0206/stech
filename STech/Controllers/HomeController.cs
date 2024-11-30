@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
+using STech.Data.ViewModels;
 using STech.Services;
 
 namespace STech.Controllers
@@ -29,8 +30,16 @@ namespace STech.Controllers
 
             IEnumerable<Slider> sliders = await _sliderService.GetAll();
 
-            Tuple<IEnumerable<Category>, IEnumerable<Brand>, IEnumerable<Category>, IEnumerable<Slider>> data
-                = new Tuple<IEnumerable<Category>, IEnumerable<Brand>, IEnumerable<Category>, IEnumerable<Slider>>(categories, brands, randomCategories, sliders);
+            PagedList<Product> bestSellingProducts = await _productService.GetBestSellingProducts(1, 20);
+
+            HomePageData data = new HomePageData
+            {
+                Categories = categories,
+                Brands = brands,
+                RandomCategories = randomCategories,
+                Sliders = sliders,
+                BestSellingProducts = bestSellingProducts.Items
+            };
 
             return View(data);
         }

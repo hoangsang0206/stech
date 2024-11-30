@@ -2,13 +2,14 @@
     ViewData["Title"] = "Trang chủ - STech";
 }
 
-@model Tuple<IEnumerable<Category>, IEnumerable<Brand>, IEnumerable<Category>, IEnumerable<Slider>>
-
+@model HomePageData
 @{
-    IEnumerable<Category> categories = Model.Item1;
-    IEnumerable<Brand> brands = Model.Item2;
-    IEnumerable<Category> randomCategories = Model.Item3;
-    IEnumerable<Slider> sliders = Model.Item4;
+    IEnumerable<Category> categories = Model.Categories;
+    IEnumerable<Brand> brands = Model.Brands;
+    IEnumerable<Category> randomCategories = Model.RandomCategories;
+    IEnumerable<Slider> sliders = Model.Sliders;
+    IEnumerable<Product> bestSellingProducts = Model.BestSellingProducts;
+    IEnumerable<ProductGroup> productGroups = Model.ProductGroups;
 }
 
 <section class="menu">
@@ -108,6 +109,29 @@
                             </span>
                         </div>
                     </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section-best-selling">
+    <div class="section-header no-bottom-line">
+        <div class="section-header-box">
+            <h2 class="section-title">
+                <a href="/groups/best-selling">Sản phẩm bán chạy</a>
+            </h2>
+        </div>
+        <div class="section-header-link">
+            <a href="/groups/best-selling">Xem tất cả</a>
+        </div>
+    </div>
+    <div class="section-content">
+        <div class="collection-slick-slider">
+            @foreach (Product product in bestSellingProducts)
+            {
+                <div class="slick-slider-item">
+                    @await Html.PartialAsync("PartialViews/ProductBox", product)
                 </div>
             }
         </div>

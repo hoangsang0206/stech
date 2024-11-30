@@ -84,6 +84,16 @@ namespace STech.Services.Services
                 .ToListAsync();
         }
 
+        public async Task<PagedList<Product>> GetBestSellingProducts(int page, int itemsPerPage)
+        {
+            return await _context.Products
+                .Where(p => p.IsActive == true)
+                .OrderByDescending(p => p.InvoiceDetails.Sum(i => i.Quantity))
+                .SelectProduct()
+                .ToPagedListAsync(page, itemsPerPage);
+
+        }
+
         public async Task<Product?> GetProduct(string id)
         {
             return await _context.Products

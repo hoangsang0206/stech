@@ -35,7 +35,7 @@ const getCartPreview = () => {
                                 <p class="m-0">${item.product.productName}</p>
                                 <div class="d-flex align-items-end justify-content-between">
                                     <div class="d-flex gap-3">
-                                        <a class="cart-preview-rm" data-product="${item.productId}"" href="javascript:void(0)">Xóa</a>
+                                        <a class="cart-preview-rm" data-product="${item.product.productId}"" href="javascript:void(0)">Xóa</a>
                                         <span class="m-0">SL: ${item.quantity}</span>
                                     </div>
                                     <span class="cart-preview-price">${price.toLocaleString("vi-VN")}đ</span>
@@ -145,11 +145,14 @@ const updateCartQty = (id, type, qty, input_element) => {
                     setTimeout(() => {
                         showHtmlDialog('info', 'Không thể cập nhật', response.message)
                     }, 500);
+
+                    input_element.focus();
                 }
             } else {
                 setTimeout(() => {
                     showHtmlDialog('info', 'Không thể cập nhật', response.message)
                 }, 500);
+                input_element.focus();
             }
         },
         error: () => {
