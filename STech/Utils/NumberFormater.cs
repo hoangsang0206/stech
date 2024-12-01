@@ -12,15 +12,15 @@ namespace STech.Utils
 
             if (number > 1_000_000_000)
             {
-                return (number / 1_000_000_000).ToString("0,###", cultureInfo) + "tỉ";
+                return (number / 1_000_000_000).ToString("0.###", cultureInfo) + " tỉ";
             }
             else if (number >= 1_000_000)
             {
-                return (number / 1_000_000).ToString("0,###", cultureInfo) + "tr";
+                return (number / 1_000_000).ToString("0.###", cultureInfo) + "tr";
             }
-            else if (number >= 1_000)
+            else if (number >= 10_000)
             {
-                return (number / 1_000).ToString("0,###", cultureInfo) + "k";
+                return (number / 1_000).ToString("0.###", cultureInfo) + "k";
             }
             else
             {
@@ -34,15 +34,37 @@ namespace STech.Utils
 
             if (number > 1_000_000_000)
             {
-                return (number / 1_000_000_000).ToString("0,###", cultureInfo) + "tỉ";
+                return (number / 1_000_000_000).ToString("0.###", cultureInfo) + " tỉ";
             }
             else if (number >= 1_000_000)
             {
-                return (number / 1_000_000).ToString("0,###", cultureInfo) + "tr";
+                return (number / 1_000_000).ToString("0.###", cultureInfo) + "tr";
             }
-            else if (number >= 1_000)
+            else if (number >= 10_000)
             {
-                return (number / 1_000).ToString("0,###", cultureInfo) + "k";
+                return (number / 1_000).ToString("0.###", cultureInfo) + "k";
+            }
+            else
+            {
+                return number.ToString("0");
+            }
+        }
+
+        public static string Format(int number)
+        {
+            CultureInfo cultureInfo = new CultureInfo(CULTURE_INFO);
+
+            if (number > 1_000_000_000)
+            {
+                return (number / 1_000_000_000).ToString("0.###", cultureInfo) + " tỉ";
+            }
+            else if (number >= 1_000_000)
+            {
+                return (number / 1_000_000).ToString("0.###", cultureInfo) + "tr";
+            }
+            else if (number >= 10_000)
+            {
+                return (number / 1_000).ToString("0.###", cultureInfo) + "k";
             }
             else
             {

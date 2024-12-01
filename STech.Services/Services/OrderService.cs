@@ -14,6 +14,37 @@ namespace STech.Services.Services
             _context = context;
         }
 
+        public async Task<int> GetTotalOrders()
+        {
+            return await _context.Invoices.CountAsync();
+        }
+
+        public async Task<decimal> GetTotalRevenue()
+        {
+            return await _context.Invoices
+                .SumAsync(i => i.Total);
+        }
+
+        public async Task<int> GetMonthOrders(int month)
+        {
+            DateTime startOfMonth = new DateTime(DateTime.Now.Year, month, 1);
+            DateTime startOfNextMonth = startOfMonth.AddMonths(1);
+
+            return await _context.Invoices
+                .Where(i => i.OrderDate >= startOfMonth && i.OrderDate < startOfNextMonth)
+                .CountAsync();
+        }
+
+        public async Task<decimal> GetMonthRevenue(int month)
+        {
+            DateTime startOfMonth = new DateTime(DateTime.Now.Year, month, 1);
+            DateTime startOfNextMonth = startOfMonth.AddMonths(1);
+
+            return await _context.Invoices
+                .Where(i => i.OrderDate >= startOfMonth && i.OrderDate < startOfNextMonth)
+                .SumAsync(i => i.Total);
+        }
+
         public async Task<bool> CreateInvoice(Invoice invoice)
         {
             IEnumerable<InvoiceDetail> invoiceDetails = invoice.InvoiceDetails;
@@ -124,6 +155,16 @@ namespace STech.Services.Services
                 .Include(i => i.InvoiceStatuses)
                 .Include(i => i.InvoiceDetails)
                 .OrderByDescending(i => i.OrderDate)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Invoice>> GetRecentOrders(int numToTake)
+        {
+            return await _context.Invoices
+                .Include(i => i.InvoiceStatuses)
+                .Include(i => i.InvoiceDetails)
+                .OrderByDescending(i => i.OrderDate)
+                .Take(numToTake)
                 .ToListAsync();
         }
 

@@ -5,6 +5,9 @@ namespace STech.Services
 {
     public interface IProductService
     {
+        Task<int> GetTotalProducts();
+        Task<int> GetMonthAdded(int month);
+
         Task<PagedList<Product>> GetProducts(string? brands, string? categories, string? status, string? priceRange, 
             string? warehouseId, string? sort, int page, int itemsPerPage);
         Task<PagedList<Product>> SearchByName(string q, int page, int itemsPerPage, string? sort);
@@ -13,6 +16,7 @@ namespace STech.Services
             int page, int itemsPerPage, string? sort);
         Task<IEnumerable<Product>> GetSimilarProducts(string categoryId, int numToTake);
         Task<PagedList<Product>> GetBestSellingProducts(int page, int itemsPerPage);
+        Task<IEnumerable<Product>> GetBestSellingProducts(int numToTake);
         Task<PagedList<Product>> GetNewestProducts(int page, int itemsPerPage);
         Task<Product?> GetProduct(string id);
         Task<Product?> GetProductWithBasicInfo(string id);

@@ -12,6 +12,22 @@ namespace STech.Services.Services
         public ProductService(StechDbContext context) => _context = context;
         
         #region GET
+
+        public async Task<int> GetTotalProducts()
+        {
+            return await _context.Products.CountAsync();
+        }
+
+        public async Task<int> GetMonthAdded(int month)
+        {
+            DateTime startOfMonth = new DateTime(DateTime.Now.Year, month, 1);
+            DateTime startOfNextMonth = startOfMonth.AddMonths(1);
+
+            return await _context.Products
+                .Where(p => p.DateAdded >= startOfMonth && p.DateAdded < startOfNextMonth)
+                .CountAsync();
+        }
+
         public async Task<PagedList<Product>> GetProducts(string? brands, string? categories, string? status, 
             string? priceRange, string? warehouseId, string? sort, int page, int itemsPerPage)
         {
@@ -92,6 +108,27 @@ namespace STech.Services.Services
                 .SelectProduct()
                 .ToPagedListAsync(page, itemsPerPage);
 
+        }
+
+        public async Task<IEnumerable<Product>> GetBestSellingProducts(int numToTake)
+        {
+            return await _context.Products
+                .Where(p => p.IsActive == true && p.InvoiceDetails.Count() > 0)
+                .OrderByDescending(p => p.InvoiceDetails.Sum(i => i.Quantity))
+                .Select(p => new Product
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    OriginalPrice = p.OriginalPrice,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
+                    WarehouseProducts = p.WarehouseProducts,
+                    BrandId = p.BrandId,
+                    CategoryId = p.CategoryId,
+                    InvoiceDetails = p.InvoiceDetails
+                })
+                .Take(numToTake)
+                .ToListAsync();
         }
 
         public async Task<PagedList<Product>> GetNewestProducts(int page, int itemsPerPage)

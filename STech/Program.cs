@@ -205,4 +205,43 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+await AutoSeedData();
+
 app.Run();
+
+
+// Auto seed messing data
+async Task AutoSeedData()
+{
+    using (IServiceScope scope = app.Services.CreateScope())
+    {
+        StechDbContext context = scope.ServiceProvider.GetRequiredService<StechDbContext>();
+        IUserService userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+
+        if (!await context.Roles.AnyAsync(r => r.RoleId == "admin"))
+        {
+            await context.Roles.AddAsync(new Role { RoleId = "admin", RoleName = "Admin" });
+        }
+
+        if (!await context.Roles.AnyAsync(r => r.RoleId == "user"))
+        {
+            await context.Roles.AddAsync(new Role { RoleId = "user", RoleName = "User" });
+        }
+
+        if (!await context.UserGroups.AnyAsync(ug => ug.GroupName == "Admin"))
+        {
+            await context.UserGroups.AddAsync(new UserGroup { GroupName = "Admin", HasAllPermissions = true });
+        }
+
+        if (!await userService.IsExist("admin"))
+        {
+            await userService.CreateUser(new STech.Data.ViewModels.RegisterVM
+            {
+                RegUserName = "admin",
+                RegPassword = "admin@123",
+                ConfirmPassword = "admin@123",
+                Email = "admin@stech.com"
+            });
+        }
+    } 
+}

@@ -1,15 +1,13 @@
 ﻿using STech.Data.Models;
 using STech.Data.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace STech.Services
 {
     public interface IUserService
     {
+        Task<int> GetTotalUsers();
+        Task<IEnumerable<User>> GetTopUsers(int numToTake);
+
         Task<User?> GetUser(LoginVM login);
         Task<User?> GetUserById(string id);
         Task<User?> GetUserByEmail(string email);

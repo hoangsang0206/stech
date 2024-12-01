@@ -3,15 +3,212 @@
     ViewData["PageTitle"] = "Tổng quan";
 }
 
+@model AdminHomePageData
+
+@{
+    int totalProducts = Model.ProductStatistic.TotalProducts;
+    int currentMonthProducts = Model.ProductStatistic.CurrentMonthAdded;
+
+    int totalOrders = Model.OrderStatistic.TotalOrders;
+    int lastMonthOrders = Model.OrderStatistic.LastMonthOrders;
+    int currentMonthOrders = Model.OrderStatistic.CurrentMonthOrders;
+    decimal totalRevenue = Model.OrderStatistic.TotalRevenue;
+    decimal lastMonthRevenue = Model.OrderStatistic.LastMonthRevenue;
+    decimal currentMonthRevenue = Model.OrderStatistic.CurrentMonthRevenue;
+
+    IEnumerable<Product> topSellingProducts = Model.TopSellingProducts;
+    IEnumerable<Invoice> recentOrders = Model.RecentOrders;
+    IEnumerable<User> topUsers = Model.TopUsers;
+}
+
 <section class="page-wrapper">
     
-    <div class="d-flex align-items-stretch flex-wrap gap-3">
-        <div class="statistic-box">
-            <span class="statistic-value">@NumberFormater.Format(2000f)</span>
-            <span class="statistic-label">Tổng số sản phẩm</span>
-            <span class="statistic-increase">+200</span>
-        </div>
-    </div>
+    <div class="row p-0 m-0">
+       <div class="col-12 col-lg-9 p-0 m-0">
+
+            <div class="d-flex align-items-stretch flex-wrap gap-4">
+                <div class="statistic-box customer-statistic">
+                    <span class="statistic-value">@NumberFormater.Format(totalProducts)</span>
+                    <span class="statistic-label">Tổng số sản phẩm</span>
+                    <div class="d-flex gap-2 align-items-center justify-content-between">
+                        <div class="d-flex flex-column">
+                            <span class="statistic-increase mt-2">+@currentMonthProducts</span>
+                            <span class="statistic-label">Tháng này</span>
+                        </div>
+                        <i class="fa-solid fa-minus"></i>
+                    </div>
+                </div>
+
+                <div class="statistic-box revenue-statistic">
+                    <span class="statistic-value">@NumberFormater.Format(totalRevenue)</span>
+                    <span class="statistic-label">Tổng doanh thu</span>
+                    <div class="d-flex gap-2 align-items-center justify-content-between">
+                        <div class="d-flex flex-column">
+                            <span class="statistic-increase mt-2">+@NumberFormater.Format(currentMonthRevenue)</span>
+                            <span class="statistic-label">Tháng này</span>
+                        </div>
+                        @if(currentMonthRevenue >= lastMonthRevenue)
+                        {
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                        }
+                        else
+                        {
+                            <i class="fa-solid fa-arrow-trend-down"></i>
+                        }
+                    </div>
+                </div>
+
+                <div class="statistic-box orders-statistic">
+                    <span class="statistic-value">@NumberFormater.Format(totalOrders)</span>
+                    <span class="statistic-label">Tổng số đơn hàng</span>
+                    <div class="d-flex gap-2 align-items-center justify-content-between">
+                        <div class="d-flex flex-column">
+                            <span class="statistic-increase mt-2">+@currentMonthOrders</span>
+                            <span class="statistic-label">Tháng này</span>
+                        </div>
+                        @if(currentMonthOrders >= lastMonthOrders)
+                        {
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                        }
+                        else
+                        {
+                            <i class="fa-solid fa-arrow-trend-down"></i>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <div class="page-content-header">Doanh thu</div>
+                <div class="revenue-chart">
+                    <canvas id="revenue-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <div class="page-content-header">Sản phẩm bán chạy</div>
+
+                <div class="page-table-wrapper mt-2">
+                    <table class="page-table order-list">
+                        <thead class="page-table-header">
+                            <tr>
+                                <th>Hình</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Giá bán</th>
+                                <th>Trạng thái</th>
+                                <th>Tồn kho</th>
+                                <th>Đã bán</th>
+                            </tr>
+                        </thead>
+                        <tbody class="product-list view-list" data-view="view-list">
+                        @{
+                            foreach (Product product in topSellingProducts)
+                            {
+                                string imageUrl = product.ProductImages.FirstOrDefault()?.ImageSrc ?? "/admin/images/no-image.jpg";
+                                int total_qty = product.WarehouseProducts.Sum(x => x.Quantity);
+
+                                string status_badge = "<span class=\"page-badge badge-success\">Còn hàng</span>";
+
+                                if (product.IsDeleted == true)
+                                {
+                                    status_badge = "<span class=\"page-badge badge-error\">Đã xóa</span>";
+                                }
+                                else if (!product.IsActive == true)
+                                {
+                                    status_badge = "<span class=\"page-badge badge-warning\">Chưa kích hoạt</span>";
+                                }
+                                else if (total_qty <= 0)
+                                {
+                                    status_badge = "<span class=\"page-badge badge-error\">Hết hàng</span>";
+                                }
+                                else if (total_qty <= 5)
+                                {
+                                    status_badge = "<span class=\"page-badge badge-warning\">Sắp hết hàng</span>";
+                                }
+
+                                <tr>
+                                    <td>
+                                        <div class="lazy-loading">
+                                            <img lazy-src="@imageUrl" alt="" style="width: 2rem">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-overflow-1">@product.ProductName</span>
+                                    </td>
+                                    <td>
+                                        @CurrencyFormatter.Format(product.Price)
+                                    </td>
+                                    <td>
+                                        @Html.Raw(status_badge)
+                                    </td>
+                                    <td>
+                                        @total_qty
+                                    </td>
+                                    <td>
+                                       @product.InvoiceDetails.Sum(x => x.Quantity)
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+       </div>
+
+       <div class="col-12 col-lg-3 m-0 p-0 ps-lg-4">
+            <div>
+                <div class="left-dashboard-header">
+                    <h1>Top người dùng</h1>
+                    <a href="/admin/users?sort=top-spending">Xem</a>
+                </div>
+
+                <div>
+                    @foreach (User user in topUsers)
+                    {
+                        <div class="d-flex gap-2 align-items-center justify-content-between pb-3">
+                            <div class="d-flex gap-2 align-items-center">
+                                <div class="lazy-loading">
+                                    <img class="top-user-avatar" lazy-src="@user.Avatar" alt="" />
+                                </div>
+                                <span class="top-user-name text-overflow-1">@(user.FullName ?? user.Username)</span>
+                            </div>
+
+                            <span class="top-user-spending">@NumberFormater.Format(user.Invoices.Sum(i => i.Total))</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <div class="left-dashboard-header">
+                    <h1>Đơn hàng gần đây</h1>
+                    <a href="/admin/orders?filter_by=unaccepted">Xem</a>
+                </div>
+
+                <div>
+                    @foreach (Invoice order in recentOrders)
+                    {
+                        <div class="d-flex gap-2 align-items-center justify-content-between pb-3">
+                            <div class="d-flex gap-2 align-items-center">
+                                <div class="recent-order-icon">
+                                  <i class="fa-solid fa-cart-flatbed"></i>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <span class="recent-order-id">@order.InvoiceId</span>
+                                    <span class="recent-order-date">@order.OrderDate?.ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+                            </div>
+
+                            <span class="recent-order-total">@NumberFormater.Format(order.Total)</span>
+                        </div>
+                    }
+
+                </div>
+            </div>
+       </div>
+   </div>
 
 </section>
 
@@ -20,5 +217,6 @@
 }
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="~/admin/js/dashboard.js"></script>
 }

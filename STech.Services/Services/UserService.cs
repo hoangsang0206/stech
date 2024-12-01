@@ -12,6 +12,21 @@ namespace STech.Services.Services
 
         #region User
 
+        public async Task<int> GetTotalUsers()
+        {
+            return await _context.Users.CountAsync();
+        }
+
+        public async Task<IEnumerable<User>> GetTopUsers(int numToTake)
+        {
+            return await _context.Users
+                .Where(u => u.Invoices.Count() > 0)
+                .Include(u => u.Invoices)
+                .OrderByDescending(u => u.Invoices.Sum(i => i.Total))
+                .Take(numToTake)
+                .ToListAsync();
+        }
+
         public async Task<User?> GetUser(LoginVM login)
         {
             User? user = await _context.Users
