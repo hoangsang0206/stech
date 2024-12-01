@@ -39,8 +39,8 @@ namespace STech.Services.Services
                         Price = p.Price,
                         ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
                         WarehouseProducts = p.WarehouseProducts,
-                        Brand = p.Brand
-
+                        Brand = p.Brand,
+                        SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true).Take(1).ToList()
                     }).Take(numProducts).ToList(),
                 })
                 .Take(numCategories)

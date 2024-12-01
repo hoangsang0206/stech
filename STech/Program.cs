@@ -134,6 +134,7 @@ builder.Services.AddScoped<ICustomerService, STech.Services.Services.CustomerSer
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IDeliveryService, DeliveryService>();
 builder.Services.AddScoped<IReviewService, STech.Services.Services.ReviewService>();
+builder.Services.AddScoped<ISaleService, SaleService>();
 
 builder.Services.AddSingleton(new AddressService(Path.Combine(builder.Environment.ContentRootPath, "DataFiles", "Address")));
 
@@ -168,17 +169,14 @@ CloudflareTurnstile.ApiUrl = builder.Configuration.GetSection("Cloudflare:Turnst
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-}
-else
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    //app.UseStatusCodePages();
 }
 
+app.UseExceptionHandler("/error/500");
+app.UseStatusCodePagesWithReExecute("/error/{0}");
 
 app.UseStaticFiles();
 

@@ -42,6 +42,8 @@ public partial class User
 
     public int? GroupId { get; set; }
 
+    public DateTime? CreateAt { get; set; }
+
     [JsonIgnore]
     public virtual Employee? Employee { get; set; }
 

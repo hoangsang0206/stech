@@ -117,6 +117,10 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<WarrantySlip> WarrantySlips { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=AORUS-Laptop;Database=STechDB;User Id=sang;Password=123456;TrustServerCertificate=True;");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Banner>(entity =>
@@ -177,6 +181,9 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.Dob).HasColumnName("DOB");
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.Gender).HasMaxLength(10);
+            entity.Property(e => e.MemberSince)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
             entity.Property(e => e.Phone)
                 .HasMaxLength(30)
                 .IsUnicode(false);
@@ -853,6 +860,9 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.AuthenticationProvider)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.CreateAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
             entity.Property(e => e.Dob).HasColumnName("DOB");
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.EmailConfirmed).HasDefaultValue(false);

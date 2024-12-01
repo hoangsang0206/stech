@@ -264,20 +264,26 @@
     border-radius: 0.25rem;
 }
 
-.section-best-selling {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: #b41e2f;
-    border-radius: 0.25rem;
+    .section-collection.section-best-selling {
+        background: #FF8A8A !important;
+    }
+
+    .section-collection.section-best-selling .product-box {
+        border: none !important;
+    }
+
+        .section-collection.section-best-selling .section-title a {
+            color: #fff;
+        }
+
+            .section-collection.section-best-selling .section-title a:hover {
+                color: #fff;
+            }
+
+
+.section-collection.section-sale {
+    background: #fff;
 }
-
-    .section-best-selling .section-title a {
-        color: #fff;
-    }
-
-    .section-best-selling .section-title a:horizontal:hover {
-        color: #fff;
-    }
 
 .section-header {
     border-bottom: 3px solid #ededed;

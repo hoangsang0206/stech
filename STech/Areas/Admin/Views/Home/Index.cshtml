@@ -4,5 +4,21 @@
 }
 
 <section class="page-wrapper">
-    <h1>Hello Admin</h1>
+    
+    <div class="d-flex align-items-stretch flex-wrap gap-3">
+        <div class="statistic-box">
+            <span class="statistic-value">@NumberFormater.Format(2000f)</span>
+            <span class="statistic-label">Tổng số sản phẩm</span>
+            <span class="statistic-increase">+200</span>
+        </div>
+    </div>
+
 </section>
+
+@section Styles {
+    <link rel="stylesheet" href="~/admin/css/dashboard.css" />
+}
+
+@section Scripts {
+    <script src="~/admin/js/dashboard.js"></script>
+}

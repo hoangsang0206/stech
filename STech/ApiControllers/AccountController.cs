@@ -11,6 +11,7 @@ using STech.Services.Services;
 using STech.Services.Utils;
 using STech.Config;
 using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace STech.ApiControllers
 {
@@ -34,14 +35,18 @@ namespace STech.ApiControllers
         #region User
         private async Task UserSignIn(User user)
         {
+            List<string> authorized = user.Group?.FunctionAuthorizations.Select(f => f.FuncId).ToList()
+                ?? new List<string>();
+
             IEnumerable<Claim> claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.Email, user.Email ?? ""),
-                    new Claim("Id", user.UserId),
-                    new Claim("Avatar", user.Avatar ?? "/images/user-no-image.svg"),
-                    new Claim(ClaimTypes.Role, user.RoleId),
-                };
+            {
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.Email ?? ""),
+                new Claim("Avatar", user.Avatar ?? "/images/user-no-image.svg"),
+                new Claim("Id", user.UserId),
+                new Claim(ClaimTypes.Role, user.RoleId),
+                new Claim("authorized", JsonConvert.SerializeObject(authorized))
+            };
 
             ClaimsIdentity identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             ClaimsPrincipal principal = new ClaimsPrincipal(identity);
@@ -67,7 +72,7 @@ namespace STech.ApiControllers
 
                 if (apiResponse.IsSuccessStatusCode)
                 {
-                    CaptchaVerificationResponse? result = JsonSerializer.Deserialize<CaptchaVerificationResponse>(responseString);
+                    CaptchaVerificationResponse? result = JsonConvert.DeserializeObject<CaptchaVerificationResponse>(responseString);
                     
                     return result != null && result.success;
                 }

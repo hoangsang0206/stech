@@ -1,13 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Services.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace STech.Services.Services
 {
@@ -21,6 +15,8 @@ namespace STech.Services.Services
         public async Task<User?> GetUser(LoginVM login)
         {
             User? user = await _context.Users
+                .Include(u => u.Group)
+                .ThenInclude(g => g.FunctionAuthorizations)
                 .FirstOrDefaultAsync(u => u.Username == login.UserName);
 
             if(user != null && user.PasswordHash == login.Password.HashPasswordMD5(user.RandomKey))
@@ -34,12 +30,16 @@ namespace STech.Services.Services
         public async Task<User?> GetUserById(string id)
         {
             return await _context.Users
+                .Include(u => u.Group)
+                .ThenInclude(g => g.FunctionAuthorizations)
                 .FirstOrDefaultAsync(u => u.UserId == id);
         }
 
         public async Task<User?> GetUserByEmail(string email)
         {
             return await _context.Users
+                .Include(u => u.Group)
+                .ThenInclude(g => g.FunctionAuthorizations)
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
@@ -80,6 +80,7 @@ namespace STech.Services.Services
                 RandomKey = randomKey,
                 IsActive = true,
                 RoleId = role.RoleId,
+                CreateAt = DateTime.Now
             };
 
             await _context.Users.AddAsync(user);
@@ -109,6 +110,7 @@ namespace STech.Services.Services
                 Avatar = register.Avatar,
                 IsActive = true,
                 RoleId = role.RoleId,
+                CreateAt = DateTime.Now,
                 AuthenticationProvider = register.AuthenticationProvider
             };
 

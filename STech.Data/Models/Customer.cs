@@ -32,6 +32,8 @@ public partial class Customer
 
     public string ProvinceCode { get; set; } = null!;
 
+    public DateTime? MemberSince { get; set; }
+
     [JsonIgnore]
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 }

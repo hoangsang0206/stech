@@ -94,6 +94,15 @@ namespace STech.Services.Services
 
         }
 
+        public async Task<PagedList<Product>> GetNewestProducts(int page, int itemsPerPage)
+        {
+            return await _context.Products
+                .Where(p => p.IsActive == true)
+                .OrderByDescending(p => p.DateAdded)
+                .SelectProduct()
+                .ToPagedListAsync(page, itemsPerPage);
+        }
+
         public async Task<Product?> GetProduct(string id)
         {
             return await _context.Products

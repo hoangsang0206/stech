@@ -8,6 +8,10 @@
     height: 100%;
 }
 
+    .product-box.no-border {
+        border: none !important;
+    }
+
     .product-box:hover {
         border-color: #c5c5c5;
     }

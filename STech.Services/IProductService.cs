@@ -13,6 +13,7 @@ namespace STech.Services
             int page, int itemsPerPage, string? sort);
         Task<IEnumerable<Product>> GetSimilarProducts(string categoryId, int numToTake);
         Task<PagedList<Product>> GetBestSellingProducts(int page, int itemsPerPage);
+        Task<PagedList<Product>> GetNewestProducts(int page, int itemsPerPage);
         Task<Product?> GetProduct(string id);
         Task<Product?> GetProductWithBasicInfo(string id);
         Task<Product?> GetProductWithBasicInfo(string id, string warehouseId);

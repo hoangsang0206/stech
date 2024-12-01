@@ -9,7 +9,9 @@
     IEnumerable<Category> randomCategories = Model.RandomCategories;
     IEnumerable<Slider> sliders = Model.Sliders;
     IEnumerable<Product> bestSellingProducts = Model.BestSellingProducts;
+    IEnumerable<Product> newProducts = Model.NewProducts;
     IEnumerable<ProductGroup> productGroups = Model.ProductGroups;
+    IEnumerable<Sale> sales = Model.Sales;
 }
 
 <section class="menu">
@@ -85,6 +87,29 @@
     </div>
 </section>
 
+@foreach(Sale sale in sales)
+{
+    <section class="section-collection section-sale" style="background: @sale.BackgroundColor">
+        <div class="section-header no-bottom-line">
+            <div class="section-header-box">
+                <h2 class="section-title">
+                    <a style="color: @sale.HeaderTextColor" onmouseover="this.style.color='@sale.HeaderTextColor'" href="/sale/@sale.SaleId">@sale.SaleName</a>
+                </h2>
+            </div>
+        </div>
+        <div class="section-content">
+            <div class="collection-slick-slider">
+                @foreach (SaleProduct saleProduct in sale.SaleProducts)
+                {
+                    <div class="slick-slider-item">
+                        @await Html.PartialAsync("PartialViews/ProductSaleBox", saleProduct)
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
 <section class="section-categories">
     <div class="section-header">
         <h2 class="section-title">
@@ -115,20 +140,37 @@
     </div>
 </section>
 
-<section class="section-best-selling">
+<section class="section-collection section-best-selling">
     <div class="section-header no-bottom-line">
         <div class="section-header-box">
             <h2 class="section-title">
                 <a href="/groups/best-selling">Sản phẩm bán chạy</a>
             </h2>
         </div>
-        <div class="section-header-link">
-            <a href="/groups/best-selling">Xem tất cả</a>
-        </div>
     </div>
     <div class="section-content">
         <div class="collection-slick-slider">
             @foreach (Product product in bestSellingProducts)
+            {
+                <div class="slick-slider-item">
+                    @await Html.PartialAsync("PartialViews/ProductBox", product)
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section-collection">
+    <div class="section-header no-bottom-line">
+        <div class="section-header-box">
+            <h2 class="section-title">
+                <a href="/groups/newest">Sản phẩm mới</a>
+            </h2>
+        </div>
+    </div>
+    <div class="section-content">
+        <div class="collection-slick-slider">
+            @foreach (Product product in newProducts)
             {
                 <div class="slick-slider-item">
                     @await Html.PartialAsync("PartialViews/ProductBox", product)

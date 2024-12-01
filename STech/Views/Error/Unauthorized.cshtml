@@ -1,0 +1,19 @@
+﻿﻿@{
+    ViewData["Title"] = "401 - Không có quyền truy cập";
+}
+
+<div class="error-site d-flex flex-column justify-content-center align-items-center">
+    <div class="error-message d-flex flex-column align-items-center">
+        <h3>Bạn không có quyền truy cập nội dung này</h3>
+        <p>
+            Nếu bạn cần hỗ trợ, vui lòng liên hệ tổng đài <span>0123456789</span>
+        </p>
+    </div>
+    <button class="to-home-page-btn" onclick="window.location.href='/'">
+        QUAY LẠI TRANG CHỦ
+    </button>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/error.css" />
+}

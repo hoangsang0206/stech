@@ -1,0 +1,32 @@
+﻿.error-site {
+    background: var(--content-color-white);
+    padding: 3rem 0;
+}
+
+.error-image {
+    width: 100%;
+}
+
+    .error-image img {
+        width: 50%;
+    }
+
+.error-message {
+    margin-top: 2rem;
+    row-gap: 1rem;
+}
+
+    .error-message h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .error-message p {
+        font-size: 1.2rem;
+    }
+
+        .error-message p span {
+            color: var(--primary-color);
+            font-size: 1.23rem;
+            font-weight: 600;
+        }

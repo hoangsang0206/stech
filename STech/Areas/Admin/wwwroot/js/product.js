@@ -250,16 +250,19 @@ const getFormData = (form) => {
         return null;
     }
 
-    const specifications = _form.find('.product-spec').toArray().map((spec) => {
-        const spec_name = $(spec).find('textarea[name="spec-name"]').val();
-        const spec_value = $(spec).find('textarea[name="spec-value"]').val();
+    const specifications = _form.find('.product-spec')
+        .toArray()
+        .map((spec) => {
+            const spec_name = $(spec).find('textarea[name="spec-name"]').val();
+            const spec_value = $(spec).find('textarea[name="spec-value"]').val();
 
-        if (spec_name && spec_value) {
-            return {
-                Name: spec_name, Value: spec_value
+            if (spec_name && spec_value) {
+                return {
+                    Name: spec_name, Value: spec_value
+                }
             }
-        }
-    });
+        })
+        .filter(item => item != null);
 
     return {
         ProductId: product_id,

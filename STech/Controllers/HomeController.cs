@@ -12,25 +12,28 @@ namespace STech.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IBrandService _brandService;
         private readonly ISliderService _sliderService;
+        private readonly ISaleService _saleService;
 
-        public HomeController(IProductService productService, ICategoryService categoryService, IBrandService brandService, ISliderService sliderService)
+        public HomeController(IProductService productService, ICategoryService categoryService, 
+            IBrandService brandService, ISliderService sliderService,
+            ISaleService saleService)
         {
             _productService = productService;
             _categoryService = categoryService;
             _brandService = brandService;
             _sliderService = sliderService;
+            _saleService = saleService;
         }
 
         public async Task<IActionResult> Index()
         {
             IEnumerable<Category> categories = await _categoryService.GetAll(true);
             IEnumerable<Brand> brands = await _brandService.GetAll(true);
-
             IEnumerable<Category> randomCategories = await _categoryService.GetRandomWithProducts(8, 15);
-
             IEnumerable<Slider> sliders = await _sliderService.GetAll();
-
+            IEnumerable<Sale> sales = await _saleService.GetActiveSales();
             PagedList<Product> bestSellingProducts = await _productService.GetBestSellingProducts(1, 20);
+            PagedList<Product> newProducts = await _productService.GetNewestProducts(1, 20);
 
             HomePageData data = new HomePageData
             {
@@ -38,7 +41,9 @@ namespace STech.Controllers
                 Brands = brands,
                 RandomCategories = randomCategories,
                 Sliders = sliders,
-                BestSellingProducts = bestSellingProducts.Items
+                BestSellingProducts = bestSellingProducts.Items,
+                NewProducts = newProducts.Items,
+                Sales = sales
             };
 
             return View(data);

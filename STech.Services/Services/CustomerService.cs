@@ -36,6 +36,7 @@ namespace STech.Services.Services
         public async Task<bool> CreateCustomer(Customer customer)
         {
             customer.CustomerId = DateTime.Now.ToString("yyyyMMdd") + UserUtils.GenerateRandomString(8).ToUpper();
+            customer.MemberSince = DateTime.Now;
 
             _context.Customers.Add(customer);
             return await _context.SaveChangesAsync() > 0;
