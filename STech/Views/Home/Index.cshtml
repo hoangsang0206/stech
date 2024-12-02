@@ -89,12 +89,21 @@
 
 @foreach(Sale sale in sales)
 {
-    <section class="section-collection section-sale" style="background: @sale.BackgroundColor">
+    <section class="section-collection section-sale" data-end="@sale.EndDate.ToString("yyyy-MM-ddTHH:mm:ss")" style="background: @sale.BackgroundColor">
         <div class="section-header no-bottom-line">
             <div class="section-header-box">
                 <h2 class="section-title">
                     <a style="color: @sale.HeaderTextColor" onmouseover="this.style.color='@sale.HeaderTextColor'" href="/sale/@sale.SaleId">@sale.SaleName</a>
                 </h2>
+            </div>
+            <div class="sale-count-down">
+                <div class="count-down-time-box days"></div>
+                <span class="separate">:</span>
+                <div class="count-down-time-box hours"></div>
+                <span class="separate">:</span>
+                <div class="count-down-time-box minutes"></div>
+                <span class="separate">:</span>
+                <div class="count-down-time-box seconds"></div>
             </div>
         </div>
         <div class="section-content">
@@ -228,3 +237,7 @@
         }
     </div>
 </section>
+
+@section Scripts {
+    <script src="~/js/home.js"></script>
+}

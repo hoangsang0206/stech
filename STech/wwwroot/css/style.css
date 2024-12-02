@@ -2016,6 +2016,29 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
     place-items: center;
 }
 
+.sale-count-down {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+}
+
+.count-down-time-box {
+    border-radius: var(--radius);
+    background: #fff;
+    display: grid;
+    place-items: center;
+    min-width: 2rem;
+    min-height: 2rem;
+    padding: .3rem;
+    font-weight: 700;
+}
+
+.separate {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fff;
+}
+
 
 /*---Responsive --------------------------------------------------------------*/
 /* For mobile (width < 768px) ---------------------------------------------*/

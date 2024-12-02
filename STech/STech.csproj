@@ -11,6 +11,7 @@
     <Content Remove="DataFiles\Address\districts.json" />
     <Content Remove="DataFiles\Address\wards.json" />
     <Content Remove="wwwroot\js\address.js" />
+    <Content Remove="wwwroot\js\home.js" />
     <Content Remove="wwwroot\js\order.js" />
     <Content Remove="wwwroot\js\product.js" />
   </ItemGroup>
@@ -33,6 +34,7 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\js\address.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\home.js" />
     <_ContentIncludedByDefault Remove="wwwroot\js\order.js" />
     <_ContentIncludedByDefault Remove="wwwroot\js\product.js" />
   </ItemGroup>
@@ -120,6 +122,7 @@
     <None Include="DataFiles\Address\districts.json" />
     <None Include="DataFiles\Address\wards.json" />
     <None Include="wwwroot\js\address.js" />
+    <None Include="wwwroot\js\home.js" />
     <None Include="wwwroot\js\order.js" />
     <None Include="wwwroot\js\product.js" />
   </ItemGroup>

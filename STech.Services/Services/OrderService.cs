@@ -45,6 +45,45 @@ namespace STech.Services.Services
                 .SumAsync(i => i.Total);
         }
 
+        public async Task<IEnumerable<MonthlyOrderSummary>> GetLastSixMonthSummary()
+        {
+            DateTime now = DateTime.Now;
+            DateTime sixMonthAgo = new DateTime(now.Year, now.Month, 1).AddMonths(-5);
+
+            var sixMonths = Enumerable.Range(0, 6)
+                .Select(i => sixMonthAgo.AddMonths(i))
+                .Select(i => new { i.Year, i.Month})
+                .ToList();
+
+            var data = await _context.Invoices
+                .Where(i => i.OrderDate >= sixMonthAgo)
+                .GroupBy(i => new { i.OrderDate.Value.Year, i.OrderDate.Value.Month })
+                .Select(i => new MonthlyOrderSummary
+                {
+                    Month = i.Key.Month,
+                    Year = i.Key.Year,
+                    TotalOrders = i.Count(),
+                    TotalRevenue = i.Sum(i => i.Total)
+                })
+                .OrderBy(i => i.Year).ThenBy(i => i.Month)
+                .ToListAsync();
+
+            return sixMonths
+                .GroupJoin(data,
+                    m => new { m.Year, m.Month },
+                    q => new { q.Year, q.Month },
+                    (m, q) => new MonthlyOrderSummary
+                    {
+                        Year = m.Year,
+                        Month = m.Month,
+                        TotalOrders = q.FirstOrDefault()?.TotalOrders ?? 0,
+                        TotalRevenue = q.FirstOrDefault()?.TotalRevenue ?? 0
+                    })
+                .OrderBy(x => x.Year)
+                .ThenBy(x => x.Month)
+                .ToList();  
+        }
+
         public async Task<bool> CreateInvoice(Invoice invoice)
         {
             IEnumerable<InvoiceDetail> invoiceDetails = invoice.InvoiceDetails;

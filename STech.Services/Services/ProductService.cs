@@ -163,7 +163,15 @@ namespace STech.Services.Services
                     Warranty = p.Warranty,
                     IsActive = p.IsActive,
                     IsDeleted = p.IsDeleted,
-                    SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true).Take(1).ToList()
+                    SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true)
+                    .Select(sp => new SaleProduct
+                    {
+                        SaleId = sp.SaleId,
+                        Sale = sp.Sale,
+                        SalePrice = sp.SalePrice,
+                        SaleQuantity = sp.SaleQuantity,
+                    })
+                    .Take(1).ToList(),
                 })
                 .FirstOrDefaultAsync();
         }

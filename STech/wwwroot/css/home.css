@@ -265,7 +265,7 @@
 }
 
     .section-collection.section-best-selling {
-        background: #FF8A8A !important;
+        background: #1aa6f7 !important;
     }
 
     .section-collection.section-best-selling .product-box {
@@ -460,6 +460,7 @@
 .about-page-right a {
     color: #000;
 }
+
 /*---Responsive --------------------------------------------------------------*/
 /* For mobile (width < 768px) ---------------------------------------------*/
 @media screen and (max-width: 767px) {

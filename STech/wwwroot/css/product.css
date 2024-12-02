@@ -640,6 +640,9 @@ ol > li[data-list="ordered"] {
     color: var(--primary-color);
 }
 
+
+
+
 /*For mobile -------------------------------------------*/
 @media screen and (max-width: 576px) {
     .add-to-cart-action {

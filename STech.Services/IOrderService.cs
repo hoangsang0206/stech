@@ -9,6 +9,7 @@ namespace STech.Services
         Task<decimal> GetTotalRevenue();
         Task<int> GetMonthOrders(int month);
         Task<decimal> GetMonthRevenue(int month);
+        Task<IEnumerable<MonthlyOrderSummary>> GetLastSixMonthSummary();
 
         Task<bool> CreateInvoice(Invoice invoice);
         Task<Invoice?> GetInvoice(string invoiceId);

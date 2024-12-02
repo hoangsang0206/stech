@@ -870,3 +870,30 @@ function loginCaptchaCompleted(token) {
 function registerCaptchaCompleted(token) {
     $('.register .form-submit-btn').prop('disabled', false);
 }
+
+
+// count down
+const updateCountDown = (element, endDate) => {
+    const interval = setInterval(() => {
+        const now = new Date();
+        const diff = endDate - now;
+
+        if (diff <= 0) {
+            clearInterval(interval);
+            return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        const formatNum = (num) => num.toString().padStart(2, '0');
+
+        const countDownElement = $(element).find('.sale-count-down');
+        countDownElement.find('.days').text(formatNum(days));
+        countDownElement.find('.hours').text(formatNum(hours));
+        countDownElement.find('.minutes').text(formatNum(minutes));
+        countDownElement.find('.seconds').text(formatNum(seconds));
+    }, 1000);
+}

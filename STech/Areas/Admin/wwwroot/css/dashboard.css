@@ -79,10 +79,14 @@
     object-fit: cover;
 }
 
-.top-user-name, .top-user-spending,
-.recent-order-total, .recent-order-id {
+.top-user-name, .recent-order-id {
     font-size: .88rem;
     font-weight: 500;
+}
+
+.top-user-spending, .recent-order-total {
+    font-size: .88rem;
+    font-weight: 600;
 }
 
 .recent-order-icon {
