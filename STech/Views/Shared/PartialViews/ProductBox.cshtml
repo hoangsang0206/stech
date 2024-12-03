@@ -7,6 +7,9 @@
 
     double discountPercent = 0;
     Model.Price = Model.SaleProducts.FirstOrDefault()?.SalePrice ?? Model.Price;
+
+    int totalReviews = Model.Reviews.Count();
+    double averageRating = totalReviews > 0 ? Math.Round(Model.Reviews.Average(r => r.Rating), 1) : 0;
 }
 
 <div class="product-box">
@@ -48,6 +51,18 @@
             </div>
         }
     </div>
+
+    <div class="product-rating d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center product-rating-avg">
+            <span>@averageRating</span>
+            <i class="fa-solid fa-star"></i>
+        </div>
+
+        <div>
+            <span class="product-rating-total">(@totalReviews đánh giá)</span>
+        </div>
+    </div>
+
     <button class="view-product" onclick="window.location.href='/product/@Model.ProductId'">
         <i class="fa-regular fa-eye"></i>
     </button>

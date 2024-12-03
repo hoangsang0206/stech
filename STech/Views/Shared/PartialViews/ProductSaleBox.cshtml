@@ -1,16 +1,22 @@
-﻿@model SaleProduct
+﻿@model Tuple<SaleProduct, bool>
 
 @{
-    ProductImage pImage = Model.Product.ProductImages.FirstOrDefault() ?? new ProductImage();
+    SaleProduct propduct = Model.Item1;
+    bool hasBorder = Model.Item2;
+
+    ProductImage pImage = propduct.Product.ProductImages.FirstOrDefault() ?? new ProductImage();
     string src = pImage.ImageSrc ?? "/images/no-image.jpg";
-    int qty = Model.Product.WarehouseProducts.Sum(wh => wh.Quantity);
+    int qty = propduct.Product.WarehouseProducts.Sum(wh => wh.Quantity);
 
     double discountPercent = 0;
-    Model.Product.Price = Model.SalePrice;
+    propduct.Product.Price = propduct.SalePrice;
+
+    int totalReviews = propduct.Product.Reviews.Count();
+    double averageRating = totalReviews > 0 ? Math.Round(propduct.Product.Reviews.Average(r => r.Rating), 1) : 0;
 }
 
-<div class="product-box no-border">
-    <a href="/product/@Model.ProductId" class="product-link">
+<div class="product-box @(!hasBorder ? "no-border" : "")">
+    <a href="/product/@propduct.ProductId" class="product-link">
         <div class="product-image lazy-loading">
             <img lazy-src="@src" alt="" class="product-img">
         </div>
@@ -21,18 +27,18 @@
             Hết hàng
         </div>
     }
-    <a href="/product/@Model.ProductId" class="product-link">
+    <a href="/product/@propduct.ProductId" class="product-link">
         <div class="product-name">
-            @Model.Product.ProductName
+            @propduct.Product.ProductName
         </div>
     </a>
 
     <div class="product-original-price">
-        @if (Model.Product.OriginalPrice > Model.Product.Price)
+        @if (propduct.Product.OriginalPrice > propduct.Product.Price)
         {
-            discountPercent = Convert.ToDouble((Model.Product.OriginalPrice - Model.Product.Price)
-            / Model.Product.OriginalPrice) * 100;
-            <span>@CurrencyFormatter.Format(Model.Product.OriginalPrice)</span>
+            discountPercent = Convert.ToDouble((propduct.Product.OriginalPrice - propduct.Product.Price)
+            / propduct.Product.OriginalPrice) * 100;
+            <span>@CurrencyFormatter.Format(propduct.Product.OriginalPrice)</span>
         }
         else
         {
@@ -40,7 +46,7 @@
         }
     </div>
     <div class="product-price d-flex align-items-center">
-        <span>@CurrencyFormatter.Format(Model.Product.Price)</span>
+        <span>@CurrencyFormatter.Format(propduct.Product.Price)</span>
         @if (discountPercent > 0)
         {
             <div class="product-discount-percent">
@@ -48,10 +54,22 @@
             </div>
         }
     </div>
-    <button class="view-product" onclick="window.location.href='/product/@Model.ProductId'">
+
+    <div class="product-rating d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center product-rating-avg">
+            <span>@averageRating</span>
+            <i class="fa-solid fa-star"></i>
+        </div>
+
+        <div>
+            <span class="product-rating-total">(@totalReviews đánh giá)</span>
+        </div>
+    </div>
+
+    <button class="view-product" onclick="window.location.href='/product/@propduct.ProductId'">
         <i class="fa-regular fa-eye"></i>
     </button>
-    <button class="btn-add-to-cart" data-product="@Model.ProductId" @(qty <= 0 ? "disabled" : "")>
+    <button class="btn-add-to-cart" data-product="@propduct.ProductId" @(qty <= 0 ? "disabled" : "")>
         <i class="fa-solid fa-cart-plus"></i>
     </button>
 </div>

@@ -18,6 +18,22 @@ namespace STech.Services.Services
             return await _context.Warehouses.ToListAsync();
         }
 
+        public async Task<IEnumerable<Warehouse>> GetWarehousesWithMostRecentImportAndExport()
+        {
+            return await _context.Warehouses
+                .Select(w => new Warehouse { 
+                    WarehouseId = w.WarehouseId,
+                    WarehouseName = w.WarehouseName,
+                    Address = w.Address,
+                    Ward = w.Ward,
+                    Province = w.Province,
+                    District = w.District,
+                    WarehouseImports = w.WarehouseImports.OrderByDescending(i => i.DateImport).Take(1).ToList(),
+                    WarehouseExports = w.WarehouseExports.OrderByDescending(e => e.DateExport).Take(1).ToList()
+                })
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Warehouse>> GetWarehousesOrderByDistance(double latitude, double longtitude)
         {
             IEnumerable<Warehouse> warehouses = await GetWarehouses();

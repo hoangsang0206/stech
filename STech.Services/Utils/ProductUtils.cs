@@ -19,7 +19,13 @@ namespace STech.Services.Utils
                 IsActive = p.IsActive,
                 IsDeleted = p.IsDeleted,
                 DateDeleted = p.DateDeleted,
-                SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true).Take(1).ToList()
+                SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true).Take(1).ToList(),
+                Reviews = p.Reviews
+                    .Where(r => r.IsProceeded == true)
+                    .Select(r => new Review
+                    {
+                        Rating = r.Rating
+                    }).ToList(),
             });
         }
 
@@ -39,7 +45,13 @@ namespace STech.Services.Utils
                 IsActive = p.IsActive,
                 IsDeleted = p.IsDeleted,
                 DateDeleted = p.DateDeleted,
-                SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true).Take(1).ToList()
+                SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true).Take(1).ToList(),
+                Reviews = p.Reviews
+                    .Where(r => r.IsProceeded == true)
+                    .Select(r => new Review
+                    {
+                        Rating = r.Rating
+                    }).ToList(),
             });
         }
 
@@ -55,7 +67,7 @@ namespace STech.Services.Utils
                 case "price-ascending":
                     return products.OrderBy(p => p.Price);
                 case "price-descending":
-                    return products.OrderBy(p => p.Price);
+                    return products.OrderByDescending(p => p.Price);
                 case "name-az":
                     return products.OrderBy(p => p.ProductName);
                 case "name-za":

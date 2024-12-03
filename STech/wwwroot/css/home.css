@@ -285,6 +285,13 @@
     background: #fff;
 }
 
+    .section-collection.section-sale .section-title a {
+        font-weight: 700;
+        font-style: italic;
+        font-size: 1.9rem;
+        text-transform: uppercase;
+    }
+
 .section-header {
     border-bottom: 3px solid #ededed;
     display: flex;
@@ -610,6 +617,14 @@
 
 /* For tablet (767 < width < 1024px) ---------------------------------------------*/
 @media screen and (min-width: 768px) and (max-width: 1023px) {
+    .menu .sidebar {
+        display: none;
+    }
+
+    .slider {
+        width: 100%;
+    }
+
     .section-title a {
         font-size: 1.4rem;
     }

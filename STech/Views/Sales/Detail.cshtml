@@ -1,0 +1,28 @@
+﻿@model Tuple<Sale, List<Breadcrumb>>
+
+@{
+    ViewData["Title"] = Model.Item1.SaleName + " - STech";
+}
+
+@await Html.PartialAsync("PartialViews/Breadcrumb", Model.Item2)
+
+<section class="page-container">
+
+    <div class="filter-box d-flex justify-content-between mt-2 mb-3 gap-2">
+        @await Html.PartialAsync("PartialViews/Sort")
+    </div>
+
+    <div class="product-list">
+        @foreach (SaleProduct product in Model.Item1.SaleProducts)
+        {
+            @await Html.PartialAsync("PartialViews/ProductSaleBox", new Tuple<SaleProduct, bool>(product, true))
+        }
+    </div>
+
+</section>
+
+<section class="side-overlay"></section>
+
+@section Scripts {
+
+}

@@ -93,7 +93,7 @@
         <div class="section-header no-bottom-line">
             <div class="section-header-box">
                 <h2 class="section-title">
-                    <a style="color: @sale.HeaderTextColor" onmouseover="this.style.color='@sale.HeaderTextColor'" href="/sale/@sale.SaleId">@sale.SaleName</a>
+                    <a style="color: @sale.HeaderTextColor" onmouseover="this.style.color='@sale.HeaderTextColor'" href="/sales/@sale.SaleId">@sale.SaleName</a>
                 </h2>
             </div>
             <div class="sale-count-down">
@@ -111,7 +111,7 @@
                 @foreach (SaleProduct saleProduct in sale.SaleProducts)
                 {
                     <div class="slick-slider-item">
-                        @await Html.PartialAsync("PartialViews/ProductSaleBox", saleProduct)
+                        @await Html.PartialAsync("PartialViews/ProductSaleBox", new Tuple<SaleProduct, bool>(saleProduct, false))
                     </div>
                 }
             </div>

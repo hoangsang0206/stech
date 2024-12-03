@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Quản lý kho hàng - STech Admin";
+    ViewData["PageTitle"] = "Quản lý kho hàng";
+}
+
+@model IEnumerable<Warehouse>
+
+<section class="page-wrapper">
+    <div>
+        <div>
+           <!-- Actions -->
+        </div>
+
+        <div>
+            <div class="page-table-wrapper mt-2">
+                <table class="page-table">
+                    <thead class="page-table-header">
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="page-table-checkbox-all" />
+                            </th>
+                            <th>STT</th>
+                            <th>Mã kho</th>
+                            <th>Tên kho</th>
+                            <th>Địa chỉ</th>
+                            <th>Ngày nhập gần nhất</th>
+                            <th>Ngày xuất gần nhất</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="category-list">
+                        @{
+                            int index = 1;
+
+                            foreach (Warehouse warehouse in Model)
+                            {
+                                WarehouseImport? lastImport = warehouse.WarehouseImports.OrderByDescending(x => x.DateImport).FirstOrDefault();
+                                WarehouseExport? lastExport = warehouse.WarehouseExports.OrderByDescending(x => x.DateExport).FirstOrDefault();
+
+                                <tr data-item="@warehouse.WarehouseId">
+                                    <td>
+                                        <input type="checkbox" name="page-table-checkbox" value="@warehouse.WarehouseId" />
+                                    </td>
+                                    <td>
+                                        @index
+                                    </td>
+                                    <td>
+                                        @warehouse.WarehouseId
+                                    </td>
+                                    <td>
+                                        <span class="text-overflow-1">@warehouse.WarehouseName</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-overflow-1">@($"{warehouse.Address}, {warehouse.Ward}, {warehouse.District}, {warehouse.Province}")</span>
+                                    </td>
+                                    <td>
+                                        @(lastImport?.DateImport?.ToString("dd/MM/yyyy HH:mm") ?? "--")
+                                    </td>
+                                    <td>
+                                        @(lastExport?.DateExport?.ToString("dd/MM/yyyy HH:mm") ?? "--")
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1 align-items-center justify-content-end">
+                                            <button class="page-table-btn btn-lightblue edit-warehouse" data-brand="@warehouse.WarehouseId">
+                                                <i class="fa-regular fa-pen-to-square"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

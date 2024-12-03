@@ -24,6 +24,14 @@ $('.view-contents').click(function () {
     }
 })
 
+$(document).ready(() => {
+    const saleElement = $('.page-sale-title');
+
+    const endDate = new Date($(saleElement).data('end'));
+    updateCountDown(saleElement, endDate);
+})
+
+
 const activeStars = () => {
     const selected_stars = $('.rating-star-group-large .fa-star.active').toArray();
     const selected_stars_count = selected_stars.length;

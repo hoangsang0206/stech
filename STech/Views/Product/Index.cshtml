@@ -11,8 +11,11 @@
 
     IEnumerable<Product> similarProducts = Model.Item2;
 
+    SaleProduct? pSale = product.SaleProducts.FirstOrDefault();
+    Sale? sale = pSale?.Sale;
+
     int inStock = wh.Sum(w => w.Quantity);
-    decimal price = product.SaleProducts.FirstOrDefault()?.SalePrice ?? product.Price;
+    decimal price = pSale?.SalePrice ?? product.Price;
 
     ViewData["Title"] = product.ProductName + " - STech";
 
@@ -77,9 +80,28 @@
                     }
                 </div>
 
-                <div class="product-sale">
-
-                </div>
+                @if(sale != null)
+                {
+                    <div class="page-sale-title d-flex align-items-center justify-content-between" data-end="@sale.EndDate.ToString("yyyy-MM-ddTHH:mm:ss")" style="background: @sale.BackgroundColor">
+                        <div class="sale-title">
+                            <a style="color: @sale.HeaderTextColor" onmouseover="this.style.color='@sale.HeaderTextColor'" href="/sales/@sale.SaleId">@sale.SaleName</a>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div>
+                                <span style="color: @sale.HeaderTextColor">Kết thúc sau</span>
+                            </div>
+                            <div class="sale-count-down">
+                                <div class="count-down-time-box days"></div>
+                                <span class="separate">:</span>
+                                <div class="count-down-time-box hours"></div>
+                                <span class="separate">:</span>
+                                <div class="count-down-time-box minutes"></div>
+                                <span class="separate">:</span>
+                                <div class="count-down-time-box seconds"></div>
+                            </div>
+                        </div>
+                    </div>
+                }
 
                 <div class="mt-3">
                     @if(product.IsActive == true)
