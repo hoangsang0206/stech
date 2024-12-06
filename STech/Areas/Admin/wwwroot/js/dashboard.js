@@ -2,7 +2,7 @@
     const ctx = document.getElementById('revenue-chart');
     $.ajax({
         type: 'GET',
-        url: '/api/statistics/last-six-month-order-summary',
+        url: '/api/admin/statistics/last-six-month-order-summary',
         success: (response) => {
             const labels = response.data.map(item => {
                 return `${item.month}/${item.year}`;

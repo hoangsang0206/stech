@@ -644,6 +644,7 @@ namespace STech.Controllers
 
             IEnumerable<Breadcrumb> breadcrumbs = new List<Breadcrumb>
             {
+                new Breadcrumb("Tài khoản", "/account"),
                 new Breadcrumb("Đơn hàng", "/account#orders"),
                 new Breadcrumb(invoice.InvoiceId, "")
             };

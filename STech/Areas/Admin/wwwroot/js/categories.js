@@ -1,4 +1,13 @@
-﻿
+﻿tippy('.edit-category', {
+    content: 'Sửa danh mục',
+    placement: 'top'
+})
+
+tippy('.delete-category', {
+    content: 'Xóa danh mục',
+    placement: 'top'
+})
+
 
 
 const showCategoryForm = (isUpdate, data) => {

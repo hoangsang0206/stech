@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
+using STech.Data.TrainingDataModels;
 using STech.Data.ViewModels;
 using STech.Services.Utils;
 
@@ -26,6 +27,23 @@ namespace STech.Services.Services
             return await _context.Products
                 .Where(p => p.DateAdded >= startOfMonth && p.DateAdded < startOfNextMonth)
                 .CountAsync();
+        }
+
+        public async Task<IEnumerable<ProductData>> GetTrainingData()
+        {
+            return await _context.Products
+                .Where(p => p.IsActive == true)
+                .Select(p => new ProductData
+                {
+                    ProductId = p.ProductId,
+                    Price = (float)p.Price,
+                    Warranty = p.Warranty ?? 0,
+                    BrandName = p.Brand != null ? p.Brand.BrandName : "",
+                    CategoryName = p.Category != null ? p.Category.CategoryName : "",
+                    Specifications = string.Join(", ", p.ProductSpecifications
+                        .Select(s => $"[{s.SpecName}: {s.SpecValue}]")),
+                })
+                .ToListAsync();
         }
 
         public async Task<PagedList<Product>> GetProducts(string? brands, string? categories, string? status, 

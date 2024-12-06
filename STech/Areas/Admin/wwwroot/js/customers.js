@@ -1,8 +1,12 @@
 ﻿const isCustomerPage = $('.page-wrapper').data('page') === 'customer';
 
-$('.add-customer form').submit(function (e) {
+$('.form-customer form').submit(function (e) {
     e.preventDefault();
 
+    const isUpdate = $(this).data('action') === 'update';
+    const customerApiUrl = isUpdate ? `/api/admin/customers/update` : '/api/admin/customers/create';
+
+    const customer_id = $(this).data('customer');
     const customer_name = $(this).find('#CustomerName').val();
     const customer_email = $(this).find('#Email').val();
     const customer_phone = $(this).find('#Phone').val();
@@ -17,8 +21,8 @@ $('.add-customer form').submit(function (e) {
     const element_html = showButtonLoader(submit_btn, '23px', '4px');
 
     $.ajax({
-        type: 'POST',
-        url: '/api/admin/customers/create',
+        type: `${ isUpdate ? 'PUT' : 'POST'}`,
+        url: customerApiUrl,
         contentType: 'application/json',
         data: JSON.stringify({
             CustomerName: customer_name,
@@ -28,11 +32,12 @@ $('.add-customer form').submit(function (e) {
             CityCode: city,
             DistrictCode: district,
             WardCode: ward,
-            Address: address
+            Address: address,
+            ...(isUpdate && { CustomerId: customer_id })
         }),
         success: (response) => {
             if (response.status) {
-                showDialogWithCallback('success', 'Thêm thành công', response.message, () => {
+                showDialogWithCallback('success', isUpdate ? 'Cập nhật thành công' : 'Thêm thành công', response.message, () => {
                     if (isCustomerPage) {
                         location.reload();
                     }
@@ -52,11 +57,47 @@ $('.add-customer form').submit(function (e) {
 })
 
 $('.show-form-add-customer').click(() => {
-    showForm('.add-customer');
+    showForm('.form-customer');
+    $('.form-customer form').data('action', 'create');
+    $('.form-customer .form-header').html('Thêm mới khách hàng');
+    $('.form-customer form').find('button[type="submit"]').text('Thêm mới');
 })
 
 $(document).on('click', '.edit-customer', function () {
-    showForm('.update-customer');
+    showForm('.form-customer');
+
+    const customer_id = $(this).data('customer');
+
+    $('.form-customer form').data('action', 'update');
+    $('.form-customer form').data('customer', customer_id);
+    $('.form-customer .form-header').html('Cập nhật thông tin khách hàng');
+    $('.form-customer form').find('button[type="submit"]').text('Cập nhật');
+
+    $.ajax({
+        type: 'GET',
+        url: `/api/admin/customers/1/${customer_id}`,
+        success: (response) => {
+            if (response.status) {
+                const customer = response.data;
+
+                $('#CustomerName').val(customer.customerName).trigger('change');
+                $('#Email').val(customer.email).trigger('change');
+                $('#Phone').val(customer.phone).trigger('change');
+                $(`input[name="Gender"][value="${customer.gender}"]`).click();
+
+                $('.city-select').val(customer.provinceCode);
+                $('.specific-address').val(customer.address).trigger('change');
+
+                loadDistricts($('.form-customer form'), customer.provinceCode, customer.districtCode);
+                loadWards($('.form-customer form'), customer.districtCode, customer.wardCode);
+            } else {
+                showDialog('error', response.message, null);
+            }
+        },
+        error: () => {
+
+        }
+    })
 })
 
 $(document).on('click', '.delete-customer', function () {
@@ -70,7 +111,7 @@ $(document).on('click', '.delete-customer', function () {
             success: (response) => {
                 hideWebLoader(0);
                 if (response.status) {
-                    showDialogWithCallback('info', 'Xóa thành công', 'Đã xóa khách hàng này', () => {
+                    showDialogWithCallback('success', 'Xóa thành công', 'Đã xóa khách hàng này', () => {
                         window.location.reload();
                     });
                 } else {

@@ -15,6 +15,8 @@
         string city = addressParts[addressParts.Length - 1].Trim();
         maskedAddress = $"***, {district}, {city}";
     }
+
+    string? userId = User.FindFirst("Id")?.ToString();
 }
 
 <div>
@@ -56,11 +58,22 @@
                     }
                 }
             </div>
-            <div class="flex-grow-1 d-flex justify-content-end">
+            <div class="flex-grow-1 d-flex gap-2 justify-content-end">
                 <a class="dowload-invoice btn btn-primary" href="/api/orders/download-invoice?oId=@Model.InvoiceId&phone=@Model.RecipientPhone" download="HĐ_@(Model.InvoiceId).pdf">
                     <i class="fa-solid fa-download"></i>
                     <span>Tải hóa đơn</span>
                 </a>
+
+               @if (User.Identity?.IsAuthenticated == true)
+                {
+                    if (userId != null && userId == Model.UserId && !Model.IsAccepted && !Model.IsCompleted && !Model.IsCancelled && Model.PaymentStatus != PaymentContants.Paid)
+                    {
+                        <a class="cancel-order btn btn-danger" data-invoice="@Model.InvoiceId" download="HĐ_@(Model.InvoiceId).pdf">
+                            <i class="fa-solid fa-xmark"></i>
+                            <span>Hủy đơn hàng</span>
+                        </a>
+                    }
+                }
             </div>
         </div>
         <div class="mt-2">

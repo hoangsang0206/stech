@@ -1,4 +1,15 @@
-﻿const getSelectedBrands = () => {
+﻿tippy('.edit-product', {
+    content: 'Sửa sản phẩm',
+    placement: 'top'
+})
+
+tippy('.delete-product', {
+    content: 'Xóa sản phẩm',
+    placement: 'top'
+})
+
+
+const getSelectedBrands = () => {
     let brands = $('input[name="filter-brand"]:checked').map(function () {
         return $(this).val() || null;
     }).toArray();

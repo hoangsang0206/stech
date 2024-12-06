@@ -1,0 +1,46 @@
+﻿@model WarehouseVM
+
+<div class="form-container form-warehouse">
+    <div class="form-box" style="width: 35rem">
+        <div class="form-header-wrapper">
+            <div class="form-header">Thêm kho hàng</div>
+            <div class="close-form">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+        </div>
+
+        <form>
+            <div>
+                <div class="form-group-header">Thông tin kho</div>
+                <div>
+                    <div>
+                        <div class="form-input-box">
+                            <input asp-for="@Model.WarehouseId" class="form-input" />
+                            <label class="input-label">Mã kho</label>
+                        </div>
+                        <span asp-validation-for="@Model.WarehouseId"></span>
+                    </div>
+                    <div>
+                        <div class="form-input-box">
+                            <input asp-for="@Model.WarehouseName" class="form-input" />
+                            <label class="input-label">Tên kho</label>
+                        </div>
+                        <span asp-validation-for="@Model.WarehouseName"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="form-group-header">Địa chỉ</div>
+                <div>
+                    @await Html.PartialAsync("PartialViews/Form_AddressItems", new AddAddressVM())
+                </div>
+            </div>
+
+            <div class="form-btn-wrapper">
+                <button type="submit" class="form-submit-btn page-btn-sm">Thêm mới</button>
+                <button type="reset" class="form-reset-btn">Hủy</button>
+            </div>
+        </form>
+    </div>
+</div>

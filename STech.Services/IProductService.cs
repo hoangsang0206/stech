@@ -1,4 +1,5 @@
 ﻿using STech.Data.Models;
+using STech.Data.TrainingDataModels;
 using STech.Data.ViewModels;
 
 namespace STech.Services
@@ -7,6 +8,8 @@ namespace STech.Services
     {
         Task<int> GetTotalProducts();
         Task<int> GetMonthAdded(int month);
+
+        Task<IEnumerable<ProductData>> GetTrainingData();
 
         Task<PagedList<Product>> GetProducts(string? brands, string? categories, string? status, string? priceRange, 
             string? warehouseId, string? sort, int page, int itemsPerPage);

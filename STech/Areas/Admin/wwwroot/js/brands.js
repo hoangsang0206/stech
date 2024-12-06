@@ -1,4 +1,13 @@
-﻿
+﻿tippy('.edit-brand', {
+    content: 'Sửa thông tin hãng',
+    placement: 'top'
+})
+
+tippy('.delete-brand', {
+    content: 'Xóa hãng',
+    placement: 'top'
+})
+
 
 
 const showBrandForm = (isUpdate, data) => {

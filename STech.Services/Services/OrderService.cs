@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
 using STech.Data.ViewModels;
+using STech.Services.Constants;
 using STech.Services.Utils;
 
 namespace STech.Services.Services
@@ -113,6 +114,13 @@ namespace STech.Services.Services
         {
             return await _context.Invoices
                 .Where(i => i.InvoiceId == invoiceId)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<Invoice?> GetUserInvoice(string invoiceId, string userId)
+        {
+            return await _context.Invoices
+                .Where(i => i.InvoiceId == invoiceId && i.UserId == userId)
                 .FirstOrDefaultAsync();
         }
 
@@ -242,6 +250,29 @@ namespace STech.Services.Services
         public async Task<bool> UpdateInvoiceStatus(InvoiceStatus invoiceStatus)
         {
             _context.InvoiceStatuses.Update(invoiceStatus);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> CancelOrder(string userId, string invoiceId)
+        {
+            Invoice? invoice = await _context.Invoices
+                .Where(i => i.InvoiceId == invoiceId && i.UserId == userId)
+                .FirstOrDefaultAsync();
+
+            if (invoice == null)
+            {
+                return false;
+            }
+
+            if(invoice.IsAccepted || invoice.IsCompleted || invoice.PaymentStatus == PaymentContants.Paid)
+            {
+                return false;
+            }
+
+            invoice.IsCancelled = true;
+            invoice.CancelledDate = DateTime.Now;
+
+            _context.Invoices.Update(invoice);
             return await _context.SaveChangesAsync() > 0;
         }
 

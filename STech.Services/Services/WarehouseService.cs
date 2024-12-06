@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
+using STech.Data.ViewModels;
 using STech.Services.Utils;
 
 namespace STech.Services.Services
@@ -75,6 +76,22 @@ namespace STech.Services.Services
                 .ToListAsync();
         }
 
+        public async Task<bool> CreateWarehouse(WarehouseVM warehouse)
+        {
+            Warehouse _warehouse = new Warehouse
+            {
+
+            };
+
+            return false;
+        }
+
+        public async Task<bool> UpdateWarehouse(WarehouseVM warehouse)
+        {
+
+            return false;
+        }
+
         public async Task<bool> CreateWarehouseExports(IEnumerable<WarehouseExport> warehouseExports)
         {
             IEnumerable<WarehouseExportDetail> wheDetails = warehouseExports.SelectMany(t => t.WarehouseExportDetails).ToList();
@@ -104,6 +121,38 @@ namespace STech.Services.Services
                         _context.WarehouseProducts.Update(whP);
                     }
                 }
+            }
+
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> CancelInvoiceWarehouseExports(string invoiceId)
+        {
+            Invoice? invoice = await _context.Invoices
+                .Where(i => i.InvoiceId == invoiceId)
+                .Include(i => i.WarehouseExports)
+                .ThenInclude(we => we.WarehouseExportDetails)
+                .FirstOrDefaultAsync();
+
+            if (invoice == null)
+            {
+                   return false;
+            }
+
+            foreach(WarehouseExport export in invoice.WarehouseExports)
+            {
+                foreach(WarehouseExportDetail detail in export.WarehouseExportDetails)
+                {
+                    WarehouseProduct? whProduct = await _context.WarehouseProducts
+                        .FirstOrDefaultAsync(wp => wp.ProductId == detail.ProductId && wp.WarehouseId == export.WarehouseId);
+
+                    if (whProduct != null)
+                    {
+                        whProduct.Quantity += detail.RequestedQuantity;
+                    }
+                }
+
+                export.Note = "Đã hủy theo hóa đơn";
             }
 
             return await _context.SaveChangesAsync() > 0;

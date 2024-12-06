@@ -78,3 +78,26 @@ $('.form-place-order .form-submit-btn').click(() => {
         }
     })
 })
+
+$('.cancel-order').click(function () {
+    showConfirmDialog('Hủy đơn hàng?', 'Bạn có chắc chắn muốn hủy đơn hàng này không?', () => {
+        const invoiceId = $(this).data('invoice');
+
+        showWebLoader();
+        $.ajax({
+            type: 'PUT',
+            url: `/api/order/cancel/${invoiceId}`,
+            success: (response) => {
+                hideWebLoader();
+
+                if (response.status) {
+                    showDialogWithCallback('success', 'Hủy đơn hàng thành công', null, () => {
+                        location.reload();
+                    })
+                } else {
+                    showHtmlDialog('error', response.message, null)
+                }
+            }
+        })
+    }) 
+})

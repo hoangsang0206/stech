@@ -1,4 +1,5 @@
 ﻿using STech.Data.Models;
+using STech.Data.ViewModels;
 
 namespace STech.Services
 {
@@ -11,7 +12,13 @@ namespace STech.Services
         Task<Warehouse?> GetNearestWarehouse(double latitude, double longtitude);
         Task<IEnumerable<WarehouseProduct>> GetWarehouseProducts(string productId);
         Task<Warehouse?> GetWarehouseById(string warehouseId);
+
+        Task<bool> CreateWarehouse(WarehouseVM warehouse);
+        Task<bool> UpdateWarehouse(WarehouseVM warehouse);
+
         Task<bool> CreateWarehouseExports(IEnumerable<WarehouseExport> warehouseExports);
         Task<bool> SubtractProductQuantity(IEnumerable<WarehouseExport> warehouseExports);
+
+        Task<bool> CancelInvoiceWarehouseExports(string invoiceId);
     }
 }

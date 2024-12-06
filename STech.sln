@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "STech.Data", "STech.Data\ST
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "STech.Services", "STech.Services\STech.Services.csproj", "{1D2362FF-9B1A-4B59-9C7C-2F59C2FC37E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STech.TrainModel", "ChatBot\STech.TrainModel.csproj", "{10A23A76-5E79-4E11-8F80-FEF53E781634}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{1D2362FF-9B1A-4B59-9C7C-2F59C2FC37E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D2362FF-9B1A-4B59-9C7C-2F59C2FC37E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D2362FF-9B1A-4B59-9C7C-2F59C2FC37E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10A23A76-5E79-4E11-8F80-FEF53E781634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10A23A76-5E79-4E11-8F80-FEF53E781634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10A23A76-5E79-4E11-8F80-FEF53E781634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10A23A76-5E79-4E11-8F80-FEF53E781634}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

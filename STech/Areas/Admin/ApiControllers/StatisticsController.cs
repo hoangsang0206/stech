@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using STech.Data.ViewModels;
+using STech.Filters;
 using STech.Services;
 
 namespace STech.Areas.Admin.ApiControllers
 {
-    [Route("api/[controller]")]
+    [AdminAuthorize]
+    [Route("api/admin/[controller]")]
     [ApiController]
     public class StatisticsController : ControllerBase
     {

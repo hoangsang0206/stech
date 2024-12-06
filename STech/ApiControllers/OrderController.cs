@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Services;
+using STech.Services.Constants;
 using System.Security.Claims;
 
 namespace STech.ApiControllers
@@ -13,11 +14,16 @@ namespace STech.ApiControllers
     {
         private readonly IProductService _productService;
         private readonly ICartService _cartService;
+        private readonly IOrderService _orderService;
+        private readonly IWarehouseService _warehouseService;
 
-        public OrderController(IProductService productService, ICartService cartService)
+        public OrderController(IProductService productService, ICartService cartService, 
+            IOrderService orderService, IWarehouseService warehouseService)
         {
             _productService = productService;
             _cartService = cartService;
+            _orderService = orderService;
+            _warehouseService = warehouseService;
         }
 
         [Authorize, HttpGet("check")]
@@ -67,6 +73,49 @@ namespace STech.ApiControllers
             {
                 Status = message == null ? true : false,
                 Data = message
+            });
+        }
+
+        [Authorize, HttpPut("cancel/{id}")]
+        public async Task<IActionResult> CancelOrder(string id)
+        {
+            string? userId = User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return BadRequest();
+            }
+
+            Invoice? invoice = await _orderService.GetUserInvoice(id, userId);
+
+            if(invoice == null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Không tìm thấy đơn hàng"
+                });
+            }
+
+            if (invoice.PaymentStatus == PaymentContants.Paid)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Không thể hủy đơn hàng đã thanh toán"
+                });
+            }
+
+            bool result = await _orderService.CancelOrder(userId, id);
+
+            if(result)
+            {
+                await _warehouseService.CancelInvoiceWarehouseExports(id);
+            }
+
+            return Ok(new ApiResponse
+            {
+                Status = result,
+                Message = result ? "Hủy đơn hàng thành công" : "Không thể hủy đơn hàng này"
             });
         }
     }

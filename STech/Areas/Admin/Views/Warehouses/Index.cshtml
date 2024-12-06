@@ -7,72 +7,95 @@
 
 <section class="page-wrapper">
     <div>
-        <div>
-           <!-- Actions -->
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <button class="page-btn btn-green show-add-warehouse">
+                <i class="fa-solid fa-plus"></i>
+                <span>Thêm kho</span>
+            </button>
+
+            <a class="page-btn btn-blue" href="/admin/warehouses/import">
+                <i class="fa-solid fa-file-import"></i>
+                <span>Nhập kho</span>
+            </a>
+
+            <a class="page-btn btn-blue" href="/admin/warehouses/export">
+                <i class="fa-solid fa-file-export"></i>
+                <span>Xuất kho</span>
+            </a>
         </div>
 
         <div>
             <div class="page-table-wrapper mt-2">
                 <table class="page-table">
                     <thead class="page-table-header">
-                        <tr>
-                            <th>
-                                <input type="checkbox" id="page-table-checkbox-all" />
-                            </th>
-                            <th>STT</th>
-                            <th>Mã kho</th>
-                            <th>Tên kho</th>
-                            <th>Địa chỉ</th>
-                            <th>Ngày nhập gần nhất</th>
-                            <th>Ngày xuất gần nhất</th>
-                            <th></th>
-                        </tr>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="page-table-checkbox-all" />
+                        </th>
+                        <th>STT</th>
+                        <th>Mã kho</th>
+                        <th>Tên kho</th>
+                        <th>Địa chỉ</th>
+                        <th>Ngày nhập gần nhất</th>
+                        <th>Ngày xuất gần nhất</th>
+                        <th></th>
+                    </tr>
                     </thead>
                     <tbody class="category-list">
-                        @{
-                            int index = 1;
+                    @{
+                        int index = 1;
 
-                            foreach (Warehouse warehouse in Model)
-                            {
-                                WarehouseImport? lastImport = warehouse.WarehouseImports.OrderByDescending(x => x.DateImport).FirstOrDefault();
-                                WarehouseExport? lastExport = warehouse.WarehouseExports.OrderByDescending(x => x.DateExport).FirstOrDefault();
+                        foreach (Warehouse warehouse in Model)
+                        {
+                            WarehouseImport? lastImport = warehouse.WarehouseImports.OrderByDescending(x => x.DateImport).FirstOrDefault();
+                            WarehouseExport? lastExport = warehouse.WarehouseExports.OrderByDescending(x => x.DateExport).FirstOrDefault();
 
-                                <tr data-item="@warehouse.WarehouseId">
-                                    <td>
-                                        <input type="checkbox" name="page-table-checkbox" value="@warehouse.WarehouseId" />
-                                    </td>
-                                    <td>
-                                        @index
-                                    </td>
-                                    <td>
-                                        @warehouse.WarehouseId
-                                    </td>
-                                    <td>
-                                        <span class="text-overflow-1">@warehouse.WarehouseName</span>
-                                    </td>
-                                    <td>
-                                        <span class="text-overflow-1">@($"{warehouse.Address}, {warehouse.Ward}, {warehouse.District}, {warehouse.Province}")</span>
-                                    </td>
-                                    <td>
-                                        @(lastImport?.DateImport?.ToString("dd/MM/yyyy HH:mm") ?? "--")
-                                    </td>
-                                    <td>
-                                        @(lastExport?.DateExport?.ToString("dd/MM/yyyy HH:mm") ?? "--")
-                                    </td>
-                                    <td>
-                                        <div class="d-flex gap-1 align-items-center justify-content-end">
-                                            <button class="page-table-btn btn-lightblue edit-warehouse" data-brand="@warehouse.WarehouseId">
-                                                <i class="fa-regular fa-pen-to-square"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                index++;
-                            }
+                            <tr data-item="@warehouse.WarehouseId">
+                                <td>
+                                    <input type="checkbox" name="page-table-checkbox" value="@warehouse.WarehouseId" />
+                                </td>
+                                <td>
+                                    @index
+                                </td>
+                                <td>
+                                    @warehouse.WarehouseId
+                                </td>
+                                <td>
+                                    <span class="text-overflow-1">@warehouse.WarehouseName</span>
+                                </td>
+                                <td>
+                                    <span class="text-overflow-1">@($"{warehouse.Address}, {warehouse.Ward}, {warehouse.District}, {warehouse.Province}")</span>
+                                </td>
+                                <td>
+                                    @(lastImport?.DateImport?.ToString("dd/MM/yyyy HH:mm") ?? "--")
+                                </td>
+                                <td>
+                                    @(lastExport?.DateExport?.ToString("dd/MM/yyyy HH:mm") ?? "--")
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1 align-items-center justify-content-end">
+                                        <button class="page-table-btn btn-lightblue edit-warehouse" data-warehouse="@warehouse.WarehouseId">
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                        </button>
+                                        <button class="page-table-btn btn-red delete-warehouse" data-warehouse="@warehouse.WarehouseId">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            index++;
                         }
+                    }
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </section>
+
+@await Html.PartialAsync("PartialViews/Form_Warehouse", new WarehouseVM())
+
+@section Scripts {
+    <script src="~/admin/js/warehouses.js"></script>
+    <script src="~/js/address.js"></script>
+}

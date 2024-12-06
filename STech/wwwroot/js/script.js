@@ -74,6 +74,33 @@ const showErrorDialog = () => {
     })
 }
 
+const showDialogWithCallback = (type, title, message, callback) => {
+    Swal.fire({
+        title: title,
+        text: message,
+        icon: type,
+    }).then(() => {
+        callback();
+    })
+}
+
+const showConfirmDialog = (title, message, callback) => {
+    Swal.fire({
+        title: title,
+        text: message,
+        icon: "question",
+        showCancelButton: true,
+        showConfirmButton: true,
+        focusConfirm: false,
+        cancelButtonText: "Hủy",
+        confirmButtonText: "Xác nhận",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            callback();
+        }
+    });
+}
+
 const updateQueryParams = (params) => {
     const url = new URL(window.location.href);
     params.map(param => {
