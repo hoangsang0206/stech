@@ -17,5 +17,7 @@ namespace STech.Services.Constants
         public const string CashPayment = "cash";
         public const string CardPayment = "card";
         public const string PaypalPayment = "paypal";
+        public const string VNPayPayment = "vnpay";
+        public const string MomoPayment = "momo";
     }
 }

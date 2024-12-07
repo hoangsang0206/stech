@@ -117,9 +117,7 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<WarrantySlip> WarrantySlips { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=AORUS-Laptop;Database=STechDB;User Id=sang;Password=123456;TrustServerCertificate=True;");
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -492,14 +490,13 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<PaymentMethod>(entity =>
         {
-            entity.HasKey(e => e.PaymentMedId).HasName("PK__PaymentM__1D98A1A732B5DBE6");
+            entity.HasKey(e => e.PaymentMedId).HasName("PK__PaymentM__1D98A1A7CDF21BED");
 
             entity.Property(e => e.PaymentMedId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.LogoSrc).IsUnicode(false);
             entity.Property(e => e.PaymentName).HasMaxLength(50);
-            entity.Property(e => e.Sort).ValueGeneratedOnAdd();
         });
 
         modelBuilder.Entity<Product>(entity =>

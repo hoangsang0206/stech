@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
 using STech.Data.ViewModels;
+using STech.Data.ViewModels.VNPay;
+using STech.PaymentServices.VNPay;
 using STech.Services;
 using STech.Services.Constants;
 using STech.Services.Services;
@@ -26,10 +28,12 @@ namespace STech.Controllers
 
         private readonly HttpClient _httpClient;
 
+        private readonly IVNPayService _vnpayService;
+
         public OrderController(AddressService addressService, IAzureMapsService mapsService,
             IUserService userService, IProductService productService, IOrderService orderService,
             ICartService cartService, IPaymentService paymentService, IWarehouseService warehouseService,
-            HttpClient httpClient)
+            HttpClient httpClient, IVNPayService vNPayService)
         {
             _addressService = addressService;
             _mapsService = mapsService;
@@ -41,6 +45,8 @@ namespace STech.Controllers
             _warehouseService = warehouseService;
 
             _httpClient = httpClient;
+
+            _vnpayService = vNPayService;
         }
 
         #region Functions
@@ -406,13 +412,25 @@ namespace STech.Controllers
                 switch (order.PaymentMethod)
                 {
                     case PaymentContants.CashPayment:
-                        return RedirectToAction("PaymentWithCash");
+                        return RedirectToAction(nameof(PaymentWithCash));
 
                     case PaymentContants.CardPayment:
-                        return RedirectToAction("PaymentWithStripe");
+                        return RedirectToAction(nameof(PaymentWithStripe));
                             
                     case PaymentContants.PaypalPayment:
-                        return RedirectToAction("PaymentWithPaypal");
+                        return RedirectToAction(nameof(PaymentWithPaypal));
+
+                    case PaymentContants.VNPayPayment:
+                        return RedirectToAction(nameof(PaymentWithVNPay), new PaymentInformationModel
+                        {
+                            OrderId = invoice.InvoiceId,
+                            Amount = (double)invoice.Total,
+                            Name = invoice.RecipientName,
+                            OrderDescription = "Thanh toan don hang: " + invoice.InvoiceId,
+                            OrderType = "other"
+                        });
+                    case PaymentContants.MomoPayment:
+                        return RedirectToAction(nameof(PaymentWithMomo));
 
                     default:
                         return BadRequest();
@@ -572,7 +590,7 @@ namespace STech.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> PaymentWithPaypal(Data.Models.Invoice invoice)
+        public IActionResult PaymentWithPaypal()
         {
             try
             {
@@ -584,6 +602,92 @@ namespace STech.Controllers
             {
                 return NotFound(ex.Message);
             }   
+        }
+
+        [Authorize]
+        public async Task<IActionResult> PaymentWithVNPay(PaymentInformationModel model)
+        {
+            try
+            {
+                Data.Models.Invoice? invoice = GetInvoiceFromSession();
+
+                if (invoice == null)
+                {
+                    return NotFound();
+                }
+
+                var url = _vnpayService.CreatePaymentUrl(model, HttpContext);
+
+                TempData["InvoiceId"] = invoice.InvoiceId;
+
+                IEnumerable<WarehouseExport> warehouseExports = invoice.WarehouseExports;
+
+                if (await _orderService.CreateInvoice(invoice))
+                {
+                    await RemoveUserCart();
+                    await UpdateWarehouseExports(warehouseExports);
+                    return Redirect(url);
+                }
+
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        public async Task<IActionResult> VNPayCallback()
+        {
+            var response = _vnpayService.PaymentExecute(Request.Query);
+            string? invoiceId = TempData["InvoiceId"]?.ToString();
+
+            if(string.IsNullOrEmpty(invoiceId))
+            {
+                return BadRequest();
+            }
+
+            Data.Models.Invoice? invoice = await _orderService.GetInvoice(invoiceId);
+
+            if (invoice == null)
+            {
+                return BadRequest();
+            }
+
+            if (response != null && response.VnPayResponseCode == "00")
+            {
+                invoice.PaymentStatus = PaymentContants.Paid;
+            } 
+            else
+            {
+                invoice.PaymentStatus = PaymentContants.PaymentFailed;
+            }
+
+            HttpContext.Session.SetString("PaymentStatus", JsonSerializer.Serialize(new PaymentStatusVM
+            {
+                InvoiceId = invoice.InvoiceId,
+                IsPaid = invoice.PaymentStatus == PaymentContants.Paid,
+                TotalAmount = invoice.Total,
+                PaymentDate = DateTime.Now
+            }));
+
+            await _orderService.UpdateInvoice(invoice);
+            return RedirectToAction("PaymentResult");
+        }
+
+        [Authorize]
+        public IActionResult PaymentWithMomo()
+        {
+            try
+            {
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]

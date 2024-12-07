@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using STech.Config;
 using STech.Data.Models;
+using STech.PaymentServices.VNPay;
 using STech.Services;
 using STech.Services.Services;
 using Stripe;
@@ -135,6 +136,8 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IDeliveryService, DeliveryService>();
 builder.Services.AddScoped<IReviewService, STech.Services.Services.ReviewService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
+
+builder.Services.AddScoped<IVNPayService, VNPayService>();
 
 builder.Services.AddSingleton(new AddressService(Path.Combine(builder.Environment.ContentRootPath, "DataFiles", "Address")));
 

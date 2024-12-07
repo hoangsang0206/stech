@@ -44,6 +44,8 @@ public partial class User
 
     public DateTime? CreateAt { get; set; }
 
+    public bool? FirstLogin { get; set; }
+
     [JsonIgnore]
     public virtual Employee? Employee { get; set; }
 
