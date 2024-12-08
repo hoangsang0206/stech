@@ -1,5 +1,4 @@
 ﻿using STech.Data.Models;
-using STech.Data.TrainingDataModels;
 using STech.Data.ViewModels;
 
 namespace STech.Services
@@ -8,13 +7,12 @@ namespace STech.Services
     {
         Task<int> GetTotalProducts();
         Task<int> GetMonthAdded(int month);
-
-        Task<IEnumerable<ProductData>> GetTrainingData();
-
+        Task<IEnumerable<Product>> GetProducts();
         Task<PagedList<Product>> GetProducts(string? brands, string? categories, string? status, string? priceRange, 
             string? warehouseId, string? sort, int page, int itemsPerPage);
         Task<PagedList<Product>> SearchByName(string q, int page, int itemsPerPage, string? sort);
         Task<PagedList<Product>> SearchProducts(string q, int page, int itemsPerPage, string? sort, string? warehouseId);
+        Task<IEnumerable<Product>> SearchProductsByChatBotData(List<ProductSpecification>? specs, string? productId, string? productName, string? priceStr);
         Task<PagedList<Product>> GetByCategory(string categoryId, string? brands, string? priceRange,
             int page, int itemsPerPage, string? sort);
         Task<IEnumerable<Product>> GetSimilarProducts(string categoryId, int numToTake);

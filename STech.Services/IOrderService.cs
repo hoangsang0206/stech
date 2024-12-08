@@ -14,6 +14,7 @@ namespace STech.Services
         Task<bool> CreateInvoice(Invoice invoice);
         Task<Invoice?> GetInvoice(string invoiceId);
         Task<Invoice?> GetUserInvoice(string invoiceId, string userId);
+        Task<Invoice?> GetUserCurrentOrder(string userId);
         Task<Invoice?> GetInvoiceWithDetails(string invoiceId);
         Task<Invoice?> GetInvoiceWithDetails(string invoiceId, string phone);
         Task<Invoice?> GetUserInvoiceWithDetails(string invoiceId, string userId);

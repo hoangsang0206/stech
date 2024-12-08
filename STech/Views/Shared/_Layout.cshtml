@@ -58,6 +58,8 @@
     @await Html.PartialAsync("PartialViews/BottomNavigation")
     @await Html.PartialAsync("PartialViews/HiddenContents")
 
+    @await Html.PartialAsync("PartialViews/Chatbot")
+
     @if(User.Identity == null || !User.Identity.IsAuthenticated)
     {
         @await Html.PartialAsync("PartialViews/Form_Login", new LoginVM())

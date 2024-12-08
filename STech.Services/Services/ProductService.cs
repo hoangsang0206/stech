@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using STech.Data.Models;
-using STech.Data.TrainingDataModels;
 using STech.Data.ViewModels;
 using STech.Services.Utils;
 
@@ -29,19 +28,27 @@ namespace STech.Services.Services
                 .CountAsync();
         }
 
-        public async Task<IEnumerable<ProductData>> GetTrainingData()
+        public async Task<IEnumerable<Product>> GetProducts()
         {
             return await _context.Products
-                .Where(p => p.IsActive == true)
-                .Select(p => new ProductData
+                .Select(p => new Product
                 {
                     ProductId = p.ProductId,
-                    Price = (float)p.Price,
-                    Warranty = p.Warranty ?? 0,
-                    BrandName = p.Brand != null ? p.Brand.BrandName : "",
-                    CategoryName = p.Category != null ? p.Category.CategoryName : "",
-                    Specifications = string.Join(", ", p.ProductSpecifications
-                        .Select(s => $"[{s.SpecName}: {s.SpecValue}]")),
+                    ProductName = p.ProductName,
+                    OriginalPrice = p.OriginalPrice,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages,
+                    BrandId = p.BrandId,
+                    Brand = p.Brand,
+                    ShortDescription = p.ShortDescription,
+                    Description = p.Description,
+                    ProductSpecifications = p.ProductSpecifications,
+                    CategoryId = p.CategoryId,
+                    Category = p.Category,
+                    ManufacturedYear = p.ManufacturedYear,
+                    Warranty = p.Warranty,
+                    IsActive = p.IsActive,
+                    IsDeleted = p.IsDeleted,
                 })
                 .ToListAsync();
         }
@@ -94,6 +101,46 @@ namespace STech.Services.Services
                 .SelectProduct(warehouseId);
 
             return await products.ToPagedListAsync(page, itemsPerPage);
+        }
+
+        public async Task<IEnumerable<Product>> SearchProductsByChatBotData(List<ProductSpecification>? specs, string? productId, 
+            string? productName, string? priceStr)
+        {
+            List<Product> result = new List<Product>();
+
+            if(productId != null)
+            {
+                return await _context.Products
+                    .Where(p => p.ProductId == productId)
+                    .ToListAsync();
+            } 
+
+            if(productName != null)
+            {
+                string[] names = productName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                result = await _context.Products
+                    .Where(p => names.All(key => p.ProductName.Contains(key)))
+                    .ToListAsync();
+            }
+
+            if(specs != null && specs.Count > 0)
+            {
+                result = await _context.Products
+                    .Where(p => p.ProductSpecifications.Any(ps => specs.Any(s => ps.SpecName.Contains(s.SpecName) && ps.SpecValue.Contains(s.SpecValue))))
+                    .ToListAsync();
+            }
+
+            decimal? price = decimal.TryParse(priceStr, out decimal p) ? p : null;
+            if(price != null)
+            {
+                decimal tolerance = 500000;
+
+                result = await _context.Products
+                    .Where(p => p.Price >= price - tolerance && p.Price <= price + tolerance)
+                    .ToListAsync();
+            }
+
+            return result;
         }
 
         public async Task<PagedList<Product>> GetByCategory(string categoryId, string? brands,  

@@ -124,6 +124,13 @@ namespace STech.Services.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<Invoice?> GetUserCurrentOrder(string userId)
+        {
+            return await _context.Invoices
+                .Where(i => i.UserId == userId)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<Invoice?> GetUserInvoiceWithDetails(string invoiceId, string userId)
         {
             Invoice? invoice = await _context.Invoices

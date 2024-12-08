@@ -924,3 +924,66 @@ const updateCountDown = (element, endDate) => {
         countDownElement.find('.seconds').text(formatNum(seconds));
     }, 1000);
 }
+
+
+//Chatbot
+const appendChatbotMessage = (message, isUser) => {
+    const messageClass = isUser ? 'from-user' : 'from-bot';
+
+    $('.chatbot-messages').append(`
+        <div class="chatbot-message ${messageClass}">
+            <div class="chatbot-message-box">
+                ${message}
+            </div>
+        </div>
+    `);
+
+    $('.chatbot-messages').scrollTop($('.chatbot-messages').prop("scrollHeight"));
+}
+
+$('.chatbot-float-icon').click(() => {
+    $('.chatbot').addClass('show')
+})
+
+$('.close-chatbot').click(() => {
+    $('.chatbot').removeClass('show')
+})
+
+$('.chatbot-input input').on('keyup', function (e) {
+    if ($(this).val().length > 0)
+    {
+        $(this).removeClass('error');
+    }
+})
+
+$('.chatbot-input').submit(function (e) {
+    e.preventDefault();
+
+    const message = $(this).find('input').val();
+
+    if (!message) {
+        $(this).find('input').addClass('error').focus();
+        return;
+    } else {
+        $(this).find('input').removeClass('error');
+    }
+
+    appendChatbotMessage(`<div class="chatbot-message-text"><span>${message}</span></div>`, true);
+    $(this).find('input').val('');
+    const element = showButtonLoader($('.chatbot-send'), '21px', '4px');
+
+    $.ajax({
+        type: 'POST',
+        url: '/api/chat',
+        contentType: 'application/json',
+
+        data: JSON.stringify({
+            message
+        }),
+        success: (response) => {
+            const receivedMessage = response.message;
+            appendChatbotMessage(receivedMessage, false);
+            hideButtonLoader($('.chatbot-send'), element);
+        }
+    })
+})

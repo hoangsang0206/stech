@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using STech.Chatbot;
 using STech.Config;
 using STech.Data.Models;
 using STech.PaymentServices.VNPay;
@@ -138,6 +139,8 @@ builder.Services.AddScoped<IReviewService, STech.Services.Services.ReviewService
 builder.Services.AddScoped<ISaleService, SaleService>();
 
 builder.Services.AddScoped<IVNPayService, VNPayService>();
+
+builder.Services.AddScoped<IChatbotService, ChatbotService>();
 
 builder.Services.AddSingleton(new AddressService(Path.Combine(builder.Environment.ContentRootPath, "DataFiles", "Address")));
 

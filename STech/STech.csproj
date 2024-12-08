@@ -128,7 +128,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ChatBot\STech.TrainModel.csproj" />
+    <ProjectReference Include="..\STech.Chatbot\STech.Chatbot.csproj" />
     <ProjectReference Include="..\STech.Data\STech.Data.csproj" />
     <ProjectReference Include="..\STech.Services\STech.Services.csproj" />
   </ItemGroup>
