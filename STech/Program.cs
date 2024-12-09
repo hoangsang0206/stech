@@ -137,6 +137,7 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IDeliveryService, DeliveryService>();
 builder.Services.AddScoped<IReviewService, STech.Services.Services.ReviewService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
+builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 
 builder.Services.AddScoped<IVNPayService, VNPayService>();
 
@@ -227,16 +228,19 @@ async Task AutoSeedData()
         if (!await context.Roles.AnyAsync(r => r.RoleId == "admin"))
         {
             await context.Roles.AddAsync(new Role { RoleId = "admin", RoleName = "Admin" });
+            await context.SaveChangesAsync();
         }
 
         if (!await context.Roles.AnyAsync(r => r.RoleId == "user"))
         {
             await context.Roles.AddAsync(new Role { RoleId = "user", RoleName = "User" });
+            await context.SaveChangesAsync();
         }
 
         if (!await context.UserGroups.AnyAsync(ug => ug.GroupName == "Admin"))
         {
             await context.UserGroups.AddAsync(new UserGroup { GroupName = "Admin", HasAllPermissions = true });
+            await context.SaveChangesAsync();
         }
 
         if (!await userService.IsExist("admin"))
@@ -248,6 +252,8 @@ async Task AutoSeedData()
                 ConfirmPassword = "admin@123",
                 Email = "admin@stech.com"
             });
+            
+            await context.SaveChangesAsync();
         }
     } 
 }

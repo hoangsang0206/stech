@@ -112,22 +112,29 @@ namespace STech.Services.Services
             {
                 return await _context.Products
                     .Where(p => p.ProductId == productId)
+                    .SelectProduct()
                     .ToListAsync();
             } 
 
             if(productName != null)
             {
-                string[] names = productName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 result = await _context.Products
-                    .Where(p => names.All(key => p.ProductName.Contains(key)))
+                    .Where(p => p.ProductName.Contains(productName))
+                    .SelectProduct()
                     .ToListAsync();
             }
 
             if(specs != null && specs.Count > 0)
             {
-                result = await _context.Products
-                    .Where(p => p.ProductSpecifications.Any(ps => specs.Any(s => ps.SpecName.Contains(s.SpecName) && ps.SpecValue.Contains(s.SpecValue))))
-                    .ToListAsync();
+                var data = !result.Any() ? await _context.Products
+                    .SelectProductWithSpecs()
+                    .ToListAsync()
+                    : result;
+
+                result = data.Where(p => p.ProductSpecifications
+                        .Any(ps => specs
+                            .Any(s => ps.SpecName.Contains(s.SpecName) && ps.SpecValue.Contains(s.SpecValue))))
+                    .ToList();
             }
 
             decimal? price = decimal.TryParse(priceStr, out decimal p) ? p : null;
@@ -137,6 +144,7 @@ namespace STech.Services.Services
 
                 result = await _context.Products
                     .Where(p => p.Price >= price - tolerance && p.Price <= price + tolerance)
+                    .SelectProduct()
                     .ToListAsync();
             }
 

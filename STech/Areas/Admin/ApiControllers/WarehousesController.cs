@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using STech.Contants;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Filters;
@@ -6,7 +7,6 @@ using STech.Services;
 
 namespace STech.Areas.Admin.ApiControllers
 {
-    [AdminAuthorize]
     [Route("api/admin/[controller]")]
     [ApiController]
     public class WarehousesController : ControllerBase
@@ -19,6 +19,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet("1/{id}")]
+        [AdminAuthorize(Code = Functions.ViewWarehouses)]
         public async Task<IActionResult> GetWarehouse(string id)
         {
             Warehouse? warehouse = await _warehouseService.GetWarehouseById(id);
@@ -41,6 +42,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPost]
+        [AdminAuthorize(Code = Functions.CreateWarehouse)]
         public async Task<IActionResult> CreateWarehouse([FromBody] WarehouseVM warehouse)
         {
             if (!ModelState.IsValid)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using STech.Contants;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Filters;
@@ -7,7 +8,6 @@ using STech.Services;
 namespace STech.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AdminAuthorize]
     public class ReviewsController : Controller
     {
         private readonly IUserService _userService;
@@ -23,6 +23,7 @@ namespace STech.Areas.Admin.Controllers
             _productService = productService;
         }
 
+        [AdminAuthorize(Code = Functions.ViewReviews)]
         public async Task<IActionResult> Index(string? search, string? sort_by, string? status, string? filter_by, int page = 1)
         {
             if(page <= 1)
@@ -39,6 +40,7 @@ namespace STech.Areas.Admin.Controllers
         }
 
         [Route("/admin/reviews/1/{rId}")]
+        [AdminAuthorize(Code = Functions.ViewReviews)]
         public async Task<IActionResult> Detail(int rId)
         {
             Review? review = await _reviewService.GetReview(rId);
@@ -55,6 +57,7 @@ namespace STech.Areas.Admin.Controllers
         }
 
         [Route("/admin/reviews/product/{pId}")]
+        [AdminAuthorize(Code = Functions.ViewReviews)]
         public async Task<IActionResult> ProductReviews(string pId, string? sort_by, string? status, string? filter_by, int page = 1)
         {
             Product? product = await _productService.GetProductWithBasicInfo(pId);

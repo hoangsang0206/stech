@@ -8,10 +8,10 @@ using STech.Services.Services;
 using STech.Services.Utils;
 using STech.Utils;
 using System.Security.Claims;
+using STech.Contants;
 
 namespace STech.Areas.Admin.ApiControllers
 {
-    [AdminAuthorize]
     [Route("api/admin/[controller]")]
     [ApiController]
     public class OrdersController : ControllerBase
@@ -220,6 +220,7 @@ namespace STech.Areas.Admin.ApiControllers
         #endregion
 
         [HttpGet]
+        [AdminAuthorize(Code = Functions.ViewInvoices)]
         public async Task<IActionResult> GetOrders(int page = 1, string? filter_by = "unaccepted", string? sort_by = null)
         {
             PagedList<Invoice> data = await _orderService.GetInvoices(page, _itemsPerPage, filter_by, sort_by);
@@ -237,6 +238,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet("search/{query}")]
+        [AdminAuthorize(Code = Functions.ViewInvoices)]
         public async Task<IActionResult> SearchOrders(string query)
         {
             PagedList<Invoice> invoices = await _orderService.SearchInvoices(query, 1, _itemsPerPage);
@@ -249,6 +251,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet("one/{oId}")]
+        [AdminAuthorize(Code = Functions.ViewInvoices)]
         public async Task<IActionResult> GetOrder(string oId)
         {
             Invoice? invoice = await _orderService.GetInvoice(oId);
@@ -270,6 +273,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPatch("accept/{oId}")]
+        [AdminAuthorize(Code = Functions.EditInvoice)]
         public async Task<IActionResult> AcceptOrder(string oId)
         {
             Invoice? invoice = await _orderService.GetInvoice(oId);
@@ -320,6 +324,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPatch("cancel/{oId}")]
+        [AdminAuthorize(Code = Functions.EditInvoice)]
         public async Task<IActionResult> CancelOrder(string oId)
         {
             Invoice? invoice = await _orderService.GetInvoice(oId);
@@ -355,6 +360,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet("print-invoice/{oId}")]
+        [AdminAuthorize(Code = Functions.ViewInvoices)]
         public async Task<IActionResult> PrintInvoice(string oId)
         {
             Invoice? invoice = await _orderService.GetInvoiceWithDetails(oId);
@@ -368,6 +374,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPost("create")]
+        [AdminAuthorize(Code = Functions.CreateInvoice)]
         public async Task<IActionResult> CreateOrder([FromBody] AdminOrderVM order)
         {
             if (ModelState.IsValid)

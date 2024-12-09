@@ -29,6 +29,8 @@ namespace STech.ApiControllers
                 Intents.FindProduct,
                 Intents.TrackOrder,
                 Intents.CurrentOrder,
+                Intents.FindProductByBrand,
+                Intents.FindProductByCategory,
             };
             _defaultMessage = "Tôi không hiểu câu hỏi của bạn, " +
                 "bạn có thể hỏi các câu liên quan đến đơn hàng hoặc sản phẩm.";
@@ -122,6 +124,22 @@ namespace STech.ApiControllers
                         {
                             message = GenerateProductHTML(products.ToList());
                         }
+
+                        break;
+                    }
+
+                    case Intents.FindProductByBrand:
+                    {
+                        string? brand = parseResponse?.entities
+                                .FirstOrDefault(e => e.entity == Entities.Brand)?.value;
+
+                        break;
+                    }
+
+                    case Intents.FindProductByCategory:
+                    {
+                        string? category = parseResponse?.entities
+                                .FirstOrDefault(e => e.entity == Entities.Category)?.value;
 
                         break;
                     }
@@ -222,16 +240,16 @@ namespace STech.ApiControllers
 
             foreach (var product in products)
             {
-                string imgSrc = product.ProductImages?.FirstOrDefault()?.ImageSrc ?? "/images/no-image.png";
+                string imgSrc = product.ProductImages?.FirstOrDefault()?.ImageSrc ?? "/images/no-image.jpg";
 
                 orderHTML +=
-                        $"<a href=\"order/detail/{product.ProductId}\" target=\"_blank\" class=\"chat-product d-flex gap-2\">" +
+                        $"<a href=\"product/{product.ProductId}\" target=\"_blank\" class=\"chat-product d-flex gap-2\">" +
                             "<div class=\"chat-product-image\">" +
-                                $"<img src=\"{imgSrc}\" alt=\"\"" +
+                                $"<img src=\"{imgSrc}\" alt=\"\" />" +
                             "</div>" +
                             "<div class=\"chat-product-info\">" +
                                 $"<div>Mã sản phẩm: <span class=\"chat-info-bold\">{product.ProductId}</span></div>" +
-                                $"<div>Tên sản phẩm: <span class=\"chat-info-bold text-overflow-2\">{product.ProductName}</span></div>" +
+                                $"<div>Tên sản phẩm: <span class=\"chat-info-bold\">{product.ProductName}</span></div>" +
                                 $"<div>Giá bán:  <span class=\"chat-info-bold\">{CurrencyFormatter.Format(product.Price)}</span></div>" +
                             "</div>" +
                         "</a>";

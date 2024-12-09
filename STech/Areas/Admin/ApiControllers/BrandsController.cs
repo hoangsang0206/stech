@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using STech.Contants;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Filters;
@@ -7,7 +8,6 @@ using STech.Utils;
 
 namespace STech.Areas.Admin.ApiControllers
 {
-    [AdminAuthorize]
     [Route("api/admin/[controller]")]
     [ApiController]
     public class BrandsController : ControllerBase
@@ -26,6 +26,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet]
+        [AdminAuthorize(Code = Functions.ViewBrands)]
         public async Task<IActionResult> GetBrands(string? sort_by, int page = 1)
         {
             if (page <= 0)
@@ -48,6 +49,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet("{id}")]
+        [AdminAuthorize(Code = Functions.ViewBrands)]
         public async Task<IActionResult> GetBrand(string id)
         {
             Brand? brand = await _brandService.GetById(id);
@@ -62,6 +64,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPost]
+        [AdminAuthorize(Code = Functions.CreateBrand)]
         public async Task<IActionResult> CreateBrand([FromForm] BrandVM brand, IFormFile? image)
         {
             if (ModelState.IsValid)
@@ -104,6 +107,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPut]
+        [AdminAuthorize(Code = Functions.EditBrand)]
         public async Task<IActionResult> UpdateBrand([FromForm] BrandVM brand, IFormFile? image)
         {
             if (ModelState.IsValid)
@@ -147,6 +151,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpDelete("{id}")]
+        [AdminAuthorize(Code = Functions.DeleteBrand)]
         public async Task<IActionResult> DeleteBrand(string id)
         {
             Brand? brand = await _brandService.GetById(id);

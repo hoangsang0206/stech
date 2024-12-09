@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using STech.Contants;
 using STech.Data.Models;
 using STech.Filters;
 using STech.Services;
@@ -6,7 +7,6 @@ using STech.Services;
 namespace STech.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AdminAuthorize]
     public class WarehousesController : Controller
     {
         private readonly IWarehouseService _warehouseService;
@@ -16,6 +16,7 @@ namespace STech.Areas.Admin.Controllers
             _warehouseService = warehouseService;
         }
 
+        [AdminAuthorize(Code = Functions.ViewWarehouses)]
         public async Task<IActionResult> Index()
         {
             IEnumerable<Warehouse> warehouses = await _warehouseService.GetWarehousesWithMostRecentImportAndExport();
@@ -24,6 +25,7 @@ namespace STech.Areas.Admin.Controllers
             return View(warehouses);
         }
 
+        [AdminAuthorize(Code = Functions.ImportWarehouse)]
         public async Task<IActionResult> Import()
         {
            
@@ -32,6 +34,7 @@ namespace STech.Areas.Admin.Controllers
             return View();
         }
 
+        [AdminAuthorize(Code = Functions.ExportWarehouse)]
         public async Task<IActionResult> Export()
         {
             

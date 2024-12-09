@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using STech.Contants;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Filters;
@@ -7,7 +8,7 @@ using static Org.BouncyCastle.Asn1.Cmp.Challenge;
 
 namespace STech.Areas.Admin.Controllers
 {
-    [Area("Admin"), AdminAuthorize]
+    [Area("Admin")]
     public class ProductsController : Controller
     {
         private readonly ICategoryService _categoryService;
@@ -26,6 +27,7 @@ namespace STech.Areas.Admin.Controllers
             _brandService = brandService;
         }
 
+        [AdminAuthorize(Code = Functions.ViewProducts)]
         public async Task<IActionResult> Index(string? brands, string? categories, string? status, string? price_range, 
             string? warehouse_id, string? sort, int page = 1, string view_type = "view-list")
         {
@@ -48,6 +50,7 @@ namespace STech.Areas.Admin.Controllers
         }
 
         [Route("/admin/products/search/{query}")]
+        [AdminAuthorize(Code = Functions.ViewProducts)]
         public async Task<IActionResult> Search(string query, string? warehouse_id, string? sort, int page = 1, string view_type = "view-list")
         {
             PagedList<Product> products = await _productService.SearchProducts(query, page, _itemsPerPage, sort, warehouse_id);
@@ -70,6 +73,7 @@ namespace STech.Areas.Admin.Controllers
         }
 
         [Route("/admin/products/1/{id}")]
+        [AdminAuthorize(Code = Functions.ViewProducts)]
         public async Task<IActionResult> Detail(string id)
         {
             Product? product = await _productService.GetProduct(id);
@@ -86,6 +90,7 @@ namespace STech.Areas.Admin.Controllers
             return View(new Tuple<Product, IEnumerable<Category>, IEnumerable<Brand>>(product, categories, brands));
         }
 
+        [AdminAuthorize(Code = Functions.CreateProduct)]
         public async Task<IActionResult> Create()
         {
             IEnumerable<Warehouse> warehouses = await _warehouseService.GetWarehouses();

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using STech.Contants;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Filters;
@@ -7,7 +8,6 @@ using STech.Services.Services;
 
 namespace STech.Areas.Admin.ApiControllers
 {
-    [AdminAuthorize]
     [Route("api/admin/[controller]")]
     [ApiController]
     public class CustomersController : ControllerBase
@@ -22,6 +22,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet("search/phone/{phone}")]
+        [AdminAuthorize(Code = Functions.ViewCustomers)]
         public async Task<IActionResult> SearchByPhone(string phone)
         {
             IEnumerable<Customer> customers = await _customerService.SearchCustomers(phone);
@@ -34,6 +35,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet("1/{id}")]
+        [AdminAuthorize(Code = Functions.ViewCustomers)]
         public async Task<IActionResult> GetById(string id)
         {
             Customer? customer = await _customerService.GetCustomerById(id);
@@ -55,6 +57,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPost("create")]
+        [AdminAuthorize(Code = Functions.CreateCustomer)]
         public async Task<IActionResult> CreateCustomer(CustomerVM customer)
         {
             if (ModelState.IsValid)
@@ -96,6 +99,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPut("update")]
+        [AdminAuthorize(Code = Functions.EditCustomer)]
         public async Task<IActionResult> UpdateCustomer(CustomerVM customer)
         {
             if(string.IsNullOrEmpty(customer.CustomerId))
@@ -145,6 +149,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpDelete("{id}")]
+        [AdminAuthorize(Code = Functions.DeleteCustomer)]
         public async Task<IActionResult> DeleteCustomer(string id)
         {
             bool result = await _customerService.DeleteCustomer(id);

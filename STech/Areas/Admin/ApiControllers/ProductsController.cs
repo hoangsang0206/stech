@@ -9,10 +9,10 @@ using STech.Services;
 using STech.Utils;
 using System.Text.RegularExpressions;
 using STech.Areas.Admin.Utils;
+using STech.Contants;
 
 namespace STech.Areas.Admin.ApiControllers
 {
-    [AdminAuthorize]
     [Route("api/admin/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
@@ -37,6 +37,7 @@ namespace STech.Areas.Admin.ApiControllers
         #region GET
 
         [HttpGet("search/{query}")]
+        [AdminAuthorize(Code = Functions.ViewProducts)]
         public async Task<IActionResult> SearchProducts(string query, string? warehouse_id, string? sort, int page = 1)
         {
             PagedList<Product> products = await _productService.SearchProducts(query, page, _itemsPerPage, sort, warehouse_id);
@@ -54,6 +55,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet]
+        [AdminAuthorize(Code = Functions.ViewProducts)]
         public async Task<IActionResult> GetProducts([FromQuery] string? brands, string? categories, string? status, 
             string? price_range, string? warehouse_id, string? sort, int page = 1)
         {
@@ -72,6 +74,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet("1/{id}/{warehouseId?}")]
+        [AdminAuthorize(Code = Functions.ViewProducts)]
         public async Task<IActionResult> GetProduct(string id, string? warehouseId)
         {
             Product? product = !string.IsNullOrEmpty(warehouseId)
@@ -92,6 +95,7 @@ namespace STech.Areas.Admin.ApiControllers
         #region POST
 
         [HttpPost("create")]
+        [AdminAuthorize(Code = Functions.CreateProduct)]
         public async Task<IActionResult> CreateProduct(ProductVM productVM)
         {
             if (!ModelState.IsValid)
@@ -205,6 +209,7 @@ namespace STech.Areas.Admin.ApiControllers
         #region PUT
 
         [HttpPut("update")]
+        [AdminAuthorize(Code = Functions.EditProduct)]
         public async Task<IActionResult> UpdateProduct([FromBody] ProductVM productVM)
         {
             if (!ModelState.IsValid)
@@ -332,6 +337,7 @@ namespace STech.Areas.Admin.ApiControllers
         #region PATCH
 
         [HttpPatch("delete/1/{id}")]
+        [AdminAuthorize(Code = Functions.DeleteProduct)]
         public async Task<IActionResult> DeleteProduct(string id)
         {
             bool result = await _productService.DeleteProduct(id);
@@ -344,6 +350,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPatch("delete/range")]
+        [AdminAuthorize(Code = Functions.DeleteProduct)]
         public async Task<IActionResult> DeleteProducts([FromBody] string[] ids)
         {
             bool result = await _productService.DeleteProducts(ids);
@@ -356,6 +363,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPatch("restore/1/{id}")]
+        [AdminAuthorize(Code = Functions.EditProduct)]
         public async Task<IActionResult> RestoreProduct(string id)
         {
             bool result = await _productService.RestoreProduct(id);
@@ -368,6 +376,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPatch("restore/range")]
+        [AdminAuthorize(Code = Functions.EditProduct)]
         public async Task<IActionResult> RestoreProducts([FromBody] string[] ids)
         {
             bool result = await _productService.RestoreProducts(ids);
@@ -380,6 +389,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPatch("activate/1/{id}")]
+        [AdminAuthorize(Code = Functions.EditProduct)]
         public async Task<IActionResult> ActivateProduct(string id)
         {
             bool result = await _productService.ActivateProduct(id);
@@ -392,6 +402,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPatch("activate/range")]
+        [AdminAuthorize(Code = Functions.EditProduct)]
         public async Task<IActionResult> ActivateProducts([FromBody] string[] ids)
         {
             bool result = await _productService.ActivateProducts(ids);
@@ -404,6 +415,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPatch("deactivate/1/{id}")]
+        [AdminAuthorize(Code = Functions.EditProduct)]
         public async Task<IActionResult> DeActivateProduct(string id)
         {
             bool result = await _productService.DeActivateProduct(id);
@@ -416,6 +428,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPatch("deactivate/range")]
+        [AdminAuthorize(Code = Functions.EditProduct)]
         public async Task<IActionResult> DeActivateProducts([FromBody] string[] ids)
         {
             bool result = await _productService.DeActivateProducts(ids);
@@ -433,6 +446,7 @@ namespace STech.Areas.Admin.ApiControllers
 
         #region DELETE
         [HttpDelete("permanently-delete/1/{id}")]
+        [AdminAuthorize(Code = Functions.DeleteProduct)]
         public async Task<IActionResult> PermanentlyDeleteProduct(string id)
         {
             bool result = await _productService.PermanentlyDeleteProduct(id);
@@ -445,6 +459,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpDelete("permanently-delete/range")]
+        [AdminAuthorize(Code = Functions.DeleteProduct)]
         public async Task<IActionResult> PermanentlyDeleteProducts(string[] ids)
         {
             bool result = await _productService.PermanentlyDeleteProducts(ids);

@@ -5,10 +5,10 @@ using STech.Data.ViewModels;
 using STech.Filters;
 using STech.Services;
 using System.Security.Claims;
+using STech.Contants;
 
 namespace STech.Areas.Admin.ApiControllers
 {
-    [AdminAuthorize]
     [Route("api/admin/[controller]")]
     [ApiController]
     public class ReviewsController : ControllerBase
@@ -27,6 +27,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet]
+        [AdminAuthorize(Code = Functions.ViewReviews)]
         public async Task<IActionResult> GetReviews(string? search, string? productId, string? sort_by, string? status, string? filter_by, int page = 1) {
 
             if (page <= 1)
@@ -53,6 +54,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet("1/{id}")]
+        [AdminAuthorize(Code = Functions.ViewReviews)]
         public async Task<IActionResult> GetReview(int id)
         {
             Review? review = await _reviewService.GetReview(id);
@@ -65,6 +67,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPatch("approve/{id}")]
+        [AdminAuthorize(Code = Functions.ManageReview)]
         public async Task<IActionResult> ApproveReview(int id)
         {
             bool result = await _reviewService.ApproveReview(id);
@@ -77,6 +80,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPatch("mark-all-read/{id}")]
+        [AdminAuthorize(Code = Functions.ManageReview)]
         public async Task<IActionResult> MarkAllRepliesAsRead(int id)
         {
             return Ok(new ApiResponse
@@ -86,6 +90,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPost("post-reply")]
+        [AdminAuthorize(Code = Functions.ManageReview)]
         public async Task<IActionResult> PostReply(ReviewReplyVM reply)
         {
             if(ModelState.IsValid)
@@ -137,6 +142,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpDelete("{id}")]
+        [AdminAuthorize(Code = Functions.ManageReview)]
         public async Task<IActionResult> DeleteReview(int id)
         {
             Review? review = await _reviewService.GetReview(id);

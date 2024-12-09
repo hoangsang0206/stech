@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using STech.Contants;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Filters;
@@ -7,7 +8,6 @@ using STech.Services;
 namespace STech.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AdminAuthorize]
     public class CategoriesController : Controller
     {
         private readonly ICategoryService _categoryService;
@@ -18,6 +18,7 @@ namespace STech.Areas.Admin.Controllers
             _categoryService = categoryService;
         }
 
+        [AdminAuthorize(Code = Functions.ViewCategories)]
         public async Task<IActionResult> Index(string? sort_by, int page = 1)
         {
             if(page <= 0)

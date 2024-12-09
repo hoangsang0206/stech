@@ -29,6 +29,32 @@ namespace STech.Services.Utils
             });
         }
 
+        public static IQueryable<Product> SelectProductWithSpecs(this IQueryable<Product> products)
+        {
+            return products.Select(p => new Product()
+            {
+                ProductId = p.ProductId,
+                ProductName = p.ProductName,
+                OriginalPrice = p.OriginalPrice,
+                Price = p.Price,
+                ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
+                ProductSpecifications = p.ProductSpecifications,
+                WarehouseProducts = p.WarehouseProducts,
+                BrandId = p.BrandId,
+                CategoryId = p.CategoryId,
+                IsActive = p.IsActive,
+                IsDeleted = p.IsDeleted,
+                DateDeleted = p.DateDeleted,
+                SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true).Take(1).ToList(),
+                Reviews = p.Reviews
+                    .Where(r => r.IsProceeded == true)
+                    .Select(r => new Review
+                    {
+                        Rating = r.Rating
+                    }).ToList(),
+            });
+        }
+
         public static IQueryable<Product> SelectProduct(this IQueryable<Product> products, string? warehouseId)
         {
             return products.Select(p => new Product()

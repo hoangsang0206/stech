@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using STech.Contants;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Filters;
@@ -7,7 +8,6 @@ using STech.Services;
 namespace STech.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[AdminAuthorize]
 public class CustomersController : Controller
 {
     private readonly ICustomerService _customerService;
@@ -19,6 +19,7 @@ public class CustomersController : Controller
         _customerService = customerService;
     }
     
+    [AdminAuthorize(Code = Functions.ViewCustomers)]
     public async Task<IActionResult> Index(string? sort_by, string? filter_by, int page= 1)
     {
         PagedList<Customer> customers = await _customerService.GetCustomers(page,_itemsPerPage, filter_by, sort_by);

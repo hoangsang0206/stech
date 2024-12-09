@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using STech.Contants;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Filters;
@@ -7,7 +8,6 @@ using STech.Utils;
 
 namespace STech.Areas.Admin.ApiControllers
 {
-    [AdminAuthorize]
     [Route("api/admin/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
@@ -26,6 +26,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet]
+        [AdminAuthorize(Code = Functions.ViewCategories)]
         public async Task<IActionResult> GetCategories(string? sort_by, int page = 1)
         {
             if (page <= 0)
@@ -48,6 +49,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpGet("{id}")]
+        [AdminAuthorize(Code = Functions.ViewCategories)]
         public async Task<IActionResult> GetCategory(string id)
         {
             Category? category = await _categoryService.GetOne(id);
@@ -62,6 +64,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPost]
+        [AdminAuthorize(Code = Functions.CreateCategory)]
         public async Task<IActionResult> CreateCategory([FromForm]CategoryVM category, IFormFile? image)
         {
             if(ModelState.IsValid)
@@ -100,6 +103,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpPut]
+        [AdminAuthorize(Code = Functions.EditCategory)]
         public async Task<IActionResult> UpdateCategory([FromForm] CategoryVM category, IFormFile? image)
         {
             if (ModelState.IsValid)
@@ -141,6 +145,7 @@ namespace STech.Areas.Admin.ApiControllers
         }
 
         [HttpDelete("{id}")]
+        [AdminAuthorize(Code = Functions.DeleteCategory)]
         public async Task<IActionResult> DeleteCategory(string id)
         {
             Category? category = await _categoryService.GetOne(id);

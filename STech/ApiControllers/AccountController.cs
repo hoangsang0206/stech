@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using System.Collections;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using STech.Data.Models;
@@ -12,6 +13,7 @@ using STech.Services.Utils;
 using STech.Config;
 using System.Text.Json;
 using Newtonsoft.Json;
+using IAuthorizationService = STech.Services.IAuthorizationService;
 
 namespace STech.ApiControllers
 {
@@ -21,13 +23,16 @@ namespace STech.ApiControllers
     {
         private readonly long _maxFileLength = 5 * 1024 * 1024;
         private readonly IUserService _userService;
+        private readonly IAuthorizationService _authorizationService;
         private readonly AddressService _addressService;
         private readonly IAzureStorageService _azureService;
 
         public AccountController(IUserService userService, 
+            IAuthorizationService authorizationService,
             AddressService addressService, IAzureStorageService azureService)
         {
             _userService = userService;
+            _authorizationService = authorizationService;
             _addressService = addressService;
             _azureService = azureService;
         }
@@ -35,8 +40,8 @@ namespace STech.ApiControllers
         #region User
         private async Task UserSignIn(User user)
         {
-            List<string> authorized = user.Group?.FunctionAuthorizations.Select(f => f.FuncId).ToList()
-                ?? new List<string>();
+            IEnumerable<Function> authorizedFuncs = await _authorizationService.GetAuthorizedFunctions(user.GroupId);
+            IEnumerable<string> authorized = authorizedFuncs.Select(f => f.FuncId);
 
             IEnumerable<Claim> claims = new List<Claim>
             {
@@ -45,6 +50,7 @@ namespace STech.ApiControllers
                 new Claim("Avatar", user.Avatar ?? "/images/user-no-image.svg"),
                 new Claim("Id", user.UserId),
                 new Claim(ClaimTypes.Role, user.RoleId),
+                new Claim("HasAllPermissions", user.Group?.HasAllPermissions.ToString() ?? "false"),
                 new Claim("authorized", JsonConvert.SerializeObject(authorized))
             };
 

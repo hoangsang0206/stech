@@ -31,7 +31,6 @@ namespace STech.Services.Services
         {
             User? user = await _context.Users
                 .Include(u => u.Group)
-                .ThenInclude(g => g.FunctionAuthorizations)
                 .FirstOrDefaultAsync(u => u.Username == login.UserName);
 
             if(user != null && user.PasswordHash == login.Password.HashPasswordMD5(user.RandomKey))
@@ -46,7 +45,6 @@ namespace STech.Services.Services
         {
             return await _context.Users
                 .Include(u => u.Group)
-                .ThenInclude(g => g.FunctionAuthorizations)
                 .FirstOrDefaultAsync(u => u.UserId == id);
         }
 
@@ -54,7 +52,6 @@ namespace STech.Services.Services
         {
             return await _context.Users
                 .Include(u => u.Group)
-                .ThenInclude(g => g.FunctionAuthorizations)
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
@@ -127,6 +124,31 @@ namespace STech.Services.Services
                 RoleId = role.RoleId,
                 CreateAt = DateTime.Now,
                 AuthenticationProvider = register.AuthenticationProvider
+            };
+
+            await _context.Users.AddAsync(user);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        
+        public async Task<bool> CreateAdminUser(RegisterVM register)
+        {
+            if(register.RegPassword != register.ConfirmPassword) return false;
+
+            string randomKey = UserUtils.GenerateRandomString(20);
+            
+            UserGroup? group = await _context.UserGroups.FirstOrDefaultAsync(ug => ug.GroupName == "Admin");
+            
+            User user = new User()
+            {
+                UserId = UserUtils.GenerateRandomId(40),
+                Username = register.RegUserName,
+                PasswordHash = register.RegPassword.HashPasswordMD5(randomKey),
+                Email = register.Email,
+                RandomKey = randomKey,
+                IsActive = true,
+                RoleId = "admin",
+                GroupId = group?.GroupId,
+                CreateAt = DateTime.Now
             };
 
             await _context.Users.AddAsync(user);

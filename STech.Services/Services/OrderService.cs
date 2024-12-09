@@ -128,6 +128,7 @@ namespace STech.Services.Services
         {
             return await _context.Invoices
                 .Where(i => i.UserId == userId)
+                .OrderByDescending(i => i.OrderDate)
                 .FirstOrDefaultAsync();
         }
 

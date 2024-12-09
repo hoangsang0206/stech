@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using STech.Contants;
 using STech.Data.ViewModels;
 using STech.Filters;
 using STech.Services;
@@ -18,7 +19,7 @@ namespace STech.Areas.Admin.Controllers
             _userService = userService;
             _orderService = orderService;
         }
-
+        
         public async Task<IActionResult> Index()
         {
             AdminHomePageData data = new AdminHomePageData
