@@ -49,5 +49,18 @@ namespace STech.Areas.Admin.Controllers
             ViewBag.ActiveSidebar = "orders";
             return View();
         }
+
+        [AdminAuthorize(Code = Functions.ViewInvoices)]
+        public async Task<IActionResult> Detail(string id)
+        {
+            Invoice? invoice = await _orderService.GetInvoice(id);
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.ActiveSidebar = "orders";
+            return View(invoice);
+        }
     }
 }

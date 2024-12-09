@@ -72,8 +72,10 @@ $(document).on('click', '.edit-brand', function () {
                 showDialog('error', response.message)
             }
         },
-        error: () => {
-
+        error: (xhr, status, error) => {
+            if (xhr.status === 401) {
+                showDialog('error', 'Không có quyền truy cập', 'Bạn không có quyền truy cập nội dung này')
+            }
         }
     })
 })
@@ -96,9 +98,13 @@ $(document).on('click', '.delete-brand', function () {
                     showDialog('error', response.message)
                 }
             },
-            error: () => {
+            error: (xhr, status, error) => {
                 hideWebLoader(0);
-                showErrorDialog();
+                if (xhr.status === 401) {
+                    showDialog('error', 'Không có quyền truy cập', 'Bạn không có quyền truy cập nội dung này')
+                } else {
+                    showErrorDialog();
+                }
             }
         })
     })
@@ -143,7 +149,10 @@ $('.form-brand form').submit(function (e) {
 
             hideButtonLoader(btn_submit, btn_element);
         },
-        error: () => {
+        error: (xhr, status, error) => {
+            if (xhr.status === 401) {
+                showDialog('error', 'Không có quyền truy cập', 'Bạn không có quyền truy cập nội dung này')
+            }
             hideButtonLoader(btn_submit, btn_element);
         }
     })

@@ -20,6 +20,8 @@ namespace STech.ApiControllers
         private readonly IOrderService _orderService;
         private readonly IProductService _productService;
 
+        private readonly string _policiesFilePath = Path.Combine(Directory.GetCurrentDirectory(), "DataFiles", "Policies");
+
         public ChatController(IChatbotService chatbotService,
             IProductService productService,
             IOrderService orderService)
@@ -31,6 +33,8 @@ namespace STech.ApiControllers
                 Intents.CurrentOrder,
                 Intents.FindProductByBrand,
                 Intents.FindProductByCategory,
+                Intents.PaymentPolicy,
+                Intents.DeliveringPolicy
             };
             _defaultMessage = "Tôi không hiểu câu hỏi của bạn, " +
                 "bạn có thể hỏi các câu liên quan đến đơn hàng hoặc sản phẩm.";
@@ -46,13 +50,13 @@ namespace STech.ApiControllers
             bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
             string? userId = isAuthenticated ? User.FindFirstValue("Id") : null;
 
-            var parseResponse = await _chatbotService.GetParseResponse(request.Message);
+            var parseResponse = await _chatbotService.GetParseResponse(request.Message.ToLower());
 
             string? intent = parseResponse?.intent.name;
 
             if (intent == null || !_intentList.Contains(intent))
             {
-                var messageResponse = await _chatbotService.GetMessageResponse(request.Message);
+                var messageResponse = await _chatbotService.GetMessageResponse(request.Message.ToLower());
                 message = GenerateMessageHTML(messageResponse?.text ?? _defaultMessage);
             }
             else
@@ -132,7 +136,13 @@ namespace STech.ApiControllers
                     {
                         string? brand = parseResponse?.entities
                                 .FirstOrDefault(e => e.entity == Entities.Brand)?.value;
-
+                        if(brand == null)
+                        {
+                            message = GenerateMessageHTML("Tôi không tìm thấy sản phẩm nào phù hợp với yêu cầu của bạn.");
+                            break;
+                        }
+                        var products = await _productService.SearchProductsByBrandName(brand);
+                        message = GenerateProductHTML(products.ToList());
                         break;
                     }
 
@@ -140,9 +150,24 @@ namespace STech.ApiControllers
                     {
                         string? category = parseResponse?.entities
                                 .FirstOrDefault(e => e.entity == Entities.Category)?.value;
-
+                        if (category == null)
+                        {
+                            message = GenerateMessageHTML("Tôi không tìm thấy sản phẩm nào phù hợp với yêu cầu của bạn.");
+                            break;
+                        }
+                        var products = await _productService.SearchProductsByCategoryName(category);
+                        message = GenerateProductHTML(products.ToList());
                         break;
                     }
+
+                    case Intents.PaymentPolicy:
+                        message = GeneratePaymentPolicyHTML();
+                        break;
+
+                    case Intents.DeliveringPolicy:
+                        message = GenerateDeliveringPolicyHTML();
+                        break;
+
 
                     default:
                         message = GenerateMessageHTML(_defaultMessage);
@@ -256,6 +281,32 @@ namespace STech.ApiControllers
             }
 
             return baseMessage + orderHTML + "</div>";
+        }
+
+        private string GeneratePaymentPolicyHTML()
+        {
+            try
+            {
+                string filePath = Path.Combine(_policiesFilePath, "payment.html");
+                return "<div class=\"chatbot-message-text\">" + System.IO.File.ReadAllText(filePath) + "</div>";
+            }
+            catch (Exception ex)
+            {
+                return GenerateMessageHTML("Tôi không tìm thấy chính sách thanh toán");
+            }
+        }
+
+        private string GenerateDeliveringPolicyHTML()
+        {
+            try
+            {
+                string filePath = Path.Combine(_policiesFilePath, "delivery.html");
+                return "<div class=\"chatbot-message-text\">" + System.IO.File.ReadAllText(filePath) + "</div>";
+            }
+            catch (Exception ex)
+            {
+                return GenerateMessageHTML("Tôi không tìm thấy chính sách giao hàng");
+            }
         }
     }
 }

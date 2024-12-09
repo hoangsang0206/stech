@@ -113,6 +113,7 @@ namespace STech.Services.Services
                 return await _context.Products
                     .Where(p => p.ProductId == productId)
                     .SelectProduct()
+                    .Take(10)
                     .ToListAsync();
             } 
 
@@ -121,6 +122,7 @@ namespace STech.Services.Services
                 result = await _context.Products
                     .Where(p => p.ProductName.Contains(productName))
                     .SelectProduct()
+                    .Take(10)
                     .ToListAsync();
             }
 
@@ -133,7 +135,9 @@ namespace STech.Services.Services
 
                 result = data.Where(p => p.ProductSpecifications
                         .Any(ps => specs
-                            .Any(s => ps.SpecName.Contains(s.SpecName) && ps.SpecValue.Contains(s.SpecValue))))
+                            .Any(s => ps.SpecName.ToLower().Contains(s.SpecName.ToLower()) 
+                            && ps.SpecValue.ToLower().Contains(s.SpecValue.ToLower()))))
+                    .Take(10)
                     .ToList();
             }
 
@@ -145,10 +149,32 @@ namespace STech.Services.Services
                 result = await _context.Products
                     .Where(p => p.Price >= price - tolerance && p.Price <= price + tolerance)
                     .SelectProduct()
+                    .OrderBy(p => Guid.NewGuid())
+                    .Take(10)
                     .ToListAsync();
             }
 
             return result;
+        }
+
+        public async Task<IEnumerable<Product>> SearchProductsByBrandName(string brandName)
+        {
+            return await _context.Products
+                .Where(p => p.Brand != null && p.Brand.BrandName.Contains(brandName))
+                .SelectProduct()
+                .OrderBy(p => Guid.NewGuid())
+                .Take(10)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Product>> SearchProductsByCategoryName(string categoryName)
+        {
+            return await _context.Products
+                .Where(p => p.Category != null && p.Category.CategoryName.Contains(categoryName))
+                .SelectProduct()
+                .OrderBy(p => Guid.NewGuid())
+                .Take(10)
+                .ToListAsync();
         }
 
         public async Task<PagedList<Product>> GetByCategory(string categoryId, string? brands,  

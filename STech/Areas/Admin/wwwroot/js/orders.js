@@ -242,7 +242,6 @@ $('.search-orders').submit(function (e) {
 
 
 $(document).on('click', '.view-order', function () {
-    showForm('.order-detail-wrapper');
-
-
+    const order_id = $(this).data('order');
+    window.location.href = `/admin/orders/detail?id=${order_id}`;
 })

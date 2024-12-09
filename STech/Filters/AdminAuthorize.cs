@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace STech.Filters
@@ -9,9 +10,20 @@ namespace STech.Filters
         
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            if(context.HttpContext.User.Identity?.IsAuthenticated == false || !context.HttpContext.User.IsInRole("admin"))
+            var requestPath = context.HttpContext.Request.Path.Value;
+
+            if (context.HttpContext.User.Identity?.IsAuthenticated == false || !context.HttpContext.User.IsInRole("admin"))
             {
-                context.HttpContext.Response.Redirect("/admin/login");
+                if (requestPath != null && requestPath.StartsWith("/api/", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Result = new UnauthorizedResult();
+                    return;
+                }
+                else
+                {
+                    context.HttpContext.Response.Redirect("/admin/login");
+                    return;
+                }
             }
             
             if (Code == null)

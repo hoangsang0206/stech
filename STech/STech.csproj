@@ -114,6 +114,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\wwwroot\images\icons\" />
+    <Folder Include="DataFiles\Policies\" />
     <Folder Include="wwwroot\images\logo\" />
   </ItemGroup>
 
