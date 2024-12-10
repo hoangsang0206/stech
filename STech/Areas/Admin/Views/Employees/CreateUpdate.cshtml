@@ -1,0 +1,162 @@
+﻿@model Tuple<EmployeeVM, IEnumerable<UserGroup>, bool> // the last bool is update (true) or create (false)
+
+@{
+    ViewData["Title"] = "Thêm nhân viên - STech Admin";
+    ViewData["PageTitle"] = "Thêm nhân viên";
+
+    EmployeeVM employee = Model.Item1;
+    IEnumerable<UserGroup> userGroups = Model.Item2;
+    bool isUpdate = Model.Item3;
+}
+
+<section class="page-wrapper">
+    <form id="@(isUpdate ? "update-employee" : "create-employee")">
+        <div class="row m-0 p-0">
+            <div class="col-12 col-lg-7 p-0">
+                <div class="page-content-box">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div class="page-content-header">
+                            Thông tin chung
+                        </div>
+                    </div>
+
+                    <div class="row p-0 m-0">
+                        <div class="col-12 col-lg-6">
+                            <div class="page-input-box">
+                                <label>Họ tên</label>
+                                <div class="page-input">
+                                    <input asp-for="@employee.EmployeeName" type="text" id="employee_name" placeholder="Tên nhân viên" value="@employee.EmployeeName" />
+                                </div>
+                                <span asp-validation-for="@employee.EmployeeName"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="page-input-box">
+                                <label>Số điện thoại</label>
+                                <div class="page-input">
+                                    <input asp-for="@employee.Phone" type="text" id="employee_phone" placeholder="Số điện thoại" value="@employee.Phone" />
+                                </div>
+                                <span asp-validation-for="@employee.Phone"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row p-0 m-0">
+                        <div class="col-12 col-lg-6">
+                            <div class="page-input-box">
+                                <label>Địa chỉ Email</label>
+                                <div class="page-input">
+                                    <input asp-for="@employee.Email" type="text" id="employee_email" placeholder="Địa chỉ Email" value="@employee.Email" />
+                                </div>
+                                <span asp-validation-for="@employee.Email"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="page-input-box">
+                                <label>Ngày sinh</label>
+                                <div class="page-input">
+                                    <input asp-for="@employee.Dob" type="datetime-local" id="employee_dob" placeholder="Số điện thoại" value="@employee.Dob" />
+                                </div>
+                                <span asp-validation-for="@employee.Dob"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-4">
+                        <div class="page-radio-input">
+                            <label for="gender-male" class="checked">
+                                <input type="radio" name="Gender" id="gender-male" value="Nam" @(employee.Gender == "Nam" ? "checked" : "") />
+                                <span class="text-black"> 
+                                    <span style="font-size: 1rem">Nam</span>
+                                </span>
+                            </label>
+                        </div>
+                        <div class="page-radio-input">
+                            <label for="gender-female">
+                                <input type="radio" name="Gender" id="gender-female" value="Nữ" @(employee.Gender == "Nữ" ? "checked" : "") />
+                                <span class="text-black">
+                                    <span style="font-size: 1rem">Nữ</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <div>
+                            <div class="page-content-header">
+                                Địa chỉ
+                            </div>
+                        </div>
+                        <div>
+                            @await Html.PartialAsync("PartialViews/Form_AddressItems", new AddAddressVM())
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-12 col-lg-5 p-0 ps-lg-4">
+
+                <div class="position-sticky top-0 start-0 mt-3 mt-lg-0">
+                    <div class="page-content-box">
+                        <div class="page-content-header">
+                            Phân quyền
+                        </div>
+
+                       <div>
+                            @if (!isUpdate) 
+                            {
+                                <div class="page-input-box">
+                                    <label>Mật khẩu đăng nhập</label>
+                                    <div class="page-input">
+                                        <input asp-for="@employee.LoginPassword" type="text" id="employee_password" placeholder="Mật khẩu đăng nhập" />
+                                    </div>
+                                    <span asp-validation-for="@employee.LoginPassword"></span>
+                                </div>
+                            }
+
+                            <div class="page-input-box">
+                                <label>Nhóm người dùng</label>
+                                <div class="page-input">
+                                    <select asp-for="@employee.GroupId" id="product_brand">
+                                        <option selected>Chọn nhóm</option>
+                                        @foreach (UserGroup group in userGroups)
+                                        {
+                                            if (employee?.GroupId == group.GroupId)
+                                            {
+                                                <option value="@group.GroupId" selected>@group.GroupName</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@group.GroupId">@group.GroupName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                       </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="page-content-box no-border d-flex justify-content-start mt-3">
+            <button type="submit" class="form-submit-btn page-btn-sm btn-green">
+                @(isUpdate ? "Cập nhật" : "Thêm nhân viên")
+            </button>
+        </div>
+    </form>
+</section>
+
+<input type="hidden" id="emp_address" value="@employee.Address" />
+<input type="hidden" id="emp_ward_code" value="@employee.WardCode" />
+<input type="hidden" id="emp_district_code" value="@employee.DistrictCode" />
+<input type="hidden" id="emp_province_code" value="@employee.ProvinceCode" />
+
+@section Scripts {
+    <script src="~/js/address.js"></script>
+}

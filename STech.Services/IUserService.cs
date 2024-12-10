@@ -11,6 +11,8 @@ namespace STech.Services
         Task<User?> GetUser(LoginVM login);
         Task<User?> GetUserById(string id);
         Task<User?> GetUserByEmail(string email);
+        Task<User?> GetEmployeeUser(string userId);
+
         Task<bool> IsExist(string username);
         Task<bool> IsEmailExist(string email);
         Task<bool> IsEmailExist(string userId, string email);

@@ -55,6 +55,13 @@ namespace STech.Services.Services
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
+        public async Task<User?> GetEmployeeUser(string userId)
+        {
+            return await _context.Users
+                .Include(u => u.Group)
+                .FirstOrDefaultAsync(u => u.EmployeeId == userId);
+        }
+
         public async Task<bool> IsExist(string username)
         {
             User? user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);

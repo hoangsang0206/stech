@@ -218,7 +218,7 @@ namespace STech.ApiControllers
             foreach (var order in orders)
             {
                 orderHTML +=
-                        $"<a href=\"order/detail/{order.InvoiceId}\" target=\"_blank\" class=\"chat-order d-flex gap-2\">" +
+                        $"<a href=\"/order/detail/{order.InvoiceId}\" target=\"_blank\" class=\"chat-order d-flex gap-2\">" +
                             "<div class=\"chat-order-icon\">" +
                                 "<i class=\"fa-solid fa-cart-flatbed\"></i>" +
                             "</div>" +

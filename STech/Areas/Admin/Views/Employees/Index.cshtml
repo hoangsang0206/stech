@@ -1,0 +1,87 @@
+﻿@model PagedList<Employee>
+
+@{
+    ViewData["Title"] = "Quản lý nhân viên - STech Admin";
+    ViewData["PageTitle"] = "Quản lý nhân viên";
+}
+
+<section class="page-wrapper">
+    <div>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <a class="page-btn btn-green" href="/admin/employees/create">
+                <i class="fa-solid fa-plus"></i>
+                <span>Thêm nhân viên</span>
+            </a>
+        </div>
+
+        <div>
+            <div class="page-table-wrapper mt-2">
+                <table class="page-table">
+                    <thead class="page-table-header">
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã nhân viên</th>
+                            <th>Họ tên</th>
+                            <th>Địa chỉ</th>
+                            <th>Số điện thoại</th>
+                            <th>Email</th>
+                            <th>Ngày sinh</th>
+                            <th>Giới tính</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="category-list">
+                        @{
+                            int index = 1;
+
+                            foreach (Employee emp in Model.Items)
+                            {
+                                <tr>
+                                    <td>
+                                        @index
+                                    </td>
+                                    <td>
+                                        @emp.EmployeeId
+                                    </td>
+                                    <td>
+                                        @emp.EmployeeName
+                                    </td>
+                                    <td>
+                                        <span class="text-overflow-1">@($"{emp.Address}, {emp.Ward}, {emp.District}, {emp.Province}")</span>
+                                    </td>
+                                    <td>
+                                       @emp.Phone
+                                    </td>
+                                    <td>
+                                        @emp.Email
+                                    </td>
+                                    <td>
+                                        @(emp.Dob?.ToString("dd/MM/yyyy") ?? "--")
+                                    </td>
+                                    <td>
+                                        @emp.Gender
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1 align-items-center justify-content-end">
+                                            <a class="page-table-btn btn-lightblue edit-employee" href="/admin/employees/update?id=@emp.EmployeeId">
+                                                <i class="fa-regular fa-pen-to-square"></i>
+                                            </a>
+                                            <button class="page-table-btn btn-red delete-employee" data-employee="@emp.EmployeeId">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+
+}
