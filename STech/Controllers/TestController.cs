@@ -5,16 +5,16 @@ namespace STech.Controllers
 {
     public class TestController : Controller
     {
-        private readonly IProductService _productService;
+        private readonly IEmailService _emailService;
 
-        public TestController(IProductService productService)
+        public TestController(IEmailService emailService)
         {
-            _productService = productService;
+            _emailService = emailService;
         }
 
         public async Task<IActionResult> Index()
         {
-           
+            await _emailService.SendEmailAsync("lexaf50292@lofiey.com", "hè he", "hè hé", null, null);
 
             return Ok();
         }

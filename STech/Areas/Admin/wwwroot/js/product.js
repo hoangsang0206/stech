@@ -67,6 +67,7 @@ $(document).on('click', '.click-delete-image', function () {
     }
 })
 
+
 $('.click-upload-image').click(function () {
     $('#upload-product-images').click();
 })
@@ -117,6 +118,8 @@ $('.click-add-spec').click(() => {
         </div>
     `);
 })
+
+
 $('.click-delete-product').click(function () {
     const id = $(this).data('product');
 

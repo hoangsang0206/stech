@@ -922,6 +922,19 @@ button:disabled {
         font-weight: 500;
     }
 
+.btn-icon {
+    text-decoration: none;
+    color: #000;
+}
+
+.btn-icon i {
+    font-size: 1.1rem;
+}
+
+.btn-icon:hover {
+    color: var(--primary-color);
+}
+
 .page-wrapper {
     background: var(--primary-content-color);
     padding: 1rem;
@@ -1317,6 +1330,7 @@ button:disabled {
     overflow-y: auto;
     max-height: 30rem;
     display: none;
+    z-index: 5;
 }
 
 .page-search-results.show {

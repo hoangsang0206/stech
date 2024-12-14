@@ -7,12 +7,14 @@ namespace STech.Controllers
         [Route("error/{code:int}")]
         public IActionResult Index(int code)
         {
-            if(code == 404)
+            bool isAdmin = User.IsInRole("admin");
+  
+            if (code == 404)
             {
                 return View("NotFound");
             }
 
-            if(code == 401)
+            if (code == 401)
             {
                 return View("Unauthorized");
             }

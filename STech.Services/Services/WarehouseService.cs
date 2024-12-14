@@ -22,7 +22,8 @@ namespace STech.Services.Services
         public async Task<IEnumerable<Warehouse>> GetWarehousesWithMostRecentImportAndExport()
         {
             return await _context.Warehouses
-                .Select(w => new Warehouse { 
+                .Select(w => new Warehouse
+                {
                     WarehouseId = w.WarehouseId,
                     WarehouseName = w.WarehouseName,
                     Address = w.Address,
@@ -76,20 +77,40 @@ namespace STech.Services.Services
                 .ToListAsync();
         }
 
-        public async Task<bool> CreateWarehouse(WarehouseVM warehouse)
+        public async Task<bool> CreateWarehouse(Warehouse warehouse)
         {
-            Warehouse _warehouse = new Warehouse
+            Warehouse? existedWarehouse = await GetWarehouseById(warehouse.WarehouseId);
+
+            if (existedWarehouse != null)
             {
+                return false;
+            }
 
-            };
-
-            return false;
+            await _context.Warehouses.AddAsync(warehouse);
+            return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> UpdateWarehouse(WarehouseVM warehouse)
+        public async Task<bool> UpdateWarehouse(Warehouse warehouse)
         {
+            Warehouse? existedWarehouse = await GetWarehouseById(warehouse.WarehouseId);
 
-            return false;
+            if (existedWarehouse == null)
+            {
+                return false;
+            }
+
+            existedWarehouse.WarehouseName = warehouse.WarehouseName;
+            existedWarehouse.Address = warehouse.Address;
+            existedWarehouse.Ward = warehouse.Ward;
+            existedWarehouse.WardCode = warehouse.WardCode;
+            existedWarehouse.District = warehouse.District;
+            existedWarehouse.DistrictCode = warehouse.DistrictCode;
+            existedWarehouse.Province = warehouse.Province;
+            existedWarehouse.ProvinceCode = warehouse.ProvinceCode;
+            existedWarehouse.Latitude = warehouse.Latitude;
+            existedWarehouse.Longtitude = warehouse.Longtitude;
+
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> CreateWarehouseExports(IEnumerable<WarehouseExport> warehouseExports)
@@ -110,7 +131,7 @@ namespace STech.Services.Services
         {
             foreach (WarehouseExport wE in warehouseExports)
             {
-                foreach(WarehouseExportDetail detail in wE.WarehouseExportDetails)
+                foreach (WarehouseExportDetail detail in wE.WarehouseExportDetails)
                 {
                     WarehouseProduct? whP = await _context.WarehouseProducts
                         .Where(wp => wp.ProductId == detail.ProductId && wp.WarehouseId == wE.WarehouseId).FirstOrDefaultAsync();
@@ -136,12 +157,12 @@ namespace STech.Services.Services
 
             if (invoice == null)
             {
-                   return false;
+                return false;
             }
 
-            foreach(WarehouseExport export in invoice.WarehouseExports)
+            foreach (WarehouseExport export in invoice.WarehouseExports)
             {
-                foreach(WarehouseExportDetail detail in export.WarehouseExportDetails)
+                foreach (WarehouseExportDetail detail in export.WarehouseExportDetails)
                 {
                     WarehouseProduct? whProduct = await _context.WarehouseProducts
                         .FirstOrDefaultAsync(wp => wp.ProductId == detail.ProductId && wp.WarehouseId == export.WarehouseId);
@@ -156,6 +177,69 @@ namespace STech.Services.Services
             }
 
             return await _context.SaveChangesAsync() > 0;
+        }
+
+
+        public async Task<bool> CreateWarehouseImport(WarehouseImportVM import, string employeeId)
+        {
+            WarehouseImport _import = new WarehouseImport
+            {
+                WarehouseId = import.WarehouseId,
+                SupplierId = import.SupplierId,
+                DateImport = DateTime.Now,
+                EmployeeId = employeeId,
+                Note = import.Note,
+                DateCreate = DateTime.Now,
+            };
+
+            _import.WarehouseImportDetails = import.WarehouseImportDetails.Select(d => new WarehouseImportDetail
+            {
+                ProductId = d.ProductId,
+                Quantity = d.Quantity,
+                UnitPrice = d.UnitPrice,
+            }).ToList();
+
+            _import.WarehouseImportHistories = import.WarehouseImportDetails.Select(d => new WarehouseImportHistory
+            {
+                HistoryId = Guid.NewGuid().ToString(),
+                ProductId = d.ProductId,
+                Quantity = d.Quantity,
+                BatchNumber = d.BatchNumber,
+                ImportDate = _import.DateImport ?? DateTime.Now
+                
+            }).ToList();
+
+            await _context.WarehouseImports.AddAsync(_import);
+            bool result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                foreach (var detail in import.WarehouseImportDetails)
+                {
+                    WarehouseProduct? whProduct = await _context.WarehouseProducts
+                        .FirstOrDefaultAsync(wp => wp.ProductId == detail.ProductId && wp.WarehouseId == import.WarehouseId);
+
+                    if (whProduct != null)
+                    {
+                        whProduct.Quantity += detail.Quantity;
+                    }
+                    else
+                    {
+                        WarehouseProduct newWhProduct = new WarehouseProduct
+                        {
+                            ProductId = detail.ProductId,
+                            WarehouseId = import.WarehouseId,
+                            Quantity = detail.Quantity
+                        };
+
+                        await _context.WarehouseProducts.AddAsync(newWhProduct);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            return result;
         }
     }
 }

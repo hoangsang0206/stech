@@ -554,6 +554,10 @@ $('.search-products').submit(function (e) {
         warehouse_id: warehouse,
     });
 
+    $('.search-result-wrapper .search-result-list').empty();
+    $('.search-result-wrapper').removeClass('show');
+    $(this).find('input').blur();
+
     showWebLoader();
     $.ajax({
         type: 'GET',

@@ -6,6 +6,7 @@ using Microsoft.Extensions.FileProviders;
 using STech.Chatbot;
 using STech.Config;
 using STech.Data.Models;
+using STech.Data.SettingModels;
 using STech.PaymentServices.VNPay;
 using STech.Services;
 using STech.Services.Services;
@@ -143,6 +144,12 @@ builder.Services.AddScoped<IVNPayService, VNPayService>();
 
 builder.Services.AddScoped<IChatbotService, ChatbotService>();
 
+// Email sender
+builder.Services.Configure<EmailSenderSettings>(builder.Configuration.GetSection("EmailSender"));
+builder.Services.AddTransient<IEmailService, EmailService>();
+
+//
+
 builder.Services.AddSingleton(new AddressService(Path.Combine(builder.Environment.ContentRootPath, "DataFiles", "Address")));
 
 builder.Services.AddHttpClient();
@@ -182,8 +189,41 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseExceptionHandler("/error/500");
-app.UseStatusCodePagesWithReExecute("/error/{0}");
+app.Use(async (context, next) =>
+{
+    string? path = context.Request.Path.Value;
+
+    if (path != null && path.StartsWith("/admin", StringComparison.OrdinalIgnoreCase))
+    {
+        context.Items["IsAdminArea"] = true;
+    }
+    else
+    {
+        context.Items["IsAdminArea"] = false;
+    }
+
+    await next();
+});
+
+app.UseWhen(
+    context => context.Items["IsAdminArea"] as bool? == true,
+    adminApp =>
+    {
+        adminApp.UseExceptionHandler("/admin/error/500");
+        adminApp.UseStatusCodePagesWithReExecute("/admin/error/{0}");
+    });
+
+app.UseWhen(
+    context => context.Items["IsAdminArea"] as bool? == false,
+    nonAdminApp =>
+    {
+        nonAdminApp.UseExceptionHandler("/error/500");
+        nonAdminApp.UseStatusCodePagesWithReExecute("/error/{0}");
+    });
+
+
+//app.UseExceptionHandler("/error/500");
+//app.UseStatusCodePagesWithReExecute("/error/{0}");
 
 app.UseStaticFiles();
 

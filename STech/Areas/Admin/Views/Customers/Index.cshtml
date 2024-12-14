@@ -8,9 +8,9 @@
 <section class="page-wrapper" data-page="customer">
     <div>
         <div class="d-flex align-items-center justify-content-between mb-3">
-            <a href="javascript:" class="page-btn btn-border-only show-form-add-customer">
+            <a href="javascript:" class="page-btn btn-green show-form-add-customer">
                 <i class="fa-solid fa-plus"></i>
-                <span>Thêm</span>
+                <span>Thêm khách hàng</span>
             </a>
             @await Html.PartialAsync("PartialViews/_PageSearchForm", new Tuple<string, string, string>("search-customers", "Tìm kiếm (mã, sđt, họ tên)", ViewBag.SearchValue))
         </div>

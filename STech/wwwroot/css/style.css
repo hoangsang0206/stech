@@ -2479,6 +2479,14 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
         padding-right: 1.5rem;
         font-size: 0.9rem;
     }
+
+    .chatbot-float-icon {
+        bottom: 8rem;
+    }
+
+    .change-theme {
+        display: none;
+    }
 }
 
 /* --------------------------- */
@@ -2577,6 +2585,10 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
 
     .to-top-btn {
         bottom: 5.5rem;
+    }
+
+    .chatbot-float-icon {
+        bottom: 8rem;
     }
 }
 

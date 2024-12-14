@@ -13,12 +13,15 @@ namespace STech.Services
         Task<IEnumerable<WarehouseProduct>> GetWarehouseProducts(string productId);
         Task<Warehouse?> GetWarehouseById(string warehouseId);
 
-        Task<bool> CreateWarehouse(WarehouseVM warehouse);
-        Task<bool> UpdateWarehouse(WarehouseVM warehouse);
+        Task<bool> CreateWarehouse(Warehouse warehouse);
+        Task<bool> UpdateWarehouse(Warehouse warehouse);
 
         Task<bool> CreateWarehouseExports(IEnumerable<WarehouseExport> warehouseExports);
         Task<bool> SubtractProductQuantity(IEnumerable<WarehouseExport> warehouseExports);
 
         Task<bool> CancelInvoiceWarehouseExports(string invoiceId);
+
+
+        Task<bool> CreateWarehouseImport(WarehouseImportVM import, string employeeId);
     }
 }

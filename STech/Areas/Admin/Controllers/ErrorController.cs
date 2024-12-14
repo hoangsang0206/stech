@@ -6,6 +6,12 @@ namespace STech.Areas.Admin.Controllers
     [Area("Admin"), AdminAuthorize]
     public class ErrorController : Controller
     {
+        [Route("/admin/error/{code:int}")]
+        public IActionResult Index(int code)
+        {
+            return View();
+        }
+
         [Route("/admin/error/unauthorized")]
         public IActionResult Error_Unauthorized()
         {

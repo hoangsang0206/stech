@@ -8,6 +8,16 @@ tippy('.delete-warehouse', {
     placement: 'top'
 })
 
+tippy('.view-inventory', {
+    content: 'Tồn kho',
+    placement: 'top'
+})
+
+tippy('.import-export-history', {
+    content: 'Lịch sử nhập xuất',
+    placement: 'top'
+})
+
 $('.show-add-warehouse').click(() => {
     showForm('.form-warehouse');
     $('.form-warehouse form').data('action', 'create');
@@ -44,6 +54,54 @@ $('.edit-warehouse').click(function () {
             } else {
                 showDialog('error', 'Đã xảy ra lỗi', response.message);
             }
+        }
+    })
+})
+
+$('.form-warehouse form').submit(function (e) {
+    e.preventDefault();
+
+    const isUpdate = $(this).data('action') === 'update';
+    const warehouseApiUrl = isUpdate ? `/api/admin/warehouses/update` : '/api/admin/warehouses/create';
+
+    const warehouse_id = $(this).find('#WarehouseId').val();
+    const warehouse_name = $(this).find('#WarehouseName').val();
+
+    const city = $(this).find('.city-select').val();
+    const district = $(this).find('.district-select').val();
+    const ward = $(this).find('.ward-select').val();
+    const address = $(this).find('.specific-address').val();
+
+    const submit_btn = $(this).find('button[type="submit"]');
+    const element_html = showButtonLoader(submit_btn, '23px', '4px');
+
+    $.ajax({
+        type: `${ isUpdate ? 'PUT' : 'POST'}`,
+        url: warehouseApiUrl,
+        contentType: 'application/json',
+        data: JSON.stringify({
+            WarehouseId: warehouse_id,
+            WarehouseName: warehouse_name,
+            ProvinceCode: city,
+            DistrictCode: district,
+            WardCode: ward,
+            Address: address
+        }),
+        success: (response) => {
+            if (response.status) {
+                showDialogWithCallback('success', isUpdate ? 'Cập nhật thành công' : 'Thêm thành công', response.message, () => {
+                    location.reload();
+                });
+                clearFormInput($(this));
+                closeForm($(this).closest('.form-container'));
+            } else {
+                showDialog('error', 'Đã xảy ra lỗi', response.message);
+            }
+
+            hideButtonLoader(submit_btn, element_html);
+        },
+        error: () => {
+            hideButtonLoader(submit_btn, element_html);
         }
     })
 })
