@@ -29,6 +29,8 @@ $(document).ready(() => {
     tippyButtons();
 })
 
+const isOrderDetailPage = $('[data-page="order-detail"]').length > 0 || false;
+
 const updateOrderList = (invoices) => { 
     $('.order-list').empty();
 
@@ -103,6 +105,10 @@ const updateOrderList = (invoices) => {
 }
 
 const loadOrders = (page, filer_by, sort_by) => {
+    if (isOrderDetailPage) {
+        return;
+    }
+
     $('#search').val(null);
 
     updateUrlPath(`/admin/orders`);
@@ -168,8 +174,15 @@ $(document).on('click', '.accept-order', function () {
                     hideWebLoader();
 
                     if (response.status) {
-                        loadOrders(current_page, filter_by, '');
-                        showDialog('success', 'Thành công', 'Đã xác nhận đơn hàng');
+                        if (isOrderDetailPage) {
+                            showDialogWithCallback('success', 'Thành công', 'Đã xác nhận đơn hàng', () => {
+                                location.reload();
+                            });
+                        } else {
+                            loadOrders(current_page, filter_by, '');
+                            showDialog('success', 'Thành công', 'Đã xác nhận đơn hàng');
+                        }
+
                     } else {
                         showDialog('error', 'Đã xảy ra lỗi', response.message);
                     }
@@ -244,4 +257,78 @@ $('.search-orders').submit(function (e) {
 $(document).on('click', '.view-order', function () {
     const order_id = $(this).data('order');
     window.location.href = `/admin/orders/detail?id=${order_id}`;
+})
+
+$(document).on('click', '.cancel-order', function () {
+    showConfirmDialog('Hủy đơn hàng', 'Bạn có chắc chắn muốn hủy đơn hàng này không?', () => {
+        const current_page = parseInt($('.pagination-item.current').data('page') || '1');
+        const filter_by = $('.orders-nav.active').data('load-orders') || '';
+        const order_id = $(this).data('order');
+
+        if (order_id) {
+            showWebLoader();
+
+            $.ajax({
+                type: 'PATCH',
+                url: `/api/admin/orders/cancel/${order_id}`,
+                success: (response) => {
+                    hideWebLoader();
+
+                    if (response.status) {
+                        if (isOrderDetailPage) {
+                            showDialogWithCallback('success', 'Thành công', 'Đã hủy đơn hàng', () => {
+                                location.reload();
+                            });
+                        } else {
+                            loadOrders(current_page, filter_by, '');
+                            showDialog('success', 'Thành công', 'Đã hủy đơn hàng');
+                        }
+                    } else {
+                        showDialog('error', 'Đã xảy ra lỗi', response.message);
+                    }
+                },
+                error: () => {
+                    hideWebLoader(0);
+                    showErrorDialog();
+                }
+            });
+        }
+    });
+})
+
+$(document).on('click', '.confirm-completed', function () {
+    showConfirmDialog('Xác nhận giao hàng', 'Xác nhận đơn hàng này đã được thanh toán và giao hàng thành công?', () => {
+        const current_page = parseInt($('.pagination-item.current').data('page') || '1');
+        const filter_by = $('.orders-nav.active').data('load-orders') || '';
+        const order_id = $(this).data('order');
+
+        if (order_id) {
+            showWebLoader();
+
+            $.ajax({
+                type: 'PATCH',
+                url: `/api/admin/orders/completed/${order_id}`,
+                success: (response) => {
+                    hideWebLoader();
+
+                    if (response.status) {
+                        if (isOrderDetailPage) {
+                            showDialogWithCallback('success', 'Thành công', 'Đã xác nhận hoàn thành đơn hàng', () => {
+                                location.reload();
+                            });
+                        } else {
+                            loadOrders(current_page, filter_by, '');
+                            showDialog('success', 'Thành công', 'Đã xác nhận hoàn thành đơn hàng');
+                        }
+                    } else {
+                        showDialog('error', 'Đã xảy ra lỗi', response.message);
+                    }
+                },
+                error: () => {
+                    hideWebLoader(0);
+                    showErrorDialog();
+                }
+            });
+        }
+    });
 })

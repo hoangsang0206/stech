@@ -198,6 +198,31 @@ namespace STech.Services.Services
             return invoice;
         }
 
+        public async Task<Invoice?> GetInvoiceWithAllDetails(string invoiceId)
+        {
+            Invoice? invoice = await _context.Invoices
+                .Where(i => i.InvoiceId == invoiceId)
+                .Include(i => i.PaymentMed)
+                .Include(i => i.InvoiceStatuses)
+                .Include(i => i.InvoiceDetails)
+                .ThenInclude(d => d.Product)
+                .ThenInclude(d => d.ProductImages)
+                .Include(i => i.PackingSlip)
+                .Include(i => i.User)
+                .Include(i => i.Employee)
+                .Include(i => i.Customer)
+                .FirstOrDefaultAsync();
+
+            if (invoice != null)
+            {
+                invoice.InvoiceDetails = invoice.InvoiceDetails
+                    .SelectDetail()
+                    .ToList();
+            }
+
+            return invoice;
+        }
+
         public async Task<IEnumerable<Invoice>> GetUserInvoices(string userId)
         {
             if (string.IsNullOrEmpty(userId))
@@ -281,6 +306,52 @@ namespace STech.Services.Services
             invoice.CancelledDate = DateTime.Now;
 
             _context.Invoices.Update(invoice);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> CancelOrder(string invoiceId)
+        {
+            Invoice? invoice = await _context.Invoices
+                .Where(i => i.InvoiceId == invoiceId)
+                .FirstOrDefaultAsync();
+
+            if (invoice == null)
+            {
+                return false;
+            }
+
+            if (invoice.IsCompleted)
+            {
+                return false;
+            }
+
+            invoice.IsCancelled = true;
+            invoice.CancelledDate = DateTime.Now;
+
+            _context.Invoices.Update(invoice);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> CompleteOrder(string invoiceId)
+        {
+            Invoice? invoice = await _context.Invoices
+                .Where(i => i.InvoiceId == invoiceId)
+                .FirstOrDefaultAsync();
+
+            if (invoice == null)
+            {
+                return false;
+            }
+
+            invoice.PaymentStatus = PaymentContants.Paid;
+            invoice.IsCompleted = true;
+            invoice.CompletedDate = DateTime.Now;
+
+            if (invoice.PackingSlip != null)
+            {
+                invoice.PackingSlip.IsCompleted = true;
+            }
+
             return await _context.SaveChangesAsync() > 0;
         }
 

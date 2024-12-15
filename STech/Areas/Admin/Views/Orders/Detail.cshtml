@@ -3,9 +3,43 @@
 @{
     ViewData["Title"] = "Chi tiết đơn hàng - STech Admin";
     ViewData["PageTitle"] = "Chi tiết đơn hàng";
+
+    string payment_status = "", order_status = "";
+
+    switch (Model.PaymentStatus)
+    {
+        case PaymentContants.Paid:
+            payment_status = "<span class=\"page-badge badge-success\">Đã thanh toán</span>";
+            break;
+
+        case PaymentContants.UnPaid:
+            payment_status = "<span class=\"page-badge badge-warning\">Chờ thanh toán</span>";
+            break;
+
+        case PaymentContants.PaymentFailed:
+            payment_status = "<span class=\"page-badge badge-error\">Thanh toán thất bại</span>";
+            break;
+    }
+
+    if (Model.IsCancelled)
+    {
+        order_status = "<span class=\"page-badge badge-error\">Đã hủy</span>";
+    }
+    else if (Model.IsCompleted)
+    {
+        order_status = "<span class=\"page-badge badge-success\">Đã giao hàng</span>";
+    }
+    else if (Model.IsAccepted)
+    {
+        order_status = "<span class=\"page-badge badge-warning\">Chờ giao hàng</span>";
+    }
+    else
+    {
+        order_status = "<span class=\"page-badge badge-warning\">Chờ xác nhận</span>";
+    }
 }
 
-<section>
+<section data-page="order-detail">
     <div class="row m-0 p-0">
 
         <div class="col-12 col-lg-7 p-0">
@@ -18,34 +52,48 @@
                 </div>
 
                 <div>
-                    <div class="d-flex gap-2">
-                        <button class="page-btn btn-blue">
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="page-btn btn-blue print-order" data-order="@Model.InvoiceId">
                             <i class="fa-solid fa-print"></i>
                             <span>In hóa đơn</span>
                         </button>
-                        <button class="page-btn btn-green">
-                            <i class="fa-solid fa-check"></i>
-                            <span>Xác nhận đơn</span>
-                        </button>
-                        <button class="page-btn btn-red">
-                            <i class="fa-solid fa-xmark"></i>
-                            <span>Hủy đơn</span>
-                        </button>
 
-                        <button class="page-btn btn-green">
-                            <i class="fa-solid fa-check"></i>
-                            <span>Xác nhận đã thanh toán</span>
-                        </button>
-                        <button class="page-btn btn-green">
-                            <i class="fa-solid fa-check"></i>
-                            <span>Xác nhận đã giao hàng</span>
-                        </button>
+                        @if (!Model.IsCancelled && !Model.IsCompleted) 
+                        {
+                            if (!Model.IsAccepted)
+                            {
+                                <button class="page-btn btn-green accept-order" data-order="@Model.InvoiceId">
+                                    <i class="fa-solid fa-check"></i>
+                                    <span>Xác nhận đơn</span>
+                                </button>
+                            }
+                            else 
+                            {
+                                <button class="page-btn btn-lightblue confirm-completed" data-order="@Model.InvoiceId">
+                                    <i class="fa-regular fa-circle-check"></i>
+                                    <span>Xác nhận đã giao hàng</span>
+                                </button>
+                            }
+
+                            @if (Model.PaymentStatus != PaymentContants.Paid)
+                            {
+                                @* <button class="page-btn btn-lightblue confirm-payment" data-order="@Model.InvoiceId">
+                                    <i class="fa-solid fa-money-check-dollar"></i>
+                                    <span>Xác nhận đã thanh toán</span>
+                                </button> *@
+                            }
+
+                            <button class="page-btn btn-red cancel-order" data-order="@Model.InvoiceId">
+                                <i class="fa-solid fa-xmark"></i>
+                                <span>Hủy đơn</span>
+                            </button>
+                        }
+                        
                     </div>
 
                     <div class="row m-0 p-0 mt-3">
 
-                        <div class="col-12 col-lg-6 ps-0">
-
+                        <div class="col-12 col-lg-5 ps-0">
                             <div>
                                 <span class="fw-bold text-nowrap">Mã đơn: </span>
                                 <span>@Model.InvoiceId</span>
@@ -56,10 +104,27 @@
                                 <span>@Model.OrderDate?.ToString("dd/MM/yyyy HH:mm")</span>
                             </div>
 
+                            <div class="mt-1">
+                                <span class="fw-bold text-nowrap">Ghi chú: </span>
+                                <span>@Model.Note</span>
+                            </div>
                         </div>
 
-                        <div class="col-12 col-lg-6 pe-0">
+                        <div class="col-12 col-lg-7 pe-0">
+                            <div class="mt-1">
+                                <span class="fw-bold text-nowrap">Phương thức thanh toán: </span>
+                                <span>@Model.PaymentMed.PaymentName</span>
+                            </div>
 
+                            <div class="mt-1">
+                                <span class="fw-bold text-nowrap">Trạng thái thanh toán: </span>
+                                <span>@Html.Raw(payment_status)</span>
+                            </div>
+
+                            <div class="mt-1">
+                                <span class="fw-bold text-nowrap">Trạng thái đơn hàng: </span>
+                                <span>@Html.Raw(order_status)</span>
+                            </div>
                         </div>
 
                     </div>
@@ -154,3 +219,7 @@
 
     </div>
 </section>
+
+@section Scripts {
+    <script src="~/admin/js/orders.js"></script>
+}

@@ -12,7 +12,7 @@ namespace STech.Areas.Admin.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly int _itemsPerPage = 30;
-        
+
         public OrdersController(IOrderService orderService)
         {
             _orderService = orderService;
@@ -53,7 +53,7 @@ namespace STech.Areas.Admin.Controllers
         [AdminAuthorize(Code = Functions.ViewInvoices)]
         public async Task<IActionResult> Detail(string id)
         {
-            Invoice? invoice = await _orderService.GetInvoice(id);
+            Invoice? invoice = await _orderService.GetInvoiceWithAllDetails(id);
             if (invoice == null)
             {
                 return NotFound();

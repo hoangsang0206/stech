@@ -16,6 +16,7 @@ namespace STech.Services
         Task<Invoice?> GetUserInvoice(string invoiceId, string userId);
         Task<Invoice?> GetUserCurrentOrder(string userId);
         Task<Invoice?> GetInvoiceWithDetails(string invoiceId);
+        Task<Invoice?> GetInvoiceWithAllDetails(string invoiceId);
         Task<Invoice?> GetInvoiceWithDetails(string invoiceId, string phone);
         Task<Invoice?> GetUserInvoiceWithDetails(string invoiceId, string userId);
         Task<IEnumerable<Invoice>> GetUserInvoices(string userId);
@@ -27,6 +28,8 @@ namespace STech.Services
         Task<bool> AddInvoiceStatus(InvoiceStatus invoiceStatus);
         Task<bool> UpdateInvoiceStatus(InvoiceStatus invoiceStatus);
         Task<bool> CancelOrder(string userId, string invoiceId);
+        Task<bool> CancelOrder(string invoiceId);
+        Task<bool> CompleteOrder(string invoiceId);
         Task<PagedList<Invoice>> GetInvoices(int page, int itemsPerPage, string? filterBy, string? sortBy);
         Task<PagedList<Invoice>> SearchInvoices(string query, int page, int itemsPerPage);
     }

@@ -9,6 +9,7 @@ using STech.Services.Utils;
 using STech.Utils;
 using System.Security.Claims;
 using STech.Contants;
+using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace STech.Areas.Admin.ApiControllers
 {
@@ -346,16 +347,68 @@ namespace STech.Areas.Admin.ApiControllers
                     Message = "Đơn hàng này đã được giao, không thể hủy"
                 });
             }
+            bool result = await _orderService.CancelOrder(oId);
 
-            invoice.IsCancelled = true;
-            invoice.CancelledDate = DateTime.Now;
-
-            bool result = await _orderService.UpdateInvoice(invoice);
+            if (result)
+            {
+                await _warehouseService.CancelInvoiceWarehouseExports(oId);
+            }
 
             return Ok(new ApiResponse
             {
                 Status = result,
-                Message = result ? "" : "Đã xảy ra lỗi"
+                Message = result ? "Hủy đơn hàng thành công" : "Không thể hủy đơn hàng này"
+            });
+        }
+
+        [HttpPatch("completed/{oId}")]
+        [AdminAuthorize(Code = Functions.EditInvoice)]
+        public async Task<IActionResult> CompleteOrder(string oId)
+        {
+            Invoice? invoice = await _orderService.GetInvoice(oId);
+
+            if (invoice == null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Không tìm thấy đơn hàng"
+                });
+            }
+
+            if (!invoice.IsAccepted)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Vui lòng xác nhận đơn hàng trước khi giao hàng"
+                });
+            }
+
+            if (invoice.IsCancelled)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Đơn hàng này đã hủy trước đó"
+                });
+            }
+
+            if (invoice.IsCompleted)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Đơn hàng này đã được giao"
+                });
+            }
+
+            bool result = await _orderService.CompleteOrder(oId);
+
+            return Ok(new ApiResponse
+            {
+                Status = result,
+                Message = result ? "Đã xác nhận hoàn thành đơn hàng" : "Không thể xác nhận hoàn thành đơn hàng"
             });
         }
 
