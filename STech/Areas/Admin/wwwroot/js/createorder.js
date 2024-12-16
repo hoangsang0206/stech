@@ -207,9 +207,13 @@ $(document).on('change', 'input[name="search-order-product"]', function () {
                     showDialog('error', 'Không thể thêm sản phẩm', 'Không tìm thấy sản phẩm này trong kho');
                 }
             },
-            error: () => {
+            error: (xhr, status, error) => {
                 hideWebLoader(0);
-                showErrorDialog();
+                if (xhr.status === 401) {
+                    showUnauthorizedDialog();
+                } else {
+                    showErrorDialog();
+                }
             }
         })
     }
@@ -246,9 +250,13 @@ $(document).on('blur', '.order-item-qty', function () {
                 removeItem(product_id);
             }
         },
-        error: () => {
+        error: (xhr, status, error) => {
             hideWebLoader(0);
-            showErrorDialog();
+            if (xhr.status === 401) {
+                showUnauthorizedDialog();
+            } else {
+                showErrorDialog();
+            }
         }
     })
 })
@@ -283,9 +291,13 @@ $(document).on('blur', '.order-item-sale-price', function () {
                 removeItem(product_id);
             }
         },
-        error: () => {
+        error: (xhr, status, error) => {
             hideWebLoader(0);
-            showErrorDialog();
+            if (xhr.status === 401) {
+                showUnauthorizedDialog();
+            } else {
+                showErrorDialog();
+            }
         }
     })
 })
@@ -361,9 +373,13 @@ $(document).on('change', 'input[name="search-customer"]', function () {
 
                 hideWebLoader(300);
             },
-            error: () => {
+            error: (xhr, status, error) => {
                 hideWebLoader(0);
-                showErrorDialog();
+                if (xhr.status === 401) {
+                    showUnauthorizedDialog();
+                } else {
+                    showErrorDialog();
+                }
             }
         })   
     }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using STech.Contants;
+using STech.Constants;
 using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Filters;

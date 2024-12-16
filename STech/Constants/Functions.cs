@@ -1,4 +1,4 @@
-namespace STech.Contants;
+namespace STech.Constants;
 
 public static class Functions
 {

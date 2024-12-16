@@ -8,7 +8,13 @@
     return _amout.toLocaleString('vi-VN') + 'đ';
 }
 
+const isOrderDetailPage = $('[data-page="order-detail"]').length > 0 || false;
+
 const tippyButtons = () => {
+    if (isOrderDetailPage) {
+        return;
+    }
+
     tippy('.view-order', {
         content: 'Xem chi tiết',
         placement: 'top'
@@ -28,8 +34,6 @@ const tippyButtons = () => {
 $(document).ready(() => {
     tippyButtons();
 })
-
-const isOrderDetailPage = $('[data-page="order-detail"]').length > 0 || false;
 
 const updateOrderList = (invoices) => { 
     $('.order-list').empty();
@@ -131,9 +135,13 @@ const loadOrders = (page, filer_by, sort_by) => {
                 updateOrderList(response.data.invoices);
             }
         },
-        error: () => {
+        error: (xhr, status, error) => {
             hideWebLoader(0);
-            showDialog('error', 'Đã xảy ra lỗi', 'Không thể tải danh sách đơn hàng');
+            if (xhr.status === 401) {
+                showUnauthorizedDialog();
+            } else {
+                showDialog('error', 'Đã xảy ra lỗi', 'Không thể tải danh sách đơn hàng');
+            }
         }
     })
 }
@@ -187,9 +195,13 @@ $(document).on('click', '.accept-order', function () {
                         showDialog('error', 'Đã xảy ra lỗi', response.message);
                     }
                 },
-                error: () => {
+                error: (xhr, status, error) => {
                     hideWebLoader(0);
-                    showErrorDialog();
+                    if (xhr.status === 401) {
+                        showUnauthorizedDialog();
+                    } else {
+                        showErrorDialog();
+                    }
                 }
             });
         }
@@ -245,9 +257,13 @@ $('.search-orders').submit(function (e) {
                     loadPagination(1, 1);
                 }
             },
-            error: () => {
+            error: (xhr, status, error) => {
                 hideWebLoader(0);
-                showErrorDialog();
+                if (xhr.status === 401) {
+                    showUnauthorizedDialog();
+                } else {
+                    showErrorDialog();
+                }
             }
         })
     }
@@ -287,9 +303,13 @@ $(document).on('click', '.cancel-order', function () {
                         showDialog('error', 'Đã xảy ra lỗi', response.message);
                     }
                 },
-                error: () => {
+                error: (xhr, status, error) => {
                     hideWebLoader(0);
-                    showErrorDialog();
+                    if (xhr.status === 401) {
+                        showUnauthorizedDialog();
+                    } else {
+                        showErrorDialog();
+                    }
                 }
             });
         }
@@ -324,9 +344,13 @@ $(document).on('click', '.confirm-completed', function () {
                         showDialog('error', 'Đã xảy ra lỗi', response.message);
                     }
                 },
-                error: () => {
+                error: (xhr, status, error) => {
                     hideWebLoader(0);
-                    showErrorDialog();
+                    if (xhr.status === 401) {
+                        showUnauthorizedDialog();
+                    } else {
+                        showErrorDialog();
+                    }
                 }
             });
         }

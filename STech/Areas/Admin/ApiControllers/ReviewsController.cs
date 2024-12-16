@@ -5,7 +5,7 @@ using STech.Data.ViewModels;
 using STech.Filters;
 using STech.Services;
 using System.Security.Claims;
-using STech.Contants;
+using STech.Constants;
 
 namespace STech.Areas.Admin.ApiControllers
 {

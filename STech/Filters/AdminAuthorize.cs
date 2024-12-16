@@ -49,11 +49,18 @@ namespace STech.Filters
 
                 if(!permissions.Contains(Code))
                 {
-                    context.HttpContext.Response.Redirect("/admin/error/unauthorized");
+                    if (requestPath != null && requestPath.StartsWith("/api/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        context.Result = new UnauthorizedResult();
+                        return;
+                    }
+                    else
+                    {
+                        context.HttpContext.Response.Redirect("/admin/error/unauthorized");
+                        return;
+                    }
                 }
             }
-                
-            context.HttpContext.Response.Redirect("/admin/error/unauthorized");
         }
     }
 }

@@ -8,7 +8,7 @@ using STech.Services.Services;
 using STech.Services.Utils;
 using STech.Utils;
 using System.Security.Claims;
-using STech.Contants;
+using STech.Constants;
 using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace STech.Areas.Admin.ApiControllers

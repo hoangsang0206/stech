@@ -70,8 +70,10 @@ $(document).on('click', '.edit-category', function () {
                 showDialog('error', response.message)
             }
         },
-        error: () => {
-
+        error: (xhr, status, error) => {
+            if (xhr.status === 401) {
+                showUnauthorizedDialog();
+            }
         }
     })
 })
@@ -94,9 +96,13 @@ $(document).on('click', '.delete-category', function () {
                     showDialog('error', response.message)
                 }
             },
-            error: () => {
+            error: (xhr, status, error) => {
                 hideWebLoader(0);
-                showErrorDialog();
+                if (xhr.status === 401) {
+                    showUnauthorizedDialog();
+                } else {
+                    showErrorDialog();
+                }
             }
         })
     })

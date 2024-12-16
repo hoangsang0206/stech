@@ -166,6 +166,10 @@ const showConfirmDialog = (title, message, callback) => {
     });
 }
 
+const showUnauthorizedDialog = () => {
+    showDialog('error', 'Không có quyền truy cập', 'Bạn không có quyền truy cập chức năng này')
+}
+
 const showForm = (form_container) => {
     $(form_container).addClass('show');
 

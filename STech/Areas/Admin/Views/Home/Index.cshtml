@@ -170,7 +170,7 @@
                         <div class="d-flex gap-2 align-items-center justify-content-between pb-3 mb-1">
                             <div class="d-flex gap-2 align-items-center">
                                 <div class="lazy-loading">
-                                    <img class="top-user-avatar" lazy-src="@user.Avatar" alt="" />
+                                    <img class="top-user-avatar" lazy-src="@(user.Avatar ?? "/images/user-no-image.svg")" alt="" />
                                 </div>
                                 <span class="top-user-name text-overflow-1">@(user.FullName ?? user.Username)</span>
                             </div>

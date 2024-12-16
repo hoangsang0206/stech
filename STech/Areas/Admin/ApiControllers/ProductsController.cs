@@ -9,7 +9,7 @@ using STech.Services;
 using STech.Utils;
 using System.Text.RegularExpressions;
 using STech.Areas.Admin.Utils;
-using STech.Contants;
+using STech.Constants;
 
 namespace STech.Areas.Admin.ApiControllers
 {

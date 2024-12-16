@@ -138,9 +138,13 @@ $('.click-delete-product').click(function () {
                     showDialog('error', 'Không thể xóa sản phẩm', null);
                 }
             },
-            error: () => {
+            error: (xhr, status, error) => {
                 hideWebLoader(0);
-                showDialog('error', 'Không thể xóa sản phẩm', null);
+                if (xhr.status === 401) {
+                    showUnauthorizedDialog();
+                } else {
+                    showDialog('error', 'Không thể xóa sản phẩm', null);
+                }
             }
         })
     })
@@ -164,9 +168,13 @@ $('.click-restore-product').click(function () {
                     showDialog('error', 'Không thể khôi phục sản phẩm', null);
                 }
             },
-            error: () => {
+            error: (xhr, status, error) => {
                 hideWebLoader(0);
-                showDialog('error', 'Không thể khôi phục sản phẩm', null);
+                if (xhr.status === 401) {
+                    showUnauthorizedDialog();
+                } else {
+                    showDialog('error', 'Không thể khôi phục sản phẩm', null);
+                }
             }
         })
     })
@@ -190,9 +198,13 @@ $('.click-activate-product').click(function () {
                     showDialog('error', 'Không thể hiện sản phẩm', null);
                 }
             },
-            error: () => {
+            error: (xhr, status, error) => {
                 hideWebLoader(0);
-                showDialog('error', 'Không thể hiện sản phẩm', null);
+                if (xhr.status === 401) {
+                    showUnauthorizedDialog();
+                } else {
+                    showDialog('error', 'Không thể hiện sản phẩm', null);
+                }
             }
         })
     })
@@ -216,9 +228,13 @@ $('.click-deactivate-product').click(function () {
                     showDialog('error', 'Không thể ẩn sản phẩm', null);
                 }
             },
-            error: () => {
+            error: (xhr, status, error) => {
                 hideWebLoader(0);
-                showDialog('error', 'Không thể ẩn sản phẩm', null);
+                if (xhr.status === 401) {
+                    showUnauthorizedDialog();
+                } else {
+                    showDialog('error', 'Không thể ẩn sản phẩm', null);
+                }
             }
         })
     })
@@ -310,9 +326,11 @@ $('#update-product').submit(function(e) {
 
             hideWebLoader(300);
         },
-        error: () => {
-            showErrorDialog();
+        error: (xhr, status, error) => {
             hideWebLoader(0);
+            if (xhr.status === 401) {
+                showUnauthorizedDialog();
+            }
         }
     })
 })
@@ -344,8 +362,11 @@ $('#create-product').submit(function(e) {
 
             hideWebLoader(300);
         },
-        error: () => {
+        error: (xhr, status, error) => {
             hideWebLoader(0);
+            if (xhr.status === 401) {
+                showUnauthorizedDialog();
+            }
         }
     })
 })

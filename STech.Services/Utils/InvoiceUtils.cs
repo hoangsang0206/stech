@@ -67,7 +67,7 @@ namespace STech.Services.Utils
         {
             if (sortBy == null)
             {
-                return invoices;
+                return invoices.OrderByDescending(i => i.OrderDate);
             }
 
             switch (sortBy)

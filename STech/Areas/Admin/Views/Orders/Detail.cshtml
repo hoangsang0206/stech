@@ -4,6 +4,7 @@
     ViewData["Title"] = "Chi tiết đơn hàng - STech Admin";
     ViewData["PageTitle"] = "Chi tiết đơn hàng";
 
+    int index = 1;
     string payment_status = "", order_status = "";
 
     switch (Model.PaymentStatus)
@@ -42,7 +43,7 @@
 <section data-page="order-detail">
     <div class="row m-0 p-0">
 
-        <div class="col-12 col-lg-7 p-0">
+        <div class="col-12 col-lg-8 p-0">
 
             <div class="page-content-box no-border">
                 <div class="d-flex align-items-start justify-content-between">
@@ -88,41 +89,41 @@
                                 <span>Hủy đơn</span>
                             </button>
                         }
-                        
+
                     </div>
 
                     <div class="row m-0 p-0 mt-3">
 
                         <div class="col-12 col-lg-5 ps-0">
                             <div>
-                                <span class="fw-bold text-nowrap">Mã đơn: </span>
+                                <span class="fw-bold text-nowrap">Mã đơn:&nbsp;&nbsp;</span>
                                 <span>@Model.InvoiceId</span>
                             </div>
 
                             <div class="mt-1">
-                                <span class="fw-bold text-nowrap">Ngày đặt: </span>
+                                <span class="fw-bold text-nowrap">Ngày đặt:&nbsp;&nbsp;</span>
                                 <span>@Model.OrderDate?.ToString("dd/MM/yyyy HH:mm")</span>
                             </div>
 
                             <div class="mt-1">
-                                <span class="fw-bold text-nowrap">Ghi chú: </span>
+                                <span class="fw-bold text-nowrap">Ghi chú:&nbsp;&nbsp;</span>
                                 <span>@Model.Note</span>
                             </div>
                         </div>
 
                         <div class="col-12 col-lg-7 pe-0">
                             <div class="mt-1">
-                                <span class="fw-bold text-nowrap">Phương thức thanh toán: </span>
+                                <span class="fw-bold text-nowrap">Phương thức thanh toán:&nbsp;&nbsp;</span>
                                 <span>@Model.PaymentMed.PaymentName</span>
                             </div>
 
                             <div class="mt-1">
-                                <span class="fw-bold text-nowrap">Trạng thái thanh toán: </span>
+                                <span class="fw-bold text-nowrap">Trạng thái thanh toán:&nbsp;&nbsp;</span>
                                 <span>@Html.Raw(payment_status)</span>
                             </div>
 
                             <div class="mt-1">
-                                <span class="fw-bold text-nowrap">Trạng thái đơn hàng: </span>
+                                <span class="fw-bold text-nowrap">Trạng thái đơn hàng:&nbsp;&nbsp;</span>
                                 <span>@Html.Raw(order_status)</span>
                             </div>
                         </div>
@@ -143,6 +144,34 @@
                         </div>
 
                         <div>
+                            @if (Model.User != null) 
+                            {
+                                <div class="d-flex gap-3 align-items-center">
+                                    <div class="user-image-wrapper">
+                                        <img src="@(Model.User.Avatar ?? "/images/user-no-image.svg")" alt="" />
+                                    </div>
+                                    <span class="fw-bold">@Model.User.Username</span>
+                                </div>
+
+                                <div class="mt-1">
+                                    <span class="fw-bold text-nowrap">Họ tên:&nbsp;&nbsp;</span>
+                                    <span>@(Model.User.FullName ?? "--" )</span>
+                                </div>
+
+                                <div class="mt-1">
+                                    <span class="fw-bold text-nowrap">Số ĐT:&nbsp;&nbsp;</span>
+                                    <span>@(Model.User.Phone ?? "--")</span>
+                                </div>
+
+                                <div class="mt-1">
+                                    <span class="fw-bold text-nowrap">Email:&nbsp;&nbsp;</span>
+                                    <span>@(Model.User.Email ?? "--")</span>
+                                </div>
+                            }
+                            else 
+                            {
+                                <span>--</span>
+                            }
                         </div>
                     </div>
                 </div>
@@ -151,11 +180,26 @@
                     <div class="page-content-box no-border">
                         <div class="d-flex align-items-start justify-content-between">
                             <div class="page-content-header">
-                                Thông tin người nhận
+                                Thông tin nhận hàng
                             </div>
+                            <a href="javascript:" class="btn-icon edit-recipient">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                            </a>
                         </div>
 
                         <div>
+                            <div class="mt-1">
+                                <span class="fw-bold text-nowrap">Họ tên người nhận:&nbsp;&nbsp;</span>
+                                <span>@(Model.RecipientName ?? "--")</span>
+                            </div>
+                            <div class="mt-1">
+                                <span class="fw-bold text-nowrap">Số ĐT:&nbsp;&nbsp;</span>
+                                <span>@(Model.RecipientPhone ?? "--")</span>
+                            </div>
+                            <div class="mt-1">
+                                <span class="fw-bold text-nowrap">Địa chỉ giao:&nbsp;&nbsp;</span>
+                                <span>@(Model.DeliveryAddress ?? "--")</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -171,12 +215,62 @@
                 </div>
 
                 <div>
+                    <div class="page-table-wrapper mt-2">
+                        <table class="page-table">
+                            <thead class="page-table-header">
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mã sản phảm</th>
+                                    <th>Hình ảnh</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Giá gốc</th>
+                                    <th>Giá bán</th>
+                                    <th>SL</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var detail in Model.InvoiceDetails)
+                                {
+                                    Product product = detail.Product;
+                                    string imageUrl = product.ProductImages
+                                        .FirstOrDefault()?.ImageSrc ?? "/images/no-image.jpg";
+
+                                    <tr>
+                                        <td>@index</td>
+                                        <td>@detail.ProductId</td>
+                                        <td>
+                                            <div class="lazy-loading">
+                                                <img lazy-src="@imageUrl" alt="" style="width: 2rem">
+                                            </div>
+                                        </td>
+                                        <td><span class="text-overflow-2">@product.ProductName</span></td>
+                                        <td>@CurrencyFormatter.Format(product.Price)</td>
+                                        <td>@CurrencyFormatter.Format(detail.Cost)</td>
+                                        <td>@detail.Quantity</td>
+                                        <td>@CurrencyFormatter.Format(detail.Quantity * detail.Cost)</td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><span class="fw-bold text-nowrap">Tổng cộng:</span></td>
+                                    <td>@Model.InvoiceDetails.Sum(i => i.Quantity)</td>
+                                    <td>@CurrencyFormatter.Format(Model.InvoiceDetails.Sum(i => i.Cost * i.Quantity))</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>          
                 </div>
             </div>
 
         </div>
 
-        <div class="col-12 col-lg-5 p-0 ps-lg-3">
+        <div class="col-12 col-lg-4 p-0 ps-lg-3">
 
             <div class="page-content-box no-border">
                 <div class="d-flex align-items-start justify-content-between">
@@ -186,6 +280,7 @@
                 </div>
 
                 <div>
+                    <span>--</span>
                 </div>
             </div>
 
@@ -201,6 +296,7 @@
                 </div>
 
                 <div>
+                    <span>--</span>
                 </div>
             </div>
 
@@ -212,6 +308,18 @@
                 </div>
 
                 <div>
+                    <div class="d-flex gap-2 align-items-center justify-content-between">
+                        <span class="fw-bold">Tạm tính:</span>
+                        <span>@CurrencyFormatter.Format(Model.SubTotal)</span>
+                    </div>
+                    <div class="d-flex gap-2 align-items-center justify-content-between">
+                        <span class="fw-bold">Phí vận chuyển:</span>
+                        <span>@(Model.PackingSlip != null ? CurrencyFormatter.Format(Model.PackingSlip.DeliveryFee) : "--")</span>
+                    </div>
+                    <div class="d-flex gap-2 align-items-center justify-content-between">
+                        <span class="fw-bold">Tổng tiền:</span>
+                        <span style="font-size: 1.1rem; font-weight: 600; color: #0859ec">@CurrencyFormatter.Format(Model.Total)</span>
+                    </div>
                 </div>
             </div>
 

@@ -241,7 +241,7 @@ namespace STech.Services.Services
         public async Task<IEnumerable<Invoice>> GetRecentOrders(int numToTake)
         {
             return await _context.Invoices
-                .Where(i => i.IsAccepted == false)
+                .Where(i => !i.IsAccepted)
                 .Include(i => i.InvoiceStatuses)
                 .Include(i => i.InvoiceDetails)
                 .OrderByDescending(i => i.OrderDate)

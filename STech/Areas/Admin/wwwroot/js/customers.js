@@ -50,8 +50,11 @@ $('.form-customer form').submit(function (e) {
 
             hideButtonLoader(submit_btn, element_html);
         },
-        error: () => {
+        error: (xhr, status, error) => {
             hideButtonLoader(submit_btn, element_html);
+            if (xhr.status === 401) {
+                showUnauthorizedDialog();
+            }
         }
     })
 })
@@ -94,8 +97,11 @@ $(document).on('click', '.edit-customer', function () {
                 showDialog('error', response.message, null);
             }
         },
-        error: () => {
-
+        error: (xhr, status, error) => {
+            hideWebLoader(0);
+            if (xhr.status === 401) {
+                showUnauthorizedDialog();
+            }
         }
     })
 })
@@ -118,9 +124,13 @@ $(document).on('click', '.delete-customer', function () {
                     showDialog('error', 'Không thể xóa khách hàng', null);
                 }
             },
-            error: () => {
+            error: (xhr, status, error) => {
                 hideWebLoader(0);
-                showDialog('error', 'Không thể xóa khách hàng', null);
+                if (xhr.status === 401) {
+                    showUnauthorizedDialog();
+                } else {
+                    showErrorDialog();
+                }
             }
         })
     })

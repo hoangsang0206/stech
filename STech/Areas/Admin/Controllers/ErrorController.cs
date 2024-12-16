@@ -9,6 +9,16 @@ namespace STech.Areas.Admin.Controllers
         [Route("/admin/error/{code:int}")]
         public IActionResult Index(int code)
         {
+            if (code == 404)
+            {
+                return View("Error_NotFound");
+            }
+
+            if (code == 401)
+            {
+                return View("Error_Unauthorized");
+            }
+
             return View();
         }
 
