@@ -138,6 +138,7 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IDeliveryService, DeliveryService>();
 builder.Services.AddScoped<IReviewService, STech.Services.Services.ReviewService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
+builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 
 builder.Services.AddScoped<IVNPayService, VNPayService>();

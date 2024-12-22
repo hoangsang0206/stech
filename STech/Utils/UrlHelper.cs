@@ -4,8 +4,19 @@ using System.Web;
 
 namespace STech.Utils
 {
-    public class UrlHelper
+    public static class UrlHelper
     {
+        public static string? RemoveHash(this string? url)
+        {
+            int hashIndex = url?.IndexOf('#') ?? 0;
+            if (hashIndex >= 0)
+            {
+                return url?.Substring(0, hashIndex);
+            }
+
+            return url;
+        }
+
         public static string AddOrUpdateQueryParam(string currentUrl, string paramName, string paramValue)
         {
             UriBuilder uriBuilder = new UriBuilder(currentUrl);

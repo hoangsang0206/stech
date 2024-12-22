@@ -50,15 +50,6 @@
             </li>
 
             <li>
-                <div class="sidebar-item @(ViewBag.ActiveSidebar == "customers" ? "active" : "")">
-                    <a class="sidebar-link" href="/admin/customers">
-                        <i class="sidebar-icon fa-solid fa-users"></i>
-                        <span class="sidebar-text">Khách hàng</span>
-                    </a>
-                </div>
-            </li>
-
-            <li>
                 <div class="sidebar-item @(ViewBag.ActiveSidebar == "products" ? "active" : "")">
                     <a class="sidebar-link" href="/admin/products">
                         <i class="sidebar-icon fa-solid fa-boxes-packing"></i>
@@ -140,11 +131,28 @@
             </li>
 
             <li>
-                <div class="sidebar-item @(ViewBag.ActiveSidebar == "employees" ? "active" : "")">
-                    <a class="sidebar-link" href="/admin/employees">
-                        <i class="sidebar-icon fa-solid fa-building-user"></i>
-                        <span class="sidebar-text">Nhân viên</span>
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "warranty-return" ? "active" : "")">
+                    <a class="sidebar-link" href="javascript:">
+                        <i class="sidebar-icon fa-solid fa-screwdriver-wrench"></i>
+                        <span class="sidebar-text">Bảo hành/Đổi trả</span>
                     </a>
+                    <i class="sidebar-arrow fa-solid fa-chevron-right"></i>
+                </div>
+                <div class="sidebar-expandation">
+                    <ul>
+                        <li>
+                            <a href="javascript:">Danh sách phiếu bảo hành</a>
+                        </li>
+                        <li>
+                            <a href="javascript:">Danh sách phiếu đổi trả</a>
+                        </li>
+                        <li>
+                            <a href="javascript:">Tạo phiếu bảo hành</a>
+                        </li>
+                        <li>
+                            <a href="javascript:">Tạo phiếu đổi trả</a>
+                        </li>
+                    </ul>
                 </div>
             </li>
 
@@ -167,15 +175,27 @@
                         <li>
                             <a href="/admin/warehouses/export">Xuất kho</a>
                         </li>
+                        <li>
+                            <a href="/admin/suppliers">Danh sách nhà cung cấp</a>
+                        </li>
                     </ul>
                 </div>
             </li>
 
             <li>
-                <div class="sidebar-item @(ViewBag.ActiveSidebar == "reports" ? "active" : "")">
-                    <a class="sidebar-link" href="javascript:void(0)">
-                        <i class="sidebar-icon fa-solid fa-chart-bar"></i>
-                        <span class="sidebar-text">Báo cáo/thống kê</span>
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "customers" ? "active" : "")">
+                    <a class="sidebar-link" href="/admin/customers">
+                        <i class="sidebar-icon fa-solid fa-users"></i>
+                        <span class="sidebar-text">Khách hàng</span>
+                    </a>
+                </div>
+            </li>
+
+            <li>
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "employees" ? "active" : "")">
+                    <a class="sidebar-link" href="/admin/employees">
+                        <i class="sidebar-icon fa-solid fa-building-user"></i>
+                        <span class="sidebar-text">Nhân viên</span>
                     </a>
                 </div>
             </li>
@@ -200,6 +220,15 @@
                             <a href="#">Phân quyền chức năng</a>
                         </li>
                     </ul>
+                </div>
+            </li>
+
+            <li>
+                <div class="sidebar-item @(ViewBag.ActiveSidebar == "reports" ? "active" : "")">
+                    <a class="sidebar-link" href="javascript:void(0)">
+                        <i class="sidebar-icon fa-solid fa-chart-bar"></i>
+                        <span class="sidebar-text">Báo cáo/thống kê</span>
+                    </a>
                 </div>
             </li>
 

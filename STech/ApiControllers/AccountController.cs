@@ -11,7 +11,6 @@ using STech.Utils;
 using STech.Services.Services;
 using STech.Services.Utils;
 using STech.Config;
-using System.Text.Json;
 using Newtonsoft.Json;
 using IAuthorizationService = STech.Services.IAuthorizationService;
 
@@ -132,7 +131,7 @@ namespace STech.ApiControllers
                 return Ok(new ApiResponse
                 {
                     Status = true,
-                    Data = user.RoleId == "admin" ? "/admin" : login.ReturnUrl ?? "/"
+                    Data = user.RoleId == "admin" ? "/admin" : login.ReturnUrl.RemoveHash() ?? "/"
                 });
             }
             else
@@ -185,7 +184,7 @@ namespace STech.ApiControllers
                     return Ok(new ApiResponse
                     {
                         Status = true,
-                        Data = user.RoleId == "admin" ? "/admin" : register.ReturnUrl ?? "/"
+                        Data = user.RoleId == "admin" ? "/admin" : register.ReturnUrl.RemoveHash() ?? "/"
                     });
                 }
 

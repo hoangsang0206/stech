@@ -837,7 +837,7 @@ $('.login form').submit(function (e) {
             }
         },
         error: (jqXHR) => {
-            renderTurnstile('.register');
+            renderTurnstile('.login');
         }
     })
 })

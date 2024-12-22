@@ -19,7 +19,11 @@ namespace STech.Services.Utils
                 IsActive = p.IsActive,
                 IsDeleted = p.IsDeleted,
                 DateDeleted = p.DateDeleted,
-                SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true).Take(1).ToList(),
+                SaleProducts = p.SaleProducts
+                    .Where(sp => sp.Sale.IsActive == true
+                            && sp.Sale.StartDate <= DateTime.Now
+                            && sp.Sale.EndDate > DateTime.Now)
+                    .Take(1).ToList(),
                 Reviews = p.Reviews
                     .Where(r => r.IsProceeded == true)
                     .Select(r => new Review
@@ -45,7 +49,11 @@ namespace STech.Services.Utils
                 IsActive = p.IsActive,
                 IsDeleted = p.IsDeleted,
                 DateDeleted = p.DateDeleted,
-                SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true).Take(1).ToList(),
+                SaleProducts = p.SaleProducts
+                    .Where(sp => sp.Sale.IsActive == true
+                            && sp.Sale.StartDate <= DateTime.Now
+                            && sp.Sale.EndDate > DateTime.Now)
+                    .Take(1).ToList(),
                 Reviews = p.Reviews
                     .Where(r => r.IsProceeded == true)
                     .Select(r => new Review
@@ -71,7 +79,11 @@ namespace STech.Services.Utils
                 IsActive = p.IsActive,
                 IsDeleted = p.IsDeleted,
                 DateDeleted = p.DateDeleted,
-                SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true).Take(1).ToList(),
+                SaleProducts = p.SaleProducts
+                    .Where(sp => sp.Sale.IsActive == true
+                            && sp.Sale.StartDate <= DateTime.Now
+                            && sp.Sale.EndDate > DateTime.Now)
+                    .Take(1).ToList(),
                 Reviews = p.Reviews
                     .Where(r => r.IsProceeded == true)
                     .Select(r => new Review

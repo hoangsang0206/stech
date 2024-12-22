@@ -214,18 +214,7 @@ namespace STech.Services.Services
             return await _context.Products
                 .Where(p => p.IsActive == true && p.InvoiceDetails.Count() > 0)
                 .OrderByDescending(p => p.InvoiceDetails.Sum(i => i.Quantity))
-                .Select(p => new Product
-                {
-                    ProductId = p.ProductId,
-                    ProductName = p.ProductName,
-                    OriginalPrice = p.OriginalPrice,
-                    Price = p.Price,
-                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
-                    WarehouseProducts = p.WarehouseProducts,
-                    BrandId = p.BrandId,
-                    CategoryId = p.CategoryId,
-                    InvoiceDetails = p.InvoiceDetails
-                })
+                .SelectProduct()
                 .Take(numToTake)
                 .ToListAsync();
         }
@@ -262,7 +251,10 @@ namespace STech.Services.Services
                     Warranty = p.Warranty,
                     IsActive = p.IsActive,
                     IsDeleted = p.IsDeleted,
-                    SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true)
+                    SaleProducts = p.SaleProducts
+                    .Where(sp => sp.Sale.IsActive == true
+                        && sp.Sale.StartDate <= DateTime.Now
+                        && sp.Sale.EndDate > DateTime.Now)
                     .Select(sp => new SaleProduct
                     {
                         SaleId = sp.SaleId,
@@ -289,7 +281,11 @@ namespace STech.Services.Services
                     WarehouseProducts = p.WarehouseProducts,
                     Brand = p.Brand,
                     Category = p.Category,
-                    SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true).Take(1).ToList(),
+                    SaleProducts = p.SaleProducts
+                    .Where(sp => sp.Sale.IsActive == true
+                            && sp.Sale.StartDate <= DateTime.Now
+                            && sp.Sale.EndDate > DateTime.Now)
+                    .Take(1).ToList(),
                 })
                 .FirstOrDefaultAsync();
         }

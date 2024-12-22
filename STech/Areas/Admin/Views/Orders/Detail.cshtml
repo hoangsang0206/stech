@@ -4,6 +4,8 @@
     ViewData["Title"] = "Chi tiết đơn hàng - STech Admin";
     ViewData["PageTitle"] = "Chi tiết đơn hàng";
 
+    var status = Model.InvoiceStatuses.OrderByDescending(i => i.DateUpdated);
+
     int index = 1;
     string payment_status = "", order_status = "";
 

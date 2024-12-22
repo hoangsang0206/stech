@@ -40,7 +40,11 @@ namespace STech.Services.Services
                         ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
                         WarehouseProducts = p.WarehouseProducts,
                         Brand = p.Brand,
-                        SaleProducts = p.SaleProducts.Where(sp => sp.Sale.IsActive == true).Take(1).ToList()
+                        SaleProducts = p.SaleProducts
+                            .Where(sp => sp.Sale.IsActive == true
+                                && sp.Sale.StartDate <= DateTime.Now
+                                && sp.Sale.EndDate > DateTime.Now)
+                            .Take(1).ToList()
                     }).Take(numProducts).ToList(),
                 })
                 .Take(numCategories)
