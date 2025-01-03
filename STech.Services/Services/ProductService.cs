@@ -37,7 +37,7 @@ namespace STech.Services.Services
                     ProductName = p.ProductName,
                     OriginalPrice = p.OriginalPrice,
                     Price = p.Price,
-                    ProductImages = p.ProductImages,
+                    ProductImages = p.ProductImages.OrderBy(i => i.Sort).ToList(),
                     BrandId = p.BrandId,
                     Brand = p.Brand,
                     ShortDescription = p.ShortDescription,
@@ -238,7 +238,7 @@ namespace STech.Services.Services
                     ProductName = p.ProductName,
                     OriginalPrice = p.OriginalPrice,
                     Price = p.Price,
-                    ProductImages = p.ProductImages,
+                    ProductImages = p.ProductImages.OrderBy(i => i.Sort).ToList(),
                     WarehouseProducts = p.WarehouseProducts,
                     BrandId = p.BrandId,
                     Brand = p.Brand,
@@ -277,7 +277,7 @@ namespace STech.Services.Services
                     ProductName = p.ProductName,
                     OriginalPrice = p.OriginalPrice,
                     Price = p.Price,
-                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
+                    ProductImages = p.ProductImages.OrderBy(pp => pp.Sort).Take(1).ToList(),
                     WarehouseProducts = p.WarehouseProducts,
                     Brand = p.Brand,
                     Category = p.Category,
@@ -301,7 +301,7 @@ namespace STech.Services.Services
                     ProductName = p.ProductName,
                     OriginalPrice = p.OriginalPrice,
                     Price = p.Price,
-                    ProductImages = p.ProductImages.OrderBy(pp => pp.Id).Take(1).ToList(),
+                    ProductImages = p.ProductImages.OrderBy(pp => pp.Sort).Take(1).ToList(),
                     WarehouseProducts = p.WarehouseProducts,
                     Brand = p.Brand,
                     Category = p.Category,
@@ -385,7 +385,8 @@ namespace STech.Services.Services
                 {
                     _product.ProductImages.Add(new ProductImage
                     {
-                        ImageSrc = image.ImageSrc
+                        ImageSrc = image.ImageSrc,
+                        Sort = image.Sort
                     });
                 }
             }
@@ -440,27 +441,35 @@ namespace STech.Services.Services
 
             if(product.Images != null && product.Images.Count > 0 && !product.Images.Any(i => i == null))
             {
-                foreach(ProductVM.Image image in product.Images)
+                int sort = 1;
+                foreach(ProductVM.Image image in product.Images.OrderBy(i => i.Sort))
                 {
                     if(image.Id != null)
                     {
-                        if (image.Status == "deleted")
+                        ProductImage? pImage = await _context.ProductImages.FindAsync(image.Id);
+                        if (pImage != null)
                         {
-                            ProductImage? pImage = await _context.ProductImages.FindAsync(image.Id);
-                            if (pImage != null)
+                            if (image.Status == "deleted")
                             {
                                 _context.ProductImages.Remove(pImage);
                             }
-                        }
+                            else
+                            {
+                                pImage.Sort = sort;
+                            }
+                        } 
                     } 
                     else
                     {
                         await _context.ProductImages.AddAsync(new ProductImage
                         {
                             ProductId = product.ProductId,
-                            ImageSrc = image.ImageSrc
+                            ImageSrc = image.ImageSrc,
+                            Sort = sort
                         });
                     }
+
+                    sort++;
                 }
 
                 await _context.SaveChangesAsync();

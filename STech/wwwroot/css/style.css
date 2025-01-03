@@ -54,18 +54,26 @@
     --header-btn-background-3: #FD7272;
     --header-btn-background-4: #009432;
 
+    --primary-content-color: #fff;
+
+    --color-green: #44bd32;
+    --color-green-hover: #8ff480;
+    --color-red: #e30019;
+    --color-red-hover: #f37684;
+    --color-blue: #0859ec;
+    --color-blue-hover: #518bf6;
+    --color-lightblue: #00c0ec;
+    --color-lightblue-hover: #8ae4f8;
+
     --border-color: #dcdcdc;
     --box-shadow: 1px 1px 5px -1px #00000070, -1px -1px 5px -1px #00000070;
-
     --rating-color: #ff8a00;
-
     /*--transition---------*/
     --trans-all-05: all .5s ease;
     --trans-all-04: all .4s ease;
     --trans-all-03: all .3s ease;
     --trans-all-02: all .2s ease;
     --radius: 0.3rem;
-
     --loader-color: var(--loader-color-light);
     --loader-color-light: #fff;
     --loader-color-dark: #000;
@@ -615,6 +623,80 @@ button:disabled:hover {
     font-weight: 500;
 }
 
+.page-table-btn, .page-btn, .page-btn-small {
+    border: none;
+    background: var(--primary-color);
+    font-size: 1rem;
+    color: var(--primary-content-color);
+    padding: 0.3rem 0.5rem;
+    border-radius: var(--radius);
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.page-table-btn {
+    padding: 0 !important;
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+}
+
+    .page-table-btn:hover, .page-btn:hover {
+        outline: 2px solid var(--primary-color-hover);
+    }
+
+.page-btn {
+    padding: .3rem .6rem;
+}
+
+    .page-btn i {
+        font-size: .9rem;
+    }
+
+.page-btn-small {
+    padding: .1rem .4rem;
+}
+
+    .page-btn-small i {
+        font-size: .85rem;
+    }
+
+.btn-red {
+    background: var(--color-red);
+}
+
+    .btn-red:hover,
+    .btn-red:active {
+        outline: 2px solid var(--color-red-hover) !important;
+    }
+
+.btn-green {
+    background: var(--color-green);
+}
+
+    .btn-green:hover,
+    .btn-green:active {
+        outline: 2px solid var(--color-green-hover) !important;
+    }
+
+.btn-blue {
+    background: var(--color-blue);
+}
+
+    .btn-blue:hover,
+    .btn-blue:active {
+        outline: 2px solid var(--color-blue-hover) !important;
+    }
+
+.btn-lightblue {
+    background: var(--color-lightblue);
+}
+
+    .btn-lightblue:hover,
+    .btn-lightblue:active {
+        outline: 2px solid var(--color-lightblue-hover) !important;
+    }
 
 /* ----------------------------- */
 .web-scroll-block {

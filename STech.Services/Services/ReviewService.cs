@@ -190,6 +190,19 @@ namespace STech.Services.Services
                 .ToListAsync();
         }
 
+        public async Task<bool> IsReviewed(string productId, string userId)
+        {
+            return await _context.Reviews
+                .AnyAsync(r => r.ProductId == productId && r.UserId == userId);
+        }
+
+        public async Task<bool> IsReviewed(string productId, string email, string? phone)
+        {
+            return await _context.Reviews
+                .AnyAsync(r => r.ProductId == productId
+                        && r.ReviewerPhone == phone || r.ReviewerEmail == email);
+        }
+
         public async Task<bool> CreateReview(Review review)
         {
             await _context.Reviews.AddAsync(review);

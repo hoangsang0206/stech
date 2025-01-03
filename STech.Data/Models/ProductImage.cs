@@ -11,5 +11,7 @@ public partial class ProductImage
 
     public string ImageSrc { get; set; } = null!;
 
+    public int? Sort { get; set; }
+
     public virtual Product Product { get; set; } = null!;
 }

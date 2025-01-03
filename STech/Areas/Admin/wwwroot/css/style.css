@@ -503,7 +503,7 @@
     display: none;
     place-items: center;
     padding-left: 18rem;
-    z-index: 10;
+    z-index: 20;
 }
 
     .web-loader-wrapper.show {

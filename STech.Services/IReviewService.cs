@@ -20,6 +20,10 @@ namespace STech.Services
         Task<PagedList<ReviewReply>> GetReviewReplies(int reviewId, int page, int repliesPerPage);
         Task<IEnumerable<ReviewReply>> GetReviewReplies(int reviewId);
 
+        Task<bool> IsReviewed(string productId, string userId);
+        Task<bool> IsReviewed(string productId, string email, string? phone);
+        
+
         Task<bool> CreateReview(Review review);
         Task<bool> UpdateReview(Review review);
         Task<bool> DeleteReview(int reviewId);

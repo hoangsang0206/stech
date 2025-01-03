@@ -608,7 +608,7 @@ $("#search").keyup(function () {
                     $('.ajax-search-autocomplete').show();
                     $('.ajax-search-items').empty();
 
-                    if (!response.status || !response.data) {
+                    if (!response.status || !response.data.length) {
                         $('.ajax-search-empty').css('display', 'grid');
                     }
                     else {

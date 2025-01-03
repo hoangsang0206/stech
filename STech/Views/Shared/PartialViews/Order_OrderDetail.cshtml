@@ -59,7 +59,7 @@
                 }
             </div>
             <div class="flex-grow-1 d-flex gap-2 justify-content-end">
-                <a class="dowload-invoice btn btn-primary" href="/api/orders/download-invoice?oId=@Model.InvoiceId&phone=@Model.RecipientPhone" download="HĐ_@(Model.InvoiceId).pdf">
+                <a class="dowload-invoice page-btn btn-blue" href="/api/orders/download-invoice?oId=@Model.InvoiceId&phone=@Model.RecipientPhone" download="HĐ_@(Model.InvoiceId).pdf">
                     <i class="fa-solid fa-download"></i>
                     <span>Tải hóa đơn</span>
                 </a>
@@ -70,7 +70,7 @@
                         && Model.IsCompleted == false && Model.IsCancelled == false 
                         && Model.PaymentStatus != PaymentContants.Paid)
                     {
-                        <a class="cancel-order btn btn-danger" data-invoice="@Model.InvoiceId" download="HĐ_@(Model.InvoiceId).pdf">
+                        <a class="cancel-order page-btn btn-red" data-invoice="@Model.InvoiceId" download="HĐ_@(Model.InvoiceId).pdf">
                             <i class="fa-solid fa-xmark"></i>
                             <span>Hủy đơn hàng</span>
                         </a>

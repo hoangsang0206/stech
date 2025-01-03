@@ -135,6 +135,15 @@ namespace STech.ApiControllers
                     return Unauthorized();
                 }
 
+                if (!await _orderService.CheckIsPurchased(userId, product.ProductId))
+                {
+                    return Ok(new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Bạn chưa mua sản phẩm này, vui lòng mua sản phẩm để có thể đánh giá."
+                    });
+                }
+
                 newReview.UserId = userId;
                 newReview.IsPurchased = await _orderService.CheckIsPurchased(userId, review.ProductId);
             }
@@ -143,6 +152,15 @@ namespace STech.ApiControllers
                 if(review.ReviewerInfo == null || review.ReviewerInfo.ReviewerEmail == null || review.ReviewerInfo.ReviewerName == null)
                 {
                     return BadRequest();
+                }
+
+                if (!await _orderService.CheckIsPurchased(review.ReviewerInfo.ReviewerEmail, review.ReviewerInfo.ReviewerPhone, review.ProductId))
+                {
+                    return Ok(new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Bạn chưa mua sản phẩm này, vui lòng mua sản phẩm để có thể đánh giá."
+                    });
                 }
 
                 newReview.ReviewerEmail = review.ReviewerInfo.ReviewerEmail;

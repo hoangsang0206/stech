@@ -9,7 +9,7 @@
 @* @await Html.PartialAsync("PartialViews/Breadcrumb", Model.Item2) *@
 
 <section class="page-container-padding row m-0 align-items-">
-    <div class="col-12 col-sm-4 col-md-3 p-0 mb-4 mb-sm-0">
+    <div class="col-12 col-sm-4 col-md-3 p-0 mb-3 mb-sm-0">
         <nav class="account-sidebar position-relative">
             <div class="click-show-sidebar d-block d-sm-none mb-3">
                 <i class="fa-solid fa-bars"></i>
@@ -113,7 +113,23 @@
                     </div>
 
                     <div class="page-table-wrapper">
-                        <table class="page-table user-order-list">
+                        <table class="page-table user-orders-table">
+                            <thead>
+                                <tr class="page-table-header">
+                                    <th>STT</th>
+                                    <th>Mã đơn hàng</th>
+                                    <th>Ngày đặt</th>
+                                    <th>Số SP</th>
+                                    <th>Thành tiền</th>
+                                    <th>Thanh toán</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="user-order-list">
+
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -138,6 +154,11 @@
     @await Html.PartialAsync("PartialViews/User_UpdateAddress", new AddAddressVM())
 </section>
 
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+}
+
 @section Scripts {
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
     <script type="text/javascript" src="~/js/account.js"></script>
 }

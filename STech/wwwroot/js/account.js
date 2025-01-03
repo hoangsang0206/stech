@@ -249,12 +249,12 @@ const loadUserAddresses = () => {
                     $('.user-address-list').append(`
                         <div class="row mt-2">
                             <div class="col-8 col-sm-9 d-flex flex-column justify-content-center">
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex flex-wrap align-items-center">
                                     <div class="d-flex align-items-center">
                                         ${isDefault ? `<div class="address-default me-2">Mặc định</div>` : ''}
                                         <span class="fw-bold">${address.recipientName}</span>
+                                        &nbsp; | &nbsp;
                                     </div> 
-                                    &nbsp; | &nbsp;
                                     <span class="fw-bold text-secondary">${address.recipientPhone}</span>
                                 </div>
                                 <div class="mt-2">
@@ -302,21 +302,11 @@ const loadOrders = (type) => {
         url: `/api/orders/userorders?type=${type}`,
         success: (response) => {
             if (response.status) {
-                $('.user-order-list').empty();
-                $('.user-order-list').append(`
-                    <tr class="page-table-header">
-                        <th>STT</th>
-                        <th>Mã đơn hàng</th>
-                        <th>Ngày đặt</th>
-                        <th>Số SP</th>
-                        <th>Thành tiền</th>
-                        <th>Thanh toán</th>
-                        <th>Trạng thái</th>
-                        <th></th>
-                    </tr>
-                `);
-
                 let index = 0;
+
+                if ($.fn.dataTable.isDataTable('.user-orders-table')) {
+                    $('.user-orders-table').DataTable().clear().destroy();
+                }
 
                 response.data.map(order => {
                     index++;
@@ -362,11 +352,30 @@ const loadOrders = (type) => {
                             <td>${payment_status}</td>
                             <td>${order_status}</td>
                             <td>
-                                <a class="text-nowrap" href="/order/detail/${order.invoiceId}">Chi tiết</a>
+                                <a class="page-table-btn btn-lightblue view-order-detail" href="/order/detail/${order.invoiceId}">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                </a>
                             </td>
                         </tr>
                     `);
                 })
+
+                $('.user-orders-table').DataTable({
+                    pageLength: -1,
+                    scrollY: '500px',
+                    scrollCollapse: true,
+                    ordering: false,
+                    dom: 't'
+                });
+
+                if (!response.data.length) {
+                    $('.dt-empty').text('Không tìm thấy đơn hàng nào hết !!!')
+                }
+
+                tippy('.view-order-detail', {
+                    content: 'Chi tiết',
+                    placement: 'top'
+                });
             }
 
             hideWebLoader();
@@ -411,6 +420,8 @@ const showContent = () => {
                 loadReviews();
                 break;
         }
+
+        $('.account-sidebar > ul').removeClass('show');
     }
 }
 

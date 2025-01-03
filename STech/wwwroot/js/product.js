@@ -173,6 +173,7 @@ $('.post-review form').submit(function (e) {
                 $('.post-review__images').empty();
             } else {
                 showDialog('error', 'Gửi đánh giá thất bại', response.message);
+                hideButtonLoader(submit_btn, btn_element);
             }
         },
         error: () => {
