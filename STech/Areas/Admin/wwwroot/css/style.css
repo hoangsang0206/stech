@@ -59,7 +59,7 @@
 
     --radius: 0.3rem;
     --border-color: #dcdcdc;
-    --box-shadow: 1px 1px 5px -1px #0000004e, -1px -1px 5px -1px #0000004e;
+    --box-shadow: 1px 1px 5px -1px #00000070, -1px -1px 5px -1px #00000070;
 
     --loader-color: var(--loader-color-light);
     --loader-color-light: #fff;
@@ -725,7 +725,7 @@ button:disabled {
     width: 100%;
     border: none;
     outline: none;
-    padding: 0.6rem 1.2rem;
+    padding: 0.5rem 1.2rem;
     border-radius: 0.3rem;
     font-size: 1rem;
 }
@@ -734,6 +734,23 @@ button:disabled {
         transform: translateY(-110%);
         font-size: 0.8rem;
     }
+
+.form-input-box .select2-selection {
+    padding: 0 !important;
+    width: calc(100% - 3rem) !important;
+    height: auto !important;
+    border: none !important;
+}
+
+.form-input-box .select2-container {
+    width: 100% !important;
+}
+
+.form-input-box .select2-selection__rendered {
+    padding: 0.7rem 1.2rem !important;
+    line-height: normal !important;
+    color: #000 !important;
+}
 
 .input-label {
     pointer-events: none;
@@ -770,9 +787,14 @@ button:disabled {
 
     .page-input:not(:has(i)) input,
     .page-input:not(:has(i)) select,
+    .page-input:not(:has(i)) .select2-selection__rendered,
     .page-input:not(:has(i)) textarea {
-        padding-left: 1.2rem;
-        width: 100%;
+        padding-left: 1.2rem !important;
+        width: 100% !important;
+    }
+
+    .page-input:not(:has(i)) .select2-selection {
+        width: 100% !important;
     }
 
     .page-input i {
@@ -784,13 +806,46 @@ button:disabled {
     }
 
     .page-input input, .page-input select, .page-input textarea {
-        width: calc(100% - 3rem);
+        width: calc(100% - 3rem) !important;
         border: none;
         outline: none;
         border-radius: 0.3rem;
-        padding: 0.6rem 1.2rem 0.6rem 0;
+        padding: 0.5rem 1.2rem 0.5rem 0;
         font-size: 0.97rem;
     }
+
+    .page-input .select2-selection {
+        padding: 0 !important;
+        width: calc(100% - 3rem) !important;
+        height: auto !important;
+        border: none !important;
+    }
+
+    .page-input .select2-container {
+        width: 100% !important;
+    }
+
+    .page-input .select2-selection__rendered {
+        padding: 0.7rem 1.2rem 0.7rem 0 !important;
+        line-height: normal !important;
+        color: #000 !important;
+    }
+
+.select2-selection__arrow {
+    height: 100% !important;
+}
+
+.select2-search__field {
+    border-radius: var(--radius);
+    outline: none;
+    border-color: #cfcfcf !important;
+}
+
+.select2-dropdown {
+    border: none !important;
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+}
 
     .page-input:has(input:focus),
     .page-input:has(select:focus),

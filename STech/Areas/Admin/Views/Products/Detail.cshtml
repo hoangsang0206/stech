@@ -71,6 +71,10 @@
                         <div class="product-image-box position-relative box-shadow overflow-hidden">
                             <img src="@image.ImageSrc" alt="" style="width: 100%" data-status="" data-image-id="@image.Id" />
 
+                            <a class="handle-sort-image" href="javascript:">
+                                <i class="fa-solid fa-bars"></i>
+                            </a>
+
                             <a class="click-delete-image" href="javascript:">
                                 <i class="fa-regular fa-trash-can"></i>
                             </a>
@@ -240,5 +244,8 @@
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <script src="https://unpkg.com/sortablejs-make/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+
     <script src="~/admin/js/product.js"></script>
 }

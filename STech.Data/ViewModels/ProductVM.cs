@@ -41,6 +41,8 @@ namespace STech.Data.ViewModels
 
             [Required(ErrorMessage = "Nhập đường dẫn ảnh")]
             public string ImageSrc { get; set; } = null!;
+
+            public int? Sort { get; set; }
         }
 
         public List<Specification>? Specifications { get; set; }

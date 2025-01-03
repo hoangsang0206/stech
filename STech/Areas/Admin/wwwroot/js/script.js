@@ -380,3 +380,7 @@ const activeDropdown = (dropdown_container, value) => {
         dropdown_item.addClass('selected');
     }
 }
+
+$('select').toArray().map(select => {
+    $(select).select2();
+})

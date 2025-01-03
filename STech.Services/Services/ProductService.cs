@@ -204,7 +204,7 @@ namespace STech.Services.Services
             return await _context.Products
                 .Where(p => p.IsActive == true)
                 .OrderByDescending(p => p.InvoiceDetails.Sum(i => i.Quantity))
-                .SelectProduct()
+                .SelectProductWithSold()
                 .ToPagedListAsync(page, itemsPerPage);
 
         }
@@ -214,7 +214,7 @@ namespace STech.Services.Services
             return await _context.Products
                 .Where(p => p.IsActive == true && p.InvoiceDetails.Count() > 0)
                 .OrderByDescending(p => p.InvoiceDetails.Sum(i => i.Quantity))
-                .SelectProduct()
+                .SelectProductWithSold()
                 .Take(numToTake)
                 .ToListAsync();
         }

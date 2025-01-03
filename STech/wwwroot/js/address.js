@@ -47,3 +47,7 @@ $('.district-select').on('change', function () {
     const districtCode = $(this).val();
     loadWards($(this).closest('form'), districtCode, null);
 })
+
+const getFormAddressData = (form) => {
+   
+}

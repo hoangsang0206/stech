@@ -987,3 +987,7 @@ $('.chatbot-input').submit(function (e) {
         }
     })
 })
+
+$('select').toArray().map(select => {
+    $(select).select2();
+})

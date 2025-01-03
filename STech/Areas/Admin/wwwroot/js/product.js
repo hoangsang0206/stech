@@ -256,11 +256,14 @@ const getFormData = (form) => {
     const short_description = !checkEditorEmpty(short_des_editor) ? short_des_editor.root.innerHTML : null;
     const description = !checkEditorEmpty(description_editor) ? description_editor.root.innerHTML : null;
 
+    let imageSort = 0;
     const images = _form.find('.product-image-box img').toArray().map((image) => {
+        imageSort++;
         return {
             Id: $(image).data('image-id') || null,
             Status: $(image).data('status') || 'old',
             ImageSrc: $(image).attr('src'),
+            Sort: imageSort
         }
     });
 
@@ -371,3 +374,11 @@ $('#create-product').submit(function(e) {
     })
 })
 
+
+
+// SortableJS
+$('.product-images-container').sortable({
+    group: 'list',
+    animation: 200,
+    handle: '.handle-sort-image'
+})

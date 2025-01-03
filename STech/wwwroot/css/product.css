@@ -329,6 +329,10 @@ button:disabled {
     padding: 1rem;
 }
 
+.product-short-descr * {
+    font-size: 1.1rem !important;
+}
+
 .view-product-info {
     border: none;
     background: var(--content-color-white);
