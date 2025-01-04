@@ -159,5 +159,56 @@ namespace STech.Areas.Admin.ApiControllers
                 Message = result ? "Tạo kho hàng thành công" : "Tạo kho hàng thất bại"
             });
         }
+        
+        [HttpDelete("{id}")]
+        [AdminAuthorize(Code = Functions.DeleteWarehouse)]
+        public async Task<IActionResult> DeleteWarehouse(string id)
+        {
+            Warehouse? wh = await _warehouseService.GetWarehouseByIdWithStockInfo(id);
+            
+            if (wh == null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Kho hàng không tồn tại"
+                });
+            }
+
+            if (wh.WarehouseProducts.Any())
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Kho hàng đang chứa sản phẩm, không thể xóa"
+                });
+            }
+
+            if (wh.WarehouseImports.Any())
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Đã nhập sản phẩm vào kho này, không thể xóa"
+                });
+            }
+
+            if (wh.WarehouseExports.Any())
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Đã xuất sản phẩm từ kho này, không thể xóa"
+                });
+            }
+            
+            bool result = await _warehouseService.DeleteWarehouse(id);
+
+            return Ok(new ApiResponse
+            {
+                Status = result,
+                Message = result ? "Xóa kho hàng thành công" : "Xóa kho hàng thất bại"
+            });
+        }
     }
 }

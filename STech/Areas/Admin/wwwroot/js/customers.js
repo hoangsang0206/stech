@@ -121,7 +121,7 @@ $(document).on('click', '.delete-customer', function () {
                         window.location.reload();
                     });
                 } else {
-                    showDialog('error', 'Không thể xóa khách hàng', null);
+                    showDialog('error', 'Không thể xóa khách hàng', response.message);
                 }
             },
             error: (xhr, status, error) => {

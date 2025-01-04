@@ -68,6 +68,15 @@ namespace STech.Services.Services
         {
             return await _context.Warehouses.FindAsync(warehouseId);
         }
+        
+        public async Task<Warehouse?> GetWarehouseByIdWithStockInfo(string warehouseId)
+        {
+            return await _context.Warehouses
+                .Include(w => w.WarehouseProducts)
+                .Include(w => w.WarehouseExports)
+                .Include(w => w.WarehouseImports)
+                .FirstOrDefaultAsync(w => w.WarehouseId == warehouseId);
+        }
 
         public async Task<IEnumerable<WarehouseProduct>> GetWarehouseProducts(string productId)
         {
@@ -110,6 +119,20 @@ namespace STech.Services.Services
             existedWarehouse.Latitude = warehouse.Latitude;
             existedWarehouse.Longtitude = warehouse.Longtitude;
 
+            return await _context.SaveChangesAsync() > 0;
+        }
+        
+        public async Task<bool> DeleteWarehouse(string warehouseId)
+        {
+            Warehouse? warehouse = await GetWarehouseByIdWithStockInfo(warehouseId);
+
+            if (warehouse == null || warehouse.WarehouseProducts.Any() 
+                || warehouse.WarehouseExports.Any() || warehouse.WarehouseImports.Any())
+            {
+                return false;
+            }
+
+            _context.Warehouses.Remove(warehouse);
             return await _context.SaveChangesAsync() > 0;
         }
 

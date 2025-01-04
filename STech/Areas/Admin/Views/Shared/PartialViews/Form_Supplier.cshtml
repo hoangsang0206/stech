@@ -1,0 +1,50 @@
+@model SupplierVM
+
+<div class="form-container form-supplier">
+    <div class="form-box" style="width: 35rem">
+        <div class="form-header-wrapper">
+            <div class="form-header">Thêm nhà cung cấp</div>
+            <div class="close-form">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+        </div>
+
+        <form>
+            <div>
+                <div>
+                    <div class="form-input-box">
+                        <input asp-for="@Model.SupplierId" class="form-input" />
+                        <label class="input-label">Mã nhà cung cấp</label>
+                    </div>
+                    <span asp-validation-for="@Model.SupplierId"></span>
+                </div>
+                <div>
+                    <div class="form-input-box">
+                        <input asp-for="@Model.SupplierName" class="form-input" />
+                        <label class="input-label">Tên nhà cung cấp</label>
+                    </div>
+                    <span asp-validation-for="@Model.SupplierName"></span>
+                </div>
+                <div>
+                    <div class="form-input-box">
+                        <input asp-for="@Model.Address" class="form-input" />
+                        <label class="input-label">Địa chỉ</label>
+                    </div>
+                    <span asp-validation-for="@Model.Address"></span>
+                </div>
+                <div>
+                    <div class="form-input-box">
+                        <input asp-for="@Model.Phone" class="form-input" />
+                        <label class="input-label">Số điện thoại</label>
+                    </div>
+                    <span asp-validation-for="@Model.Phone"></span>
+                </div>
+            </div>
+
+            <div class="form-btn-wrapper">
+                <button type="submit" class="form-submit-btn page-btn-sm">Thêm mới</button>
+                <button type="reset" class="form-reset-btn">Hủy</button>
+            </div>
+        </form>
+    </div>
+</div>

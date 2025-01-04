@@ -100,8 +100,41 @@ $('.form-warehouse form').submit(function (e) {
 
             hideButtonLoader(submit_btn, element_html);
         },
-        error: () => {
+        error: (xhr, status, error) => {
             hideButtonLoader(submit_btn, element_html);
+            if (xhr.status === 401) {
+                showUnauthorizedDialog();
+            }
         }
     })
+})
+
+$('.delete-warehouse').click(function () {
+    const warehouseId = $(this).data('warehouse');
+    
+    showConfirmDialog('Xác nhận xóa kho hàng', 'Bạn có chắc chắn muốn xóa kho hàng này?', () => {
+        showWebLoader();
+        $.ajax({
+            type: 'DELETE',
+            url: `/api/admin/warehouses/${warehouseId}`,
+            success: (response) => {
+                hideWebLoader(0);
+                if (response.status) {
+                    showDialogWithCallback('success', 'Xóa thành công', 'Đã xóa kho hàng này', () => {
+                        window.location.reload();
+                    });
+                } else {
+                    showDialog('error', 'Không thể xóa kho hàng', response.message);
+                }
+            },
+            error: (xhr, status, error) => {
+                hideWebLoader(0);
+                if (xhr.status === 401) {
+                    showUnauthorizedDialog();
+                } else {
+                    showErrorDialog();
+                }
+            }
+        })
+    });
 })

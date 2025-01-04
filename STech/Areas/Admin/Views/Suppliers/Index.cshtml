@@ -7,7 +7,7 @@
 
 <section class="page-wrapper">
     <div>
-        <div class="mb-3">
+        <div class="d-flex">
             <a href="javascript:" class="page-btn btn-green click-add-supplier">
                 <i class="fa-solid fa-plus"></i>
                 <span>Thêm nhà cung cấp</span>
@@ -18,60 +18,67 @@
             <div class="page-table-wrapper mt-2">
                 <table class="page-table">
                     <thead class="page-table-header">
-                        <tr>
-                            <th>
-                                <input type="checkbox" id="page-table-checkbox-all" />
-                            </th>
-                            <th>STT</th>
-                            <th>Mã NCC</th>
-                            <th>Tên NCC</th>
-                            <th>Địa chỉ</th>
-                            <th>Số ĐT</th>
-                            <th></th>
-                        </tr>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="page-table-checkbox-all" />
+                        </th>
+                        <th>STT</th>
+                        <th>Mã NCC</th>
+                        <th>Tên NCC</th>
+                        <th>Địa chỉ</th>
+                        <th>Số ĐT</th>
+                        <th></th>
+                    </tr>
                     </thead>
                     <tbody class="suppliers-list">
-                        @{
-                            int index = 1;
+                    @{
+                        int index = 1;
 
-                            foreach (Supplier supplier in Model)
-                            {
-                                <tr data-item="@supplier.SupplierId">
-                                    <td>
-                                        <input type="checkbox" name="page-table-checkbox" value="@supplier.SupplierId" />
-                                    </td>
-                                    <td>
-                                        @index
-                                    </td>
-                                    <td>
-                                        @supplier.SupplierId
-                                    </td>
-                                    <td>
-                                        @supplier.SupplierName
-                                    </td>
-                                    <td>
-                                        @supplier.Address
-                                    </td>
-                                    <td>
-                                        @supplier.Phone
-                                    </td>
-                                    <td>
-                                        <div class="d-flex gap-1 align-items-center justify-content-end">
-                                            <button class="page-table-btn btn-lightblue edit-supplier" data-supplier="@supplier.SupplierId">
-                                                <i class="fa-regular fa-pen-to-square"></i>
-                                            </button>
-                                            <button class="page-table-btn btn-red delete-supplier" data-supplier="@supplier.SupplierId">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                index++;
-                            }
+                        foreach (Supplier supplier in Model)
+                        {
+                            <tr data-item="@supplier.SupplierId">
+                                <td>
+                                    <input type="checkbox" name="page-table-checkbox" value="@supplier.SupplierId" />
+                                </td>
+                                <td>
+                                    @index
+                                </td>
+                                <td>
+                                    @supplier.SupplierId
+                                </td>
+                                <td>
+                                    @supplier.SupplierName
+                                </td>
+                                <td>
+                                    @supplier.Address
+                                </td>
+                                <td>
+                                    @supplier.Phone
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1 align-items-center justify-content-end">
+                                        <button class="page-table-btn btn-lightblue edit-supplier" data-supplier="@supplier.SupplierId">
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                        </button>
+                                        <button class="page-table-btn btn-red delete-supplier" data-supplier="@supplier.SupplierId">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            index++;
                         }
+                    }
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </section>
+
+@await Html.PartialAsync("PartialViews/Form_Supplier", new SupplierVM())
+
+@section Scripts
+{
+    <script src="~/admin/js/suppliers.js"></script>
+}

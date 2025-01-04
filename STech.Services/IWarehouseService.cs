@@ -12,9 +12,11 @@ namespace STech.Services
         Task<Warehouse?> GetNearestWarehouse(double latitude, double longtitude);
         Task<IEnumerable<WarehouseProduct>> GetWarehouseProducts(string productId);
         Task<Warehouse?> GetWarehouseById(string warehouseId);
+        Task<Warehouse?> GetWarehouseByIdWithStockInfo(string warehouseId);
 
         Task<bool> CreateWarehouse(Warehouse warehouse);
         Task<bool> UpdateWarehouse(Warehouse warehouse);
+        Task<bool> DeleteWarehouse(string warehouseId);
 
         Task<bool> CreateWarehouseExports(IEnumerable<WarehouseExport> warehouseExports);
         Task<bool> SubtractProductQuantity(IEnumerable<WarehouseExport> warehouseExports);

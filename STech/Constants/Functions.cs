@@ -29,6 +29,11 @@ public static class Functions
     public const string ImportWarehouse = "import-warehouse";
     public const string ExportWarehouse = "export-warehouse";
     
+    public const string ViewSuppliers = "view-suppliers";
+    public const string CreateSupplier = "create-supplier";
+    public const string EditSupplier = "edit-supplier";
+    public const string DeleteSupplier = "delete-supplier";
+    
     public const string ViewCustomers = "view-customers";
     public const string CreateCustomer = "create-customer";
     public const string EditCustomer = "edit-customer";
