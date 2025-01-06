@@ -99,7 +99,7 @@
 
 @keyframes web-loader-r {
     0% {
-        transform: translate(74px,40px) scale(1):
+        transform: translate(74px,40px) scale(1);
     }
 
     100% {
@@ -195,7 +195,6 @@
     place-items: center;
     background: transparent;
     border-radius: var(--radius);
-    backdrop-filter: var(--blur);
 }
 
 .loader-container {
@@ -1284,12 +1283,12 @@ button:disabled {
 }
 
 .filter-submit-action {
-    border: 2px solid var(--color-blue);
+    border: 1px solid var(--color-blue);
 }
 
 .filter-cancel-action {
     outline: none !important;
-    border: 2px solid var(--color-red);
+    border: 1px solid var(--color-red);
     color: var(--color-red);
     background: #fff;
 }

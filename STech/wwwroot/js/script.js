@@ -143,57 +143,19 @@ $('.toogle-theme-btn').click(() => {
 })
 
 //Change theme -----------------------------
-function changeThemeColor(newColor, btnHoverColor, headerBtnBackground) {
-    $('body').css('--primary-color', newColor);
-    $('body').css('--primary-color-hover', btnHoverColor);
-    $('body').css('--header-btn-background', headerBtnBackground);
-}
-
-function saveColorToLocalStorage(color1, color2, headerBtnBackground, themeValue) {
-    localStorage.setItem('themeColor', color1);
-    localStorage.setItem('btnHoverColor', color2);
-    localStorage.setItem('headerBtnBackground', headerBtnBackground);
-    localStorage.setItem('themeValue', themeValue);
-}
-
-function loadThemeColor() {
-    var themeColor = localStorage.getItem('themeColor');
-    var btnHoverColor = localStorage.getItem('btnHoverColor');
-    var headerBtnBackground = localStorage.getItem('headerBtnBackground');
-    var themeValue = localStorage.getItem('themeValue');
-    changeThemeColor(themeColor, btnHoverColor, headerBtnBackground);
-
-    //checked theme radio
-    $('#' + themeValue).prop('checked', true);
-}
-
-$(document).ready(() => {
-    loadThemeColor();
-})
-
-$('input[name="theme"]').on('change', (e) => {
-    const colorValue = $(e.target).val();
-
-    if (colorValue == "theme-1") {
-        changeThemeColor('#0859ec', '#7ba8fb', '#387dfc');
-        saveColorToLocalStorage('#0859ec', '#7ba8fb', '#387dfc', 'theme-1');
-    }
-    else if (colorValue == "theme-2") {
-        changeThemeColor('var(--primary-color-1)', 'var(--primary-color-1-hover)', 'var(--header-btn-background-1)');
-        saveColorToLocalStorage('var(--primary-color-1)', 'var(--primary-color-1-hover)', 'var(--header-btn-background-1)', 'theme-2');
-    }
-    else if (colorValue == "theme-3") {
-        changeThemeColor('var(--primary-color-2)', 'var(--primary-color-2-hover)', 'var(--header-btn-background-2)');
-        saveColorToLocalStorage('var(--primary-color-2)', 'var(--primary-color-2-hover)', 'var(--header-btn-background-2)', 'theme-3');
-    }
-    else if (colorValue == "theme-4") {
-        changeThemeColor('var(--primary-color-3)', 'var(--primary-color-3-hover)', 'var(--header-btn-background-3)');
-        saveColorToLocalStorage('var(--primary-color-3)', 'var(--primary-color-3-hover)', 'var(--header-btn-background-3)', 'theme-4');
-    }
-    else if (colorValue == "theme-5") {
-        changeThemeColor('var(--primary-color-4)', 'var(--primary-color-4-hover)', 'var(--header-btn-background-4)');
-        saveColorToLocalStorage('var(--primary-color-4)', 'var(--primary-color-4-hover)', 'var(--header-btn-background-4)', 'theme-5');
-    }
+$('input[name="theme"]').on('change', function() {
+    const theme = $(this).val();
+    const color = $(this).data('color');
+    
+    $(this).siblings('.theme-label-box .theme-label').css('background-color', color);
+    
+    $.ajax({
+        type: 'POST',
+        url: `/api/themes?theme=${theme}`,
+        success: (response) => {
+            location.reload();
+        }
+    })
 })
 
 //Show/hide web loader
@@ -990,4 +952,53 @@ $('.chatbot-input').submit(function (e) {
 
 $('select').toArray().map(select => {
     $(select).select2();
+})
+
+$('.filter-button').click(function() {
+    const filterContent = $(this).siblings('.filter-content');
+    $('.filter-content').not(filterContent).removeClass('show');
+    filterContent.toggleClass('show');
+    
+    updateFilterContentPosition();
+})
+
+$(document).click((e) => {
+    if ($(e.target).closest('.filter-content, .filter-button').length <= 0) {
+        $('.filter-content').removeClass('show');
+    }
+})
+
+const updateFilterContentPosition = () => {
+    $(".filter-content").each(function () {
+        const filterMaxWidth = $('.filter-box').outerWidth();
+        $(this).css('max-width', filterMaxWidth);
+
+        const container = $(".page-container");
+        const containerOffset = container.offset();
+        const containerWidth = container.outerWidth();
+
+        const $element = $(this);
+        const elementOffset = $element.offset();
+        const elementWidth = $element.outerWidth();
+
+        const originalLeft = parseFloat($element.css("left")) || 0;
+        
+        if (elementOffset.left + elementWidth > containerOffset.left + containerWidth) {
+            const overflow = (elementOffset.left + elementWidth) - (containerOffset.left + containerWidth);
+            $element.css("left", originalLeft - overflow + "px");
+        }
+        
+        if (elementOffset.left < containerOffset.left) {
+            const overflow = containerOffset.left - elementOffset.left;
+            $element.css("left", originalLeft + overflow + "px");
+        }
+    });
+}
+
+$(document).ready(() => {
+    updateFilterContentPosition();
+})
+
+$(window).resize(() => {
+    updateFilterContentPosition();
 })

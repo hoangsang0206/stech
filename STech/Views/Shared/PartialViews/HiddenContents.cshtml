@@ -1,4 +1,8 @@
-﻿<button class="to-top-btn">
+﻿@{
+    string? theme = Context.Request.Cookies["theme"];
+}
+
+<button class="to-top-btn">
     <i class="fa-solid fa-chevron-up"></i>
 </button>
 
@@ -13,37 +17,42 @@
         <i class='bx bx-chevron-left toogle-theme-btn position-absolute'></i>
         <div class="theme-select">
             <div class="theme-item">
-                <input type="radio" id="theme-1" name="theme" value="theme-1" />
+                <input type="radio" id="theme-1" name="theme" value="blue" data-color="#0859ec" 
+                       @(string.IsNullOrEmpty(theme) || theme == "blue" ? "checked" : "") />
                 <label for="theme-1" class="theme-label-box d-flex align-items-center gap-2">
-                    <span class="theme-color theme-color-1"></span>
+                    <span class="theme-color theme-color-1" style="background: #0859ec"></span>
                     <span class="theme-label"></span>
                 </label>
             </div>
             <div class="theme-item">
-                <input type="radio" id="theme-2" name="theme" value="theme-2" />
+                <input type="radio" id="theme-2" name="theme" value="purple" data-color="#7d5fff"
+                       @(theme == "purple" ? "checked" : "") />
                 <label for="theme-2" class="theme-label-box d-flex align-items-center gap-2">
-                    <span class="theme-color theme-color-2"></span>
+                    <span class="theme-color theme-color-2" style="background: #7d5fff"></span>
                     <span class="theme-label"></span>
                 </label>
             </div>
             <div class="theme-item">
-                <input type="radio" id="theme-3" name="theme" value="theme-3" />
+                <input type="radio" id="theme-3" name="theme" value="red" data-color="#e30019"
+                       @(theme == "red" ? "checked" : "") />
                 <label for="theme-3" class="theme-label-box d-flex align-items-center gap-2">
-                    <span class="theme-color theme-color-3"></span>
+                    <span class="theme-color theme-color-3" style="background: #e30019"></span>
                     <span class="theme-label"></span>
                 </label>
             </div>
             <div class="theme-item">
-                <input type="radio" id="theme-4" name="theme" value="theme-4" />
+                <input type="radio" id="theme-4" name="theme" value="pink" data-color="#FC427B"
+                       @(theme == "pink" ? "checked" : "") />
                 <label for="theme-4" class="theme-label-box d-flex align-items-center gap-2">
-                    <span class="theme-color theme-color-4"></span>
+                    <span class="theme-color theme-color-4" style="background: #FC427B"></span>
                     <span class="theme-label"></span>
                 </label>
             </div>
             <div class="theme-item">
-                <input type="radio" id="theme-5" name="theme" value="theme-5" />
+                <input type="radio" id="theme-5" name="theme" value="green" data-color="#44bd32"
+                       @(theme == "green" ? "checked" : "") />
                 <label for="theme-5" class="theme-label-box d-flex align-items-center gap-2">
-                    <span class="theme-color theme-color-5"></span>
+                    <span class="theme-color theme-color-5"  style="background: #44bd32"></span>
                     <span class="theme-label"></span>
                 </label>
             </div>

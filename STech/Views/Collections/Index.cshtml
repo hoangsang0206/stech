@@ -1,10 +1,9 @@
-﻿@model Tuple<PagedList<Product>, List<Breadcrumb>>
+﻿@model CollectionPageData
 
-
-@await Html.PartialAsync("PartialViews/Breadcrumb", Model.Item2)
+@await Html.PartialAsync("PartialViews/Breadcrumb", Model.Breadcrumbs)
 
 <section class="page-container">
-    @if (!Model.Item1.Items.Any())
+    @if (!Model.Products.Items.Any())
     {
         <div class="filter-error mt-3 mb-5 px-3 d-flex flex-column align-items-center justify-content-center">
             <p class="text-center">
@@ -17,20 +16,71 @@
     }
     else
     {
-        <div class="filter-box d-flex justify-content-between mt-2 mb-3 gap-2">
+        <div class="filter-box d-flex justify-content-between align-items-start mt-2 mb-3 gap-2">
+            @await Html.PartialAsync("PartialViews/Filter", new CollectionFilter
+            {
+                Brands = Model.Brands,
+                Categories = Model.Categories
+            })
+
             @await Html.PartialAsync("PartialViews/Sort")
         </div>
 
         <div class="product-list">
-            @foreach (Product product in Model.Item1.Items)
+            @foreach (Product product in Model.Products.Items)
             {
                 @await Html.PartialAsync("PartialViews/ProductBox", product)
             }
         </div>
     }
 
-    @await Html.PartialAsync("PartialViews/Pagination", new Tuple<int, int>(Model.Item1.CurrentPage, Model.Item1.TotalPages))
+    @await Html.PartialAsync("PartialViews/Pagination", new Tuple<int, int>(Model.Products.CurrentPage, Model.Products.TotalPages))
 
 </section>
 
 <section class="side-overlay"></section>
+
+@section Scripts
+{
+    <script>
+        const updateFilter = () => {
+            let brands = [];
+            let categories = [];
+            
+            $('input[name="filter-brands"]:checked').each(function () {
+                brands.push($(this).val());
+            });
+            
+            $('input[name="filter-categories"]:checked').each(function () {
+                categories.push($(this).val());
+            });
+            
+            const url = new URL(window.location.href);
+            const params = new URLSearchParams(url.search);
+            params.delete('brands');
+            params.delete('categories');
+            
+            if (brands.length > 0) {
+                params.append('brands', brands.join(','));
+            }
+            
+            if (categories.length > 0) {
+                params.append('categories', categories.join(','));
+            }
+            
+            console.log(categories.join(','));
+            
+            window.location.href = url.origin + url.pathname + '?' + params.toString();
+        }
+    
+        $('.filter-action-clear').click(function () {
+            $(this).closest('.filter-content').find('input[type="checkbox"]').prop('checked', false);
+            
+            updateFilter();
+        });
+
+        $('.filter-action-submit').click(function () {
+            updateFilter();
+        });
+    </script>
+}

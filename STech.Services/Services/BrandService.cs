@@ -29,6 +29,14 @@ namespace STech.Services.Services
 
             return await brands.ToPagedListAsync(page, itemsPerPage);
         }
+        
+        public async Task<IEnumerable<Brand>> GetByCategory(string categoryId)
+        {
+            return await _context.Brands
+                .Where(b => b.Products.Any(p => p.CategoryId == categoryId))
+                .OrderBy(b => b.BrandName)
+                .ToListAsync();
+        }
 
         public async Task<Brand?> GetById(string id)
         {

@@ -1,7 +1,7 @@
 ﻿@{
     var request = Context.Request;
     Uri uri = new Uri($"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}");
-    string currentUrl = uri.AbsoluteUri;
+    string currentUrl = uri.AbsoluteUri.RemoveHash() ?? uri.AbsoluteUri;
 
     string sortType = "";
     switch(ViewBag.Sort)
@@ -58,7 +58,7 @@
 
         <a href="@UrlHelper.AddOrUpdateQueryParam(currentUrl, "sort", "name-za")">
             <div class="sort-dropdown-content-item @( ViewBag.Sort == "name-za" ? "active" : "" )">
-                Name Z - A
+                Tên Z - A
             </div>
         </a>
 

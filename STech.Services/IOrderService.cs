@@ -7,8 +7,8 @@ namespace STech.Services
     {
         Task<int> GetTotalOrders();
         Task<decimal> GetTotalRevenue();
-        Task<int> GetMonthOrders(int month);
-        Task<decimal> GetMonthRevenue(int month);
+        Task<int> GetMonthOrders(int month, int year);
+        Task<decimal> GetMonthRevenue(int month, int year);
         Task<IEnumerable<MonthlyOrderSummary>> GetLastSixMonthSummary();
 
         Task<bool> CreateInvoice(Invoice invoice);

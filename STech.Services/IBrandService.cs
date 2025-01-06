@@ -7,6 +7,7 @@ namespace STech.Services
     {
         Task<IEnumerable<Brand>> GetAll(bool isExcept);
         Task<PagedList<Brand>> GetAll(string? sortBy, int page, int itemsPerPage);
+        Task<IEnumerable<Brand>> GetByCategory(string categoryId);
         Task<Brand?> GetById(string id);
 
         Task<bool> Create(Brand brand);

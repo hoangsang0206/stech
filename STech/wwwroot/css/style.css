@@ -38,21 +38,9 @@
     /*--color -------------*/
     --primary-color: #0859ec;
     --primary-color-hover: #7ba8fb;
-    --primary-color-1: #7d5fff;
-    --primary-color-2: #e30019;
-    --primary-color-3: #FC427B;
-    --primary-color-4: #44bd32;
-    --primary-color-1-hover: #af9dff;
-    --primary-color-2-hover: #fba5a5;
-    --primary-color-3-hover: #ff96b6;
-    --primary-color-4-hover: #7ffba9;
     --content-color-black: #000000;
     --content-color-white: #ffffff;
     --header-btn-background: #387dfc;
-    --header-btn-background-1: #5129ff;
-    --header-btn-background-2: #be1529;
-    --header-btn-background-3: #FD7272;
-    --header-btn-background-4: #009432;
 
     --primary-content-color: #fff;
 
@@ -2060,26 +2048,6 @@ input[name="theme"] {
     display: inline-block;
 }
 
-.theme-color-1 {
-    background: #0859ec;
-}
-
-.theme-color-2 {
-    background: var(--primary-color-1);
-}
-
-.theme-color-3 {
-    background: var(--primary-color-2);
-}
-
-.theme-color-4 {
-    background: var(--primary-color-3);
-}
-
-.theme-color-5 {
-    background: var(--primary-color-4);
-}
-
 .theme-label {
     position: relative;
     width: 2.5rem;
@@ -2105,21 +2073,6 @@ input[name="theme"]:checked ~ .theme-label-box .theme-label::after {
     background: var(--primary-color);
     left: calc(100% - 1.3rem + 3px);
 }
-
-.filter-button {
-    border-radius: var(--radius);
-    border: 1px solid var(--border-color);
-    background: none;
-    padding: .5rem .7rem;
-    font-weight: 500;
-    white-space: nowrap;
-}
-
-    .filter-button:hover, .filter-button.active {
-        border-color: var(--primary-color);
-        color: var(--primary-color);
-    }
-
 
 .page-content-loader {
     width: 100%;

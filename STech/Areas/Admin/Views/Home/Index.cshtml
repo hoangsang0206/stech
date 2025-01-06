@@ -47,13 +47,17 @@
                             <span class="statistic-increase mt-2">+@NumberFormater.Format(currentMonthRevenue)</span>
                             <span class="statistic-label">Tháng này</span>
                         </div>
-                        @if(currentMonthRevenue >= lastMonthRevenue)
+                        @if(currentMonthRevenue > lastMonthRevenue)
                         {
-                            <i class="fa-solid fa-arrow-trend-up"></i>
+                            <i class="fa-solid fa-arrow-trend-up show-lastmonth-revenue"></i>
                         }
-                        else
+                        else if (currentMonthRevenue < lastMonthRevenue)
                         {
-                            <i class="fa-solid fa-arrow-trend-down"></i>
+                            <i class="fa-solid fa-arrow-trend-down show-lastmonth-revenue"></i>
+                        }
+                        else 
+                        {
+                            <i class="fa-solid fa-minus show-lastmonth-revenue"></i>
                         }
                     </div>
                 </div>
@@ -66,13 +70,17 @@
                             <span class="statistic-increase mt-2">+@currentMonthOrders</span>
                             <span class="statistic-label">Tháng này</span>
                         </div>
-                        @if(currentMonthOrders >= lastMonthOrders)
+                        @if(currentMonthOrders > lastMonthOrders)
                         {
-                            <i class="fa-solid fa-arrow-trend-up"></i>
+                            <i class="fa-solid fa-arrow-trend-up show-lastmonth-orders"></i>
                         }
-                        else
+                        else if (currentMonthOrders < lastMonthOrders)
                         {
-                            <i class="fa-solid fa-arrow-trend-down"></i>
+                            <i class="fa-solid fa-arrow-trend-down show-lastmonth-orders"></i>
+                        }
+                        else 
+                        {
+                            <i class="fa-solid fa-minus show-lastmonth-orders"></i>
                         }
                     </div>
                 </div>
@@ -219,4 +227,16 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="~/admin/js/dashboard.js"></script>
+
+    <script>
+         tippy('.show-lastmonth-revenue', {
+            content: 'Tháng trước: @NumberFormater.Format(lastMonthRevenue)',
+            placement: 'bottom'
+        })
+
+        tippy('.show-lastmonth-orders', {
+            content: 'Tháng trước: @NumberFormater.Format(lastMonthOrders)',
+            placement: 'bottom'
+        })
+    </script>
 }

@@ -29,6 +29,53 @@
     <link rel="stylesheet" type="text/css" href="~/css/cart.css" />
     <link rel="stylesheet" type="text/css" href="~/css/account.css" />
     <link rel="stylesheet" type="text/css" href="~/css/order.css" />
+    
+    @{ string? theme = Context.Request.Cookies["theme"]; }
+    @if (!string.IsNullOrEmpty(theme) && theme != "blue")
+    {
+        switch (theme)
+        {
+            case "purple":
+                <style>
+                    :root {
+                        --primary-color: #7d5fff !important;
+                        --primary-color-hover: #af9dff !important;
+                        --header-btn-background: #5129ff !important;
+                    }
+                </style>
+                break;
+                
+            case "red":
+                <style>
+                    :root {
+                        --primary-color: #e30019 !important;
+                        --primary-color-hover: #fba5a5 !important;
+                        --header-btn-background: #be1529 !important;
+                    }
+                </style>
+                break;
+                
+            case "pink":
+                <style>
+                    :root {
+                        --primary-color: #FC427B !important;
+                        --primary-color-hover: #ff96b6 !important;
+                        --header-btn-background: #FD7272 !important;
+                    }
+                </style>
+                break;
+            
+            case "green":
+                <style>
+                    :root {
+                        --primary-color: #44bd32 !important;
+                        --primary-color-hover: #7ffba9 !important;
+                        --header-btn-background: #009432 !important;
+                    }
+                </style>
+                break;
+        }
+    }
 
     @RenderSection("Styles", required: false)
 

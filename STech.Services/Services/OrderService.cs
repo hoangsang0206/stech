@@ -26,9 +26,9 @@ namespace STech.Services.Services
                 .SumAsync(i => i.Total);
         }
 
-        public async Task<int> GetMonthOrders(int month)
+        public async Task<int> GetMonthOrders(int month, int year)
         {
-            DateTime startOfMonth = new DateTime(DateTime.Now.Year, month, 1);
+            DateTime startOfMonth = new DateTime(year, month, 1);
             DateTime startOfNextMonth = startOfMonth.AddMonths(1);
 
             return await _context.Invoices
@@ -36,9 +36,9 @@ namespace STech.Services.Services
                 .CountAsync();
         }
 
-        public async Task<decimal> GetMonthRevenue(int month)
+        public async Task<decimal> GetMonthRevenue(int month, int year)
         {
-            DateTime startOfMonth = new DateTime(DateTime.Now.Year, month, 1);
+            DateTime startOfMonth = new DateTime(year, month, 1);
             DateTime startOfNextMonth = startOfMonth.AddMonths(1);
 
             return await _context.Invoices

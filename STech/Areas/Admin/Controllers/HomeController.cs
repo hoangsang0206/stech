@@ -22,6 +22,9 @@ namespace STech.Areas.Admin.Controllers
         
         public async Task<IActionResult> Index()
         {
+            DateTime lastMonth = DateTime.Now.AddMonths(-1);
+            DateTime currentMonth = DateTime.Now;
+
             AdminHomePageData data = new AdminHomePageData
             {
                 ProductStatistic = new ProductStatistic
@@ -33,10 +36,10 @@ namespace STech.Areas.Admin.Controllers
                 {
                     TotalOrders = await _orderService.GetTotalOrders(),
                     TotalRevenue = await _orderService.GetTotalRevenue(),
-                    LastMonthOrders = await _orderService.GetMonthOrders(DateTime.Now.AddMonths(-1).Month),
-                    CurrentMonthOrders = await _orderService.GetMonthOrders(DateTime.Now.Month),
-                    LastMonthRevenue = await _orderService.GetMonthRevenue(DateTime.Now.AddMonths(-1).Month),
-                    CurrentMonthRevenue = await _orderService.GetMonthRevenue(DateTime.Now.Month),
+                    LastMonthOrders = await _orderService.GetMonthOrders(lastMonth.Month, lastMonth.Year),
+                    CurrentMonthOrders = await _orderService.GetMonthOrders(currentMonth.Month, currentMonth.Year),
+                    LastMonthRevenue = await _orderService.GetMonthRevenue(lastMonth.Month, lastMonth.Year),
+                    CurrentMonthRevenue = await _orderService.GetMonthRevenue(currentMonth.Month, currentMonth.Year),
                 },
                 TopSellingProducts = await _productService.GetBestSellingProducts(10),
                 RecentOrders = await _orderService.GetRecentOrders(10),
