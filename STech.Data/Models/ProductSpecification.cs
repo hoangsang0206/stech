@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -13,9 +14,6 @@ public partial class ProductSpecification
 
     public string SpecValue { get; set; } = null!;
 
-    public int? SpecFilterId { get; set; }
-
+    [JsonIgnore]
     public virtual Product Product { get; set; } = null!;
-
-    public virtual SpecFilterValue? SpecFilter { get; set; }
 }

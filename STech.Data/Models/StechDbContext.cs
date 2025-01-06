@@ -83,10 +83,6 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<Slider> Sliders { get; set; }
 
-    public virtual DbSet<SpecFilterByCategory> SpecFilterByCategories { get; set; }
-
-    public virtual DbSet<SpecFilterValue> SpecFilterValues { get; set; }
-
     public virtual DbSet<SubHeader> SubHeaders { get; set; }
 
     public virtual DbSet<Supplier> Suppliers { get; set; }
@@ -117,7 +113,9 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<WarrantySlip> WarrantySlips { get; set; }
 
-
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=AORUS-Laptop;Database=STechDB;User Id=sang;Password=123456;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -609,10 +607,6 @@ public partial class StechDbContext : DbContext
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Spec_Product");
-
-            entity.HasOne(d => d.SpecFilter).WithMany(p => p.ProductSpecifications)
-                .HasForeignKey(d => d.SpecFilterId)
-                .HasConstraintName("FK_Spec_SpecFilter");
         });
 
         modelBuilder.Entity<ReturnExchangeSlip>(entity =>
@@ -793,37 +787,6 @@ public partial class StechDbContext : DbContext
         modelBuilder.Entity<Slider>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Sliders__3214EC07B44944C4");
-        });
-
-        modelBuilder.Entity<SpecFilterByCategory>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__SpecFilt__3214EC078351989F");
-
-            entity.ToTable("SpecFilterByCategory");
-
-            entity.Property(e => e.CategoryId)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.SpecFilterType)
-                .HasMaxLength(30)
-                .IsUnicode(false);
-            entity.Property(e => e.SpecFilterTypeDisplay).HasMaxLength(30);
-        });
-
-        modelBuilder.Entity<SpecFilterValue>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__SpecFilt__3214EC07A38D3CF4");
-
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
-            entity.Property(e => e.SpecFilterValue1)
-                .HasMaxLength(50)
-                .HasColumnName("SpecFilterValue");
-            entity.Property(e => e.SpecFilterValueDisplay).HasMaxLength(50);
-
-            entity.HasOne(d => d.IdNavigation).WithOne(p => p.SpecFilterValue)
-                .HasForeignKey<SpecFilterValue>(d => d.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_SpecFilterValue_SpecFilter");
         });
 
         modelBuilder.Entity<SubHeader>(entity =>
