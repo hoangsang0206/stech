@@ -216,7 +216,6 @@
     border-top: 1px solid var(--border-color);
 }
 
-
 .filter-action-btn {
     padding: .4rem .5rem;
     width: 9rem;
@@ -236,6 +235,16 @@
     border-color: #2485f6;
     color: #fff;
     background: #2485f6;
+}
+
+.filter-all .filter-content {
+    width: 50rem;
+}
+
+.filter-group-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1rem 0 .4rem 0;
 }
 
 .breadcrumb {

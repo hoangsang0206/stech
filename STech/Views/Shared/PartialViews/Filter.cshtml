@@ -6,14 +6,63 @@
 }
 
 <div class="d-flex flex-wrap gap-2 align-items-center">
-    <div class="filter-item">
+    <div class="filter-item filter-all">
         <div class="filter-button">
             <i class="fa-solid fa-filter"></i>
             <span class="filter-button-text">Bộ lọc</span>
         </div>
         
         <div class="filter-content">
-            
+            <div>
+                @if (Model.Categories.Any())
+                {
+                    <div>
+                        <div class="filter-group-title">Danh mục</div>
+                        <div class="filter-checkbox-list">
+                            @foreach (Category category in Model.Categories)
+                            {
+                                <div class="filter-checkbox">
+                                    <input type="checkbox"
+                                           name="filter-categories" id="filter-category-a-@category.CategoryId"
+                                           value="@category.CategoryId"
+                                           hidden @(selectedCategories.Contains(category.CategoryId) ? "checked" : "")/>
+                                    <label for="filter-category-a-@category.CategoryId">@category.CategoryName</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Brands.Any())
+                {
+                    <div>
+                        <div class="filter-group-title">Hãng</div>
+                        <div class="filter-checkbox-list">
+                            @foreach (Brand brand in Model.Brands)
+                            {
+                                <div class="filter-checkbox">
+                                    <input type="checkbox" 
+                                           name="filter-brands" id="filter-brand-a-@brand.BrandId" 
+                                           value="@brand.BrandId" 
+                                           hidden @(selectedBrands.Contains(brand.BrandId) ? "checked" : "") />
+                                    <label for="filter-brand-a-@brand.BrandId">@brand.BrandName</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                
+            </div>
+
+            <div class="filter-action">
+                <button class="filter-action-btn filter-action-clear clear-filter-all">
+                    Bỏ chọn
+                </button>
+
+                <button class="filter-action-btn filter-action-submit">
+                    Xem kết quả
+                </button>
+            </div>
         </div>
     </div>
 
