@@ -772,7 +772,7 @@ button:disabled {
     margin-bottom: 0.8rem;
 }
 
-    .page-input-box label {
+    .page-input-box label, .page-label {
         margin-bottom: 0.3rem;
         font-size: 1rem;
         font-weight: 500;

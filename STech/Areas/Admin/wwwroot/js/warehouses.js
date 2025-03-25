@@ -138,3 +138,43 @@ $('.delete-warehouse').click(function () {
         })
     });
 })
+
+$('.page-search-form form').submit((e) => {
+    e.preventDefault();
+})
+
+let typingTimeOut;
+$('#search-list-products').keyup(() => {
+    clearTimeout(typingTimeOut);
+    
+    typingTimeOut = setTimeout(() => {
+        const searchValue = $('#search-list-products').val();
+
+        $.ajax({
+            type: 'GET',
+            url: `/api/admin/products/search-by-id-or-name/${searchValue}`,
+            success: (response) => {
+                $('.product-table-list-result').empty();
+                
+                response.data.products.forEach(product => {
+                    const total_qty = product.warehouseProducts.reduce((total, item) => total + item.quantity, 0);
+                    if (total_qty <= 0) return;
+
+                    $('.product-table-list-result').append(`
+                        <tr>
+                            <td>${product.productId}</td>
+                            <td>${product.productName}</td>
+                            <td>${product.price.toLocaleString('vi-VN')}đ</td>
+                            <td>${total_qty}</td>
+                            <td><button class="page-table-btn btn-blue"><i class="fa-solid fa-plus"></i></button></td>
+                        </tr>
+                    `);
+                });
+            },
+            error: () => {
+                $('.product-table-list-result').empty();
+            }
+        })
+        
+    }, 300);
+});
