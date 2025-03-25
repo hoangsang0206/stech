@@ -220,18 +220,20 @@ $(document).on('click', '.print-order', async function () {
             }
 
             const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-
-            a.style.display = 'none';
-            a.href = url;
-            a.download = `HĐ_${order_id}.pdf`;
-
-            document.body.appendChild(a);
-            a.click();
-
-            URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+            // const url = URL.createObjectURL(blob);
+            // const a = document.createElement('a');
+            //
+            // a.style.display = 'none';
+            // a.href = url;
+            // a.download = `HĐ_${order_id}.pdf`;
+            //
+            // document.body.appendChild(a);
+            // a.click();
+            //
+            // URL.revokeObjectURL(url);
+            // document.body.removeChild(a);
+            
+            printBlobPdf(blob);
         } catch (error) {
             showDialog('error', 'Không thể tải hóa đơn', error);
         }

@@ -826,7 +826,7 @@ button:disabled {
     }
 
     .page-input .select2-selection__rendered {
-        padding: 0.7rem 1.2rem 0.7rem 0 !important;
+        padding: 0.65rem 1.2rem 0.65rem 0 !important;
         line-height: normal !important;
         color: #000 !important;
         font-size: .97rem;

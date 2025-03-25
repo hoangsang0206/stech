@@ -384,3 +384,14 @@ const activeDropdown = (dropdown_container, value) => {
 $('select').toArray().map(select => {
     $(select).select2();
 })
+
+const printBlobPdf = (blob) => {
+    const url = URL.createObjectURL(blob);
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = url;
+    document.body.appendChild(iframe);
+    iframe.onload = () => {
+        iframe.contentWindow.print();
+    }
+}

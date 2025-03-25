@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using STech.Constants;
 using STech.Data.Models;
 using STech.Filters;
@@ -10,10 +11,16 @@ namespace STech.Areas.Admin.Controllers
     public class WarehousesController : Controller
     {
         private readonly IWarehouseService _warehouseService;
+        private readonly ISupplierService _supplierService;
+        private readonly IEmployeeService _employeeService;
 
-        public WarehousesController(IWarehouseService warehouseService)
+        public WarehousesController(IWarehouseService warehouseService,
+            ISupplierService supplierService,
+            IEmployeeService employeeService)
         {
             _warehouseService = warehouseService;
+            _supplierService = supplierService;
+            _employeeService = employeeService;
         }
 
         [AdminAuthorize(Code = Functions.ViewWarehouses)]
@@ -27,11 +34,20 @@ namespace STech.Areas.Admin.Controllers
 
         [AdminAuthorize(Code = Functions.ImportWarehouse)]
         public async Task<IActionResult> Import()
-        {
-           
+        {  
+            string? userId = User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+            
+            Employee? employee = await _employeeService.GetEmployeeByUserId(userId);
+            IEnumerable<Warehouse> warehouses = await _warehouseService.GetWarehouses();
+            IEnumerable<Supplier> suppliers = await _supplierService.GetSuppliers();
 
             ViewBag.ActiveSidebar = "warehouses";
-            return View();
+            return View(
+                new Tuple<Employee?, IEnumerable<Warehouse>, IEnumerable<Supplier>>(employee, warehouses, suppliers));
         }
 
         [AdminAuthorize(Code = Functions.ExportWarehouse)]
