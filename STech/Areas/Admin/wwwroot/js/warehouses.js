@@ -168,6 +168,7 @@ $('#search-list-products').keyup(() => {
                             <td>${total_qty}</td>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                             <td>
                                 <button class="page-table-btn btn-blue click-select-product" 
                                     data-product="${product.productId}"
@@ -175,6 +176,9 @@ $('#search-list-products').keyup(() => {
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
                             </td>
+=======
+                            <td><button class="page-table-btn btn-blue"><i class="fa-solid fa-plus"></i></button></td>
+>>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a
 =======
                             <td><button class="page-table-btn btn-blue"><i class="fa-solid fa-plus"></i></button></td>
 >>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a
@@ -191,6 +195,7 @@ $('#search-list-products').keyup(() => {
         })
         
     }, 300);
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 });
@@ -301,6 +306,9 @@ $(document).on('click', '.confirm-edit-import-item', function () {
 $('.create-import').click(() => {
     
 })
+=======
+});
+>>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a
 =======
 });
 >>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a
