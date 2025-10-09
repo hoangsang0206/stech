@@ -27,5 +27,7 @@ namespace STech.Services
         Task<bool> UpdateUserAddress(UserAddress address);
         Task<bool> SetDefaultAddress(string userId, int id);
         Task<bool> DeleteUserAddress(string userId, int id);
+        
+        Task<Employee?> GetEmployeeByUserId(string userId);
     }
 }

@@ -235,5 +235,12 @@ namespace STech.Services.Services
         }
 
         #endregion
+        
+        public async Task<Employee?> GetEmployeeByUserId(string userId)
+        {
+            return await _context.Employees
+                .Where(u => u.Users.Any(uu => uu.UserId == userId))
+                .FirstOrDefaultAsync();
+        }
     }
 }

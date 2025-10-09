@@ -138,3 +138,172 @@ $('.delete-warehouse').click(function () {
         })
     });
 })
+
+$('.page-search-form form').submit((e) => {
+    e.preventDefault();
+})
+
+let typingTimeOut;
+$('#search-list-products').keyup(() => {
+    clearTimeout(typingTimeOut);
+    
+    typingTimeOut = setTimeout(() => {
+        const searchValue = $('#search-list-products').val();
+
+        $.ajax({
+            type: 'GET',
+            url: `/api/admin/products/search-by-id-or-name/${searchValue}`,
+            success: (response) => {
+                $('.product-table-list-result').empty();
+                
+                response.data.products.forEach(product => {
+                    const total_qty = product.warehouseProducts.reduce((total, item) => total + item.quantity, 0);
+                    if (total_qty <= 0) return;
+
+                    $('.product-table-list-result').append(`
+                        <tr>
+                            <td>${product.productId}</td>
+                            <td>${product.productName}</td>
+                            <td>${product.price.toLocaleString('vi-VN')}đ</td>
+                            <td>${total_qty}</td>
+<<<<<<< HEAD
+<<<<<<< HEAD
+                            <td>
+                                <button class="page-table-btn btn-blue click-select-product" 
+                                    data-product="${product.productId}"
+                                    data-price="${product.price}">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </td>
+=======
+                            <td><button class="page-table-btn btn-blue"><i class="fa-solid fa-plus"></i></button></td>
+>>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a
+=======
+                            <td><button class="page-table-btn btn-blue"><i class="fa-solid fa-plus"></i></button></td>
+>>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a
+                        </tr>
+                    `);
+                });
+            },
+            error: () => {
+                $('.product-table-list-result').empty();
+            }
+        })
+        
+    }, 300);
+<<<<<<< HEAD
+<<<<<<< HEAD
+});
+
+
+let selectedProducts = [];
+
+const updateSelectedProductList = () => {
+    $('.selected-product-list').empty();
+    selectedProducts.map(item => {
+        $('.selected-product-list').append(`
+            <tr data-product="${item.productId}" data-qty="${item.quantity}" data-price="${item.price}">
+                <td>${item.productId}</td>
+                <td>${item.quantity}</td>
+                <td>${(item.price).toLocaleString('vi-VN')}đ</td>
+                <td><i class="fa-solid fa-pen-to-square edit-import-item" data-product="${item.productId}"></i></td>
+            </tr>
+        `);
+    })
+
+    $('.selected-product-list').append(`
+        <tr>
+            <td class="fw-bold text-end">Tổng cộng:</td>
+            <td class="fweight-600">${selectedProducts.reduce((total, item) => total + item.quantity, 0)}</td>
+            <td class="fweight-600">${(selectedProducts.reduce((total, item) => total + item.price, 0)).toLocaleString('vi-VN')}đ</td>
+        </tr>
+        
+        <tr>
+            <td colspan="2" class="fw-bold text-end">Tổng tiền:</td>
+            <td class="fweight-600">${selectedProducts.reduce((total, item) => total + item.quantity * item.price, 0).toLocaleString('vi-VN')}đ</td>
+        </tr>
+    `);
+}
+
+$(document).on('click', '.click-select-product', function () { 
+    const productId = $(this).data('product');
+    const price = $(this).data('price');
+
+    const selectedProduct = selectedProducts.find(item => item.productId === productId);
+    
+    if (selectedProduct) {
+        selectedProduct.quantity++;
+    } else {
+        selectedProducts.push({
+            productId: productId,
+            quantity: 1,
+            price: price
+        });
+    }
+    
+    updateSelectedProductList();
+})
+
+$(document).on('click', '.edit-import-item', function () {
+    const productId = $(this).data('product');
+    const selectedProduct = selectedProducts.find(item => item.productId === productId);
+    
+    const editElement = $(this).closest('tr');
+    const editQty = selectedProduct.quantity;
+    const editPrice = selectedProduct.price;
+    
+    const editHtml = `
+        <td>${productId}</td>
+        <td>
+            <input type="number" class="form-control" value="${editQty}" min="1" required>
+        </td>
+        <td>
+            <input type="number" class="form-control" value="${editPrice}" min="1" required>
+        </td>
+        <td><i class="fa-solid fa-check confirm-edit-import-item"></i></td>
+    `;
+    
+    editElement.html(editHtml);
+})
+
+$(document).on('click', '.confirm-edit-import-item', function () {
+    const editElement = $(this).closest('tr');
+    const productId = editElement.data('product');
+    const selectedProduct = selectedProducts.find(item => item.productId === productId);
+    
+    const qty = parseInt(editElement.find('input[type="number"]').eq(0).val());
+    const price = parseInt(editElement.find('input[type="number"]').eq(1).val());
+    
+    if (qty <= 0 || price <= 0) { 
+        showDialog('error', 'Lỗi nhập liệu', 'Số lượng và giá phải lớn hơn 0');
+        return;
+    }
+    
+    if (isNaN(qty) || isNaN(price)) {
+        showDialog('error', 'Lỗi nhập liệu', 'Số lượng và giá phải là số');
+        return;
+    }
+    
+    selectedProduct.quantity = qty;
+    selectedProduct.price = price;
+    
+    const newHtml = `
+        <td>${productId}</td>
+        <td>${qty}</td>
+        <td>${price.toLocaleString('vi-VN')}đ</td>
+        <td><i class="fa-solid fa-pen-to-square edit-import-item" data-product="${productId}"></i></td>
+    `;
+    
+    editElement.html(newHtml);
+    updateSelectedProductList();
+})
+
+$('.create-import').click(() => {
+    
+})
+=======
+});
+>>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a
+=======
+});
+>>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a

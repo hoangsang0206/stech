@@ -1,0 +1,9 @@
+.product-table-list-wrapper {
+    max-height: 30rem;
+    overflow-y: auto;
+}
+
+.edit-import-item, .confirm-edit-import-item {
+    color: #0c6cf2;
+    cursor: pointer;
+}

@@ -1,8 +1,11 @@
-﻿@{
-    ViewData["Title"] = "Thanh toán thành công";
+﻿@model PaymentStatusVM
+
+@{
+    string title = Model.IsPaid ? "Thanh toán thành công" : "Thanh toán thất bại";
+    
+    ViewData["Title"] = title;
 }
 
-@model PaymentStatusVM
 
 <section class="page-container-padding payment-status-page d-flex flex-column align-items-center justify-content-center">
     @if(Model.IsPaid)

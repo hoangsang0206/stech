@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using STech.Constants;
 using STech.Data.Models;
 using STech.Data.ViewModels;
@@ -13,14 +14,24 @@ namespace STech.Areas.Admin.ApiControllers
     public class WarehousesController : ControllerBase
     {
         private readonly IWarehouseService _warehouseService;
+        private readonly ISupplierService _supplierService;
+        private readonly IProductService _productService;
+        private readonly IEmployeeService _employeeService;
+        
         private readonly AddressService _addressService;
         private readonly IAzureMapsService _azureMapsService;
 
         public WarehousesController(IWarehouseService warehouseService,
+            ISupplierService supplierService,
+            IProductService productService,
+            IEmployeeService employeeService,
             AddressService addressService,
             IAzureMapsService azureMapsService)
         {
             _warehouseService = warehouseService;
+            _supplierService = supplierService;
+            _productService = productService;
+            _employeeService = employeeService;
             _addressService = addressService;
             _azureMapsService = azureMapsService;
         }
@@ -210,5 +221,90 @@ namespace STech.Areas.Admin.ApiControllers
                 Message = result ? "Xóa kho hàng thành công" : "Xóa kho hàng thất bại"
             });
         }
+
+        #region Import
+
+        [HttpPost("import")]
+        [AdminAuthorize(Code = Functions.ImportWarehouse)]
+        public async Task<IActionResult> ImportWarehouse([FromBody] WarehouseImportVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    StatusCode = 400,
+                    Message = "Dữ liệu không hợp lệ"
+                });
+            }
+
+            Warehouse? warehouse = await _warehouseService.GetWarehouseById(model.WarehouseId);
+            if (warehouse == null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Kho hàng không tồn tại"
+                });
+            }
+            
+            Supplier? supplier = await _supplierService.GetSupplierById(model.SupplierId);
+            if (supplier == null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Nhà cung cấp không tồn tại"
+                });
+            }
+            if (model.WarehouseImportDetails.Count == 0)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Vui long chọn ít nhất 1 sản phẩm"
+                });
+            }
+
+            foreach (var product in model.WarehouseImportDetails)
+            {
+                Product? existedProduct = await _productService.GetProduct(product.ProductId);
+                
+                if (existedProduct == null)
+                {
+                    return Ok(new ApiResponse
+                    {
+                        Status = false,
+                        Message = $"Sản phẩm {product.ProductId} không tồn tại"
+                    });
+                }
+            }
+            
+            string? userId = User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+            
+            Employee? employee = await _employeeService.GetEmployeeByUserId(userId);
+            if (employee == null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Nhân viên không tồn tại"
+                });
+            }
+
+            bool result = await _warehouseService.CreateWarehouseImport(model, employee.EmployeeId);
+           
+            return Ok(new ApiResponse
+            {
+               Status = result,
+               Message = result ? "Tạo phiếu nhập kho thành công" : "Tạo phiếu nhập kho thất bại"
+            });
+        }
+
+        #endregion
     }
 }

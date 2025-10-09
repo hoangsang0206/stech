@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using STech.Constants;
 using STech.Data.Models;
+using STech.Data.ViewModels;
 using STech.Filters;
 using STech.Services;
 
@@ -47,7 +48,9 @@ namespace STech.Areas.Admin.Controllers
 
             ViewBag.ActiveSidebar = "warehouses";
             return View(
-                new Tuple<Employee?, IEnumerable<Warehouse>, IEnumerable<Supplier>>(employee, warehouses, suppliers));
+                new Tuple<Employee?, IEnumerable<Warehouse>, 
+                    IEnumerable<Supplier>, WarehouseImportVM>
+                    (employee, warehouses, suppliers, new WarehouseImportVM()));
         }
 
         [AdminAuthorize(Code = Functions.ExportWarehouse)]

@@ -53,6 +53,23 @@ namespace STech.Areas.Admin.ApiControllers
                 }
             });
         }
+        
+        [HttpGet("search-by-id-or-name/{query}")]
+        public async Task<IActionResult> SearchProductsByIdOrName(string query, int page)
+        {
+            PagedList<Product> products = await _productService.SearchProductsByIdOrName(query, page, _itemsPerPage);
+
+            return Ok(new ApiResponse
+            {
+                Status = true,
+                Data = new
+                {
+                    products = products.Items,
+                    totalPages = products.TotalPages,
+                    currentPage = products.CurrentPage
+                }
+            });
+        }
 
         [HttpGet]
         [AdminAuthorize(Code = Functions.ViewProducts)]

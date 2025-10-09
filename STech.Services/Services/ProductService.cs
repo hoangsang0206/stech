@@ -102,6 +102,22 @@ namespace STech.Services.Services
 
             return await products.ToPagedListAsync(page, itemsPerPage);
         }
+        
+        public async Task<PagedList<Product>> SearchProductsByIdOrName(string q, int page, int itemsPerPage)
+        {
+            if (string.IsNullOrEmpty(q))
+            {
+                return new PagedList<Product>();
+            }
+
+            string[] keywords = q.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            IQueryable<Product> products = _context.Products
+                .Where(p => (p.ProductId == q || keywords.All(key => p.ProductName.Contains(key))))
+                .SelectProduct();
+
+            return await products.ToPagedListAsync(page, itemsPerPage);
+        }
 
         public async Task<IEnumerable<Product>> SearchProductsByChatBotData(List<ProductSpecification>? specs, string? productId, 
             string? productName, string? priceStr)
