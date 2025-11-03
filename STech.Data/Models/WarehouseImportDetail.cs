@@ -15,6 +15,8 @@ public partial class WarehouseImportDetail
 
     public decimal UnitPrice { get; set; }
 
+    public string? BatchNumber { get; set; }
+
     public virtual Product Product { get; set; } = null!;
 
     public virtual WarehouseImport Wi { get; set; } = null!;

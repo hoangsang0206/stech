@@ -31,10 +31,16 @@ public partial class Warehouse
     public decimal? Longtitude { get; set; }
 
     [JsonIgnore]
+    public virtual ICollection<Batch> Batches { get; set; } = new List<Batch>();
+
+    [JsonIgnore]
     public virtual ICollection<WarehouseExport> WarehouseExports { get; set; } = new List<WarehouseExport>();
 
     [JsonIgnore]
     public virtual ICollection<WarehouseImport> WarehouseImports { get; set; } = new List<WarehouseImport>();
 
     public virtual ICollection<WarehouseProduct> WarehouseProducts { get; set; } = new List<WarehouseProduct>();
+
+    [JsonIgnore]
+    public virtual ICollection<WarehouseHistory> WarehouseHistories { get; set; } = new List<WarehouseHistory>();
 }

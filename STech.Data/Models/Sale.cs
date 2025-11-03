@@ -18,6 +18,8 @@ public partial class Sale
 
     public string? BackgroundColor { get; set; }
 
+    public string? BannerImg { get; set; }
+
     public string? HeaderTextColor { get; set; }
 
     public bool? IsActive { get; set; }

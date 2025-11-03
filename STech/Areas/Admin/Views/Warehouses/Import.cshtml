@@ -31,7 +31,7 @@
                     <label>Kho nhập</label>
                     <div class="page-input">
                         <select id="warehouse_id" asp-for="@Model.Item4.WarehouseId">
-                            <option selected>Chọn kho nhập</option>
+                            <option value="" selected>Chọn kho nhập</option>
                             @foreach (Warehouse warehouse in warehouses)
                             {
                                 <option value="@warehouse.WarehouseId">@warehouse.WarehouseName</option>
@@ -45,7 +45,7 @@
                     <label>Nhà cung cấp</label>
                     <div class="page-input">
                         <select id="supplier_id" asp-for="@Model.Item4.SupplierId">
-                            <option selected>Chọn nhà cung cấp</option>
+                            <option value="" selected>Chọn nhà cung cấp</option>
                             @foreach (Supplier supplier in suppliers)
                             {
                                 <option value="@supplier.SupplierId">@supplier.SupplierName</option>

@@ -19,6 +19,8 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<BannerType> BannerTypes { get; set; }
 
+    public virtual DbSet<Batch> Batches { get; set; }
+
     public virtual DbSet<Brand> Brands { get; set; }
 
     public virtual DbSet<Category> Categories { get; set; }
@@ -103,11 +105,11 @@ public partial class StechDbContext : DbContext
 
     public virtual DbSet<WarehouseExportDetail> WarehouseExportDetails { get; set; }
 
+    public virtual DbSet<WarehouseHistory> WarehouseHistories { get; set; }
+
     public virtual DbSet<WarehouseImport> WarehouseImports { get; set; }
 
     public virtual DbSet<WarehouseImportDetail> WarehouseImportDetails { get; set; }
-
-    public virtual DbSet<WarehouseImportHistory> WarehouseImportHistories { get; set; }
 
     public virtual DbSet<WarehouseProduct> WarehouseProducts { get; set; }
 
@@ -117,7 +119,7 @@ public partial class StechDbContext : DbContext
     {
         modelBuilder.Entity<Banner>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Banners__3214EC07B40A8AA8");
+            entity.HasKey(e => e.Id).HasName("PK__Banners__3214EC072226E4AC");
 
             entity.HasOne(d => d.BannerTypeNavigation).WithMany(p => p.Banners)
                 .HasForeignKey(d => d.BannerType)
@@ -126,16 +128,41 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<BannerType>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__BannerTy__3214EC07DA92B5FB");
+            entity.HasKey(e => e.Id).HasName("PK__BannerTy__3214EC075BFA903B");
 
             entity.Property(e => e.Type)
                 .HasMaxLength(50)
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<Batch>(entity =>
+        {
+            entity.HasKey(e => new { e.BatchNumber, e.ProductId, e.WarehouseId }).HasName("PK__Batches__CB0F29AF1C524E05");
+
+            entity.Property(e => e.BatchNumber)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ProductId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.WarehouseId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Product).WithMany(p => p.Batches)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Batches__Product__756D6ECB");
+
+            entity.HasOne(d => d.Warehouse).WithMany(p => p.Batches)
+                .HasForeignKey(d => d.WarehouseId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Batches__Warehou__76619304");
+        });
+
         modelBuilder.Entity<Brand>(entity =>
         {
-            entity.HasKey(e => e.BrandId).HasName("PK__Brands__DAD4F05E165DCEC4");
+            entity.HasKey(e => e.BrandId).HasName("PK__Brands__DAD4F05EA9843E46");
 
             entity.Property(e => e.BrandId)
                 .HasMaxLength(50)
@@ -149,7 +176,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.CategoryId).HasName("PK__Categori__19093A0B9103C118");
+            entity.HasKey(e => e.CategoryId).HasName("PK__Categori__19093A0BDB7992ED");
 
             entity.Property(e => e.CategoryId)
                 .HasMaxLength(50)
@@ -159,7 +186,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64D8242A919A");
+            entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64D858954F6D");
 
             entity.Property(e => e.CustomerId)
                 .HasMaxLength(50)
@@ -191,7 +218,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<DeliveryMethod>(entity =>
         {
-            entity.HasKey(e => e.DeliveryMedId).HasName("PK__Delivery__C9AFB121B1B137A8");
+            entity.HasKey(e => e.DeliveryMedId).HasName("PK__Delivery__C9AFB1210636AAEC");
 
             entity.Property(e => e.DeliveryMedId)
                 .HasMaxLength(50)
@@ -201,7 +228,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<DeliveryUnit>(entity =>
         {
-            entity.HasKey(e => e.Duid).HasName("PK__Delivery__2A5FEA4A556D0705");
+            entity.HasKey(e => e.Duid).HasName("PK__Delivery__2A5FEA4A8AD7AA8D");
 
             entity.Property(e => e.Duid)
                 .HasMaxLength(50)
@@ -217,7 +244,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Employee>(entity =>
         {
-            entity.HasKey(e => e.EmployeeId).HasName("PK__Employee__7AD04F1166399E49");
+            entity.HasKey(e => e.EmployeeId).HasName("PK__Employee__7AD04F118AF440BC");
 
             entity.Property(e => e.EmployeeId)
                 .HasMaxLength(50)
@@ -251,7 +278,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Function>(entity =>
         {
-            entity.HasKey(e => e.FuncId).HasName("PK__Function__834DE213D6905D6E");
+            entity.HasKey(e => e.FuncId).HasName("PK__Function__834DE213B28CA0D6");
 
             entity.Property(e => e.FuncId)
                 .HasMaxLength(50)
@@ -269,7 +296,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<FunctionAuthorization>(entity =>
         {
-            entity.HasKey(e => new { e.GroupId, e.FuncId }).HasName("PK__Function__3CAE2D4B6CAF6640");
+            entity.HasKey(e => new { e.GroupId, e.FuncId }).HasName("PK__Function__3CAE2D4B7B2B4992");
 
             entity.ToTable("FunctionAuthorization");
 
@@ -280,17 +307,17 @@ public partial class StechDbContext : DbContext
             entity.HasOne(d => d.Func).WithMany(p => p.FunctionAuthorizations)
                 .HasForeignKey(d => d.FuncId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__FunctionA__FuncI__4B622666");
+                .HasConstraintName("FK__FunctionA__FuncI__25518C17");
 
             entity.HasOne(d => d.Group).WithMany(p => p.FunctionAuthorizations)
                 .HasForeignKey(d => d.GroupId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__FunctionA__Group__4A6E022D");
+                .HasConstraintName("FK__FunctionA__Group__2645B050");
         });
 
         modelBuilder.Entity<FunctionCategory>(entity =>
         {
-            entity.HasKey(e => e.FuncCateId).HasName("PK__Function__91338DED631CF284");
+            entity.HasKey(e => e.FuncCateId).HasName("PK__Function__91338DED3226298C");
 
             entity.Property(e => e.FuncCateId)
                 .HasMaxLength(50)
@@ -300,7 +327,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Invoice>(entity =>
         {
-            entity.HasKey(e => e.InvoiceId).HasName("PK__Invoices__D796AAB59C32660C");
+            entity.HasKey(e => e.InvoiceId).HasName("PK__Invoices__D796AAB514F09F60");
 
             entity.Property(e => e.InvoiceId)
                 .HasMaxLength(50)
@@ -361,7 +388,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<InvoiceDetail>(entity =>
         {
-            entity.HasKey(e => new { e.InvoiceId, e.ProductId }).HasName("PK__InvoiceD__1CD666D903179831");
+            entity.HasKey(e => new { e.InvoiceId, e.ProductId }).HasName("PK__InvoiceD__1CD666D91EA246CA");
 
             entity.Property(e => e.InvoiceId)
                 .HasMaxLength(50)
@@ -391,7 +418,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<InvoiceStatus>(entity =>
         {
-            entity.HasKey(e => new { e.Id, e.InvoiceId }).HasName("PK__InvoiceS__7F6D86AC0F55D53F");
+            entity.HasKey(e => new { e.Id, e.InvoiceId }).HasName("PK__InvoiceS__7F6D86AC9E8E09E4");
 
             entity.ToTable("InvoiceStatus");
 
@@ -410,7 +437,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Menu>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Menu__3214EC078BB706C6");
+            entity.HasKey(e => e.Id).HasName("PK__Menu__3214EC07A642031C");
 
             entity.ToTable("Menu");
 
@@ -420,7 +447,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<MenuLevel1>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__MenuLeve__3214EC07490F7D0A");
+            entity.HasKey(e => e.Id).HasName("PK__MenuLeve__3214EC07EE671F30");
 
             entity.ToTable("MenuLevel1");
 
@@ -434,7 +461,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<MenuLevel2>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__MenuLeve__3214EC0755BF88C8");
+            entity.HasKey(e => e.Id).HasName("PK__MenuLeve__3214EC07DE080E63");
 
             entity.ToTable("MenuLevel2");
 
@@ -448,9 +475,9 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<PackingSlip>(entity =>
         {
-            entity.HasKey(e => e.Psid).HasName("PK__PackingS__BC000956631FED4B");
+            entity.HasKey(e => e.Psid).HasName("PK__PackingS__BC000956889571B0");
 
-            entity.HasIndex(e => e.InvoiceId, "UQ__PackingS__D796AAB4A2975625").IsUnique();
+            entity.HasIndex(e => e.InvoiceId, "UQ__PackingS__D796AAB45C9C1171").IsUnique();
 
             entity.Property(e => e.Psid)
                 .HasMaxLength(50)
@@ -484,7 +511,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<PaymentMethod>(entity =>
         {
-            entity.HasKey(e => e.PaymentMedId).HasName("PK__PaymentM__1D98A1A7CDF21BED");
+            entity.HasKey(e => e.PaymentMedId).HasName("PK__PaymentM__1D98A1A72E5310C0");
 
             entity.Property(e => e.PaymentMedId)
                 .HasMaxLength(50)
@@ -495,7 +522,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.ProductId).HasName("PK__Products__B40CC6CDF6793729");
+            entity.HasKey(e => e.ProductId).HasName("PK__Products__B40CC6CDEC2238B4");
 
             entity.Property(e => e.ProductId)
                 .HasMaxLength(50)
@@ -524,7 +551,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<ProductGroup>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ProductG__3214EC0706C83E36");
+            entity.HasKey(e => e.Id).HasName("PK__ProductG__3214EC077DCB1910");
 
             entity.Property(e => e.BackgroundColor)
                 .HasMaxLength(20)
@@ -548,7 +575,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<ProductGroupItem>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ProductG__3214EC07EBE2DBB4");
+            entity.HasKey(e => e.Id).HasName("PK__ProductG__3214EC07DC70F923");
 
             entity.Property(e => e.ProductId)
                 .HasMaxLength(50)
@@ -567,7 +594,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<ProductGroupType>(entity =>
         {
-            entity.HasKey(e => e.TypeId).HasName("PK__ProductG__516F03B59FC4CF41");
+            entity.HasKey(e => e.TypeId).HasName("PK__ProductG__516F03B59884BE91");
 
             entity.Property(e => e.TypeId)
                 .HasMaxLength(30)
@@ -578,7 +605,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<ProductImage>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ProductI__3214EC07AFDDDCF3");
+            entity.HasKey(e => e.Id).HasName("PK__ProductI__3214EC07519F7649");
 
             entity.Property(e => e.ProductId)
                 .HasMaxLength(50)
@@ -592,7 +619,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<ProductSpecification>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ProductS__3214EC073B99A0E4");
+            entity.HasKey(e => e.Id).HasName("PK__ProductS__3214EC074951AA3A");
 
             entity.Property(e => e.ProductId)
                 .HasMaxLength(50)
@@ -607,7 +634,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<ReturnExchangeSlip>(entity =>
         {
-            entity.HasKey(e => e.Resid).HasName("PK__ReturnEx__4D969312DB1332FF");
+            entity.HasKey(e => e.Resid).HasName("PK__ReturnEx__4D969312761AD866");
 
             entity.Property(e => e.Resid)
                 .HasMaxLength(50)
@@ -635,22 +662,22 @@ public partial class StechDbContext : DbContext
             entity.HasOne(d => d.Employee).WithMany(p => p.ReturnExchangeSlips)
                 .HasForeignKey(d => d.EmployeeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ReturnExc__Emplo__2630A1B7");
+                .HasConstraintName("FK__ReturnExc__Emplo__3C34F16F");
 
             entity.HasOne(d => d.Invoice).WithMany(p => p.ReturnExchangeSlips)
                 .HasForeignKey(d => d.InvoiceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ReturnExc__Invoi__253C7D7E");
+                .HasConstraintName("FK__ReturnExc__Invoi__3D2915A8");
 
             entity.HasOne(d => d.Product).WithMany(p => p.ReturnExchangeSlips)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ReturnExc__Produ__24485945");
+                .HasConstraintName("FK__ReturnExc__Produ__3E1D39E1");
         });
 
         modelBuilder.Entity<Review>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Reviews__3214EC0763D41091");
+            entity.HasKey(e => e.Id).HasName("PK__Reviews__3214EC077BA09498");
 
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.ProductId)
@@ -677,7 +704,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<ReviewImage>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ReviewIm__3214EC0717D64B44");
+            entity.HasKey(e => e.Id).HasName("PK__ReviewIm__3214EC07F0C7294F");
 
             entity.HasOne(d => d.Review).WithMany(p => p.ReviewImages)
                 .HasForeignKey(d => d.ReviewId)
@@ -687,7 +714,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<ReviewLike>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ReviewLi__3214EC0799937885");
+            entity.HasKey(e => e.Id).HasName("PK__ReviewLi__3214EC071938CF84");
 
             entity.Property(e => e.LikeDate).HasColumnType("datetime");
             entity.Property(e => e.UserId)
@@ -707,7 +734,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<ReviewReply>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ReviewRe__3214EC07385DB39A");
+            entity.HasKey(e => e.Id).HasName("PK__ReviewRe__3214EC07B53488C4");
 
             entity.Property(e => e.IsRead).HasDefaultValue(false);
             entity.Property(e => e.ReplyDate).HasColumnType("datetime");
@@ -728,7 +755,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE1ACFDA3797");
+            entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE1AC3B2E6CF");
 
             entity.Property(e => e.RoleId)
                 .HasMaxLength(50)
@@ -738,7 +765,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Sale>(entity =>
         {
-            entity.HasKey(e => e.SaleId).HasName("PK__Sales__1EE3C3FF724B7144");
+            entity.HasKey(e => e.SaleId).HasName("PK__Sales__1EE3C3FF2382B849");
 
             entity.Property(e => e.SaleId)
                 .HasMaxLength(50)
@@ -759,7 +786,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<SaleProduct>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__SaleProd__3214EC0738C48EC2");
+            entity.HasKey(e => e.Id).HasName("PK__SaleProd__3214EC07C830EF99");
 
             entity.Property(e => e.ProductId)
                 .HasMaxLength(50)
@@ -782,19 +809,19 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<Slider>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Sliders__3214EC07B44944C4");
+            entity.HasKey(e => e.Id).HasName("PK__Sliders__3214EC07CE762C07");
         });
 
         modelBuilder.Entity<SubHeader>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__SubHeade__3214EC0705BD1B6C");
+            entity.HasKey(e => e.Id).HasName("PK__SubHeade__3214EC070E43B631");
 
             entity.Property(e => e.Title).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Supplier>(entity =>
         {
-            entity.HasKey(e => e.SupplierId).HasName("PK__Supplier__4BE666B4D9BBA1C7");
+            entity.HasKey(e => e.SupplierId).HasName("PK__Supplier__4BE666B4CF6EB258");
 
             entity.Property(e => e.SupplierId)
                 .HasMaxLength(50)
@@ -808,7 +835,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4CDFB78CC7");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C8F76979A");
 
             entity.Property(e => e.UserId)
                 .HasMaxLength(50)
@@ -847,7 +874,7 @@ public partial class StechDbContext : DbContext
 
             entity.HasOne(d => d.Group).WithMany(p => p.Users)
                 .HasForeignKey(d => d.GroupId)
-                .HasConstraintName("FK__Users__GroupId__47919582");
+                .HasConstraintName("FK__Users__GroupId__4B7734FF");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
@@ -857,7 +884,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<UserAddress>(entity =>
         {
-            entity.HasKey(e => new { e.Id, e.UserId }).HasName("PK__UserAddr__E36C60C39E6EE1B7");
+            entity.HasKey(e => new { e.Id, e.UserId }).HasName("PK__UserAddr__E36C60C382792A6E");
 
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.UserId)
@@ -893,7 +920,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<UserCart>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__UserCart__3214EC0730C44DBC");
+            entity.HasKey(e => e.Id).HasName("PK__UserCart__3214EC07A6F13324");
 
             entity.Property(e => e.ProductId)
                 .HasMaxLength(50)
@@ -936,14 +963,14 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<UserGroup>(entity =>
         {
-            entity.HasKey(e => e.GroupId).HasName("PK__UserGrou__149AF36A4761C8B5");
+            entity.HasKey(e => e.GroupId).HasName("PK__UserGrou__149AF36A60969466");
 
             entity.Property(e => e.GroupName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Warehouse>(entity =>
         {
-            entity.HasKey(e => e.WarehouseId).HasName("PK__Warehous__2608AFF9F444B510");
+            entity.HasKey(e => e.WarehouseId).HasName("PK__Warehous__2608AFF99B0C8533");
 
             entity.Property(e => e.WarehouseId)
                 .HasMaxLength(50)
@@ -971,7 +998,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<WarehouseExport>(entity =>
         {
-            entity.HasKey(e => e.Weid).HasName("PK__Warehous__FA31005192D7BD96");
+            entity.HasKey(e => e.Weid).HasName("PK__Warehous__FA31005131EA736E");
 
             entity.Property(e => e.Weid)
                 .HasMaxLength(50)
@@ -1007,7 +1034,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<WarehouseExportDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Warehous__3214EC07F8FCAAC9");
+            entity.HasKey(e => e.Id).HasName("PK__Warehous__3214EC077E8278AA");
 
             entity.Property(e => e.ProductId)
                 .HasMaxLength(50)
@@ -1029,9 +1056,45 @@ public partial class StechDbContext : DbContext
                 .HasConstraintName("FK_WHDetail_WHE");
         });
 
+        modelBuilder.Entity<WarehouseHistory>(entity =>
+        {
+            entity.HasKey(e => e.HistoryId).HasName("PK__Warehous__4D7B4ABD95823BE1");
+
+            entity.Property(e => e.HistoryId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ActionDate).HasColumnType("datetime");
+            entity.Property(e => e.ActionType)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.BatchNumber)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ProductId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ReferenceId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.WarehouseId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Product).WithMany(p => p.WarehouseHistories)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Warehouse__Produ__7A3223E8");
+
+            entity.HasOne(d => d.Warehouse).WithMany(p => p.WarehouseHistories)
+                .HasForeignKey(d => d.WarehouseId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Warehouse__Wareh__7B264821");
+        });
+
         modelBuilder.Entity<WarehouseImport>(entity =>
         {
-            entity.HasKey(e => e.Wiid).HasName("PK__Warehous__83D4711A46C369B6");
+            entity.HasKey(e => e.Wiid).HasName("PK__Warehous__83D4711A9DBF8A94");
 
             entity.Property(e => e.Wiid)
                 .HasMaxLength(50)
@@ -1055,23 +1118,26 @@ public partial class StechDbContext : DbContext
 
             entity.HasOne(d => d.Employee).WithMany(p => p.WarehouseImports)
                 .HasForeignKey(d => d.EmployeeId)
-                .HasConstraintName("FK__Warehouse__Emplo__31A25463");
+                .HasConstraintName("FK__Warehouse__Emplo__56E8E7AB");
 
             entity.HasOne(d => d.Supplier).WithMany(p => p.WarehouseImports)
                 .HasForeignKey(d => d.SupplierId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Warehouse__Suppl__338A9CD5");
+                .HasConstraintName("FK__Warehouse__Suppl__57DD0BE4");
 
             entity.HasOne(d => d.Warehouse).WithMany(p => p.WarehouseImports)
                 .HasForeignKey(d => d.WarehouseId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Warehouse__Wareh__3296789C");
+                .HasConstraintName("FK__Warehouse__Wareh__58D1301D");
         });
 
         modelBuilder.Entity<WarehouseImportDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Warehous__3214EC07853541EF");
+            entity.HasKey(e => e.Id).HasName("PK__Warehous__3214EC076E52C35F");
 
+            entity.Property(e => e.BatchNumber)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.ProductId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -1084,47 +1150,17 @@ public partial class StechDbContext : DbContext
             entity.HasOne(d => d.Product).WithMany(p => p.WarehouseImportDetails)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Warehouse__Produ__6ADAD1BF");
+                .HasConstraintName("FK__Warehouse__Produ__531856C7");
 
             entity.HasOne(d => d.Wi).WithMany(p => p.WarehouseImportDetails)
                 .HasForeignKey(d => d.Wiid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WarehouseI__WIId__6BCEF5F8");
-        });
-
-        modelBuilder.Entity<WarehouseImportHistory>(entity =>
-        {
-            entity.HasKey(e => e.HistoryId).HasName("PK__Warehous__4D7B4ABDC5723141");
-
-            entity.Property(e => e.HistoryId)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.BatchNumber)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.ImportDate).HasColumnType("datetime");
-            entity.Property(e => e.ProductId)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.Wiid)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("WIId");
-
-            entity.HasOne(d => d.Product).WithMany(p => p.WarehouseImportHistories)
-                .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Warehouse__Produ__58BC2184");
-
-            entity.HasOne(d => d.Wi).WithMany(p => p.WarehouseImportHistories)
-                .HasForeignKey(d => d.Wiid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WarehouseI__WIId__57C7FD4B");
+                .HasConstraintName("FK__WarehouseI__WIId__540C7B00");
         });
 
         modelBuilder.Entity<WarehouseProduct>(entity =>
         {
-            entity.HasKey(e => new { e.WarehouseId, e.ProductId }).HasName("PK__Warehous__ED486395FBE0EFEB");
+            entity.HasKey(e => new { e.WarehouseId, e.ProductId }).HasName("PK__Warehous__ED486395DE1AA30C");
 
             entity.Property(e => e.WarehouseId)
                 .HasMaxLength(50)
@@ -1146,7 +1182,7 @@ public partial class StechDbContext : DbContext
 
         modelBuilder.Entity<WarrantySlip>(entity =>
         {
-            entity.HasKey(e => e.Wsid).HasName("PK__Warranty__8265E45AB3E4644D");
+            entity.HasKey(e => e.Wsid).HasName("PK__Warranty__8265E45AB9922088");
 
             entity.Property(e => e.Wsid)
                 .HasMaxLength(50)
@@ -1172,17 +1208,17 @@ public partial class StechDbContext : DbContext
             entity.HasOne(d => d.Employee).WithMany(p => p.WarrantySlips)
                 .HasForeignKey(d => d.EmployeeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WarrantyS__Emplo__2077C861");
+                .HasConstraintName("FK__WarrantyS__Emplo__5BAD9CC8");
 
             entity.HasOne(d => d.Invoice).WithMany(p => p.WarrantySlips)
                 .HasForeignKey(d => d.InvoiceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WarrantyS__Invoi__1F83A428");
+                .HasConstraintName("FK__WarrantyS__Invoi__5CA1C101");
 
             entity.HasOne(d => d.Product).WithMany(p => p.WarrantySlips)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WarrantyS__Produ__1E8F7FEF");
+                .HasConstraintName("FK__WarrantyS__Produ__5D95E53A");
         });
 
         OnModelCreatingPartial(modelBuilder);

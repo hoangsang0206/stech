@@ -39,6 +39,9 @@ public partial class Product
     public virtual Category? Category { get; set; }
 
     [JsonIgnore]
+    public virtual ICollection<Batch> Batches { get; set; } = new List<Batch>();
+
+    [JsonIgnore]
     public virtual ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new List<InvoiceDetail>();
 
     [JsonIgnore]
@@ -65,7 +68,7 @@ public partial class Product
     public virtual ICollection<WarehouseImportDetail> WarehouseImportDetails { get; set; } = new List<WarehouseImportDetail>();
 
     [JsonIgnore]
-    public virtual ICollection<WarehouseImportHistory> WarehouseImportHistories { get; set; } = new List<WarehouseImportHistory>();
+    public virtual ICollection<WarehouseHistory> WarehouseHistories { get; set; } = new List<WarehouseHistory>();
 
     public virtual ICollection<WarehouseProduct> WarehouseProducts { get; set; } = new List<WarehouseProduct>();
 

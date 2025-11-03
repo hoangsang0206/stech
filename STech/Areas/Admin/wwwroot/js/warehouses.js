@@ -166,9 +166,6 @@ $('#search-list-products').keyup(() => {
                             <td>${product.productName}</td>
                             <td>${product.price.toLocaleString('vi-VN')}đ</td>
                             <td>${total_qty}</td>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
                             <td>
                                 <button class="page-table-btn btn-blue click-select-product" 
                                     data-product="${product.productId}"
@@ -176,15 +173,6 @@ $('#search-list-products').keyup(() => {
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
                             </td>
-=======
-                            <td><button class="page-table-btn btn-blue"><i class="fa-solid fa-plus"></i></button></td>
->>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a
-=======
-                            <td><button class="page-table-btn btn-blue"><i class="fa-solid fa-plus"></i></button></td>
->>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a
-=======
-                            <td><button class="page-table-btn btn-blue"><i class="fa-solid fa-plus"></i></button></td>
->>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a
                         </tr>
                     `);
                 });
@@ -195,9 +183,6 @@ $('#search-list-products').keyup(() => {
         })
         
     }, 300);
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 });
 
 
@@ -304,14 +289,56 @@ $(document).on('click', '.confirm-edit-import-item', function () {
 })
 
 $('.create-import').click(() => {
+    const warehouseId = $('#warehouse_id').val();
+    const supplierId = $('#supplier_id').val();
     
+    if (!warehouseId || !supplierId) {
+        showDialog('error', 'Dữ liệu không hợp lệ.', 'Vui lòng nhập đầy đủ thông tin.');
+        return;
+    }
+    
+    const note = $('#ImportNote').val() || null;
+
+    const products = $('.selected-product-list tr[data-product]').map(function() {
+        return {
+            productId: $(this).data('product'),
+            quantity: +$(this).data('qty'),
+            price: +$(this).data('price')
+        };
+    }).get();
+
+    if (!products || products.length <= 0) {
+        showDialog('error', 'Dữ liệu không hợp lệ', 'Vui lòng chọn sản phẩm cần nhập.');
+        return;
+    }
+
+    const submit_btn = $('.create-import');
+    const element_html = showButtonLoader(submit_btn, '23px', '4px');
+    
+    $.ajax({
+        type: 'POST',
+        url: '/api/admin/warehouses/import/',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            
+        }),
+        success: (response) => {
+            if (response.status) {
+                showDialogWithCallback('success', 'Nhập kho thành công', response.message, () => {
+                    selectedProducts.empty();
+                    updateSelectedProductList();
+                });
+            } else {
+                showDialog('error', 'Đã xảy ra lỗi', response.message);
+            }
+
+            hideButtonLoader(submit_btn, element_html);
+        },
+        error: (xhr, status, error) => {
+            hideButtonLoader(submit_btn, element_html);
+            if (xhr.status === 401) {
+                showUnauthorizedDialog();
+            }
+        }
+    })
 })
-=======
-});
->>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a
-=======
-});
->>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a
-=======
-});
->>>>>>> 76deb3222dd6feb1033f465aa8f5382b0566037a

@@ -222,15 +222,9 @@ namespace STech.Services.Services
                 UnitPrice = d.UnitPrice,
             }).ToList();
 
-            _import.WarehouseImportHistories = import.WarehouseImportDetails.Select(d => new WarehouseImportHistory
-            {
-                HistoryId = Guid.NewGuid().ToString(),
-                ProductId = d.ProductId,
-                Quantity = d.Quantity,
-                BatchNumber = d.BatchNumber,
-                ImportDate = _import.DateImport ?? DateTime.Now
-                
-            }).ToList();
+            //Add Batch and Warehouse action history here
+
+            //
 
             await _context.WarehouseImports.AddAsync(_import);
             bool result = await _context.SaveChangesAsync() > 0;

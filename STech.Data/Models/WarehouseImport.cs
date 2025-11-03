@@ -28,6 +28,4 @@ public partial class WarehouseImport
     public virtual Warehouse Warehouse { get; set; } = null!;
 
     public virtual ICollection<WarehouseImportDetail> WarehouseImportDetails { get; set; } = new List<WarehouseImportDetail>();
-
-    public virtual ICollection<WarehouseImportHistory> WarehouseImportHistories { get; set; } = new List<WarehouseImportHistory>();
 }

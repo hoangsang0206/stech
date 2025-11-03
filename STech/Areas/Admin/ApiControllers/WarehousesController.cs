@@ -262,7 +262,7 @@ namespace STech.Areas.Admin.ApiControllers
                 return Ok(new ApiResponse
                 {
                     Status = false,
-                    Message = "Vui long chọn ít nhất 1 sản phẩm"
+                    Message = "Vui lòng chọn ít nhất 1 sản phẩm"
                 });
             }
 
