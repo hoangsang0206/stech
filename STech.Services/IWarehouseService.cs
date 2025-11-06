@@ -24,6 +24,6 @@ namespace STech.Services
         Task<bool> CancelInvoiceWarehouseExports(string invoiceId);
 
 
-        Task<bool> CreateWarehouseImport(WarehouseImportVM import, string employeeId);
+        Task<bool> CreateWarehouseImport(WarehouseImport import);
     }
 }

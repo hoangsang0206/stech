@@ -131,7 +131,7 @@ $('.click-delete-product').click(function () {
             success: (response) => {
                 hideWebLoader(0);
                 if (response.status) {
-                    showDialogWithCallback('info', 'Xóa thành công', 'Đã xóa sản phẩm này', () => {
+                    showDialogWithCallback('success', 'Xóa thành công', 'Đã xóa sản phẩm này', () => {
                         window.location.reload();
                     });
                 } else {
@@ -161,7 +161,7 @@ $('.click-restore-product').click(function () {
             success: (response) => {
                 hideWebLoader(0);
                 if (response.status) {
-                    showDialogWithCallback('info', 'Khôi phục thành công', 'Đã khôi phục sản phẩm này', () => {
+                    showDialogWithCallback('success', 'Khôi phục thành công', 'Đã khôi phục sản phẩm này', () => {
                         window.location.reload();
                     });
                 } else {
@@ -191,7 +191,7 @@ $('.click-activate-product').click(function () {
             success: (response) => {
                 hideWebLoader(0);
                 if (response.status) {
-                    showDialogWithCallback('info', 'Hiện sản phẩm thành công', 'Đã hiện sản phẩm này', () => {
+                    showDialogWithCallback('success', 'Hiện sản phẩm thành công', 'Đã hiện sản phẩm này', () => {
                         window.location.reload();
                     });
                 } else {
@@ -221,7 +221,7 @@ $('.click-deactivate-product').click(function () {
             success: (response) => {
                 hideWebLoader(0);
                 if (response.status) {
-                    showDialogWithCallback('info', 'Ẩn sản phẩm thành công', 'Đã ẩn sản phẩm này', () => {
+                    showDialogWithCallback('success', 'Ẩn sản phẩm thành công', 'Đã ẩn sản phẩm này', () => {
                         window.location.reload();
                     });
                 } else {
@@ -320,7 +320,7 @@ $('#update-product').submit(function(e) {
         data: JSON.stringify(data),
         success: (response) => {
             if (response.status) {
-                showDialogWithCallback('info', 'Cập nhật thành công', 'Đã cập nhật thông tin sản phẩm này', () => {
+                showDialogWithCallback('success', 'Cập nhật thành công', 'Đã cập nhật thông tin sản phẩm này', () => {
                     window.location.reload();
                 });
             } else {
@@ -356,7 +356,7 @@ $('#create-product').submit(function(e) {
         data: JSON.stringify(data),
         success: (response) => {
             if (response.status) {
-                showDialogWithCallback('info', 'Tạo sản phẩm thành công', 'Thêm sản phẩm thành công, để hiển thị sản phẩm vui lòng đến kích hoạt sản phẩm', () => {
+                showDialogWithCallback('success', 'Tạo sản phẩm thành công', 'Thêm sản phẩm thành công, để hiển thị sản phẩm vui lòng đến kích hoạt sản phẩm', () => {
                     window.location.reload();
                 });
             } else {

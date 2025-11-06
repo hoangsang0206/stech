@@ -6,6 +6,7 @@ using STech.Data.ViewModels;
 using STech.Filters;
 using STech.Services;
 using STech.Services.Services;
+using STech.Utils;
 
 namespace STech.Areas.Admin.ApiControllers
 {
@@ -296,7 +297,26 @@ namespace STech.Areas.Admin.ApiControllers
                 });
             }
 
-            bool result = await _warehouseService.CreateWarehouseImport(model, employee.EmployeeId);
+            DateTime now = DateTime.Now;
+            WarehouseImport import = new WarehouseImport
+            {
+                Wiid = now.ToString("yyyyMMdd") + RandomUtils.GenerateRandomString(8).ToUpper(),
+                WarehouseId = model.WarehouseId,
+                SupplierId = model.SupplierId,
+                DateImport = now,
+                EmployeeId = employee.EmployeeId,
+                Note = model.Note,
+                DateCreate = now,
+            };
+
+            import.WarehouseImportDetails =  model.WarehouseImportDetails.Select(d => new WarehouseImportDetail
+            {
+                ProductId = d.ProductId,
+                Quantity = d.Quantity,
+                UnitPrice = d.UnitPrice,
+            }).ToList();
+            
+            bool result = await _warehouseService.CreateWarehouseImport(import);
            
             return Ok(new ApiResponse
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace STech.Data.Models;
 
@@ -22,8 +23,8 @@ public partial class WarehouseHistory
     public string? ReferenceId { get; set; }
 
     public DateTime? ActionDate { get; set; }
-
+    
     public virtual Product Product { get; set; } = null!;
-
+    
     public virtual Warehouse Warehouse { get; set; } = null!;
 }

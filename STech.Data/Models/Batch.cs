@@ -12,6 +12,8 @@ public partial class Batch
     public string WarehouseId { get; set; } = null!;
 
     public int CurrentStock { get; set; }
+    
+    public DateTime DateImport { get; set; }
 
     public virtual Product Product { get; set; } = null!;
 

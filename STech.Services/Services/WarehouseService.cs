@@ -203,34 +203,66 @@ namespace STech.Services.Services
         }
 
 
-        public async Task<bool> CreateWarehouseImport(WarehouseImportVM import, string employeeId)
+        public async Task<bool> CreateWarehouseImport(WarehouseImport import)
         {
-            WarehouseImport _import = new WarehouseImport
-            {
-                WarehouseId = import.WarehouseId,
-                SupplierId = import.SupplierId,
-                DateImport = DateTime.Now,
-                EmployeeId = employeeId,
-                Note = import.Note,
-                DateCreate = DateTime.Now,
-            };
-
-            _import.WarehouseImportDetails = import.WarehouseImportDetails.Select(d => new WarehouseImportDetail
-            {
-                ProductId = d.ProductId,
-                Quantity = d.Quantity,
-                UnitPrice = d.UnitPrice,
-            }).ToList();
-
-            //Add Batch and Warehouse action history here
-
-            //
-
-            await _context.WarehouseImports.AddAsync(_import);
+            DateTime date = import.DateImport ?? DateTime.Now;
+            
+            await _context.WarehouseImports.AddAsync(import);
             bool result = await _context.SaveChangesAsync() > 0;
 
             if (result)
             {
+                // Add Batch and Warehouse History
+                List<Batch> batches = new List<Batch>();
+                List<WarehouseHistory> histories = new List<WarehouseHistory>();
+                
+                foreach (var detail in import.WarehouseImportDetails)
+                {
+                    string batchNumber = $"{detail.ProductId}-{date:yyyyMMdd}";
+                    string? existedBatchNum = _context.Batches
+                        .FirstOrDefaultAsync(b => 
+                            b.ProductId == detail.ProductId
+                            && b.DateImport.Date == date.Date).Result?.BatchNumber;
+
+                    if (existedBatchNum != null)
+                    {
+                        int lastIndex = int.Parse( existedBatchNum.Split('-').Last());
+                        batchNumber += $"-{lastIndex + 1}";
+                    }
+                    else
+                    {
+                        batchNumber += "-1";
+                    }
+                    
+                    batches.Add(new Batch
+                    {
+                        BatchNumber = batchNumber,
+                        ProductId = detail.ProductId,
+                        CurrentStock = detail.Quantity,
+                        WarehouseId = import.WarehouseId,
+                        DateImport = date
+                    });
+                    
+                    histories.Add(new  WarehouseHistory
+                    {
+                        HistoryId = Guid.NewGuid().ToString(),
+                        BatchNumber = batchNumber,
+                        ProductId = detail.ProductId,
+                        WarehouseId = import.WarehouseId,
+                        ActionDate = date,
+                        ActionType = "Import",
+                        Quantity = detail.Quantity,
+                        UnitPrice = detail.UnitPrice,
+                        ReferenceId = import.Wiid
+                    });
+                    
+                    detail.BatchNumber = batchNumber;
+                }
+                
+                await _context.Batches.AddRangeAsync(batches);
+                await _context.WarehouseHistories.AddRangeAsync(histories);
+                
+                // Update total quantity in all warehouse
                 foreach (var detail in import.WarehouseImportDetails)
                 {
                     WarehouseProduct? whProduct = await _context.WarehouseProducts

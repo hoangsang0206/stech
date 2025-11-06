@@ -140,7 +140,7 @@ public partial class StechDbContext : DbContext
             entity.HasKey(e => new { e.BatchNumber, e.ProductId, e.WarehouseId }).HasName("PK__Batches__CB0F29AF1C524E05");
 
             entity.Property(e => e.BatchNumber)
-                .HasMaxLength(50)
+                .HasMaxLength(150)
                 .IsUnicode(false);
             entity.Property(e => e.ProductId)
                 .HasMaxLength(50)
@@ -148,6 +148,7 @@ public partial class StechDbContext : DbContext
             entity.Property(e => e.WarehouseId)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.DateImport).HasColumnType("datetime");
 
             entity.HasOne(d => d.Product).WithMany(p => p.Batches)
                 .HasForeignKey(d => d.ProductId)

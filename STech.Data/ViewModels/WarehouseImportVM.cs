@@ -7,8 +7,6 @@ namespace STech.Data.ViewModels
     {
         public string? Note { get; set; }
 
-        public string? Status { get; set; }
-
         [Required(ErrorMessage = "Mã kho không để trống")]
         public string WarehouseId { get; set; } = null!;
 
@@ -26,8 +24,5 @@ namespace STech.Data.ViewModels
         public int Quantity { get; set; }
         [Required(ErrorMessage = "Giá nhập không để trống")]
         public decimal UnitPrice { get; set; }
-
-        [Required(ErrorMessage = "Số lô không để trống")]
-        public string BatchNumber { get; set; } = null!;
     }
 }

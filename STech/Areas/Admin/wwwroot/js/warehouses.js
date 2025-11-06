@@ -158,7 +158,6 @@ $('#search-list-products').keyup(() => {
                 
                 response.data.products.forEach(product => {
                     const total_qty = product.warehouseProducts.reduce((total, item) => total + item.quantity, 0);
-                    if (total_qty <= 0) return;
 
                     $('.product-table-list-result').append(`
                         <tr>
@@ -169,7 +168,8 @@ $('#search-list-products').keyup(() => {
                             <td>
                                 <button class="page-table-btn btn-blue click-select-product" 
                                     data-product="${product.productId}"
-                                    data-price="${product.price}">
+                                    data-price="${product.price}"
+                                    data-product-name="${product.productName}">
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
                             </td>
@@ -192,10 +192,10 @@ const updateSelectedProductList = () => {
     $('.selected-product-list').empty();
     selectedProducts.map(item => {
         $('.selected-product-list').append(`
-            <tr data-product="${item.productId}" data-qty="${item.quantity}" data-price="${item.price}">
-                <td>${item.productId}</td>
+            <tr data-product="${item.productId}" data-qty="${item.quantity}" data-price="${item.unitPrice}">
+                <td title="${item.productName}" class="text-nowrap">${item.productId}</td>
                 <td>${item.quantity}</td>
-                <td>${(item.price).toLocaleString('vi-VN')}đ</td>
+                <td>${(item.unitPrice).toLocaleString('vi-VN')}đ</td>
                 <td><i class="fa-solid fa-pen-to-square edit-import-item" data-product="${item.productId}"></i></td>
             </tr>
         `);
@@ -205,18 +205,19 @@ const updateSelectedProductList = () => {
         <tr>
             <td class="fw-bold text-end">Tổng cộng:</td>
             <td class="fweight-600">${selectedProducts.reduce((total, item) => total + item.quantity, 0)}</td>
-            <td class="fweight-600">${(selectedProducts.reduce((total, item) => total + item.price, 0)).toLocaleString('vi-VN')}đ</td>
+            <td class="fweight-600">${(selectedProducts.reduce((total, item) => total + item.unitPrice, 0)).toLocaleString('vi-VN')}đ</td>
         </tr>
         
         <tr>
             <td colspan="2" class="fw-bold text-end">Tổng tiền:</td>
-            <td class="fweight-600">${selectedProducts.reduce((total, item) => total + item.quantity * item.price, 0).toLocaleString('vi-VN')}đ</td>
+            <td class="fweight-600">${selectedProducts.reduce((total, item) => total + item.quantity * item.unitPrice, 0).toLocaleString('vi-VN')}đ</td>
         </tr>
     `);
 }
 
 $(document).on('click', '.click-select-product', function () { 
     const productId = $(this).data('product');
+    const productName = $(this).data('product-name');
     const price = $(this).data('price');
 
     const selectedProduct = selectedProducts.find(item => item.productId === productId);
@@ -226,8 +227,9 @@ $(document).on('click', '.click-select-product', function () {
     } else {
         selectedProducts.push({
             productId: productId,
+            productName: productName,
             quantity: 1,
-            price: price
+            unitPrice: price
         });
     }
     
@@ -240,15 +242,15 @@ $(document).on('click', '.edit-import-item', function () {
     
     const editElement = $(this).closest('tr');
     const editQty = selectedProduct.quantity;
-    const editPrice = selectedProduct.price;
+    const editPrice = selectedProduct.unitPrice;
     
     const editHtml = `
-        <td>${productId}</td>
+        <td title="${selectedProduct.productName}" class="text-nowrap">${productId}</td>
         <td>
-            <input type="number" class="form-control" value="${editQty}" min="1" required>
+            <div class="page-input"><input type="number" value="${editQty}" min="1" required></div>
         </td>
         <td>
-            <input type="number" class="form-control" value="${editPrice}" min="1" required>
+            <div class="page-input"><input type="number" class="form-control" value="${editPrice}" min="1" required></div>
         </td>
         <td><i class="fa-solid fa-check confirm-edit-import-item"></i></td>
     `;
@@ -275,7 +277,7 @@ $(document).on('click', '.confirm-edit-import-item', function () {
     }
     
     selectedProduct.quantity = qty;
-    selectedProduct.price = price;
+    selectedProduct.unitPrice = price;
     
     const newHtml = `
         <td>${productId}</td>
@@ -299,13 +301,7 @@ $('.create-import').click(() => {
     
     const note = $('#ImportNote').val() || null;
 
-    const products = $('.selected-product-list tr[data-product]').map(function() {
-        return {
-            productId: $(this).data('product'),
-            quantity: +$(this).data('qty'),
-            price: +$(this).data('price')
-        };
-    }).get();
+    const products = selectedProducts.map(({productName, ...rest}) => rest);
 
     if (!products || products.length <= 0) {
         showDialog('error', 'Dữ liệu không hợp lệ', 'Vui lòng chọn sản phẩm cần nhập.');
@@ -317,15 +313,18 @@ $('.create-import').click(() => {
     
     $.ajax({
         type: 'POST',
-        url: '/api/admin/warehouses/import/',
+        url: '/api/admin/warehouses/import',
         contentType: 'application/json',
         data: JSON.stringify({
-            
+            note: note,
+            warehouseId: warehouseId,
+            supplierId: supplierId,
+            warehouseImportDetails: products,
         }),
         success: (response) => {
             if (response.status) {
                 showDialogWithCallback('success', 'Nhập kho thành công', response.message, () => {
-                    selectedProducts.empty();
+                    selectedProducts = [];
                     updateSelectedProductList();
                 });
             } else {
