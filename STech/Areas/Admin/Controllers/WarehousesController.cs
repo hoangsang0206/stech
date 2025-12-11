@@ -56,10 +56,19 @@ namespace STech.Areas.Admin.Controllers
         [AdminAuthorize(Code = Functions.ExportWarehouse)]
         public async Task<IActionResult> Export()
         {
+            string? userId = User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
             
+            Employee? employee = await _employeeService.GetEmployeeByUserId(userId);
+            IEnumerable<Warehouse> warehouses = await _warehouseService.GetWarehouses();
 
             ViewBag.ActiveSidebar = "warehouses";
-            return View();
+            return View(
+                new Tuple<Employee?, IEnumerable<Warehouse>, WarehouseImportVM>
+                    (employee, warehouses, new WarehouseImportVM()));
         }
     }
 }

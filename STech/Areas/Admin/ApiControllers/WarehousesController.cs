@@ -324,6 +324,8 @@ namespace STech.Areas.Admin.ApiControllers
                Message = result ? "Tạo phiếu nhập kho thành công" : "Tạo phiếu nhập kho thất bại"
             });
         }
+        
+        
 
         #endregion
     }

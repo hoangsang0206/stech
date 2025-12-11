@@ -12,158 +12,116 @@
 }
 
 <section>
-    
-    <div class="mb-3">
-        <button class="page-btn btn-blue">
-            <i class="fa-solid fa-list-ul"></i>
-            <span>Danh sách phiếu nhập</span>
-        </button>
-    </div>
-    
-    <div class="page-content-box no-border">
-        <div class="page-content-header">
-            Thông tin phiếu nhập
-        </div>
-
-        <div class="row m-0 p-0 import-infomation">
-            <div class="col-12 col-md-6 m-0">
-                <div class="page-input-box">
-                    <label>Kho nhập</label>
-                    <div class="page-input">
-                        <select id="warehouse_id" asp-for="@Model.Item4.WarehouseId">
-                            <option value="" selected>Chọn kho nhập</option>
-                            @foreach (Warehouse warehouse in warehouses)
-                            {
-                                <option value="@warehouse.WarehouseId">@warehouse.WarehouseName</option>
-                            }
-                        </select>
-                        <span asp-validation-for="@Model.Item4.WarehouseId"></span>
-                    </div>
+    <div class="row">
+        <div class="col-12 col-lg-8">
+            <div class="page-content-box no-border h-100">
+                <div class="page-content-header">
+                    SẢN PHẨM
                 </div>
 
-                <div class="page-input-box">
-                    <label>Nhà cung cấp</label>
-                    <div class="page-input">
-                        <select id="supplier_id" asp-for="@Model.Item4.SupplierId">
-                            <option value="" selected>Chọn nhà cung cấp</option>
-                            @foreach (Supplier supplier in suppliers)
-                            {
-                                <option value="@supplier.SupplierId">@supplier.SupplierName</option>
-                            }
-                        </select>
-                        <span asp-validation-for="@Model.Item4.SupplierId"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-md-6 m-0">
-                <div class="page-input-box">
-                    <label>Nhân viên nhập</label>
-                    <div class="page-input">
-                        <input type="text" placeholder="Tên nhân viên" value="@employee?.EmployeeName" disabled="disabled"/>
-                    </div>
-                </div>
-
-                <div class="page-input-box">
-                    <label>Ngày tạo phiếu</label>
-                    <div class="page-input">
-                        <input type="text" placeholder="Ngày tạo phiếu" value="@DateTime.Now.ToString("MM/dd/yyyy")" disabled="disabled"/>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-md-6 m-0">
-                <div class="page-input-box">
-                    <label>Ghi chú</label>
-                    <div class="page-input">
-                        <textarea id="ImportNote" type="text" placeholder="Ghi chú"></textarea>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="page-content-box no-border mt-3">
-        <div class="page-content-header">
-            Sản phẩm nhập
-        </div>
-
-        <div class="row m-0 p-0">
-            <div class="col-12 col-lg-7">
-                <div class="page-content-box">
-                    <div>
-                        <span class="page-label">Danh sách sản phẩm</span>
-                    </div>
-                    
-                    <div>
-                        <div class="page-search-form mt-2">
-                            <form>
-                                <i class="fa-solid fa-search"></i>
-                                <input type="text" id="search-list-products" placeholder="Tìm theo mã/tên sản phẩm" required />
-                            </form>
+                <div>
+                    <div class="">
+                        <div>
+                            <div class="page-search-form mt-2">
+                                <form>
+                                    <i class="fa-solid fa-search"></i>
+                                    <input type="text" id="search-products-val" placeholder="Tìm theo mã/tên sản phẩm" required />
+                                </form>
+                                
+                                <div class="page-search-results search-list-product-results">
+                        
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="mt-2">
-                            <div class="page-table-wrapper product-table-list-wrapper">
-                                <table class="page-table">
-                                    <thead class="page-table-header">
+                        <div class="mt-4">
+                            
+                            <div class="import-products flex-grow-1 overflow-y-auto overflow-x-hidden">
+                                <table class="w-100">
+                                    <thead>
                                     <tr>
-                                        <th>Mã SP</th>
-                                        <th>Tên sản phẩm</th>
-                                        <th>Giá bán</th>
-                                        <th>Tồn kho</th>
+                                        <th class="weight-600">STT</th>
+                                        <th class="fweight-600 ps-2">Sản phẩm</th>
+                                        <th class="fweight-600">Số lượng</th>
+                                        <th class="fweight-600">Giá nhập</th>
+                                        <th class="fweight-600 text-end">Thành tiền</th>
                                         <th></th>
                                     </tr>
                                     </thead>
-                                    
-                                    <tbody class="product-table-list-result">
-                                    
+
+                                    <tbody class="selected-product-list">
+                                       
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-12 col-lg-5">
-                <div class="page-content-box position-sticky top-0">
-                    <div>
-                        <span class="page-label">Sản phẩm đã chọn</span>
-                    </div>
-
-                    <div class="mt-2">
-                        <div class="page-table-wrapper">
-                            <table class="page-table">
-                                <thead class="page-table-header">
-                                <tr>
-                                    <th>Mã SP</th>
-                                    <th>Số lượng</th>
-                                    <th>Giá nhập</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-
-                                <tbody class="selected-product-list">
-
-                                <tr>
-                                    <td class="fw-bold text-end">Tổng cộng:</td>
-                                    <td class="fweight-600">0</td>
-                                    <td class="fweight-600">0đ</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        
+        <div class="col-12 ps-1 col-md-4">
+            <div class="page-content-box no-border">
+                <div class="page-content-header">
+                    THÔNG TIN PHIẾU NHẬP
+                </div>
 
-    <div class="page-content-box no-border mt-3">
-        <div class="d-flex justify-content-end">
-            <button class="form-submit-btn page-btn-sm btn-green create-import">Tạo phiếu nhập</button>
+                <div class="import-infomation p-2">
+                    <div class="page-input-box">
+                        <label>Kho nhập</label>
+                        <div class="page-input">
+                            <select id="warehouse_id" asp-for="@Model.Item4.WarehouseId">
+                                <option value="" selected>Chọn kho nhập</option>
+                                @foreach (Warehouse warehouse in warehouses)
+                                {
+                                    <option value="@warehouse.WarehouseId">@warehouse.WarehouseName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="@Model.Item4.WarehouseId"></span>
+                        </div>
+                    </div>
+
+                    <div class="page-input-box mt-4">
+                        <label>Nhà cung cấp</label>
+                        <div class="page-input">
+                            <select id="supplier_id" asp-for="@Model.Item4.SupplierId">
+                                <option value="" selected>Chọn nhà cung cấp</option>
+                                @foreach (Supplier supplier in suppliers)
+                                {
+                                    <option value="@supplier.SupplierId">@supplier.SupplierName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="@Model.Item4.SupplierId"></span>
+                        </div>
+                    </div>
+                    <div class="page-input-box mt-4">
+                        <label>Nhân viên nhập</label>
+                        <div class="page-input">
+                            <input type="text" placeholder="Tên nhân viên" value="@employee?.EmployeeName" disabled="disabled"/>
+                        </div>
+                    </div>
+
+                    <div class="page-input-box mt-4">
+                        <label>Ngày tạo phiếu</label>
+                        <div class="page-input">
+                            <input type="text" placeholder="Ngày tạo phiếu" value="@DateTime.Now.ToString("MM/dd/yyyy")" disabled="disabled"/>
+                        </div>
+                    </div>
+                    <div class="page-input-box mt-4">
+                        <label>Ghi chú</label>
+                        <div class="page-input">
+                            <textarea id="ImportNote" type="text" placeholder="Ghi chú"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button class="form-submit-btn page-btn-sm btn-green create-import">Tạo phiếu nhập</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
 </section>
 
 @section Styles

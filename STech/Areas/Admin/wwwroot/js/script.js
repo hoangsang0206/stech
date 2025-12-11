@@ -395,3 +395,74 @@ const printBlobPdf = (blob) => {
         iframe.contentWindow.print();
     }
 }
+
+const activeProductSearch = (withInstock) => {
+    let searchTypingTimeOut;
+    $('#search-products-val').keyup(function() {
+        clearTimeout(searchTypingTimeOut);
+
+        searchTypingTimeOut = setTimeout(() => {
+            const search_value = $(this).val();
+            const warehouse_id = $('.select-warehouse').find('.page-dropdown-btn').data('selected');
+
+            let apiUrl = `/api/admin/products/search-by-id-or-name/${search_value}`;
+            
+            if (withInstock === true) {
+                apiUrl = `/api/admin/products/search/${search_value}`;
+
+                if (warehouse_id) {
+                    apiUrl += '?warehouse_id=' + warehouse_id;
+                }
+            }
+
+            const resultElement = $('.search-list-product-results');
+
+            $.ajax({
+                type: 'GET',
+                url: apiUrl,
+                success: (response) => {
+                    resultElement.empty();
+
+                    if (!response.status || response.data.length <= 0) {
+                        resultElement.removeClass('show');
+                    } else {
+                        resultElement.addClass('show');
+
+                        const data = withInstock === true ? response.data.products : response.data;
+
+                        data.forEach(product => {
+                            const total_qty = product.warehouseProducts.reduce((total, item) => total + item.quantity, 0);
+                            if (withInstock === true && total_qty <= 0) return;
+
+                            resultElement.append(`
+                                <div class="page-search-result-item">
+                                    <input type="radio" id="${product.productId}" name="search-product-item" value="${product.productId}" hidden />
+                                    <label for="${product.productId}" class="d-flex gap-2">
+                                        <img style="width: 2rem; height: 2rem; object-fit: contain" src="${product.productImages[0].imageSrc || '/admin/images/no-image.jpg'}" alt="" />
+                                        <span class="text-overflow-1 flex-grow-1">${product.productName} </span>
+                                        <span class="fweight-600 ms-2" style="color: var(--primary-color)">${product.price.toLocaleString('vi-VN')}đ</span>
+                                    </label>
+                                </div>
+                            `);
+                        });
+                    }
+                },
+                error: () => {
+                    resultElement.empty();
+                    resultElement.removeClass('show');
+                }
+            })
+        }, 300);
+    })
+
+    $('#search-products-val').focus(() => {
+        $('.search-list-product-results').addClass('show');
+    });
+
+    $(document).on('click', function (e) {
+        if ($(e.target).closest('.search-list-product-results').length <= 0 &&
+            $(e.target).closest('#search-products-val').length <= 0) {
+            $('.search-list-product-results').removeClass('show');
+        }
+    });
+}

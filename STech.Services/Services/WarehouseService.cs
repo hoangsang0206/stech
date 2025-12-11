@@ -203,6 +203,8 @@ namespace STech.Services.Services
         }
 
 
+        #region  Import
+        
         public async Task<bool> CreateWarehouseImport(WarehouseImport import)
         {
             DateTime date = import.DateImport ?? DateTime.Now;
@@ -261,34 +263,92 @@ namespace STech.Services.Services
                 
                 await _context.Batches.AddRangeAsync(batches);
                 await _context.WarehouseHistories.AddRangeAsync(histories);
-                
-                // Update total quantity in all warehouse
-                foreach (var detail in import.WarehouseImportDetails)
-                {
-                    WarehouseProduct? whProduct = await _context.WarehouseProducts
-                        .FirstOrDefaultAsync(wp => wp.ProductId == detail.ProductId && wp.WarehouseId == import.WarehouseId);
-
-                    if (whProduct != null)
-                    {
-                        whProduct.Quantity += detail.Quantity;
-                    }
-                    else
-                    {
-                        WarehouseProduct newWhProduct = new WarehouseProduct
-                        {
-                            ProductId = detail.ProductId,
-                            WarehouseId = import.WarehouseId,
-                            Quantity = detail.Quantity
-                        };
-
-                        await _context.WarehouseProducts.AddAsync(newWhProduct);
-                    }
-                }
 
                 await _context.SaveChangesAsync();
             }
 
             return result;
         }
+
+        public async Task<bool> ConfirmWarehouseImport(string id)
+        {
+            WarehouseImport? import = await _context.WarehouseImports
+                .Include(t => t.WarehouseImportDetails)
+                .FirstOrDefaultAsync(t => t.Wiid == id);
+
+            if (import == null)
+            {
+                return false;
+            }
+
+            import.Status = "completed";
+
+            // Update total quantity
+            foreach (var detail in import.WarehouseImportDetails)
+            {
+                WarehouseProduct? whProduct = await _context.WarehouseProducts
+                    .FirstOrDefaultAsync(wp => wp.ProductId == detail.ProductId && wp.WarehouseId == import.WarehouseId);
+
+                if (whProduct != null)
+                {
+                    whProduct.Quantity += detail.Quantity;
+                }
+                else
+                {
+                    WarehouseProduct newWhProduct = new WarehouseProduct
+                    {
+                        ProductId = detail.ProductId,
+                        WarehouseId = import.WarehouseId,
+                        Quantity = detail.Quantity
+                    };
+
+                    await _context.WarehouseProducts.AddAsync(newWhProduct);
+                }
+            }
+
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> CancelWarehouseImport(string id)
+        {
+            WarehouseImport? import = await _context.WarehouseImports
+                .FirstOrDefaultAsync(t => t.Wiid == id);
+
+            if (import == null)
+            {
+                return false;
+            }
+
+            import.Status = "canceled";
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> UpdateWarehouseImport(WarehouseImport import)
+        {
+            
+            
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<PagedList<WarehouseImport>> GetWarehouseImports(int page, int pageSize)
+        {
+            return await _context.WarehouseImports
+                .Include(t => t.WarehouseImportDetails)
+                .ToPagedListAsync(page, pageSize);
+        }
+
+        public async Task<WarehouseImport?> GetWarehouseImport(string id)
+        {
+            return await _context.WarehouseImports.FirstOrDefaultAsync(t => t.Wiid == id);
+        }
+        
+        #endregion
+        
+        
+        #region Export
+        
+        
+        
+        #endregion
     }
 }

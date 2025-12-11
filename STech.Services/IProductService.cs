@@ -13,6 +13,7 @@ namespace STech.Services
         Task<PagedList<Product>> SearchByName(string q, int page, int itemsPerPage, string? sort);
         Task<PagedList<Product>> SearchProducts(string q, int page, int itemsPerPage, string? sort, string? warehouseId);
         Task<PagedList<Product>> SearchProductsByIdOrName(string q, int page, int itemsPerPage);
+        Task<IEnumerable<Product>> SearchProductsByIdOrName(string q);
         Task<IEnumerable<Product>> SearchProductsByChatBotData(List<ProductSpecification>? specs, string? productId, string? productName, string? priceStr);
         Task<IEnumerable<Product>> SearchProductsByBrandName(string brandName);
         Task<IEnumerable<Product>> SearchProductsByCategoryName(string categoryName);

@@ -1421,7 +1421,11 @@ button:disabled {
     color: #0859ec;
 }
 
-.order-item-input {
+.selected-product-item {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.order-item-input, .table-input {
     width: 6rem;
     outline: none;
     border: 1px solid var(--border-color);

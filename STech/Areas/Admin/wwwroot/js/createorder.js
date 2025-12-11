@@ -2,56 +2,12 @@
     e.preventDefault();
 })
 
-
-let typingTimeOut;
-$('#search-order-products').keyup(function() {
-    clearTimeout(typingTimeOut);
-
-    typingTimeOut = setTimeout(() => {
-        const search_value = $(this).val();
-        const warehouse_id = $('.select-warehouse').find('.page-dropdown-btn').data('selected');
-
-        $.ajax({
-            type: 'GET',
-            url: `/api/admin/products/search/${search_value}?warehouse_id=${warehouse_id}`,
-            success: (response) => {
-                $('.search-order-product-results').empty();
-
-                if (!response.status || response.data.length <= 0) {
-                    $('.search-order-product-results').removeClass('show');
-                } else {
-                    $('.search-order-product-results').addClass('show');
-
-
-                    response.data.products.forEach(product => {
-                        const total_qty = product.warehouseProducts.reduce((total, item) => total + item.quantity, 0);
-                        if (total_qty <= 0) return;
-
-                        $('.search-order-product-results').append(`
-                            <div class="page-search-result-item search-order-product">
-                                <input type="radio" id="${product.productId}" name="search-order-product" value="${product.productId}" hidden />
-                                <label for="${product.productId}" class="d-flex gap-2">
-                                    <img style="width: 2rem; height: 2rem; object-fit: contain" src="${product.productImages[0].imageSrc || '/admin/images/no-image.jpg'}" alt="" />
-                                    <span class="text-overflow-1 flex-grow-1">${product.productName} </span>
-                                    <span class="fweight-600 ms-2" style="color: var(--primary-color)">${product.price.toLocaleString('vi-VN')}đ</span>
-                                </label>
-                            </div>
-                        `);
-                    });
-                }
-            },
-            error: () => {
-                $('.search-order-product-results').empty();
-                $('.search-order-product-results').removeClass('show');
-            }
-        })
-    }, 300);
-})
-
 $('.select-warehouse .page-dropdown-item').click(() => {
     $('.order-product-items').empty();
     calculateTotalPrice();
 })
+
+activeProductSearch(true);
 
 const calculateShippingFee = (ward_code, district_code, city_code) => {
     const ship_med = $('input[name="DeliveryMethod"]:checked').val() || 'cod';
@@ -130,11 +86,9 @@ const removeItem = (product_id) => {
     calculateTotalPrice();
 }
 
-$(document).on('change', 'input[name="search-order-product"]', function () {
+$(document).on('change', 'input[name="search-product-item"]', function () {
     if ($(this).prop('checked')) {
-        $('.search-order-product-results').empty();
-        $('.search-order-product-results').removeClass('show');
-        $('#search-order-products').val(null);
+        $('.search-list-product-results').removeClass('show');
 
         const warehouse_id = $('.select-warehouse').find('.page-dropdown-btn').data('selected');
 
@@ -164,12 +118,12 @@ $(document).on('change', 'input[name="search-order-product"]', function () {
                             <tr class="order-product-item" data-product="${product.productId}" data-qty="1">
                                 <td class="py-2">${total_products + 1}</td>
                                 <td class="py-2 ps-2">
-                                    <div class="d-flex gap-1">
+                                    <div class="d-flex gap-1"  style="max-width: 24rem">
                                         <div>
                                             <img src="${product.productImages[0].imageSrc || '/admin/images/no-image.jpg'}" alt="" style="width: 3rem" />
                                         </div>
                                         <div class="pe-2 overflow-hidden">
-                                            <div class="text-overflow-1 fweight-500 w-100" style="font-size: .95rem; font-weight: 500">${product.productName}</div>
+                                            <div class="text-overflow-1 fweight-500 w-100" style="font-size: .95rem; font-weight: 500" title="${product.productName} - ${product.productId}">${product.productName}</div>
                                             <div class="text-price" style="font-size: .95rem;">${product.price.toLocaleString('vi-VN')}đ</div>
                                         </div>
                                     </div>
@@ -217,6 +171,8 @@ $(document).on('change', 'input[name="search-order-product"]', function () {
             }
         })
     }
+
+    $(this).prop('checked', false);
 })
 
 $(document).on('blur', '.order-item-qty', function () {
@@ -307,6 +263,7 @@ $(document).on('click', '.remove-order-item', function () {
     removeItem(product_id);
 })
 
+let typingTimeOut;
 $('#search-customers').keyup(function () {
     clearTimeout(typingTimeOut);
 

@@ -2,3 +2,168 @@
     ViewData["Title"] = "Xuất kho - STech Admin";
     ViewData["PageTitle"] = "Xuất kho";
 }
+
+@model Tuple<Employee, IEnumerable<Warehouse>, WarehouseImportVM>
+
+@{
+    Employee employee = Model.Item1;
+    IEnumerable<Warehouse> warehouses = Model.Item2;
+}
+
+<section>
+    
+    <div class="mb-3">
+        <button class="page-btn btn-blue">
+            <i class="fa-solid fa-list-ul"></i>
+            <span>Danh sách phiếu xuất</span>
+        </button>
+    </div>
+    
+    <div class="page-content-box no-border">
+        <div class="page-content-header">
+            Thông tin phiếu xuất
+        </div>
+
+        <div class="row m-0 p-0 import-infomation">
+            <div class="col-12 col-md-6 m-0">
+                <div class="page-input-box">
+                    <label>Kho xuất</label>
+                    <div class="page-input">
+                        <select id="warehouse_id" asp-for="@Model.Item3.WarehouseId">
+                            <option value="" selected>Chọn kho xuất</option>
+                            @foreach (Warehouse warehouse in warehouses)
+                            {
+                                <option value="@warehouse.WarehouseId">@warehouse.WarehouseName</option>
+                            }
+                        </select>
+                        <span asp-validation-for="@Model.Item3.WarehouseId"></span>
+                    </div>
+                </div>
+
+                <div class="page-input-box">
+                    <label>Lý do xuất kho</label>
+                    <div class="page-input">
+                        <textarea id="ExportReason" type="text" placeholder="Lý do xuất kho"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 m-0">
+                <div class="page-input-box">
+                    <label>Nhân viên xuất</label>
+                    <div class="page-input">
+                        <input type="text" placeholder="Tên nhân viên" value="@employee?.EmployeeName" disabled="disabled"/>
+                    </div>
+                </div>
+
+                <div class="page-input-box">
+                    <label>Ngày tạo phiếu</label>
+                    <div class="page-input">
+                        <input type="text" placeholder="Ngày tạo phiếu" value="@DateTime.Now.ToString("MM/dd/yyyy")" disabled="disabled"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 m-0">
+                <div class="page-input-box">
+                    <label>Ghi chú</label>
+                    <div class="page-input">
+                        <textarea id="ExportNote" type="text" placeholder="Ghi chú"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-content-box no-border mt-3">
+        <div class="page-content-header">
+            Sản phẩm nhập
+        </div>
+
+        <div class="row m-0 p-0">
+            <div class="col-12 col-lg-7">
+                <div class="page-content-box">
+                    <div>
+                        <span class="page-label">Danh sách sản phẩm</span>
+                    </div>
+                    
+                    <div>
+                        <div class="page-search-form mt-2">
+                            <form>
+                                <i class="fa-solid fa-search"></i>
+                                <input type="text" id="search-list-products" placeholder="Tìm theo mã/tên sản phẩm" required />
+                            </form>
+                        </div>
+                        
+                        <div class="mt-2">
+                            <div class="page-table-wrapper product-table-list-wrapper">
+                                <table class="page-table">
+                                    <thead class="page-table-header">
+                                    <tr>
+                                        <th>Mã SP</th>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Giá bán</th>
+                                        <th>Tồn kho</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    
+                                    <tbody class="product-table-list-result">
+                                    
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-lg-5">
+                <div class="page-content-box position-sticky top-0">
+                    <div>
+                        <span class="page-label">Sản phẩm đã chọn</span>
+                    </div>
+
+                    <div class="mt-2">
+                        <div class="page-table-wrapper">
+                            <table class="page-table">
+                                <thead class="page-table-header">
+                                <tr>
+                                    <th>Mã SP</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+
+                                <tbody class="selected-product-list">
+
+                                <tr>
+                                    <td class="fw-bold text-end">Tổng cộng:</td>
+                                    <td class="fweight-600">0</td>
+                                    <td class="fweight-600">0đ</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-content-box no-border mt-3">
+        <div class="d-flex justify-content-end">
+            <button class="form-submit-btn page-btn-sm btn-green create-import">Tạo phiếu nhập</button>
+        </div>
+    </div>
+
+</section>
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/admin/css/warehouse.css" />
+}
+
+@section Scripts
+{
+    <script src="~/admin/js/warehouses.js"></script>
+}

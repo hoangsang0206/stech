@@ -143,165 +143,227 @@ $('.page-search-form form').submit((e) => {
     e.preventDefault();
 })
 
-let typingTimeOut;
-$('#search-list-products').keyup(() => {
-    clearTimeout(typingTimeOut);
+activeProductSearch(false);
+
+const calculateTotalPrice = () => {
+    const totalPrice = $('.selected-prod-item-total-price').toArray().reduce((total, item) => total + parseFloat($(item).data('item-total-price') || 0), 0);
     
-    typingTimeOut = setTimeout(() => {
-        const searchValue = $('#search-list-products').val();
+    $('.total-price')
+        .data('total', totalPrice)
+        .text(`${(totalPrice).toLocaleString('vi-VN')}đ`);
+}
+
+const updateItemQuantity = (product, qty) => {
+    const itemElement = $(`.selected-product-item[data-product="${product.productId}"]`);
+    const selectedPrice = itemElement.find('.selected-prod-price').val();
+
+    const price = () => {
+        if (selectedPrice) {
+            return parseFloat(selectedPrice) * qty;
+        }
+
+        return parseFloat(product.price) * qty
+    }
+
+    itemElement.data('qty', qty);
+    itemElement.find('.selected-prod-qty').val(qty);
+    itemElement.find('.selected-prod-item-total-price')
+        .data('item-total-price', price())
+        .text(`${price().toLocaleString('vi-VN')}đ`);
+
+    calculateTotalPrice();
+}
+
+const removeItem = (product_id) => {
+    $(`.selected-product-item[data-product="${product_id}"]`).remove();
+    calculateTotalPrice();
+}
+
+$(document).on('change', 'input[name="search-product-item"]', function () {
+    if ($(this).prop('checked')) {
+        $('.search-list-product-results').removeClass('show');
+
+        const total_products = parseInt($('.selected-product-item').length || 0);
+
+        const product_id = $(this).val();
+        const existed_product = $(`.selected-product-item[data-product="${product_id}"]`);
+
+        showWebLoader();
 
         $.ajax({
             type: 'GET',
-            url: `/api/admin/products/search-by-id-or-name/${searchValue}`,
+            url: `/api/admin/products/1/${product_id}`,
             success: (response) => {
-                $('.product-table-list-result').empty();
-                
-                response.data.products.forEach(product => {
-                    const total_qty = product.warehouseProducts.reduce((total, item) => total + item.quantity, 0);
+                if (response.status) {
+                    const product = response.data;
 
-                    $('.product-table-list-result').append(`
-                        <tr>
-                            <td>${product.productId}</td>
-                            <td>${product.productName}</td>
-                            <td>${product.price.toLocaleString('vi-VN')}đ</td>
-                            <td>${total_qty}</td>
-                            <td>
-                                <button class="page-table-btn btn-blue click-select-product" 
-                                    data-product="${product.productId}"
-                                    data-price="${product.price}"
-                                    data-product-name="${product.productName}">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `);
-                });
+                    if (!existed_product.length) {
+                        $('.selected-product-list').append(`
+                            <tr class="selected-product-item" data-product="${product.productId}" data-qty="1">
+                                <td class="py-2">${total_products + 1}</td>
+                                <td class="py-2 ps-2">
+                                    <div class="d-flex gap-1" style="max-width: 24rem">
+                                        <div>
+                                            <img src="${product.productImages[0].imageSrc || '/admin/images/no-image.jpg'}" alt="" style="width: 3rem" />
+                                        </div>
+                                        <div class="pe-2 overflow-hidden">
+                                            <div class="text-overflow-1 fweight-500 w-100" style="font-size: .95rem; font-weight: 500" title="${product.productName} - ${product.productId}">${product.productName}</div>
+                                            <div class="text-price" style="font-size: .95rem;">${product.price.toLocaleString('vi-VN')}đ</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-2">
+                                    <input type="number" min="1" value="1" class="table-input input-quantity selected-prod-qty" data-product="${product.productId}" />
+                                </td>
+                                <td class="py-2">
+                                    <input style="width: 10rem" type="text" inputmode="decimal" pattern="[0-9,\\.]*" value="${product.price}" class="table-input selected-prod-price" data-product="${product.productId}" />
+                                </td>
+                                <td class="py-2">
+                                    <div class="d-flex justify-content-end align-items-center gap-3">
+                                        <div class="text-price selected-prod-item-total-price" style="font-size: .95rem;" data-item-total-price="${product.price}">${product.price.toLocaleString('vi-VN')}đ</div>
+                                        <a href="javascript:void(0)" class="text-decoration-none text-danger remove-selected-item" data-product="${product.productId}">
+                                            <i class="fa-regular fa-trash-can"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        `);
+                    } else {
+                        let qty = parseInt(existed_product.data('qty') || 1) + 1;
+                        
+                        updateItemQuantity(product, qty);
+                    }
+                    
+                    hideWebLoader(300);
+                } else {
+                    hideWebLoader(0);
+                    showDialog('error', 'Không thể thêm sản phẩm', 'Không tìm thấy sản phẩm này');
+                }
             },
-            error: () => {
-                $('.product-table-list-result').empty();
+            error: (xhr, status, error) => {
+                hideWebLoader(0);
+                if (xhr.status === 401) {
+                    showUnauthorizedDialog();
+                } else {
+                    showErrorDialog();
+                }
             }
         })
-        
-    }, 300);
-});
+    }
 
+    $(this).prop('checked', false);
+})
 
-let selectedProducts = [];
+$(document).on('click', '.remove-selected-item', function () {
+    const product_id = $(this).data('product');
+    removeItem(product_id);
+})
 
-const updateSelectedProductList = () => {
-    $('.selected-product-list').empty();
-    selectedProducts.map(item => {
-        $('.selected-product-list').append(`
-            <tr data-product="${item.productId}" data-qty="${item.quantity}" data-price="${item.unitPrice}">
-                <td title="${item.productName}" class="text-nowrap">${item.productId}</td>
-                <td>${item.quantity}</td>
-                <td>${(item.unitPrice).toLocaleString('vi-VN')}đ</td>
-                <td><i class="fa-solid fa-pen-to-square edit-import-item" data-product="${item.productId}"></i></td>
-            </tr>
-        `);
+$(document).on('blur', '.selected-prod-qty', function () {
+    const product_id = $(this).data('product');
+    let qty = parseInt($(this).val() || 1);
+
+    if (qty < 1) {
+        qty = 1;
+        $(this).val(qty);
+    }
+
+    showWebLoader();
+
+    $.ajax({
+        type: 'GET',
+        url: `/api/admin/products/1/${product_id}`,
+        success: (response) => {
+            if (response.status) {
+                updateItemQuantity(response.data, qty);
+                hideWebLoader(300);
+            } else {
+                hideWebLoader(0);
+                showDialog('error', 'Không thể cập nhật số lượng', 'Không tìm thấy sản phẩm này');
+                removeItem(product_id);
+            }
+        },
+        error: (xhr, status, error) => {
+            hideWebLoader(0);
+            if (xhr.status === 401) {
+                showUnauthorizedDialog();
+            } else {
+                showErrorDialog();
+            }
+        }
     })
+})
 
-    $('.selected-product-list').append(`
-        <tr>
-            <td class="fw-bold text-end">Tổng cộng:</td>
-            <td class="fweight-600">${selectedProducts.reduce((total, item) => total + item.quantity, 0)}</td>
-            <td class="fweight-600">${(selectedProducts.reduce((total, item) => total + item.unitPrice, 0)).toLocaleString('vi-VN')}đ</td>
-        </tr>
-        
-        <tr>
-            <td colspan="2" class="fw-bold text-end">Tổng tiền:</td>
-            <td class="fweight-600">${selectedProducts.reduce((total, item) => total + item.quantity * item.unitPrice, 0).toLocaleString('vi-VN')}đ</td>
-        </tr>
-    `);
-}
+$(document).on('blur', '.selected-prod-price', function () {
+    const product_id = $(this).data('product');
 
-$(document).on('click', '.click-select-product', function () { 
-    const productId = $(this).data('product');
-    const productName = $(this).data('product-name');
-    const price = $(this).data('price');
+    const qty_element = $(`.selected-prod-qty[data-product="${product_id}"]`);
+    let qty = parseInt($(qty_element).val() || 1);
+    if (qty < 1) {
+        qty = 1;
+        $(qty_element).val(qty);
+    }
 
-    const selectedProduct = selectedProducts.find(item => item.productId === productId);
-    
-    if (selectedProduct) {
-        selectedProduct.quantity++;
-    } else {
-        selectedProducts.push({
+    if (parseInt($(this).val()) < 0) {
+        $(this).val(0);
+    }
+
+    showWebLoader();
+
+    $.ajax({
+        type: 'GET',
+        url: `/api/admin/products/1/${product_id}`,
+        success: (response) => {
+            if (response.status) {
+                updateItemQuantity(response.data, qty);
+                hideWebLoader(300);
+            } else {
+                hideWebLoader(0);
+                showDialog('error', 'Không thể cập nhật giá', 'Không tìm thấy sản phẩm này');
+                removeItem(product_id);
+            }
+        },
+        error: (xhr, status, error) => {
+            hideWebLoader(0);
+            if (xhr.status === 401) {
+                showUnauthorizedDialog();
+            } else {
+                showErrorDialog();
+            }
+        }
+    })
+})
+
+const getSelectedProducts = () => {
+    const products = [];
+
+    $('.selected-product-item').each(function () {
+        const productId = $(this).data('product');
+        const qty = parseInt($(this).find('.selected-prod-qty').val(), 10);
+        const price = parseFloat($(this).find('.selected-prod-price').val());
+
+        products.push({
             productId: productId,
-            productName: productName,
-            quantity: 1,
+            quantity: qty,
             unitPrice: price
         });
-    }
+    });
     
-    updateSelectedProductList();
-})
-
-$(document).on('click', '.edit-import-item', function () {
-    const productId = $(this).data('product');
-    const selectedProduct = selectedProducts.find(item => item.productId === productId);
-    
-    const editElement = $(this).closest('tr');
-    const editQty = selectedProduct.quantity;
-    const editPrice = selectedProduct.unitPrice;
-    
-    const editHtml = `
-        <td title="${selectedProduct.productName}" class="text-nowrap">${productId}</td>
-        <td>
-            <div class="page-input"><input type="number" value="${editQty}" min="1" required></div>
-        </td>
-        <td>
-            <div class="page-input"><input type="number" class="form-control" value="${editPrice}" min="1" required></div>
-        </td>
-        <td><i class="fa-solid fa-check confirm-edit-import-item"></i></td>
-    `;
-    
-    editElement.html(editHtml);
-})
-
-$(document).on('click', '.confirm-edit-import-item', function () {
-    const editElement = $(this).closest('tr');
-    const productId = editElement.data('product');
-    const selectedProduct = selectedProducts.find(item => item.productId === productId);
-    
-    const qty = parseInt(editElement.find('input[type="number"]').eq(0).val());
-    const price = parseInt(editElement.find('input[type="number"]').eq(1).val());
-    
-    if (qty <= 0 || price <= 0) { 
-        showDialog('error', 'Lỗi nhập liệu', 'Số lượng và giá phải lớn hơn 0');
-        return;
-    }
-    
-    if (isNaN(qty) || isNaN(price)) {
-        showDialog('error', 'Lỗi nhập liệu', 'Số lượng và giá phải là số');
-        return;
-    }
-    
-    selectedProduct.quantity = qty;
-    selectedProduct.unitPrice = price;
-    
-    const newHtml = `
-        <td>${productId}</td>
-        <td>${qty}</td>
-        <td>${price.toLocaleString('vi-VN')}đ</td>
-        <td><i class="fa-solid fa-pen-to-square edit-import-item" data-product="${productId}"></i></td>
-    `;
-    
-    editElement.html(newHtml);
-    updateSelectedProductList();
-})
+    return products;
+}
 
 $('.create-import').click(() => {
     const warehouseId = $('#warehouse_id').val();
     const supplierId = $('#supplier_id').val();
-    
+
     if (!warehouseId || !supplierId) {
         showDialog('error', 'Dữ liệu không hợp lệ.', 'Vui lòng nhập đầy đủ thông tin.');
         return;
     }
-    
+
     const note = $('#ImportNote').val() || null;
 
-    const products = selectedProducts.map(({productName, ...rest}) => rest);
+    const products = getSelectedProducts();
 
     if (!products || products.length <= 0) {
         showDialog('error', 'Dữ liệu không hợp lệ', 'Vui lòng chọn sản phẩm cần nhập.');
@@ -310,7 +372,7 @@ $('.create-import').click(() => {
 
     const submit_btn = $('.create-import');
     const element_html = showButtonLoader(submit_btn, '23px', '4px');
-    
+
     $.ajax({
         type: 'POST',
         url: '/api/admin/warehouses/import',
@@ -324,8 +386,7 @@ $('.create-import').click(() => {
         success: (response) => {
             if (response.status) {
                 showDialogWithCallback('success', 'Nhập kho thành công', response.message, () => {
-                    selectedProducts = [];
-                    updateSelectedProductList();
+                    $(".selected-product-list").empty();
                 });
             } else {
                 showDialog('error', 'Đã xảy ra lỗi', response.message);

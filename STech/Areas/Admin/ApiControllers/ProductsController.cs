@@ -54,20 +54,39 @@ namespace STech.Areas.Admin.ApiControllers
             });
         }
         
-        [HttpGet("search-by-id-or-name/{query}")]
-        public async Task<IActionResult> SearchProductsByIdOrName(string query, int page)
+        [HttpGet("search-by-id-or-name/{query?}")]
+        public async Task<IActionResult> SearchProductsByIdOrName(string? query, int? page)
         {
-            PagedList<Product> products = await _productService.SearchProductsByIdOrName(query, page, _itemsPerPage);
+            if (string.IsNullOrEmpty(query))
+            {
+                query = "";
+            }
+            
+            
+            if (page.HasValue)
+            {
+                int currentPage = page.Value;
+                
+                PagedList<Product> products = await _productService.SearchProductsByIdOrName(query, currentPage, _itemsPerPage);
+                
+                return Ok(new ApiResponse
+                {
+                    Status = true,
+                    Data = new
+                    {
+                        products = products.Items,
+                        totalPages = products.TotalPages,
+                        currentPage = products.CurrentPage
+                    }
+                });
+            }
 
+            IEnumerable<Product> data = await _productService.SearchProductsByIdOrName(query);
+            
             return Ok(new ApiResponse
             {
                 Status = true,
-                Data = new
-                {
-                    products = products.Items,
-                    totalPages = products.TotalPages,
-                    currentPage = products.CurrentPage
-                }
+                Data = data
             });
         }
 

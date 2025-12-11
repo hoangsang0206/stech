@@ -336,6 +336,7 @@ namespace STech.Services.Services
         {
             Invoice? invoice = await _context.Invoices
                 .Where(i => i.InvoiceId == invoiceId)
+                .Include(i => i.PackingSlip)
                 .FirstOrDefaultAsync();
 
             if (invoice == null)

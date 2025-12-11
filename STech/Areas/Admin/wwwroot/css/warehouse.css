@@ -3,7 +3,7 @@
     overflow-y: auto;
 }
 
-.edit-import-item, .confirm-edit-import-item {
+.edit-selected-item, .confirm-edit-selected-item {
     color: #0c6cf2;
     cursor: pointer;
 }
