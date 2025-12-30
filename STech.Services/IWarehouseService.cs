@@ -28,7 +28,8 @@ namespace STech.Services
         Task<bool> ConfirmWarehouseImport(string id);
         Task<bool> CancelWarehouseImport(string id);
         Task<bool> UpdateWarehouseImport(WarehouseImport import);
-        Task<PagedList<WarehouseImport>> GetWarehouseImports(int page, int pageSize);
+        Task<PagedList<WarehouseImport>> GetWarehouseImports(string? wId, string? pId, string? sId, 
+            string? eId, string? sort, int page = 1);
         Task<WarehouseImport?> GetWarehouseImport(string id);
     }
 }

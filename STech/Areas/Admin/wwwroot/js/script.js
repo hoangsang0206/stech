@@ -385,6 +385,32 @@ $('select').toArray().map(select => {
     $(select).select2();
 })
 
+const activeDateRangePicker = () => {
+    let start = moment().subtract(29, 'days');
+    let end = moment();
+    
+    const cb = (start, end) => {
+        $('.date-range-picker span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
+    }
+
+    $('.date-range-picker').daterangepicker({
+        startDate: start,
+        endDate: end,
+        ranges: {
+            'Hôm nay': [moment(), moment()],
+            'Hôm qua': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            '7 ngày qua': [moment().subtract(6, 'days'), moment()],
+            '30 ngày qua': [moment().subtract(29, 'days'), moment()],
+            'Tháng này': [moment().startOf('month'), moment().endOf('month')],
+            'Tháng trước': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    }, cb);
+
+    cb(start, end);
+}
+
+activeDateRangePicker();
+
 const printBlobPdf = (blob) => {
     const url = URL.createObjectURL(blob);
     const iframe = document.createElement('iframe');
@@ -439,8 +465,9 @@ const activeProductSearch = (withInstock) => {
                                     <input type="radio" id="${product.productId}" name="search-product-item" value="${product.productId}" hidden />
                                     <label for="${product.productId}" class="d-flex gap-2">
                                         <img style="width: 2rem; height: 2rem; object-fit: contain" src="${product.productImages[0].imageSrc || '/admin/images/no-image.jpg'}" alt="" />
-                                        <span class="text-overflow-1 flex-grow-1">${product.productName} </span>
-                                        <span class="fweight-600 ms-2" style="color: var(--primary-color)">${product.price.toLocaleString('vi-VN')}đ</span>
+                                        <span class="text-overflow-1 text-nowrap flex-grow-1" style="width: calc(100% - 14rem)">${product.productName} </span>
+                                        <span class="text-overflow-1" style="width: 5rem">Tồn: ${total_qty}</span>
+                                        <span class="fweight-600 ms-2 text-end" style="color: var(--primary-color); width: 7rem">${product.price.toLocaleString('vi-VN')}đ</span>
                                     </label>
                                 </div>
                             `);

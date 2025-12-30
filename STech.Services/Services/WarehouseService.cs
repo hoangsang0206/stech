@@ -330,11 +330,12 @@ namespace STech.Services.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<PagedList<WarehouseImport>> GetWarehouseImports(int page, int pageSize)
+        public async Task<PagedList<WarehouseImport>> GetWarehouseImports(string? wId, string? pId, string? sId, 
+            string? eId, string? sort, int page = 1)
         {
-            return await _context.WarehouseImports
-                .Include(t => t.WarehouseImportDetails)
-                .ToPagedListAsync(page, pageSize);
+            
+
+            return null;
         }
 
         public async Task<WarehouseImport?> GetWarehouseImport(string id)

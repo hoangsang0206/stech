@@ -12,6 +12,14 @@
 }
 
 <section>
+    
+    <div class="mb-3">
+        <button class="page-btn btn-blue" onclick='window.location.href="/admin/warehouses/import/list"'>
+            <i class="fa-solid fa-list-ul"></i>
+            <span>Danh sách phiếu nhập</span>
+        </button>
+    </div>
+    
     <div class="row">
         <div class="col-12 col-lg-8">
             <div class="page-content-box no-border h-100">
@@ -25,17 +33,17 @@
                             <div class="page-search-form mt-2">
                                 <form>
                                     <i class="fa-solid fa-search"></i>
-                                    <input type="text" id="search-products-val" placeholder="Tìm theo mã/tên sản phẩm" required />
+                                    <input type="text" id="search-products-val" placeholder="Tìm theo mã/tên sản phẩm" required/>
                                 </form>
-                                
+
                                 <div class="page-search-results search-list-product-results">
-                        
+
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="mt-4">
-                            
+
                             <div class="import-products flex-grow-1 overflow-y-auto overflow-x-hidden">
                                 <table class="w-100">
                                     <thead>
@@ -50,17 +58,17 @@
                                     </thead>
 
                                     <tbody class="selected-product-list">
-                                       
+
                                     </tbody>
                                 </table>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="col-12 ps-1 col-md-4">
             <div class="page-content-box no-border">
                 <div class="page-content-header">
@@ -114,7 +122,7 @@
                             <textarea id="ImportNote" type="text" placeholder="Ghi chú"></textarea>
                         </div>
                     </div>
-                    
+
                     <div class="d-flex justify-content-end mt-4">
                         <button class="form-submit-btn page-btn-sm btn-green create-import">Tạo phiếu nhập</button>
                     </div>

@@ -225,6 +225,12 @@ namespace STech.Areas.Admin.ApiControllers
 
         #region Import
 
+        // Get import list
+        [HttpGet]
+        
+        
+        
+        // Create import
         [HttpPost("import")]
         [AdminAuthorize(Code = Functions.ImportWarehouse)]
         public async Task<IActionResult> ImportWarehouse([FromBody] WarehouseImportVM model)
