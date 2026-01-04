@@ -1299,6 +1299,14 @@ button:disabled {
     background: #fff;
 }
 
+.filter-submit {
+    padding: .5rem .9rem;
+}
+
+.date-range-picker {
+    padding: .5rem .7rem;
+}
+
 .pagination-box {
     display: flex;
     align-items: center;

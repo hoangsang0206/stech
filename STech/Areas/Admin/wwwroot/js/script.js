@@ -385,15 +385,17 @@ $('select').toArray().map(select => {
     $(select).select2();
 })
 
-const activeDateRangePicker = () => {
+const activeDateRangePicker = (onApply) => {
     let start = moment().subtract(29, 'days');
     let end = moment();
     
+    const picker = $('.date-range-picker');
+    
     const cb = (start, end) => {
-        $('.date-range-picker span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
+        picker.find('span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
     }
 
-    $('.date-range-picker').daterangepicker({
+    picker.daterangepicker({
         startDate: start,
         endDate: end,
         ranges: {
@@ -407,9 +409,14 @@ const activeDateRangePicker = () => {
     }, cb);
 
     cb(start, end);
+    
+    picker.on('apply.daterangepicker', (ev, pickerInstance) => {
+        onApply(
+            pickerInstance.startDate.format('DD/MM/YYYY'),
+            pickerInstance.endDate.format('DD/MM/YYYY'),
+        );
+    })
 }
-
-activeDateRangePicker();
 
 const printBlobPdf = (blob) => {
     const url = URL.createObjectURL(blob);
