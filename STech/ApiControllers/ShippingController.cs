@@ -32,7 +32,7 @@ namespace STech.ApiControllers
         {
             DeliveryMethod? deliveryMethod = await _deliveryService.GetDeliveryMethodById(shipmed);
 
-            if (deliveryMethod != null && deliveryMethod.DeliveryMedId == DeliveryContants.Store)
+            if (deliveryMethod != null && deliveryMethod.DeliveryMedId == DeliveryConstants.Store)
             {
                 return Ok(new ApiResponse
                 {

@@ -56,17 +56,27 @@ namespace STech.Areas.Admin.Controllers
 
         [AdminAuthorize(Code = Functions.ImportWarehouse)]
         [Route("[area]/[controller]/import/list")]
-        public async Task<IActionResult> ImportList(string? wId, string? pId,
+        public async Task<IActionResult> ImportList(string? id, string? wId, string? pId,
             string? sId, string? eId,
-            string? sort, int page = 1)
+            string? date,
+            string? sort, string? status, int page = 1)
         {
-            WarehouseFilterVM filterVm = new WarehouseFilterVM();
-            filterVm.Warehouses = await _warehouseService.GetWarehouses();
-            filterVm.Suppliers = await _supplierService.GetSuppliers();
+            WarehouseFilterVM filterVm = new WarehouseFilterVM()
+            {
+                Warehouses = await _warehouseService.GetWarehouses(),
+                Suppliers = await _supplierService.GetSuppliers(),
+                WarehouseId = wId,
+                SupplierId = sId,
+                EmployeeId = eId,
+                ProductId = pId,
+                ItemId = id,
+                DateRange = date,
+            };
             
-           //PagedList<WarehouseImport> importList = await _warehouseService.GetWarehouseImports();
+            PagedList<WarehouseImport> importList = await _warehouseService.GetWarehouseImports(id, wId, pId, sId, eId, date, sort, status, page);
             
-            return View(filterVm);
+            ViewBag.ActiveSidebar = "warehouses";
+            return View(new Tuple<WarehouseFilterVM, PagedList<WarehouseImport>>(filterVm, importList));
         }
 
         [AdminAuthorize(Code = Functions.ExportWarehouse)]

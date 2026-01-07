@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace STech.Services.Constants
 {
-    public class PaymentContants
+    public class PaymentConstants
     {
         public const decimal USD_EXCHANGE_RATE = 25000;
 

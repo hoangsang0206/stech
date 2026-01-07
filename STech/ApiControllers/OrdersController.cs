@@ -46,10 +46,10 @@ namespace STech.ApiControllers
                     invoices = invoices.Where(i => i.IsCancelled == true);
                     break;
                 case "paid":
-                    invoices = invoices.Where(i => i.PaymentStatus == PaymentContants.Paid);
+                    invoices = invoices.Where(i => i.PaymentStatus == PaymentConstants.Paid);
                     break;
                 case "unpaid":
-                    invoices = invoices.Where(i => i.PaymentStatus == PaymentContants.UnPaid);
+                    invoices = invoices.Where(i => i.PaymentStatus == PaymentConstants.UnPaid);
                     break;
                 default:
                     break;

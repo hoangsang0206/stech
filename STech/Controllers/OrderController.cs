@@ -98,7 +98,7 @@ namespace STech.Controllers
             invoice.InvoiceId = date.ToString("yyyyMMdd") + RandomUtils.GenerateRandomString(8).ToUpper();
             invoice.OrderDate = date;
             invoice.PaymentMedId = paymentMethod.PaymentMedId;
-            invoice.PaymentStatus = PaymentContants.UnPaid;
+            invoice.PaymentStatus = PaymentConstants.UnPaid;
             invoice.DeliveryMedId = order.DeliveryMethod;
             invoice.UserId = userId;
             invoice.Note = order.Note;
@@ -115,7 +115,7 @@ namespace STech.Controllers
             PackingSlip packingSlip = new PackingSlip();
             packingSlip.InvoiceId = invoice.InvoiceId;
             packingSlip.Psid = DateTime.Now.ToString("yyyyMMdd") + RandomUtils.GenerateRandomString(8).ToUpper();
-            packingSlip.DeliveryFee = invoice.DeliveryMedId == DeliveryContants.COD ? await CalculateShippingFee(address) : 0;
+            packingSlip.DeliveryFee = invoice.DeliveryMedId == DeliveryConstants.COD ? await CalculateShippingFee(address) : 0;
             packingSlip.IsCompleted = false;
 
             return packingSlip;
@@ -411,16 +411,16 @@ namespace STech.Controllers
 
                 switch (order.PaymentMethod)
                 {
-                    case PaymentContants.CashPayment:
+                    case PaymentConstants.CashPayment:
                         return RedirectToAction(nameof(PaymentWithCash));
 
-                    case PaymentContants.CardPayment:
+                    case PaymentConstants.CardPayment:
                         return RedirectToAction(nameof(PaymentWithStripe));
                             
-                    case PaymentContants.PaypalPayment:
+                    case PaymentConstants.PaypalPayment:
                         return RedirectToAction(nameof(PaymentWithPaypal));
 
-                    case PaymentContants.VNPayPayment:
+                    case PaymentConstants.VNPayPayment:
                         return RedirectToAction(nameof(PaymentWithVNPay), new PaymentInformationModel
                         {
                             OrderId = invoice.InvoiceId,
@@ -429,7 +429,7 @@ namespace STech.Controllers
                             OrderDescription = "Thanh toan don hang: " + invoice.InvoiceId,
                             OrderType = "other"
                         });
-                    case PaymentContants.MomoPayment:
+                    case PaymentConstants.MomoPayment:
                         return RedirectToAction(nameof(PaymentWithMomo));
 
                     default:
@@ -492,7 +492,7 @@ namespace STech.Controllers
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            UnitAmount = (long)Math.Round(detail.Cost / PaymentContants.USD_EXCHANGE_RATE) * 100,
+                            UnitAmount = (long)Math.Round(detail.Cost / PaymentConstants.USD_EXCHANGE_RATE) * 100,
                             Currency = "usd",
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
@@ -510,7 +510,7 @@ namespace STech.Controllers
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            UnitAmount = (long)Math.Round(invoice.PackingSlip.DeliveryFee / PaymentContants.USD_EXCHANGE_RATE) * 100,
+                            UnitAmount = (long)Math.Round(invoice.PackingSlip.DeliveryFee / PaymentConstants.USD_EXCHANGE_RATE) * 100,
                             Currency = "usd",
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
@@ -570,17 +570,17 @@ namespace STech.Controllers
             
             if(session.PaymentStatus == "paid")
             {
-                invoice.PaymentStatus = PaymentContants.Paid;
+                invoice.PaymentStatus = PaymentConstants.Paid;
             }
             else
             {
-                invoice.PaymentStatus = PaymentContants.PaymentFailed;
+                invoice.PaymentStatus = PaymentConstants.PaymentFailed;
             }
 
             HttpContext.Session.SetString("PaymentStatus", JsonSerializer.Serialize(new PaymentStatusVM
             {
                 InvoiceId = invoice.InvoiceId,
-                IsPaid = invoice.PaymentStatus == PaymentContants.Paid,
+                IsPaid = invoice.PaymentStatus == PaymentConstants.Paid,
                 TotalAmount = invoice.Total,
                 PaymentDate = DateTime.Now
             }));
@@ -657,17 +657,17 @@ namespace STech.Controllers
 
             if (response != null && response.VnPayResponseCode == "00")
             {
-                invoice.PaymentStatus = PaymentContants.Paid;
+                invoice.PaymentStatus = PaymentConstants.Paid;
             } 
             else
             {
-                invoice.PaymentStatus = PaymentContants.PaymentFailed;
+                invoice.PaymentStatus = PaymentConstants.PaymentFailed;
             }
 
             HttpContext.Session.SetString("PaymentStatus", JsonSerializer.Serialize(new PaymentStatusVM
             {
                 InvoiceId = invoice.InvoiceId,
-                IsPaid = invoice.PaymentStatus == PaymentContants.Paid,
+                IsPaid = invoice.PaymentStatus == PaymentConstants.Paid,
                 TotalAmount = invoice.Total,
                 PaymentDate = DateTime.Now
             }));

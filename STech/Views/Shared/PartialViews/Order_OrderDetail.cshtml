@@ -33,15 +33,15 @@
                     {
                         switch (Model.PaymentStatus)
                         {
-                            case PaymentContants.Paid:
+                            case PaymentConstants.Paid:
                                 <span class="page-badge badge-success">Đã thanh toán</span>
                                 break;
 
-                            case PaymentContants.UnPaid:
+                            case PaymentConstants.UnPaid:
                                 <span class="page-badge badge-warning">Chờ thanh toán</span>
                                 break;
 
-                            case PaymentContants.PaymentFailed:
+                            case PaymentConstants.PaymentFailed:
                                 <span class="page-badge badge-error">Thanh toán thất bại</span>
                                 break;
                         }
@@ -68,7 +68,7 @@
                 {
                     if (userId != null && userId == Model.UserId && Model.IsAccepted == false 
                         && Model.IsCompleted == false && Model.IsCancelled == false 
-                        && Model.PaymentStatus != PaymentContants.Paid)
+                        && Model.PaymentStatus != PaymentConstants.Paid)
                     {
                         <a class="cancel-order page-btn btn-red" data-invoice="@Model.InvoiceId" download="HĐ_@(Model.InvoiceId).pdf">
                             <i class="fa-solid fa-xmark"></i>

@@ -34,11 +34,11 @@ namespace STech.Services.Utils
             switch (filterBy)
             {
                 case "paid":
-                    return invoices.Where(i => i.PaymentStatus == PaymentContants.Paid)
+                    return invoices.Where(i => i.PaymentStatus == PaymentConstants.Paid)
                         .OrderByDescending(i => i.OrderDate);
 
                 case "unpaid":
-                    return invoices.Where(i => i.PaymentStatus == PaymentContants.UnPaid)
+                    return invoices.Where(i => i.PaymentStatus == PaymentConstants.UnPaid)
                         .OrderByDescending(i => i.OrderDate);
 
                 case "accepted":

@@ -96,7 +96,7 @@ namespace STech.ApiControllers
                 });
             }
 
-            if (invoice.PaymentStatus == PaymentContants.Paid)
+            if (invoice.PaymentStatus == PaymentConstants.Paid)
             {
                 return Ok(new ApiResponse
                 {

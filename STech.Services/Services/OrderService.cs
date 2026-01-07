@@ -297,7 +297,7 @@ namespace STech.Services.Services
                 return false;
             }
 
-            if(invoice.IsAccepted || invoice.IsCompleted || invoice.PaymentStatus == PaymentContants.Paid)
+            if(invoice.IsAccepted || invoice.IsCompleted || invoice.PaymentStatus == PaymentConstants.Paid)
             {
                 return false;
             }
@@ -344,7 +344,7 @@ namespace STech.Services.Services
                 return false;
             }
 
-            invoice.PaymentStatus = PaymentContants.Paid;
+            invoice.PaymentStatus = PaymentConstants.Paid;
             invoice.IsCompleted = true;
             invoice.CompletedDate = DateTime.Now;
 

@@ -8,6 +8,8 @@ namespace STech.Services.Services
     public class WarehouseService : IWarehouseService
     {
         private readonly StechDbContext _context;
+        
+        private readonly int ItemsPerPage = 20;
 
         public WarehouseService(StechDbContext context)
         {
@@ -330,17 +332,35 @@ namespace STech.Services.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<PagedList<WarehouseImport>> GetWarehouseImports(string? wId, string? pId, string? sId, 
-            string? eId, string? sort, int page = 1)
+        public async Task<PagedList<WarehouseImport>> GetWarehouseImports(string?id, string? wId, string? pId, string? sId, 
+            string? eId, string? date, string? sort, string? status, int page = 1)
         {
-            
+            IQueryable<WarehouseImport> importList = _context.WarehouseImports
+                .Include(t => t.WarehouseImportDetails);
 
-            return null;
+            if (!string.IsNullOrEmpty(id))
+            {
+                importList = importList.Where(t => t.Wiid.ToLower().Contains(id.ToLower()));
+            }
+            else
+            {
+                importList = importList
+                    .FilterByDateImport(date)
+                    .FilterByEmployee(eId)
+                    .FilterByProduct(pId)
+                    .FilterBySupplier(sId)
+                    .FilterByWarehouse(wId);
+
+            }
+
+            return await importList.ToPagedListAsync(page, ItemsPerPage);
         }
 
         public async Task<WarehouseImport?> GetWarehouseImport(string id)
         {
-            return await _context.WarehouseImports.FirstOrDefaultAsync(t => t.Wiid == id);
+            return await _context.WarehouseImports
+                .Include(t => t.WarehouseImportDetails)
+                .FirstOrDefaultAsync(t => t.Wiid == id);
         }
         
         #endregion

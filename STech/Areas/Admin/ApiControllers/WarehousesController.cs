@@ -226,8 +226,21 @@ namespace STech.Areas.Admin.ApiControllers
         #region Import
 
         // Get import list
-        [HttpGet]
-        
+        [HttpGet("import-list")]
+        [AdminAuthorize(Code = Functions.ImportWarehouse)]
+        public async Task<IActionResult> GetImportList(string? id, string? wId, string? pId,
+            string? sId, string? eId,
+            string? date,
+            string? sort, string? status, int page = 1)
+        {
+            PagedList<WarehouseImport> importList = await _warehouseService.GetWarehouseImports(id, wId, pId, sId, eId, date, sort, status, page);
+
+            return Ok(new ApiResponse
+            {
+                Status = true,
+                Data = importList
+            });
+        }
         
         
         // Create import

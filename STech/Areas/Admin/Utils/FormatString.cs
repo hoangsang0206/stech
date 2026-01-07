@@ -18,6 +18,5 @@ namespace STech.Areas.Admin.Utils
             string strToLower = str.Trim().ToLower();
             return RemoveVietnameseSigns(strToLower.Replace(" ", "-"));
         }
-
     }
 }

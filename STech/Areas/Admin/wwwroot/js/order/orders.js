@@ -1,14 +1,4 @@
-﻿const formatCurrency = (amout) => {
-    const _amout = parseFloat(amout);
-
-    if (_amout === 0) {
-        return '0đ';
-    }
-
-    return _amout.toLocaleString('vi-VN') + 'đ';
-}
-
-const isOrderDetailPage = $('[data-page="order-detail"]').length > 0 || false;
+﻿const isOrderDetailPage = $('[data-page="order-detail"]').length > 0 || false;
 
 const tippyButtons = () => {
     if (isOrderDetailPage) {

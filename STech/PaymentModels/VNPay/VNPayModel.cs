@@ -38,7 +38,7 @@ namespace STech.PaymentModels.VNPay
             return new PaymentResponseModel()
             {
                 Success = true,
-                PaymentMethod = PaymentContants.VNPayPayment,
+                PaymentMethod = PaymentConstants.VNPayPayment,
                 OrderDescription = orderInfo,
                 OrderId = orderId.ToString(),
                 PaymentId = vnPayTranId.ToString(),

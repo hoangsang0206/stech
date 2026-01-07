@@ -11,15 +11,15 @@
 
     switch (Model.PaymentStatus)
     {
-        case PaymentContants.Paid:
+        case PaymentConstants.Paid:
             payment_status = "<span class=\"page-badge badge-success\">Đã thanh toán</span>";
             break;
 
-        case PaymentContants.UnPaid:
+        case PaymentConstants.UnPaid:
             payment_status = "<span class=\"page-badge badge-warning\">Chờ thanh toán</span>";
             break;
 
-        case PaymentContants.PaymentFailed:
+        case PaymentConstants.PaymentFailed:
             payment_status = "<span class=\"page-badge badge-error\">Thanh toán thất bại</span>";
             break;
     }
@@ -78,7 +78,7 @@
                                 </button>
                             }
 
-                            @if (Model.PaymentStatus != PaymentContants.Paid)
+                            @if (Model.PaymentStatus != PaymentConstants.Paid)
                             {
                                 @* <button class="page-btn btn-lightblue confirm-payment" data-order="@Model.InvoiceId">
                                     <i class="fa-solid fa-money-check-dollar"></i>

@@ -96,7 +96,7 @@ namespace STech.Areas.Admin.ApiControllers
             invoice.InvoiceId = date.ToString("yyyyMMdd") + RandomUtils.GenerateRandomString(8).ToUpper();
             invoice.OrderDate = date;
             invoice.PaymentMedId = paymentMethod.PaymentMedId;
-            invoice.PaymentStatus = PaymentContants.UnPaid;
+            invoice.PaymentStatus = PaymentConstants.UnPaid;
             invoice.DeliveryMedId = order.DeliveryMethod;
             invoice.CustomerId = customer.CustomerId;
             invoice.EmployeeId = employeeId;
@@ -113,7 +113,7 @@ namespace STech.Areas.Admin.ApiControllers
             PackingSlip packingSlip = new PackingSlip();
             packingSlip.InvoiceId = invoice.InvoiceId;
             packingSlip.Psid = DateTime.Now.ToString("yyyyMMdd") + RandomUtils.GenerateRandomString(8).ToUpper();
-            packingSlip.DeliveryFee = invoice.DeliveryMedId == DeliveryContants.COD ? await CalculateShippingFee(address, warehouseId) : 0;
+            packingSlip.DeliveryFee = invoice.DeliveryMedId == DeliveryConstants.COD ? await CalculateShippingFee(address, warehouseId) : 0;
             packingSlip.IsCompleted = false;
 
             return packingSlip;
@@ -449,7 +449,7 @@ namespace STech.Areas.Admin.ApiControllers
 
                 Employee? employee = await _employeeService.GetEmployeeByUserId(userId);
                 Customer? customer = await _customerService.GetCustomerById(order.CustomerId);
-                PaymentMethod? paymentMethod = await _paymentService.GetPaymentMethod(PaymentContants.CashPayment);
+                PaymentMethod? paymentMethod = await _paymentService.GetPaymentMethod(PaymentConstants.CashPayment);
 
                 if (customer == null || paymentMethod == null)
                 {

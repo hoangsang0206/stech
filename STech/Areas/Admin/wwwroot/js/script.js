@@ -364,10 +364,23 @@ const formatDateTime = (date) => {
     const day = String(_date.getDate()).padStart(2, '0');
     const month = String(_date.getMonth() + 1).padStart(2, '0');
     const year = _date.getFullYear();
-    const hours = String(_date.getHours()).padStart(2, '0');
+    let hours = _date.getHours();
     const minutes = String(_date.getMinutes()).padStart(2, '0');
 
-    return `${day}/${month}/${year} ${hours}:${minutes}`;
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = String(hours % 12 || 12).padStart(2, '0');
+
+    return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
+}
+
+const formatCurrency = (amout) => {
+    const _amout = parseFloat(amout);
+
+    if (_amout === 0) {
+        return '0đ';
+    }
+
+    return _amout.toLocaleString('vi-VN') + 'đ';
 }
 
 const activeDropdown = (dropdown_container, value) => {
@@ -385,19 +398,29 @@ $('select').toArray().map(select => {
     $(select).select2();
 })
 
+
+let pickerSelectedRange = null;
 const activeDateRangePicker = (onApply) => {
     let start = moment().subtract(29, 'days');
     let end = moment();
     
     const picker = $('.date-range-picker');
+    const filterDate = picker.data('filter-date');
+    
+    if (filterDate) {
+        const [startStr, endStr] = filterDate.split(' - ');
+        
+        start = moment(startStr, 'DD/MM/YYYY');
+        end = moment(endStr, 'DD/MM/YYYY');
+    }
     
     const cb = (start, end) => {
         picker.find('span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
     }
 
     picker.daterangepicker({
-        startDate: start,
-        endDate: end,
+        autoUpdateImput: false,
+        locale: { format: 'DD/MM/YYYY' },
         ranges: {
             'Hôm nay': [moment(), moment()],
             'Hôm qua': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -407,15 +430,32 @@ const activeDateRangePicker = (onApply) => {
             'Tháng trước': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         }
     }, cb);
-
-    cb(start, end);
     
     picker.on('apply.daterangepicker', (ev, pickerInstance) => {
         onApply(
             pickerInstance.startDate.format('DD/MM/YYYY'),
             pickerInstance.endDate.format('DD/MM/YYYY'),
         );
+        
+        pickerSelectedRange = {
+            start: pickerInstance.startDate.format('DD/MM/YYYY'),
+            end: pickerInstance.endDate.format('DD/MM/YYYY'),
+        }
     })
+
+    picker.on('cancel.daterangepicker', function (ev, pickerInstance) {
+        picker.val('');
+        picker.find('span').text(' - ');
+        pickerSelectedRange = null;
+    });
+}
+
+const getDateRangePickerValue = () => {
+    return pickerSelectedRange;
+}
+
+const getDropdownSelectedValue = (element) => {
+    return $(element).find('.page-dropdown-btn').data('selected') || null;
 }
 
 const printBlobPdf = (blob) => {

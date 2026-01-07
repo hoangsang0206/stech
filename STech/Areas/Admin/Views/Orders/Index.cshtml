@@ -53,15 +53,15 @@
 
                     switch (invoice.PaymentStatus)
                     {
-                        case PaymentContants.Paid:
+                        case PaymentConstants.Paid:
                             payment_status = "<span class=\"page-badge badge-success\">Đã thanh toán</span>";
                             break;
 
-                        case PaymentContants.UnPaid:
+                        case PaymentConstants.UnPaid:
                             payment_status = "<span class=\"page-badge badge-warning\">Chờ thanh toán</span>";
                             break;
 
-                        case PaymentContants.PaymentFailed:
+                        case PaymentConstants.PaymentFailed:
                             payment_status = "<span class=\"page-badge badge-error\">Thanh toán thất bại</span>";
                             break;
 
@@ -87,7 +87,7 @@
                     <tr>
                         <td class="fweight-600">@index</td>
                         <td>@invoice.InvoiceId</td>
-                        <td>@invoice.OrderDate?.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@invoice.OrderDate?.ToString("dd/MM/yyyy hh:mm tt")</td>
                         <td>@total_items</td>
                         <td class="fweight-600">@CurrencyFormatter.Format(invoice.Total)</td>
                         <td>@invoice.PaymentMed.PaymentName</td>
