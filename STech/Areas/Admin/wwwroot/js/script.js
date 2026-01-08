@@ -406,20 +406,29 @@ const activeDateRangePicker = (onApply) => {
     
     const picker = $('.date-range-picker');
     const filterDate = picker.data('filter-date');
+
+    const cb = (start, end) => {
+        picker.find('span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
+    }
     
     if (filterDate) {
         const [startStr, endStr] = filterDate.split(' - ');
         
         start = moment(startStr, 'DD/MM/YYYY');
         end = moment(endStr, 'DD/MM/YYYY');
-    }
-    
-    const cb = (start, end) => {
-        picker.find('span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
+        
+        pickerSelectedRange = {
+            start: startStr,
+            end: endStr,
+        }
+        
+        cb(start, end);
     }
 
     picker.daterangepicker({
-        autoUpdateImput: false,
+        startDate: start,
+        endDate: end,
+        autoUpdateInput: false,
         locale: { format: 'DD/MM/YYYY' },
         ranges: {
             'Hôm nay': [moment(), moment()],
@@ -427,7 +436,10 @@ const activeDateRangePicker = (onApply) => {
             '7 ngày qua': [moment().subtract(6, 'days'), moment()],
             '30 ngày qua': [moment().subtract(29, 'days'), moment()],
             'Tháng này': [moment().startOf('month'), moment().endOf('month')],
-            'Tháng trước': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            'Tháng trước': [
+                moment().subtract(1, 'month').startOf('month'), 
+                moment().subtract(1, 'month').endOf('month')
+            ]
         }
     }, cb);
     

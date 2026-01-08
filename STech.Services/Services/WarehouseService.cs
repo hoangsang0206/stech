@@ -349,7 +349,9 @@ namespace STech.Services.Services
                     .FilterByEmployee(eId)
                     .FilterByProduct(pId)
                     .FilterBySupplier(sId)
-                    .FilterByWarehouse(wId);
+                    .FilterByWarehouse(wId)
+                    .FilterByStatus(status)
+                    .Sort(sort);
 
             }
 

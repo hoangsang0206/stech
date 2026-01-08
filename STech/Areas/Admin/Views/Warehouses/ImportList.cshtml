@@ -119,7 +119,7 @@
                     <div class="page-dropdown-item" data-value data-text="Trạng thái">Trạng thái</div>
                     <div class="page-dropdown-item" data-value="@StatusConstant.Waiting" data-text="Chờ xác nhận">Chờ xác nhận</div>
                     <div class="page-dropdown-item" data-value="@StatusConstant.Completed" data-text="Đã hoàn thành">Đã hoàn thành</div>
-                    <div class="page-dropdown-item" data-value="@StatusConstant.Canceled" data-text="Đã hủy">Đã hủy</div>
+                    <div class="page-dropdown-item" data-value="@StatusConstant.Cancelled" data-text="Đã hủy">Đã hủy</div>
                 </div>
             </div>
         </div>
@@ -150,7 +150,7 @@
                         {
                             statusHtml = "<span class=\"page-badge badge-success\">Hoàn thành</span>";
                         }
-                        else if (import.Status == StatusConstant.Canceled)
+                        else if (import.Status == StatusConstant.Cancelled)
                         {
                             statusHtml = "<span class=\"page-badge badge-error\">Đã hủy</span>";
                         }
@@ -165,9 +165,19 @@
                                     .Format(import.WarehouseImportDetails.Sum(t => t.UnitPrice * t.Quantity)))</td>
                             <td>@Html.Raw(statusHtml)</td>
                             <td>
-                                <button class="page-table-btn btn-lightblue">
-                                    <i class="fa-solid fa-circle-info"></i>
-                                </button>
+                                <div class="d-flex gap-1 justify-content-end">
+                                    <button class="page-table-btn btn-lightblue view-import-detail" 
+                                            onclick="window.location.href='/admin/warehouses/import/detail/@import.Wiid'">
+                                        <i class="fa-solid fa-circle-info"></i>
+                                    </button>
+                                
+                                    @if (import.Status == StatusConstant.Waiting)
+                                    {
+                                        <button class="page-table-btn btn-green accept-import" data-id="@import.Wiid">
+                                            <i class="fa-solid fa-check"></i>
+                                        </button>
+                                    }
+                                </div>
                             </td>
 
                         </tr>

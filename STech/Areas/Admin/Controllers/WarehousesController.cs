@@ -79,6 +79,20 @@ namespace STech.Areas.Admin.Controllers
             return View(new Tuple<WarehouseFilterVM, PagedList<WarehouseImport>>(filterVm, importList));
         }
 
+        [AdminAuthorize(Code = Functions.ImportWarehouse)]
+        [Route("[area]/[controller]/import/detail/{id}")]
+        public async Task<IActionResult> Detail(string id)
+        {
+            WarehouseImport? import = await _warehouseService.GetWarehouseImport(id);
+
+            if (import == null)
+            {
+                return NotFound();
+            }
+            
+            return View("ImportDetail", import);
+        }
+
         [AdminAuthorize(Code = Functions.ExportWarehouse)]
         [Route("[area]/[controller]/export/create")]
         public async Task<IActionResult> CreateExport()

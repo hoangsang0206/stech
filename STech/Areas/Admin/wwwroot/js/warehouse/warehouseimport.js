@@ -21,7 +21,7 @@ $('.create-import').click(() => {
 
     $.ajax({
         type: 'POST',
-        url: '/api/admin/warehouses/import',
+        url: '/api/admin/warehouses/import/create',
         contentType: 'application/json',
         data: JSON.stringify({
             note: note,
@@ -114,6 +114,19 @@ $('.filter-import-id').blur(() => {
     }
 })
 
+const tippyButtons = () => {
+    tippy('.view-import-detail', {
+        content: 'Xem chi tiết',
+        placement: 'top'
+    })
+
+    tippy('.accept-import', {
+        content: 'Xác nhận hoàn thành',
+        placement: 'top'
+    })
+}
+tippyButtons();
+
 const renderImportList = (data) => {
     const element = $('.import-list');
     let i = 1;
@@ -141,17 +154,68 @@ const renderImportList = (data) => {
                 <td>${formatCurrency(item.warehouseImportDetails.reduce((sum, t) => sum + (t.quantity * t.unitPrice), 0))}</td>
                 <td>${statusHtml}</td>
                 <td>
-                    <button class="page-table-btn btn-lightblue">
-                        <i class="fa-solid fa-circle-info"></i>
-                    </button>
+                    <div class="d-flex gap-1 justify-content-end">
+                        <button class="page-table-btn btn-lightblue view-import-detail" 
+                                onclick="window.location.href='/admin/warehouses/import/detail/${item.wiid}'">
+                            <i class="fa-solid fa-circle-info"></i>
+                        </button>
+                    
+                        ${
+                            item.status === 'waiting' ?
+                            `<button class="page-table-btn btn-green accept-import" data-id="${item.wiid}">
+                                <i class="fa-solid fa-check"></i>
+                            </button>` : ''
+                        }
+                    </div>
                 </td>
             </tr>
         `);
         
         i++;
     })
+    
+    tippyButtons();
 }
 
 $('.filter-submit').click(() => {
     getImportList();
+})
+
+$(document).ready(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sort = params.get('sort');
+    const status = params.get('status');
+    
+    activeDropdown('.sort-selection', sort);
+    activeDropdown('.status-selection', status);
+})
+
+$(document).on('click', '.accept-import', function() {
+    const id = $(this).data('id');
+    
+    if (id) {
+        showConfirmDialog('Xác nhận hoàn thành', `Xác nhận đã hoàn thành cho phiếu nhập ${id} ?`,
+            () => {
+                showWebLoader();
+
+                $.ajax({
+                    type: 'PATCH',
+                    url: `/api/admin/warehouses/import/accept/${id}`,
+                    success: (response) => {
+                        if (response.status) {
+                            showDialogWithCallback('success', 'Hoàn tất', `Đã xác nhận hoàn thành phiếu nhập ${id}.`,
+                                () => { getImportList() });
+                        } else {
+                            showDialog('error', 'Không tìm thấy', `Phiếu nhập ${id} không tồn tại.`);
+                        }
+                        
+                        hideWebLoader(500);
+                    },
+                    error: (xhr, status, error) => {
+                        showErrorDialog();
+                        hideWebLoader(500);
+                    }
+                })
+            });
+    }
 })

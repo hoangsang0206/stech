@@ -63,7 +63,12 @@ public static class WarehouseUtils
         }
     }
 
-    public static IQueryable<WarehouseImport> Sort(this IQueryable<WarehouseImport> query, string sort)
+    public static IQueryable<WarehouseImport> FilterByStatus(this IQueryable<WarehouseImport> query, string? status)
+    {
+        return string.IsNullOrEmpty(status) ? query : query.Where(w => w.Status == status);
+    }
+
+    public static IQueryable<WarehouseImport> Sort(this IQueryable<WarehouseImport> query, string? sort)
     {
         switch (sort)
         {

@@ -5,6 +5,7 @@ using STech.Data.Models;
 using STech.Data.ViewModels;
 using STech.Filters;
 using STech.Services;
+using STech.Services.Constants;
 using STech.Services.Services;
 using STech.Utils;
 
@@ -244,7 +245,7 @@ namespace STech.Areas.Admin.ApiControllers
         
         
         // Create import
-        [HttpPost("import")]
+        [HttpPost("import/create")]
         [AdminAuthorize(Code = Functions.ImportWarehouse)]
         public async Task<IActionResult> ImportWarehouse([FromBody] WarehouseImportVM model)
         {
@@ -326,6 +327,7 @@ namespace STech.Areas.Admin.ApiControllers
                 EmployeeId = employee.EmployeeId,
                 Note = model.Note,
                 DateCreate = now,
+                Status = StatusConstant.Waiting,
             };
 
             import.WarehouseImportDetails =  model.WarehouseImportDetails.Select(d => new WarehouseImportDetail
@@ -343,8 +345,26 @@ namespace STech.Areas.Admin.ApiControllers
                Message = result ? "Tạo phiếu nhập kho thành công" : "Tạo phiếu nhập kho thất bại"
             });
         }
-        
-        
+
+        [HttpPatch("import/accept/{id}")]
+        public async Task<IActionResult> AcceptImport(string id)
+        {
+            WarehouseImport? import = await _warehouseService.GetWarehouseImport(id);
+            if (import == null)
+            {
+                return Ok(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Không tìm thấy phiếu nhập này."
+                });
+            }
+
+            return Ok(new ApiResponse
+            {
+                Status = await _warehouseService.ConfirmWarehouseImport(id),
+                Message = "Đã xác nhận hoàn thành phiếu nhập này."
+            });
+        }
 
         #endregion
     }
