@@ -13,6 +13,7 @@ using STech.Services.Services;
 using Stripe;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -180,6 +181,11 @@ CloudflareTurnstile.SecretKey = builder.Configuration.GetSection("Cloudflare:Tur
 CloudflareTurnstile.ApiUrl = builder.Configuration.GetSection("Cloudflare:Turnstile")["ApiUrl"];
 
 //builder.Services.AddHttpContextAccessor();
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 200 * 1024 * 1024; // 200MB
+});
 
 var app = builder.Build();
 

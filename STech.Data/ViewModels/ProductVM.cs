@@ -17,8 +17,7 @@ namespace STech.Data.ViewModels
         public string? Description { get; set; }
 
         public int? ManufacturedYear { get; set; }
-
-        [GreaterThan("Price", ErrorMessage = "Giá so sánh nên lớn hơn giá bán")]
+        
         public decimal? OriginalPrice { get; set; }
 
         [Required(ErrorMessage = "Nhập giá sản phẩm")]
