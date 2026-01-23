@@ -9,7 +9,6 @@ using STech.Services.Utils;
 using STech.Utils;
 using System.Security.Claims;
 using STech.Constants;
-using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace STech.Areas.Admin.ApiControllers
 {
@@ -93,7 +92,7 @@ namespace STech.Areas.Admin.ApiControllers
 
             DateTime date = DateTime.Now;
             Invoice invoice = new Invoice();
-            invoice.InvoiceId = date.ToString("yyyyMMdd") + RandomUtils.GenerateRandomString(8).ToUpper();
+            invoice.InvoiceId = date.ToString("ddMMyy") + "HD" + RandomUtils.GenerateRandomString(5).ToUpper();
             invoice.OrderDate = date;
             invoice.PaymentMedId = paymentMethod.PaymentMedId;
             invoice.PaymentStatus = PaymentConstants.UnPaid;
@@ -112,7 +111,7 @@ namespace STech.Areas.Admin.ApiControllers
         {
             PackingSlip packingSlip = new PackingSlip();
             packingSlip.InvoiceId = invoice.InvoiceId;
-            packingSlip.Psid = DateTime.Now.ToString("yyyyMMdd") + RandomUtils.GenerateRandomString(8).ToUpper();
+            packingSlip.Psid = DateTime.Now.ToString("ddMMyy") + "PS" + RandomUtils.GenerateRandomString(5).ToUpper();
             packingSlip.DeliveryFee = invoice.DeliveryMedId == DeliveryConstants.COD ? await CalculateShippingFee(address, warehouseId) : 0;
             packingSlip.IsCompleted = false;
 
@@ -167,7 +166,7 @@ namespace STech.Areas.Admin.ApiControllers
             }
 
             whE = new WarehouseExport();
-            whE.Weid = DateTime.Now.ToString("yyyyMMdd") + RandomUtils.GenerateRandomString(8).ToUpper();
+            whE.Weid = DateTime.Now.ToString("ddMMyy") + "EX" + RandomUtils.GenerateRandomString(5).ToUpper();
             whE.WarehouseId = warehouse.WarehouseId;
             whE.InvoiceId = invoice.InvoiceId;
             whE.DateCreate = DateTime.Now;

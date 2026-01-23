@@ -182,10 +182,10 @@ CloudflareTurnstile.ApiUrl = builder.Configuration.GetSection("Cloudflare:Turnst
 
 //builder.Services.AddHttpContextAccessor();
 
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.Limits.MaxRequestBodySize = 200 * 1024 * 1024; // 200MB
-});
+// builder.WebHost.ConfigureKestrel(options =>
+// {
+//     options.Limits.MaxRequestBodySize = 200 * 1024 * 1024; // 200MB
+// });
 
 var app = builder.Build();
 

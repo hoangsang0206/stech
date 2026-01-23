@@ -130,6 +130,8 @@ namespace STech.Areas.Admin.ApiControllers
 
         #region POST
 
+        [RequestSizeLimit(200_000_000)]
+        [RequestFormLimits(MultipartBodyLengthLimit = 200_000_000)]
         [HttpPost("create")]
         [AdminAuthorize(Code = Functions.CreateProduct)]
         public async Task<IActionResult> CreateProduct(ProductVM productVM)
@@ -243,7 +245,9 @@ namespace STech.Areas.Admin.ApiControllers
 
 
         #region PUT
-
+        
+        [RequestSizeLimit(200_000_000)]
+        [RequestFormLimits(MultipartBodyLengthLimit = 200_000_000)]
         [HttpPut("update")]
         [AdminAuthorize(Code = Functions.EditProduct)]
         public async Task<IActionResult> UpdateProduct([FromBody] ProductVM productVM)

@@ -212,8 +212,8 @@
                                     foreach (ProductSpecification spec in productSpecs)
                                     {
                                         <tr>
-                                            <td>@spec.SpecName</td>
-                                            <td>@spec.SpecValue</td>
+                                            <td>@Html.Raw(spec.SpecName)</td>
+                                            <td>@Html.Raw(spec.SpecValue)</td>
                                         </tr>
                                     }
                                 }
@@ -405,8 +405,8 @@
                         foreach (ProductSpecification spec in productSpecs)
                         {
                             <tr>
-                                <td>@spec.SpecName</td>
-                                <td>@spec.SpecValue</td>
+                                <td>@Html.Raw(spec.SpecName)</td>
+                                <td>@Html.Raw(spec.SpecValue)</td>
                             </tr>
                         }
                     }
